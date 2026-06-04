@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "",
+    "targets": "all",
+    "externalBin": ["lensfit-engine"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png"
+    ]
+  },
+  "productName": "LensFit",
+  "mainBinaryName": "LensFit",
+  "version": "0.1.0",
+  "identifier": "com.lensfit.app",
+  "plugins": {},
+  "app": {
+    "security": {
+      "csp": null,
+      "dangerousDisableAssetCspModification": false,
+      "freezePrototype": false,
+      "assetProtocol": {
+        "enable": false,
+        "scope": []
+      },
+      "capabilities": ["default"]
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 900,
+        "resizable": true,
+        "title": "LensFit",
+        "width": 1400,
+        "minWidth": 1200,
+        "minHeight": 800
+      }
+    ]
+  }
+}
