@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { ChevronDown, ChevronUp, FlaskConical } from "lucide-react";
+import { FlaskConical } from "lucide-react";
 
 export interface PhysicsTraceItem {
   formula: string;
@@ -13,51 +12,73 @@ interface Props {
   traces: PhysicsTraceItem[];
 }
 
-export default function PhysicsTrace({ traces }: Props) {
-  const [expanded, setExpanded] = useState(false);
+function formatValue(v: string | number): string {
+  if (typeof v === "number") {
+    if (Math.abs(v) >= 1000) return v.toFixed(0);
+    if (Math.abs(v) >= 1) return v.toFixed(2);
+    return v.toFixed(4);
+  }
+  return String(v);
+}
 
+export default function PhysicsTrace({ traces }: Props) {
   if (!traces || traces.length === 0) return null;
 
   return (
     <div className="mt-4">
-      <button
-        onClick={() => setExpanded((v) => !v)}
-        className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-      >
-        <FlaskConical size={14} />
-        推导详情
-        {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-      </button>
+      <h3 className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+        <FlaskConical size={13} />
+        推导过程
+      </h3>
 
-      {expanded && (
-        <div className="mt-2 space-y-2">
+      <div className="relative pl-3">
+        {/* vertical connector line */}
+        <div className="absolute left-[11px] top-2 bottom-2 w-px bg-slate-200 dark:bg-slate-700" />
+
+        <div className="space-y-0">
           {traces.map((t, i) => (
-            <div
-              key={i}
-              className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700"
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{t.formula}</span>
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 tabular-nums">
-                  {t.output.toFixed ? t.output.toFixed(4) : t.output} {t.unit}
+            <div key={i} className="relative flex items-start gap-3 py-2">
+              {/* node dot */}
+              <div className="relative z-10 mt-1.5 w-[22px] h-[22px] rounded-full bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-300 dark:border-indigo-700 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">
+                  {i + 1}
                 </span>
               </div>
-              <div className="text-[10px] text-slate-400 dark:text-slate-500">
-                {Object.entries(t.inputs).map(([k, v]) => (
-                  <span key={k} className="mr-2">
-                    {k}={typeof v === "number" && v.toFixed ? v.toFixed(2) : v}
+
+              {/* content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                    {t.formula}
                   </span>
-                ))}
+                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 tabular-nums flex-shrink-0">
+                    {formatValue(t.output)} {t.unit}
+                  </span>
+                </div>
+
+                {Object.keys(t.inputs).length > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
+                    {Object.entries(t.inputs).map(([k, v]) => (
+                      <span
+                        key={k}
+                        className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums"
+                      >
+                        {k}={formatValue(v)}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {t.assumption && (
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 italic">
+                    * {t.assumption}
+                  </p>
+                )}
               </div>
-              {t.assumption && (
-                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 italic">
-                  * {t.assumption}
-                </p>
-              )}
             </div>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }

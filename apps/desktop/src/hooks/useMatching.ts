@@ -28,6 +28,15 @@ export interface UnifiedMatchResult {
   vignetting: boolean;
   derived: Record<string, unknown>;
   derivation_chain: PhysicsTraceItem[];
+  reason: string;
+}
+
+export interface FilterDiagnosticItem {
+  stage: string;
+  before_count: number;
+  after_count: number;
+  rejected_reasons: Record<string, number>;
+  suggestion: string;
 }
 
 interface MatchingState {
@@ -37,6 +46,7 @@ interface MatchingState {
   stage: string;
   error: string | null;
   results: UnifiedMatchResult[];
+  diagnostics: FilterDiagnosticItem[] | null;
 }
 
 interface UseMatchingOptions {
@@ -55,6 +65,7 @@ export function useMatching({ domain, requirements, mode = "poll", onSuccess, on
     stage: "",
     error: null,
     results: [],
+    diagnostics: null,
   });
 
   const mountedRef = useRef(true);
@@ -85,6 +96,7 @@ export function useMatching({ domain, requirements, mode = "poll", onSuccess, on
       stage: "",
       error: null,
       results: [],
+      diagnostics: null,
     });
 
     if (mode === "stream") {
@@ -109,6 +121,7 @@ export function useMatching({ domain, requirements, mode = "poll", onSuccess, on
               stage,
               status: stage === "completed" ? "completed" : stage === "error" ? "failed" : "running",
               results: stage === "completed" ? (data.results as UnifiedMatchResult[]) ?? [] : prev.results,
+              diagnostics: stage === "completed" ? (data.diagnostics as FilterDiagnosticItem[]) ?? null : prev.diagnostics,
               error: stage === "error" ? String(data.error ?? "匹配失败") : null,
             }));
 
@@ -229,11 +242,13 @@ export function useMatching({ domain, requirements, mode = "poll", onSuccess, on
           if (!mountedRef.current) return;
 
           const matches = (resultData.top_matches ?? []) as UnifiedMatchResult[];
+          const diagnostics = (resultData.diagnostics as FilterDiagnosticItem[]) ?? null;
           setState((prev) => ({
             ...prev,
             status: "completed",
             taskId: null,
             results: matches,
+            diagnostics,
             error: null,
           }));
           toast("success", "匹配完成", `共找到 ${matches.length} 组最优方案`);

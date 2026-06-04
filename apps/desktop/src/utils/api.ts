@@ -172,7 +172,13 @@ export async function getMatchStatus(taskId: string) {
 }
 
 export async function getMatchResult(taskId: string) {
-  return apiFetch<{ status: string; top_matches?: unknown[]; results?: unknown[]; error?: string }>(
+  return apiFetch<{
+    status: string;
+    top_matches?: unknown[];
+    results?: unknown[];
+    diagnostics?: unknown[];
+    error?: string;
+  }>(
     `/api/v1/match/async/${taskId}/result`
   );
 }
@@ -285,7 +291,9 @@ export async function exportReport(
   format: "pdf" | "excel",
   requirements: object,
   results: object[],
-  topK: number = 10
+  topK: number = 10,
+  diagnostics?: object[],
+  whatIfResults?: object[]
 ): Promise<Blob> {
   const base = await getEndpoint();
   const apiKey = await getApiKey();
@@ -295,10 +303,33 @@ export async function exportReport(
       "Content-Type": "application/json",
       ...(apiKey ? { "X-API-Key": apiKey } : {}),
     },
-    body: JSON.stringify({ format, requirements, results, top_k: topK }),
+    body: JSON.stringify({
+      format, requirements, results, top_k: topK,
+      diagnostics, what_if_results: whatIfResults,
+    }),
   });
   if (!res.ok) {
     throw new Error(`Export error: ${res.status} ${res.statusText}`);
+  }
+  return res.blob();
+}
+
+export async function generateProjectReport(
+  projectId: number,
+  format: "pdf" | "excel" = "pdf"
+): Promise<Blob> {
+  const base = await getEndpoint();
+  const apiKey = await getApiKey();
+  const res = await fetch(`${base}/api/v1/projects/${projectId}/report`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(apiKey ? { "X-API-Key": apiKey } : {}),
+    },
+    body: JSON.stringify({ format }),
+  });
+  if (!res.ok) {
+    throw new Error(`Report error: ${res.status} ${res.statusText}`);
   }
   return res.blob();
 }
@@ -322,7 +353,7 @@ export async function listSetups(projectId: number) {
 
 export async function saveSetup(
   projectId: number,
-  data: { name: string; lens_id?: number; detector_id?: number; notes?: string }
+  data: { name: string; lens_id?: number; detector_id?: number; notes?: string; match_result_snapshot?: object }
 ) {
   return apiFetch<SetupItem>(`/api/v1/projects/${projectId}/setups`, {
     method: "POST",
