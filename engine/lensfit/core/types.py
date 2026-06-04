@@ -39,19 +39,23 @@ class SensorSize:
 class PhysicsTrace:
     """物理推导链单步记录 — 可审计的光学计算溯源."""
 
+    step: str = ""
     formula: str = ""
     inputs: dict[str, Any] = field(default_factory=dict)
     output: float = 0.0
     unit: str = ""
     assumption: str = ""
+    principle: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "step": self.step,
             "formula": self.formula,
             "inputs": self.inputs,
             "output": self.output,
             "unit": self.unit,
             "assumption": self.assumption,
+            "principle": self.principle,
         }
 
 

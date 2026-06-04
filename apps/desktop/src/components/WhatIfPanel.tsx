@@ -33,14 +33,23 @@ function getSensitivityLabel(_baseline: UnifiedMatchResult[], key: string): { la
 export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResults, whatIfResults, isRunning }: Props) {
   const [activeParam, setActiveParam] = useState<string | null>(null);
   const [sliderValue, setSliderValue] = useState<number>(0);
+  const [localForm, setLocalForm] = useState<Record<string, unknown>>(form);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const originalValueRef = useRef<number | null>(null);
 
   const paramDef = NUMERIC_PARAMS.find((p) => p.key === activeParam);
-  const currentVal = paramDef ? Number(form[paramDef.key] ?? 0) : 0;
+  const currentVal = paramDef ? Number(localForm[paramDef.key] ?? 0) : 0;
+
+  useEffect(() => {
+    setLocalForm(form);
+  }, [form]);
 
   useEffect(() => {
     if (paramDef) {
       setSliderValue(currentVal);
+      if (originalValueRef.current === null) {
+        originalValueRef.current = Number(form[paramDef.key] ?? 0);
+      }
     }
     return () => {
       if (debounceTimer.current) {
@@ -48,20 +57,33 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
         debounceTimer.current = null;
       }
     };
-  }, [activeParam, paramDef, currentVal]);
+  }, [activeParam, paramDef, currentVal, form]);
 
   const handleSliderChange = useCallback((val: number) => {
     setSliderValue(val);
     if (paramDef) {
-      onChange(paramDef.key, val);
+      setLocalForm((prev) => ({ ...prev, [paramDef.key]: val }));
     }
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
     debounceTimer.current = setTimeout(() => {
-      onRunWhatIf({ ...form, [paramDef!.key]: val });
+      onRunWhatIf({ ...localForm, [paramDef!.key]: val });
     }, 600);
-  }, [paramDef, form, onChange, onRunWhatIf]);
+  }, [paramDef, localForm, onRunWhatIf]);
+
+  const handleBack = useCallback(() => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = null;
+    }
+    if (paramDef && originalValueRef.current !== null) {
+      onChange(paramDef.key, originalValueRef.current);
+      setLocalForm((prev) => ({ ...prev, [paramDef.key]: originalValueRef.current }));
+    }
+    setActiveParam(null);
+    originalValueRef.current = null;
+  }, [paramDef, onChange]);
 
   const diffCount = whatIfResults.length - baselineResults.length;
 
@@ -100,7 +122,7 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200">{paramDef?.label}</span>
             <button
-              onClick={() => { setActiveParam(null); if (debounceTimer.current) clearTimeout(debounceTimer.current); }}
+              onClick={handleBack}
               className="text-[10px] text-slate-400 dark:text-slate-500 hover:text-indigo-500"
             >
               返回
@@ -138,11 +160,11 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
             <div className="p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
               <p className="text-[10px] text-slate-500 dark:text-slate-500 mb-1">Top 3 对比</p>
               <div className="space-y-1">
-                {whatIfResults.slice(0, 3).map((r, i) => {
+                {whatIfResults.slice(0, 3).map((r) => {
                   const baseline = baselineResults.find((b) => b.lens_id === r.lens_id && b.detector_id === r.detector_id);
                   const scoreDiff = baseline ? r.score - baseline.score : 0;
                   return (
-                    <div key={i} className="flex items-center justify-between text-[10px]">
+                    <div key={`${r.lens_id}-${r.detector_id}`} className="flex items-center justify-between text-[10px]">
                       <span className="text-slate-600 dark:text-slate-300 truncate max-w-[120px]">{r.lens_model}</span>
                       <span className={`tabular-nums font-medium ${scoreDiff > 0.01 ? "text-emerald-500" : scoreDiff < -0.01 ? "text-rose-500" : "text-slate-400"}`}>
                         {r.score.toFixed(2)}

@@ -337,11 +337,13 @@ class MatchingEngine:
                     for key, val in combo.derived.items():
                         if isinstance(val, (int, float)) and key not in ("coverage", "nyquist"):
                             trace_chain.append(PhysicsTrace(
+                                step=f"derived:{key}",
                                 formula=key.replace("_", " "),
                                 inputs={"lens": lens.model, "detector": det.model},
                                 output=float(val),
                                 unit="",
                                 assumption="domain derived parameter",
+                                principle="光学薄透镜近似与几何成像关系",
                             ))
 
                 # Trace 2: coverage check
@@ -349,6 +351,7 @@ class MatchingEngine:
                     det.sensor_w_mm or 0, det.sensor_h_mm or 0, lens.image_circle_mm or 0
                 )
                 trace_chain.append(PhysicsTrace(
+                    step="coverage",
                     formula="sensor coverage check",
                     inputs={
                         "sensor_w_mm": det.sensor_w_mm or 0,
@@ -358,6 +361,7 @@ class MatchingEngine:
                     output=coverage.get("coverage_ratio", 1.0),
                     unit="ratio",
                     assumption="image circle must cover sensor diagonal",
+                    principle="几何光学：像圆直径 ≥ 传感器对角线",
                 ))
 
                 # Trace 3: nyquist
@@ -369,6 +373,7 @@ class MatchingEngine:
                             lens_mtf50_lpmm=lens.mtf50_lpmm,
                         )
                         trace_chain.append(PhysicsTrace(
+                            step="nyquist",
                             formula="nyquist frequency",
                             inputs={
                                 "pixel_size_um": det.pixel_size_um,
@@ -377,6 +382,7 @@ class MatchingEngine:
                             output=nyquist.get("sensor_nyquist_lpmm", 0) if isinstance(nyquist, dict) else 0,
                             unit="lp/mm",
                             assumption="sampling theorem",
+                            principle="采样定理：光学分辨率需高于奈奎斯特频率以避免混叠",
                         ))
                     except ValueError:
                         pass
@@ -392,11 +398,13 @@ class MatchingEngine:
 
                 # Trace 4: composite score
                 trace_chain.append(PhysicsTrace(
+                    step="composite",
                     formula="composite score",
                     inputs={k: round(v, 3) for k, v in score_vector.items()},
                     output=sum(score_vector.values()) / max(len(score_vector), 1),
                     unit="score",
                     assumption="weighted average of scoring dimensions",
+                    principle="多目标决策：加权综合评分排序",
                 ))
 
                 result = MatchResult(

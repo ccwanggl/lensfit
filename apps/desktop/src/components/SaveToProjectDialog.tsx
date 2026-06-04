@@ -34,7 +34,13 @@ export default function SaveToProjectDialog({
   const [mode, setMode] = useState<"select" | "create">("select");
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      // Reset state when dialog closes
+      setSelectedProjectId(null);
+      setNewProjectName("");
+      setMode("select");
+      return;
+    }
     setLoading(true);
     listProjects()
       .then((data) => {

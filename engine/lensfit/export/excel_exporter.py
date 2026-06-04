@@ -54,7 +54,7 @@ def generate_excel_report(
     # Title
     ws["A1"] = "LensFit 选型报告"
     ws["A1"].font = title_font
-    ws.merge_cells("A1:H1")
+    ws.merge_cells("A1:I1")
 
     # Requirements
     ws["A3"] = "选型参数"
