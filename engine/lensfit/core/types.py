@@ -69,6 +69,7 @@ class MatchResult:
     coverage_ratio: float = 1.0
     vignetting: bool = False
     derivation_chain: list[PhysicsTrace] = field(default_factory=list)
+    reason: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -82,6 +83,27 @@ class MatchResult:
             "coverage_ratio": self.coverage_ratio,
             "vignetting": self.vignetting,
             "derivation_chain": [t.to_dict() for t in self.derivation_chain],
+            "reason": self.reason,
+        }
+
+
+@dataclass
+class FilterDiagnostic:
+    """匹配过滤阶段诊断信息 — 用于零结果分析."""
+
+    stage: str = ""
+    before_count: int = 0
+    after_count: int = 0
+    rejected_reasons: dict[str, int] = field(default_factory=dict)
+    suggestion: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "stage": self.stage,
+            "before_count": self.before_count,
+            "after_count": self.after_count,
+            "rejected_reasons": self.rejected_reasons,
+            "suggestion": self.suggestion,
         }
 
 
@@ -96,6 +118,7 @@ class MatchingTask:
     total_candidates: int = 0
     filtered_candidates: int = 0
     result: Optional[list[MatchResult]] = None
+    diagnostics: Optional[list[FilterDiagnostic]] = None
     error: Optional[str] = None
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
