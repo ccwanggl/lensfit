@@ -43,6 +43,7 @@ import DiagnosticsPanel from "../components/DiagnosticsPanel";
 import WhatIfPanel from "../components/WhatIfPanel";
 import GlossaryTooltip from "../components/GlossaryTooltip";
 import SaveToProjectDialog from "../components/SaveToProjectDialog";
+import KnowledgePanel from "../components/KnowledgePanel";
 import {
   generateCoverage,
   exportReport,
@@ -578,6 +579,12 @@ export default function IndustrialPage() {
           </div>
         </Card>
       </div>
+
+      <KnowledgePanel
+        form={form}
+        domain="industrial"
+        selectedResult={selectedResult}
+      />
 
       <SaveToProjectDialog
         isOpen={saveDialogOpen}

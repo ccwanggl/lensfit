@@ -286,9 +286,18 @@ def get_matching_result(task_id: str):
     if task.status != "completed":
         raise HTTPException(status_code=400, detail=f"Task status: {task.status}")
 
+    top_matches = (task.result or [])[:20]
+    explanations = {}
+    for r in top_matches:
+        try:
+            explanations[f"{r.lens_id}-{r.detector_id}"] = _engine.explain_result(r)
+        except Exception:
+            pass
+
     return {
-        "top_matches": [r.to_dict() for r in (task.result or [])],
+        "top_matches": [r.to_dict() for r in top_matches],
         "diagnostics": [d.to_dict() for d in (task.diagnostics or [])],
+        "explanations": explanations,
     }
 
 
@@ -300,6 +309,47 @@ def cancel_matching(task_id: str):
 
     cancelled = _engine.cancel_task(task_id)
     return {"cancelled": cancelled}
+
+
+# =====================================================================
+# Knowledge Base
+# =====================================================================
+from lensfit.knowledge.formulas import ALL_FORMULAS, list_formulas as kb_list_formulas
+from lensfit.knowledge.constraints import ALL_CONSTRAINTS
+from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
+
+_knowledge_engine = KnowledgeInferenceEngine(OpticalKnowledgeBase())
+
+
+@app.get("/api/v1/knowledge/formulas")
+def list_knowledge_formulas(domain: str | None = None):
+    """列出光学公式库."""
+    formulas = kb_list_formulas(domain)
+    return {"items": [f.to_dict() for f in formulas]}
+
+
+@app.get("/api/v1/knowledge/constraints")
+def list_knowledge_constraints():
+    """列出物理约束库."""
+    return {"items": [c.to_dict() for c in ALL_CONSTRAINTS]}
+
+
+class InferReq(BaseModel):
+    params: dict
+    domain: str = Field(default="all", max_length=32)
+
+
+@app.post("/api/v1/knowledge/infer")
+def knowledge_infer(req: InferReq):
+    """基于已知参数，使用知识库推理未知参数."""
+    try:
+        result = _knowledge_engine.infer(req.params, req.domain)
+        return {
+            "derived_params": result.derived_params,
+            "trace_chain": result.trace_chain,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
 
 
 # =====================================================================

@@ -17,6 +17,7 @@ from lensfit.db.catalog import CatalogQuery
 from lensfit.db.models import DetectorCatalog, LensCatalog
 from lensfit.domains.base import DeviceCombo, DomainModule, Requirements
 from lensfit.matching.scoring import ScoringEngine, TopsisRanker
+from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
 
 # Constants
 _MAX_CANDIDATE_COMBOS = 100_000
@@ -36,6 +37,7 @@ class MatchingEngine:
         self._ranker = TopsisRanker()
         self._lock = threading.Lock()
         self._last_diagnostics: list[FilterDiagnostic] = []
+        self._knowledge_engine = KnowledgeInferenceEngine(OpticalKnowledgeBase())
 
     def register_domain(self, module: DomainModule) -> None:
         """注册领域模块."""
@@ -523,6 +525,10 @@ class MatchingEngine:
         if ratio > 1.5:
             return 0.3
         return 0.6
+
+    def explain_result(self, result: MatchResult) -> dict[str, Any]:
+        """使用知识库为匹配结果生成结构化解释."""
+        return self._knowledge_engine.explain_result(result).to_dict()
 
     # =====================================================================
     # Stage 5: Ranking
