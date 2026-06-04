@@ -288,6 +288,7 @@ def get_matching_result(task_id: str):
 
     return {
         "top_matches": [r.to_dict() for r in (task.result or [])],
+        "diagnostics": [d.to_dict() for d in (task.diagnostics or [])],
     }
 
 
@@ -451,6 +452,7 @@ class CreateSetupReq(BaseModel):
     lens_id: int | None = None
     detector_id: int | None = None
     notes: str | None = Field(default=None, max_length=2000)
+    match_result_snapshot: dict | None = None
 
 
 @app.get("/api/v1/projects")
@@ -544,6 +546,7 @@ def save_setup(project_id: int, req: CreateSetupReq):
             detector_id=req.detector_id,
             lens_snapshot=json.dumps(_model_to_dict(lens)) if lens else None,
             detector_snapshot=json.dumps(_model_to_dict(detector)) if detector else None,
+            match_result_snapshot=json.dumps(req.match_result_snapshot, default=str) if req.match_result_snapshot else None,
             notes=req.notes,
         )
         session.add(setup)
@@ -580,6 +583,8 @@ class ExportReq(BaseModel):
     results: list[dict]
     format: str = Field(default="pdf", pattern=r"^(pdf|excel)$")
     top_k: int = Field(default=10, ge=1, le=1000)
+    diagnostics: list[dict] | None = None
+    what_if_results: list[dict] | None = None
 
 
 @app.post("/api/v1/export")
@@ -589,7 +594,10 @@ def export_results(req: ExportReq):
         if req.format == "pdf":
             from lensfit.export.pdf_exporter import generate_pdf_report
 
-            pdf_bytes = generate_pdf_report(req.requirements, req.results, req.top_k)
+            pdf_bytes = generate_pdf_report(
+                req.requirements, req.results, req.top_k,
+                diagnostics=req.diagnostics, what_if_results=req.what_if_results,
+            )
             return FastAPIResponse(
                 content=pdf_bytes,
                 media_type="application/pdf",
@@ -598,7 +606,10 @@ def export_results(req: ExportReq):
         elif req.format == "excel":
             from lensfit.export.excel_exporter import generate_excel_report
 
-            excel_bytes = generate_excel_report(req.requirements, req.results, req.top_k)
+            excel_bytes = generate_excel_report(
+                req.requirements, req.results, req.top_k,
+                diagnostics=req.diagnostics, what_if_results=req.what_if_results,
+            )
             return FastAPIResponse(
                 content=excel_bytes,
                 media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -610,6 +621,81 @@ def export_results(req: ExportReq):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+
+class ProjectReportReq(BaseModel):
+    format: str = Field(default="pdf", pattern=r"^(pdf|excel)$")
+
+
+@app.post("/api/v1/projects/{project_id}/report")
+def generate_project_report(project_id: int, req: ProjectReportReq):
+    """聚合项目下所有方案的匹配历史，生成综合选型建议书."""
+    if _session_maker is None:
+        raise HTTPException(status_code=503, detail="Engine not initialized")
+
+    with _session_maker() as session:
+        project = session.get(Project, project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        setups = (
+            session.query(ProjectSetup)
+            .filter(ProjectSetup.project_id == project_id)
+            .order_by(ProjectSetup.created_at.desc())
+            .all()
+        )
+
+        # Collect match result snapshots
+        aggregated_results: list[dict] = []
+        for s in setups:
+            if s.match_result_snapshot:
+                try:
+                    snap = json.loads(s.match_result_snapshot)
+                    if isinstance(snap, dict):
+                        aggregated_results.append(snap)
+                    elif isinstance(snap, list) and snap:
+                        aggregated_results.extend(snap)
+                except json.JSONDecodeError:
+                    continue
+
+        if not aggregated_results:
+            raise HTTPException(status_code=400, detail="项目中没有可聚合的匹配记录")
+
+        # Build synthetic requirements from project info
+        synthetic_requirements = {
+            "project_name": project.name,
+            "domain": project.domain or "-",
+            "setup_count": len(setups),
+        }
+
+        # Deduplicate by lens+detector combo, keep highest score
+        seen: set[str] = set()
+        unique_results: list[dict] = []
+        for r in sorted(aggregated_results, key=lambda x: x.get("score", 0), reverse=True):
+            key = f"{r.get('lens_id')}-{r.get('detector_id')}"
+            if key not in seen:
+                seen.add(key)
+                unique_results.append(r)
+
+        try:
+            if req.format == "pdf":
+                from lensfit.export.pdf_exporter import generate_pdf_report
+                pdf_bytes = generate_pdf_report(synthetic_requirements, unique_results, top_k=50)
+                return FastAPIResponse(
+                    content=pdf_bytes,
+                    media_type="application/pdf",
+                    headers={"Content-Disposition": f"attachment; filename=lensfit-project-{project_id}-report.pdf"},
+                )
+            else:
+                from lensfit.export.excel_exporter import generate_excel_report
+                excel_bytes = generate_excel_report(synthetic_requirements, unique_results, top_k=50)
+                return FastAPIResponse(
+                    content=excel_bytes,
+                    media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    headers={"Content-Disposition": f"attachment; filename=lensfit-project-{project_id}-report.xlsx"},
+                )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Report generation failed: {str(e)}")
 
 
 # =====================================================================

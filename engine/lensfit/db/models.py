@@ -244,6 +244,9 @@ class ProjectSetup(Base):
     # 计算结果缓存
     calculated_params: Mapped[Optional[str]] = mapped_column(Text)
 
+    # 匹配结果快照（含 reason, derivation_chain, diagnostics, score_vector）
+    match_result_snapshot: Mapped[Optional[str]] = mapped_column(Text)
+
     notes: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
