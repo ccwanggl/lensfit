@@ -366,6 +366,7 @@ export interface KnowledgeFormula {
   id: string;
   name_cn: string;
   expression: string;
+  latex?: string;
   params: Array<{ name: string; name_cn: string; unit: string; description: string }>;
   outputs: string[];
   principle: string;

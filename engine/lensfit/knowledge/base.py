@@ -24,8 +24,9 @@ class OpticalFormula:
     id: str
     name_cn: str
     expression: str
-    params: list[FormulaParam]
-    outputs: list[str]
+    latex: str = ""          # LaTeX 渲染表达式
+    params: list[FormulaParam] = field(default_factory=list)
+    outputs: list[str] = field(default_factory=list)
     principle: str = ""      # 物理原理（中文）
     assumption: str = ""     # 适用假设（中文）
     domain: str = "all"      # "all" | "industrial" | "microscope" | "photography" | "infrared"
@@ -36,6 +37,7 @@ class OpticalFormula:
             "id": self.id,
             "name_cn": self.name_cn,
             "expression": self.expression,
+            "latex": self.latex or self.expression,
             "params": [
                 {"name": p.name, "name_cn": p.name_cn, "unit": p.unit, "description": p.description}
                 for p in self.params

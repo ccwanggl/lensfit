@@ -12,6 +12,7 @@ thin_lens_imaging = OpticalFormula(
     id="thin_lens_imaging",
     name_cn="薄透镜成像公式",
     expression="f = (WD × s) / (FOV + s)",
+    latex=r"f = \frac{WD \cdot s}{FOV + s}",
     params=[
         FormulaParam("wd", "工作距离", "mm", "镜头前端到被测面的距离"),
         FormulaParam("fov", "视场宽度", "mm", "被测区域在物方的宽度"),
@@ -29,6 +30,7 @@ magnification = OpticalFormula(
     id="magnification",
     name_cn="放大倍率",
     expression="β = f / (WD − f) = 像高 / 物高",
+    latex=r"\beta = \frac{f}{WD - f} = \frac{h_{\text{像}}}{h_{\text{物}}}",
     params=[
         FormulaParam("focal", "焦距", "mm"),
         FormulaParam("wd", "工作距离", "mm"),
@@ -45,6 +47,7 @@ fov_from_focal = OpticalFormula(
     id="fov_from_focal",
     name_cn="视场计算",
     expression="FOV = (WD × s) / f − s",
+    latex=r"FOV = \frac{WD \cdot s}{f} - s",
     params=[
         FormulaParam("wd", "工作距离", "mm"),
         FormulaParam("focal", "焦距", "mm"),
@@ -62,6 +65,7 @@ afov_from_focal = OpticalFormula(
     id="afov_from_focal",
     name_cn="视角计算",
     expression="AFOV = 2 × arctan(s / 2f)",
+    latex=r"AFOV = 2 \arctan\left(\frac{s}{2f}\right)",
     params=[
         FormulaParam("sensor", "传感器宽度", "mm"),
         FormulaParam("focal", "焦距", "mm"),
@@ -78,6 +82,7 @@ nyquist_sampling = OpticalFormula(
     id="nyquist_sampling",
     name_cn="奈奎斯特采样定理",
     expression="f_Nyquist = 1 / (2 × p)  [lp/mm]",
+    latex=r"f_{\text{Nyquist}} = \frac{1}{2p} \; [\text{lp/mm}]",
     params=[
         FormulaParam("pixel_size_um", "像元尺寸", "μm", "传感器单个像素的物理边长"),
         FormulaParam("lens_mtf50_lpmm", "镜头MTF50", "lp/mm", "可选，镜头在50%对比度下的空间频率"),
@@ -95,6 +100,7 @@ sensor_coverage = OpticalFormula(
     id="sensor_coverage",
     name_cn="传感器覆盖检查",
     expression="coverage_ratio = (image_circle / sensor_diag)²",
+    latex=r"\text{coverage\_ratio} = \left(\frac{\text{image\_circle}}{\text{sensor\_diag}}\right)^2",
     params=[
         FormulaParam("sensor_w_mm", "传感器宽度", "mm"),
         FormulaParam("sensor_h_mm", "传感器高度", "mm"),
@@ -112,6 +118,7 @@ depth_of_field = OpticalFormula(
     id="depth_of_field",
     name_cn="景深计算",
     expression="H = f² / (F × c) + f;  near = H×d / (H+d);  far = H×d / (H−d)",
+    latex=r"H = \frac{f^2}{F \cdot c} + f; \quad d_{\text{near}} = \frac{H \cdot d}{H+d}; \quad d_{\text{far}} = \frac{H \cdot d}{H-d}",
     params=[
         FormulaParam("focal", "焦距", "mm"),
         FormulaParam("f_number", "F值", "", "光圈值"),
@@ -130,6 +137,7 @@ mount_compatibility = OpticalFormula(
     id="mount_compatibility",
     name_cn="接口兼容性",
     expression="兼容 = mount_lens == mount_detector 或 存在标准转接方案",
+    latex=r"\text{兼容} = \text{mount}_{\text{lens}} = \text{mount}_{\text{det}}",
     params=[
         FormulaParam("lens_mount", "镜头接口", ""),
         FormulaParam("det_mount", "探测器接口", ""),
@@ -146,6 +154,7 @@ pixel_accuracy = OpticalFormula(
     id="pixel_accuracy",
     name_cn="像素精度",
     expression="acc = pixel_size / β  [mm/px]",
+    latex=r"\text{acc} = \frac{p_{\text{size}}}{\beta} \; [\text{mm/px}]",
     params=[
         FormulaParam("pixel_size_um", "像元尺寸", "μm"),
         FormulaParam("magnification", "放大倍率", "", "系统总放大倍率"),
