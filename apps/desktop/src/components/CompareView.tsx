@@ -134,14 +134,14 @@ export default function CompareView({ results }: Props) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-xs">
+        <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 dark:border-slate-700">
-              <th className="text-left py-2 pr-3 text-slate-400 dark:text-slate-500 font-medium">维度</th>
+              <th className="text-left py-2.5 pr-3 text-slate-500 dark:text-slate-400 font-semibold">维度</th>
               {results.map((r, i) => (
-                <th key={i} className="text-center py-2 px-2 text-slate-600 dark:text-slate-300 font-semibold min-w-[90px]">
-                  <div className="truncate max-w-[100px]">{r.lens_model || `方案${i + 1}`}</div>
-                  <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500">Rank {i + 1}</span>
+                <th key={i} className="text-center py-2.5 px-2 text-slate-700 dark:text-slate-200 font-bold min-w-[100px]">
+                  <div className="truncate max-w-[110px]">{r.lens_model || `方案${i + 1}`}</div>
+                  <span className="text-xs font-normal text-slate-400 dark:text-slate-500">Rank {i + 1}</span>
                 </th>
               ))}
             </tr>
@@ -151,23 +151,23 @@ export default function CompareView({ results }: Props) {
               const { bestIdx, worstIdx } = getBestWorst(row);
               return (
                 <tr key={ri} className="border-b border-slate-100 dark:border-slate-800/50">
-                  <td className="py-2 pr-3 text-slate-500 dark:text-slate-400 font-medium">{row.label}</td>
+                  <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300 font-semibold">{row.label}</td>
                   {results.map((r, ci) => {
                     const val = getCellValue(r, row);
                     const isBest = ci === bestIdx;
                     const isWorst = ci === worstIdx && results.length > 1 && bestIdx !== worstIdx;
                     return (
-                      <td key={ci} className="py-2 px-2 text-center">
+                      <td key={ci} className="py-2.5 px-2 text-center">
                         <span
-                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
                             isBest
-                              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-semibold"
+                              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-bold"
                               : isWorst
                               ? "text-slate-400 dark:text-slate-500"
-                              : "text-slate-600 dark:text-slate-300"
+                              : "text-slate-700 dark:text-slate-200"
                           }`}
                         >
-                          {isBest && <CheckCircle2 size={10} />}
+                          {isBest && <CheckCircle2 size={12} />}
                           {row.type === "vignetting" ? (val ? "有 ⚠" : "无") : formatVal(val)}
                         </span>
                       </td>
@@ -182,8 +182,8 @@ export default function CompareView({ results }: Props) {
 
       {results.length >= 2 && (
         <div className="p-3 rounded-[10px] bg-indigo-50/60 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <p className="text-[11px] font-semibold text-indigo-700 dark:text-indigo-300 mb-1">为什么选 {results[0].lens_model || "方案1"}？</p>
-          <p className="text-[11px] text-indigo-600 dark:text-indigo-400 leading-relaxed">
+          <p className="text-xs font-bold text-indigo-700 dark:text-indigo-300 mb-1.5">为什么选 {results[0].lens_model || "方案1"}？</p>
+          <p className="text-xs text-indigo-600 dark:text-indigo-400 leading-relaxed">
             {generateCompareReason(results[0], results[1])}
           </p>
         </div>

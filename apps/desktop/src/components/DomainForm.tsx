@@ -167,7 +167,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
 
         return (
           <div key={groupName} className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-            <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">
+            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">
               {groupName}
             </p>
             <div className="space-y-2">

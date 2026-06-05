@@ -54,7 +54,7 @@ export default function GlossaryTooltip({ term, children, showIcon = false }: Pr
           </span>
           {entry.explanation}
           {entry.related && entry.related.length > 0 && (
-            <span className="block mt-2 text-[10px] text-slate-400 dark:text-slate-500">
+            <span className="block mt-2 text-xs text-slate-400 dark:text-slate-500">
               相关：{entry.related.map((r) => lookupGlossary(r)?.term ?? r).join("、")}
             </span>
           )}

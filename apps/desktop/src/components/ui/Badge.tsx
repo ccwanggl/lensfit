@@ -21,8 +21,8 @@ export default function Badge({
   };
 
   const sizes: Record<string, string> = {
-    sm: "px-2 py-0.5 text-[10px]",
-    md: "px-2.5 py-1 text-xs",
+    sm: "px-2 py-0.5 text-xs",
+    md: "px-2.5 py-1 text-sm",
   };
 
   return (

@@ -35,7 +35,7 @@ export default function ProgressBar({
       {(label || showValue) && (
         <div className="flex justify-between items-center mb-1.5">
           {label && (
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {label}
             </span>
           )}

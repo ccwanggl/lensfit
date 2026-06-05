@@ -86,7 +86,7 @@ function RankBadge({ rank }: { rank: number }) {
     3: "bg-gradient-to-br from-orange-300 to-orange-400 text-white shadow-[0_2px_6px_rgba(251,146,60,0.4)]",
   };
   return (
-    <span className={`flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-extrabold ${colors[rank] || "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 dark:text-slate-500"}`}>
+    <span className={`flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-xs font-extrabold ${colors[rank] || "bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300"}`}>
       {rank}
     </span>
   );
@@ -141,12 +141,12 @@ function ResultCard({
         <div className="flex items-center justify-between gap-2 mb-1">
           <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{result.lens_model || `镜头 #${result.lens_id}`}</h4>
           <div className="flex items-center gap-1 flex-shrink-0">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">评分</span>
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">评分</span>
             <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums">{result.score?.toFixed(2) || "-"}</span>
           </div>
         </div>
 
-        <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 truncate mb-2.5">{result.detector_model || `探测器 #${result.detector_id}`}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-400 truncate mb-2.5">{result.detector_model || `探测器 #${result.detector_id}`}</p>
 
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant={result.vignetting ? "warning" : "success"} size="sm">
@@ -156,10 +156,10 @@ function ResultCard({
         </div>
 
         {result.reason && (
-          <p className={`mt-2 text-[11px] leading-relaxed ${
+          <p className={`mt-2 text-xs leading-relaxed ${
             result.reason.startsWith("✓") ? "text-emerald-600 dark:text-emerald-400" :
             result.reason.startsWith("⚠") ? "text-amber-600 dark:text-amber-400" :
-            "text-slate-500 dark:text-slate-400"
+            "text-slate-600 dark:text-slate-300"
           }`}>
             {result.reason}
           </p>
@@ -210,12 +210,12 @@ function ParamCard({
       highlight ? "bg-indigo-50/60 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/40" : "bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700"
     }`}>
       <div className={`flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg ${
-        highlight ? "bg-indigo-100 dark:bg-indigo-800/40 text-indigo-600 dark:text-indigo-400" : "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 dark:text-slate-500"
+        highlight ? "bg-indigo-100 dark:bg-indigo-800/40 text-indigo-600 dark:text-indigo-400" : "bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300"
       }`}>{icon}</div>
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</p>
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</p>
         <p className="text-sm font-bold text-slate-800 dark:text-slate-200 tabular-nums truncate">
-          {value}{unit && <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 ml-1">{unit}</span>}
+          {value}{unit && <span className="text-xs font-medium text-slate-500 dark:text-slate-400 ml-1">{unit}</span>}
         </p>
       </div>
     </div>
@@ -465,8 +465,8 @@ export default function IndustrialPage() {
                 >
                   <div className="flex items-center gap-2">
                     <Zap size={12} className="text-amber-500" />
-                    <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">参数灵敏度分析</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500">点击展开调整参数并查看影响</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">参数灵敏度分析</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">点击展开调整参数并查看影响</span>
                   </div>
                   {whatIfExpanded ? <ChevronUp size={12} className="text-slate-400" /> : <ChevronDown size={12} className="text-slate-400" />}
                 </button>
@@ -537,7 +537,7 @@ export default function IndustrialPage() {
                     <button
                       key={t.key}
                       onClick={() => setRightTab(t.key)}
-                      className={`flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg transition-colors ${
+                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
                         rightTab === t.key
                           ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold"
                           : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
@@ -561,14 +561,14 @@ export default function IndustrialPage() {
 
                       {selectedResult?.score_vector && (
                         <div>
-                          <h3 className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">评分维度</h3>
+                          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">评分维度</h3>
                           <ScoreRadarChart scoreVector={selectedResult.score_vector} size={220} />
                         </div>
                       )}
 
                       {selectedResult?.derived && (
                         <div className="space-y-3">
-                          <h3 className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">光学参数</h3>
+                          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">光学参数</h3>
                           {(() => {
                             const d = selectedResult.derived as Record<string, unknown>;
                             const cov = d.coverage as Record<string, unknown> | undefined;
@@ -593,7 +593,7 @@ export default function IndustrialPage() {
                                 {cov != null && (
                                   <div className="mt-2 p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
                                     <div className="flex items-center justify-between mb-2">
-                                      <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider"><GlossaryTooltip term="vignetting">渐晕风险</GlossaryTooltip></span>
+                                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"><GlossaryTooltip term="vignetting">渐晕风险</GlossaryTooltip></span>
                                       <Badge variant={cov.vignetting ? "warning" : "success"} size="sm">{cov.vignetting ? "有" : "无"}</Badge>
                                     </div>
                                     <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">

@@ -72,14 +72,14 @@ export default function ResultCard({
               {score.toFixed(0)}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
             <Badge variant="neutral" size="sm">
               {badgeLabel}
             </Badge>
-            <span>·</span>
+            <span className="text-slate-400 dark:text-slate-500">·</span>
             <span>{detectorModel}</span>
-            <span>·</span>
-            <span className="font-medium text-slate-700 dark:text-slate-300">${price.toFixed(0)}</span>
+            <span className="text-slate-400 dark:text-slate-500">·</span>
+            <span className="font-semibold text-slate-700 dark:text-slate-200">${price.toFixed(0)}</span>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
             {reasons.slice(0, 3).map((reason, i) => (

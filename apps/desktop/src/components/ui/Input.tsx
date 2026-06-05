@@ -83,7 +83,7 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className={`block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
+          <label className={`block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
             {label}
           </label>
         )}

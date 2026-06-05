@@ -45,7 +45,7 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam }: Props) 
               <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
                 {STAGE_LABELS[d.stage] || d.stage}
               </span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums">
+              <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">
                 {d.before_count} → {d.after_count}
               </span>
             </div>
@@ -61,7 +61,7 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam }: Props) 
                 {Object.entries(d.rejected_reasons).map(([reason, count]) => (
                   <span
                     key={reason}
-                    className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-900/20 text-[10px] font-medium text-rose-600 dark:text-rose-400"
+                    className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-900/20 text-xs font-medium text-rose-600 dark:text-rose-400"
                   >
                     {REASON_LABELS[reason] || reason}: {count}
                   </span>
@@ -71,8 +71,8 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam }: Props) 
 
             {d.suggestion && (
               <div className="flex items-start gap-1.5">
-                <Lightbulb size={11} className="text-amber-500 mt-0.5 flex-shrink-0" />
-                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                <Lightbulb size={13} className="text-amber-500 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   {d.suggestion}
                 </p>
               </div>
@@ -84,31 +84,31 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam }: Props) 
       {hasZeroResult && onAdjustParam && (
         <div className="p-3 rounded-[10px] bg-indigo-50/60 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
           <div className="flex items-center gap-1.5 mb-2">
-            <SlidersHorizontal size={12} className="text-indigo-500" />
-            <span className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300">快捷调整</span>
+            <SlidersHorizontal size={14} className="text-indigo-500" />
+            <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">快捷调整</span>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => onAdjustParam("sensor_size", "1/2")}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-[11px] text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
             >
               改用 1/2" 传感器
             </button>
             <button
               onClick={() => onAdjustParam("interface", "CS-mount")}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-[11px] text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
             >
               改用 CS-mount
             </button>
             <button
               onClick={() => onAdjustParam("working_distance_mm", 500)}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-[11px] text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
             >
               工作距离 500mm
             </button>
             <button
               onClick={() => onAdjustParam("target_width_mm", 100)}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-[11px] text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
             >
               视场 100mm
             </button>

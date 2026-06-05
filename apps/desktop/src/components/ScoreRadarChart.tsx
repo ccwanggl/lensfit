@@ -44,12 +44,12 @@ export default function ScoreRadarChart({ scoreVector, size = 240 }: Props) {
           <PolarGrid stroke="#e2e8f0" />
           <PolarAngleAxis
             dataKey="dimension"
-            tick={{ fontSize: 10, fill: "#64748b", fontWeight: 500 }}
+            tick={{ fontSize: 12, fill: "#475569", fontWeight: 600 }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fontSize: 9, fill: "#94a3b8" }}
+            tick={{ fontSize: 10, fill: "#64748b" }}
             tickCount={5}
             axisLine={false}
           />

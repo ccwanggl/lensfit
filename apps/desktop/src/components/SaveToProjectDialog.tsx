@@ -150,7 +150,7 @@ export default function SaveToProjectDialog({
               </div>
             ) : (
               <div className="mb-4">
-                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">项目名称</label>
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">项目名称</label>
                 <input
                   type="text"
                   value={newProjectName}

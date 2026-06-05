@@ -14,7 +14,7 @@ export default function SpecItem({ label, value, helper, highlight }: SpecItemPr
           : "bg-slate-50/80 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700"
       }`}
     >
-      <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+      <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
         {label}
       </p>
       <p
@@ -24,7 +24,7 @@ export default function SpecItem({ label, value, helper, highlight }: SpecItemPr
       >
         {value}
       </p>
-      {helper && <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{helper}</p>}
+      {helper && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{helper}</p>}
     </div>
   );
 }
