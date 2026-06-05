@@ -5,9 +5,9 @@ import "katex/dist/katex.min.css";
 import { listKnowledgeFormulas, listKnowledgeConstraints, knowledgeInfer, type KnowledgeFormula, type KnowledgeConstraint } from "../utils/api";
 import { toast } from "../hooks/useToast";
 
-function renderLatex(latex: string): string {
+function renderLatex(latex: string, display = false): string {
   try {
-    return katex.renderToString(latex, { throwOnError: false, displayMode: false });
+    return katex.renderToString(latex, { throwOnError: false, displayMode: display });
   } catch {
     return latex;
   }
@@ -104,17 +104,17 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
               onClick={() => setExpandedFormula(expandedFormula === f.id ? null : f.id)}
               className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
             >
-              <div className="min-w-0 flex items-center gap-2">
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{f.name_cn}</span>
-                <span
-                  className="text-xs text-slate-600 dark:text-slate-300"
-                  dangerouslySetInnerHTML={{ __html: renderLatex(f.latex || f.expression) }}
-                />
-              </div>
+              <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{f.name_cn}</span>
               {expandedFormula === f.id ? <ChevronDown size={16} className="text-slate-500 shrink-0" /> : <ChevronRight size={16} className="text-slate-500 shrink-0" />}
             </button>
             {expandedFormula === f.id && (
               <div className="px-4 pb-4 space-y-3">
+                {/* LaTeX formula — centered, large */}
+                <div
+                  className="py-3 flex justify-center overflow-x-auto"
+                  dangerouslySetInnerHTML={{ __html: renderLatex(f.latex || f.expression, true) }}
+                />
+
                 {f.params.length > 0 && (
                   <div className="space-y-1.5">
                     <p className="text-xs font-bold text-slate-600 dark:text-slate-300">参数</p>
