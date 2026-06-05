@@ -132,95 +132,115 @@ export default function InfraredPage() {
               subtitle="配置红外成像系统需求"
               icon={<Sun size={16} />}
             />
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <Input
-                as="select"
-                label="工作波段"
-                icon={<Radio size={16} />}
-                value={form.band}
-                onChange={(e: InputChangeEvent) => handleBandChange(e.target.value)}
-              >
-                {BANDS.map((b) => (
-                  <option key={b.value} value={b.value}>
-                    {b.label}
-                  </option>
-                ))}
-              </Input>
+            <form onSubmit={handleSubmit} className="space-y-2 mt-4">
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">波段与波长</p>
+                <Input
+                  as="select"
+                  label="工作波段"
+                  icon={<Radio size={14} />}
+                  layout="horizontal"
+                  value={form.band}
+                  onChange={(e: InputChangeEvent) => handleBandChange(e.target.value)}
+                >
+                  {BANDS.map((b) => (
+                    <option key={b.value} value={b.value}>
+                      {b.label}
+                    </option>
+                  ))}
+                </Input>
 
-              <Input
-                type="number"
-                step="0.1"
-                label="目标波长"
-                icon={<Waves size={16} />}
-                helper={`单位：μm (${selectedBand?.min}-${selectedBand?.max}μm)`}
-                value={form.wavelength_um}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, wavelength_um: parseFloat(e.target.value) || 0 })}
-              />
+                <Input
+                  type="number"
+                  step="0.1"
+                  label="目标波长"
+                  icon={<Waves size={14} />}
+                  unit={`μm (${selectedBand?.min}-${selectedBand?.max})`}
+                  layout="horizontal"
+                  value={form.wavelength_um}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, wavelength_um: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
 
-              <Input
-                type="number"
-                step="0.1"
-                label="目标视场角"
-                icon={<Eye size={16} />}
-                helper="单位：度 (°)"
-                value={form.fov_deg}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, fov_deg: parseFloat(e.target.value) || 0 })}
-              />
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">光学条件</p>
+                <Input
+                  type="number"
+                  step="0.1"
+                  label="视场角"
+                  icon={<Eye size={14} />}
+                  unit="°"
+                  layout="horizontal"
+                  value={form.fov_deg}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, fov_deg: parseFloat(e.target.value) || 0 })}
+                />
 
-              <Input
-                type="number"
-                step="0.1"
-                label="工作距离"
-                icon={<Ruler size={16} />}
-                helper="单位：米 (m)"
-                value={form.working_distance_m}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, working_distance_m: parseFloat(e.target.value) || 0 })}
-              />
+                <Input
+                  type="number"
+                  step="0.1"
+                  label="工作距离"
+                  icon={<Ruler size={14} />}
+                  unit="m"
+                  layout="horizontal"
+                  value={form.working_distance_m}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, working_distance_m: parseFloat(e.target.value) || 0 })}
+                />
 
-              <Input
-                type="number"
-                step="0.001"
-                label="目标空间分辨率"
-                icon={<Crosshair size={16} />}
-                helper="单位：米 (m)，留空则不限制"
-                value={form.target_resolution_m}
-                onChange={(e: InputChangeEvent) =>
-                  setForm({ ...form, target_resolution_m: parseFloat(e.target.value) || 0 })
-                }
-              />
+                <Input
+                  type="number"
+                  step="0.001"
+                  label="分辨率"
+                  icon={<Crosshair size={14} />}
+                  unit="m"
+                  layout="horizontal"
+                  value={form.target_resolution_m}
+                  onChange={(e: InputChangeEvent) =>
+                    setForm({ ...form, target_resolution_m: parseFloat(e.target.value) || 0 })
+                  }
+                />
+              </div>
 
-              <Input
-                as="select"
-                label="传感器尺寸"
-                icon={<Focus size={16} />}
-                value={form.sensor_format}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, sensor_format: e.target.value })}
-              >
-                <option value="1/4">1/4&quot;</option>
-                <option value="1/3">1/3&quot;</option>
-                <option value="1/2">1/2&quot;</option>
-                <option value="2/3">2/3&quot;</option>
-                <option value="1">1&quot;</option>
-              </Input>
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">传感器</p>
+                <Input
+                  as="select"
+                  label="传感器尺寸"
+                  icon={<Focus size={14} />}
+                  layout="horizontal"
+                  value={form.sensor_format}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, sensor_format: e.target.value })}
+                >
+                  <option value="1/4">1/4&quot;</option>
+                  <option value="1/3">1/3&quot;</option>
+                  <option value="1/2">1/2&quot;</option>
+                  <option value="2/3">2/3&quot;</option>
+                  <option value="1">1&quot;</option>
+                </Input>
 
-              <Input
-                type="number"
-                step="0.1"
-                label="像元尺寸"
-                icon={<Ruler size={16} />}
-                helper="单位：微米 (μm)"
-                value={form.pixel_size_um}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, pixel_size_um: parseFloat(e.target.value) || 0 })}
-              />
+                <Input
+                  type="number"
+                  step="0.1"
+                  label="像元尺寸"
+                  icon={<Ruler size={14} />}
+                  unit="μm"
+                  layout="horizontal"
+                  value={form.pixel_size_um}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, pixel_size_um: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
 
-              <Input
-                type="number"
-                label="预算上限"
-                icon={<DollarSign size={16} />}
-                helper="美元 (USD)"
-                value={form.budget_usd}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, budget_usd: parseFloat(e.target.value) || 0 })}
-              />
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">预算</p>
+                <Input
+                  type="number"
+                  label="预算上限"
+                  icon={<DollarSign size={14} />}
+                  unit="USD"
+                  layout="horizontal"
+                  value={form.budget_usd}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, budget_usd: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
 
               <div className="pt-2">
                 <Button

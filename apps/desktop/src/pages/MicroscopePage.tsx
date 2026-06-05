@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Microscope, Search, Ruler, Focus, Eye, Zap, Camera, Info, Award } from "lucide-react";
+import { Microscope, Search, Ruler, Focus, Eye, Zap, Camera, DollarSign, Info, Award } from "lucide-react";
 import { Card, Button, Input, SectionHeader, EmptyState, Badge } from "../components/ui";
 import { type InputChangeEvent } from "../components/ui/Input";
 import LensImage from "../components/LensImage";
@@ -118,122 +118,144 @@ export default function MicroscopePage() {
               subtitle="配置显微成像系统需求"
               icon={<Microscope size={16} />}
             />
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <Input
-                as="select"
-                label="显微镜类型"
-                icon={<Microscope size={16} />}
-                value={form.microscope_type}
-                onChange={(e: InputChangeEvent) => {
-                  const newType = e.target.value as "compound" | "stereo";
-                  setForm(newType === "stereo" ? STEREO_DEFAULTS : COMPOUND_DEFAULTS);
-                  setSelectedMatch(null);
-                  setHasSearched(false);
-                }}
-              >
-                <option value="compound">复式显微镜（高倍、短WD）</option>
-                <option value="stereo">体视显微镜（低倍、长WD、三维）</option>
-              </Input>
+            <form onSubmit={handleSubmit} className="space-y-2 mt-4">
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">显微镜类型</p>
+                <Input
+                  as="select"
+                  label="类型"
+                  icon={<Microscope size={14} />}
+                  layout="horizontal"
+                  value={form.microscope_type}
+                  onChange={(e: InputChangeEvent) => {
+                    const newType = e.target.value as "compound" | "stereo";
+                    setForm(newType === "stereo" ? STEREO_DEFAULTS : COMPOUND_DEFAULTS);
+                    setSelectedMatch(null);
+                    setHasSearched(false);
+                  }}
+                >
+                  <option value="compound">复式显微镜（高倍、短WD）</option>
+                  <option value="stereo">体视显微镜（低倍、长WD、三维）</option>
+                </Input>
 
-              {form.microscope_type === "compound" ? (
-                <>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    label="物镜数值孔径 (NA)"
-                    icon={<Focus size={16} />}
-                    value={form.objective_na}
-                    onChange={(e: InputChangeEvent) => setForm({ ...form, objective_na: parseFloat(e.target.value) || 0 })}
-                  />
-                  <Input
-                    type="number"
-                    label="目标放大倍率"
-                    icon={<Eye size={16} />}
-                    value={form.magnification}
-                    onChange={(e: InputChangeEvent) => setForm({ ...form, magnification: parseFloat(e.target.value) || 0 })}
-                  />
-                </>
-              ) : (
-                <>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    label="变焦范围下限 (×)"
-                    icon={<Eye size={16} />}
-                    value={form.magnification}
-                    onChange={(e: InputChangeEvent) => setForm({ ...form, magnification: parseFloat(e.target.value) || 0 })}
-                  />
-                  <Input
-                    type="number"
-                    step="0.01"
-                    label="数值孔径 (NA)"
-                    icon={<Focus size={16} />}
-                    value={form.objective_na}
-                    onChange={(e: InputChangeEvent) => setForm({ ...form, objective_na: parseFloat(e.target.value) || 0 })}
-                  />
-                </>
-              )}
-
-              <Input
-                type="number"
-                label="照明波长"
-                icon={<Ruler size={16} />}
-                helper="单位：纳米 (nm)"
-                value={form.wavelength_nm}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, wavelength_nm: parseFloat(e.target.value) || 0 })}
-              />
-              <Input
-                as="select"
-                label="传感器尺寸"
-                icon={<Camera size={16} />}
-                value={form.sensor_format}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, sensor_format: e.target.value })}
-              >
-                <option value="1/3">1/3&quot;</option>
-                <option value="1/2.5">1/2.5&quot;</option>
-                <option value="1/2">1/2&quot;</option>
-                <option value="2/3">2/3&quot;</option>
-                <option value="1">1&quot;</option>
-              </Input>
-              <Input
-                type="number"
-                step="0.01"
-                label="像元尺寸"
-                icon={<Ruler size={16} />}
-                helper="单位：微米 (μm)"
-                value={form.pixel_size_um}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, pixel_size_um: parseFloat(e.target.value) || 0 })}
-              />
-              <Input
-                as="select"
-                label="应用场景"
-                icon={<Zap size={16} />}
-                value={form.application}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, application: e.target.value })}
-              >
                 {form.microscope_type === "compound" ? (
                   <>
-                    <option value="biology">生物/生命科学</option>
-                    <option value="materials">材料/金相分析</option>
-                    <option value="semiconductor">半导体检测</option>
-                    <option value="fluorescence">荧光成像</option>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      label="数值孔径"
+                      icon={<Focus size={14} />}
+                      layout="horizontal"
+                      value={form.objective_na}
+                      onChange={(e: InputChangeEvent) => setForm({ ...form, objective_na: parseFloat(e.target.value) || 0 })}
+                    />
+                    <Input
+                      type="number"
+                      label="放大倍率"
+                      icon={<Eye size={14} />}
+                      layout="horizontal"
+                      value={form.magnification}
+                      onChange={(e: InputChangeEvent) => setForm({ ...form, magnification: parseFloat(e.target.value) || 0 })}
+                    />
                   </>
                 ) : (
                   <>
-                    <option value="dissection">解剖/手术</option>
-                    <option value="inspection">工业检测</option>
-                    <option value="biology">生物观察</option>
-                    <option value="materials">材料分析</option>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      label="变焦下限"
+                      icon={<Eye size={14} />}
+                      layout="horizontal"
+                      unit="×"
+                      value={form.magnification}
+                      onChange={(e: InputChangeEvent) => setForm({ ...form, magnification: parseFloat(e.target.value) || 0 })}
+                    />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      label="数值孔径"
+                      icon={<Focus size={14} />}
+                      layout="horizontal"
+                      value={form.objective_na}
+                      onChange={(e: InputChangeEvent) => setForm({ ...form, objective_na: parseFloat(e.target.value) || 0 })}
+                    />
                   </>
                 )}
-              </Input>
-              <Input
-                type="number"
-                label="预算上限 (USD)"
-                icon={<Ruler size={16} />}
-                value={form.budget_usd}
-                onChange={(e: InputChangeEvent) => setForm({ ...form, budget_usd: parseFloat(e.target.value) || 0 })}
-              />
+              </div>
+
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">光学参数</p>
+                <Input
+                  type="number"
+                  label="照明波长"
+                  icon={<Ruler size={14} />}
+                  unit="nm"
+                  layout="horizontal"
+                  value={form.wavelength_nm}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, wavelength_nm: parseFloat(e.target.value) || 0 })}
+                />
+                <Input
+                  as="select"
+                  label="传感器"
+                  icon={<Camera size={14} />}
+                  layout="horizontal"
+                  value={form.sensor_format}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, sensor_format: e.target.value })}
+                >
+                  <option value="1/3">1/3&quot;</option>
+                  <option value="1/2.5">1/2.5&quot;</option>
+                  <option value="1/2">1/2&quot;</option>
+                  <option value="2/3">2/3&quot;</option>
+                  <option value="1">1&quot;</option>
+                </Input>
+                <Input
+                  type="number"
+                  step="0.01"
+                  label="像元尺寸"
+                  icon={<Ruler size={14} />}
+                  unit="μm"
+                  layout="horizontal"
+                  value={form.pixel_size_um}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, pixel_size_um: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+
+              <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
+                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">应用与预算</p>
+                <Input
+                  as="select"
+                  label="应用场景"
+                  icon={<Zap size={14} />}
+                  layout="horizontal"
+                  value={form.application}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, application: e.target.value })}
+                >
+                  {form.microscope_type === "compound" ? (
+                    <>
+                      <option value="biology">生物/生命科学</option>
+                      <option value="materials">材料/金相分析</option>
+                      <option value="semiconductor">半导体检测</option>
+                      <option value="fluorescence">荧光成像</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="dissection">解剖/手术</option>
+                      <option value="inspection">工业检测</option>
+                      <option value="biology">生物观察</option>
+                      <option value="materials">材料分析</option>
+                    </>
+                  )}
+                </Input>
+                <Input
+                  type="number"
+                  label="预算上限"
+                  icon={<DollarSign size={14} />}
+                  unit="USD"
+                  layout="horizontal"
+                  value={form.budget_usd}
+                  onChange={(e: InputChangeEvent) => setForm({ ...form, budget_usd: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
               <div className="pt-2">
                 <Button
                   type="submit"
