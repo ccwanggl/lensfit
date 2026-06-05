@@ -7,12 +7,16 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement | HTMLSelectEl
   icon?: ReactNode;
   error?: string;
   helper?: string;
+  unit?: string;
   as?: "input" | "select";
   compact?: boolean;
+  layout?: "vertical" | "horizontal";
 }
 
 const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
-  ({ label, icon, error, helper, className = "", as = "input", compact = false, ...props }, ref) => {
+  ({ label, icon, error, helper, unit, className = "", as = "input", compact = false, layout = "vertical", ...props }, ref) => {
+    const isHorizontal = layout === "horizontal";
+
     const sharedClasses = `
       w-full bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700
       rounded-[10px] px-3 ${compact ? "py-2 text-[13px]" : "py-2.5 text-[13px]"} text-slate-800 dark:text-slate-200
@@ -26,6 +30,56 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
       ${className}
     `;
 
+    const inputWrap = (
+      <div className={`relative ${isHorizontal ? "flex-1 min-w-0" : "w-full"}`}>
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
+            {icon}
+          </div>
+        )}
+        {as === "input" ? (
+          <input
+            ref={ref as React.Ref<HTMLInputElement>}
+            className={sharedClasses}
+            {...(props as InputHTMLAttributes<HTMLInputElement>)}
+          />
+        ) : (
+          <select
+            ref={ref as React.Ref<HTMLSelectElement>}
+            className={`${sharedClasses} appearance-none cursor-pointer`}
+            {...(props as InputHTMLAttributes<HTMLSelectElement>)}
+          >
+            {props.children}
+          </select>
+        )}
+        {as === "select" && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+        )}
+      </div>
+    );
+
+    if (isHorizontal) {
+      return (
+        <div className="w-full flex items-center gap-2">
+          {label && (
+            <label className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none">
+              {label}
+            </label>
+          )}
+          {inputWrap}
+          {(unit || helper) && (
+            <span className="shrink-0 text-xs text-slate-400 dark:text-slate-500 tabular-nums">
+              {unit || helper}
+            </span>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="w-full">
         {label && (
@@ -33,35 +87,7 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
             {label}
           </label>
         )}
-        <div className="relative">
-          {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
-              {icon}
-            </div>
-          )}
-          {as === "input" ? (
-            <input
-              ref={ref as React.Ref<HTMLInputElement>}
-              className={sharedClasses}
-              {...(props as InputHTMLAttributes<HTMLInputElement>)}
-            />
-          ) : (
-            <select
-              ref={ref as React.Ref<HTMLSelectElement>}
-              className={`${sharedClasses} appearance-none cursor-pointer`}
-              {...(props as InputHTMLAttributes<HTMLSelectElement>)}
-            >
-              {props.children}
-            </select>
-          )}
-          {as === "select" && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </div>
-          )}
-        </div>
+        {inputWrap}
         {error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-rose-500 font-medium`}>{error}</p>}
         {helper && !error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-slate-400 dark:text-slate-500`}>{helper}</p>}
       </div>

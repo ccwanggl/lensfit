@@ -18,7 +18,7 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   boolean: <ToggleLeft size={14} />,
 };
 
-/** Group parameter names by logical category for compact 2-col layout */
+/** Group parameter names by logical category */
 const PARAM_GROUPS: Record<string, string[]> = {
   "传感器": ["sensor_size", "pixel_size_um"],
   "目标视场": ["target_width_mm", "target_height_mm"],
@@ -31,17 +31,13 @@ function ParameterField({
   value,
   onChange,
   disabled,
-  compact = false,
 }: {
   def: DomainParameterDef;
   value: unknown;
   onChange: (val: unknown) => void;
   disabled?: boolean;
-  compact?: boolean;
 }) {
-  const { label, type, unit, default: defaultVal, required, options, min_value, max_value, description } = def;
-
-  const helper = [unit || "", description || ""].filter(Boolean).join(" · ");
+  const { label, type, unit, default: defaultVal, required, options, min_value, max_value } = def;
   const currentValue = value !== undefined ? value : defaultVal;
 
   if (type === "enum" && options && options.length > 0) {
@@ -50,10 +46,10 @@ function ParameterField({
         as="select"
         label={label}
         icon={TYPE_ICONS[type] || <Settings size={14} />}
-        helper={helper || undefined}
+        unit={unit || undefined}
         value={String(currentValue ?? "")}
         disabled={disabled}
-        compact={compact}
+        layout="horizontal"
         onChange={(e: InputChangeEvent) => onChange(e.target.value)}
       >
         {options.map((opt) => (
@@ -72,13 +68,13 @@ function ParameterField({
         type="number"
         label={label}
         icon={TYPE_ICONS[type] || <Settings size={14} />}
-        helper={helper || undefined}
+        unit={unit || undefined}
         value={numValue}
         disabled={disabled}
         min={min_value ?? undefined}
         max={max_value ?? undefined}
         step="any"
-        compact={compact}
+        layout="horizontal"
         onChange={(e: InputChangeEvent) => {
           const v = e.target.value;
           if (v === "") {
@@ -94,19 +90,21 @@ function ParameterField({
 
   if (type === "boolean") {
     return (
-      <label className={`flex items-center gap-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors ${compact ? "p-2.5" : "p-3"}`}>
-        <input
-          type="checkbox"
-          checked={!!currentValue}
-          disabled={disabled}
-          onChange={(e) => onChange(e.target.checked)}
-          className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-        />
-        <div>
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{label}</span>
-          {description && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{description}</p>}
-        </div>
-      </label>
+      <div className="flex items-center gap-2">
+        <span className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none">
+          {label}
+        </span>
+        <label className="flex items-center gap-2 p-2 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors flex-1">
+          <input
+            type="checkbox"
+            checked={!!currentValue}
+            disabled={disabled}
+            onChange={(e) => onChange(e.target.checked)}
+            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <span className="text-sm text-slate-700 dark:text-slate-300">{currentValue ? "是" : "否"}</span>
+        </label>
+      </div>
     );
   }
 
@@ -116,11 +114,11 @@ function ParameterField({
       type="text"
       label={label}
       icon={TYPE_ICONS[type] || <Settings size={14} />}
-      helper={helper || undefined}
+      unit={unit || undefined}
       value={String(currentValue ?? "")}
       disabled={disabled}
       required={required}
-      compact={compact}
+      layout="horizontal"
       onChange={(e: InputChangeEvent) => onChange(e.target.value)}
     />
   );
@@ -135,7 +133,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
 
   if (isLoading) {
     return (
-      <div className="space-y-3 animate-pulse">
+      <div className="space-y-2 animate-pulse">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="h-9 bg-slate-100 dark:bg-slate-800 rounded-[10px]" />
         ))}
@@ -167,14 +165,12 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
           .filter(Boolean) as DomainParameterDef[];
         if (groupParams.length === 0) return null;
 
-        const hasWideField = groupParams.some((p) => p.type === "enum" || p.type === "string" || p.type === "boolean");
-
         return (
           <div key={groupName}>
             <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">
               {groupName}
             </p>
-            <div className={hasWideField ? "space-y-2" : "grid grid-cols-2 gap-2.5"}>
+            <div className="space-y-2">
               {groupParams.map((param) => (
                 <ParameterField
                   key={param.name}
@@ -182,7 +178,6 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
                   value={values[param.name]}
                   onChange={(val) => onChange(param.name, val)}
                   disabled={disabled}
-                  compact
                 />
               ))}
             </div>
@@ -192,7 +187,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
 
       {/* Ungrouped params (fallback for dynamic domains) */}
       {ungroupedParams.length > 0 && (
-        <div className={ungroupedParams.some((p) => p.type === "enum" || p.type === "string" || p.type === "boolean") ? "space-y-2" : "grid grid-cols-2 gap-2.5"}>
+        <div className="space-y-2">
           {ungroupedParams.map((param) => (
             <ParameterField
               key={param.name}
@@ -200,7 +195,6 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
               value={values[param.name]}
               onChange={(val) => onChange(param.name, val)}
               disabled={disabled}
-              compact
             />
           ))}
         </div>
