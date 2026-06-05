@@ -8,13 +8,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement | HTMLSelectEl
   error?: string;
   helper?: string;
   as?: "input" | "select";
+  compact?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
-  ({ label, icon, error, helper, className = "", as = "input", ...props }, ref) => {
+  ({ label, icon, error, helper, className = "", as = "input", compact = false, ...props }, ref) => {
     const sharedClasses = `
       w-full bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700
-      rounded-[10px] px-3 py-2.5 text-[13px] text-slate-800 dark:text-slate-200
+      rounded-[10px] px-3 ${compact ? "py-2 text-[13px]" : "py-2.5 text-[13px]"} text-slate-800 dark:text-slate-200
       placeholder:text-slate-400 dark:placeholder:text-slate-500
       transition-all duration-200 ease-out
       focus:outline-none focus:bg-white dark:focus:bg-slate-800
@@ -28,7 +29,7 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+          <label className={`block text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
             {label}
           </label>
         )}
@@ -61,8 +62,8 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
             </div>
           )}
         </div>
-        {error && <p className="mt-1.5 text-xs text-rose-500 font-medium">{error}</p>}
-        {helper && !error && <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{helper}</p>}
+        {error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-rose-500 font-medium`}>{error}</p>}
+        {helper && !error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-slate-400 dark:text-slate-500`}>{helper}</p>}
       </div>
     );
   }

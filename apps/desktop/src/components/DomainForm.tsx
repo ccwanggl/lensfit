@@ -18,21 +18,30 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   boolean: <ToggleLeft size={14} />,
 };
 
+/** Group parameter names by logical category for compact 2-col layout */
+const PARAM_GROUPS: Record<string, string[]> = {
+  "传感器": ["sensor_size", "pixel_size_um"],
+  "目标视场": ["target_width_mm", "target_height_mm"],
+  "光学条件": ["working_distance_mm"],
+  "镜头选型": ["lens_type", "interface"],
+};
+
 function ParameterField({
   def,
   value,
   onChange,
   disabled,
+  compact = false,
 }: {
   def: DomainParameterDef;
   value: unknown;
   onChange: (val: unknown) => void;
   disabled?: boolean;
+  compact?: boolean;
 }) {
   const { label, type, unit, default: defaultVal, required, options, min_value, max_value, description } = def;
 
   const helper = [unit || "", description || ""].filter(Boolean).join(" · ");
-
   const currentValue = value !== undefined ? value : defaultVal;
 
   if (type === "enum" && options && options.length > 0) {
@@ -44,6 +53,7 @@ function ParameterField({
         helper={helper || undefined}
         value={String(currentValue ?? "")}
         disabled={disabled}
+        compact={compact}
         onChange={(e: InputChangeEvent) => onChange(e.target.value)}
       >
         {options.map((opt) => (
@@ -68,6 +78,7 @@ function ParameterField({
         min={min_value ?? undefined}
         max={max_value ?? undefined}
         step="any"
+        compact={compact}
         onChange={(e: InputChangeEvent) => {
           const v = e.target.value;
           if (v === "") {
@@ -83,7 +94,7 @@ function ParameterField({
 
   if (type === "boolean") {
     return (
-      <label className="flex items-center gap-3 p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+      <label className={`flex items-center gap-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors ${compact ? "p-2.5" : "p-3"}`}>
         <input
           type="checkbox"
           checked={!!currentValue}
@@ -109,6 +120,7 @@ function ParameterField({
       value={String(currentValue ?? "")}
       disabled={disabled}
       required={required}
+      compact={compact}
       onChange={(e: InputChangeEvent) => onChange(e.target.value)}
     />
   );
@@ -118,14 +130,14 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
   const { data, isLoading, error } = useQuery({
     queryKey: ["domainParams", domain],
     queryFn: () => getDomainParameters(domain),
-    staleTime: Infinity, // Domain definitions rarely change
+    staleTime: Infinity,
   });
 
   if (isLoading) {
     return (
-      <div className="space-y-4 animate-pulse">
+      <div className="space-y-3 animate-pulse">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-10 bg-slate-100 dark:bg-slate-800 rounded-[10px]" />
+          <div key={i} className="h-9 bg-slate-100 dark:bg-slate-800 rounded-[10px]" />
         ))}
       </div>
     );
@@ -140,17 +152,59 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
     );
   }
 
+  // Build a lookup map for quick access
+  const paramMap = new Map(data.parameters.map((p) => [p.name, p]));
+
+  // Determine which params belong to a group vs ungrouped
+  const groupedNames = new Set(Object.values(PARAM_GROUPS).flat());
+  const ungroupedParams = data.parameters.filter((p) => !groupedNames.has(p.name));
+
   return (
-    <div className="space-y-4">
-      {data.parameters.map((param) => (
-        <ParameterField
-          key={param.name}
-          def={param}
-          value={values[param.name]}
-          onChange={(val) => onChange(param.name, val)}
-          disabled={disabled}
-        />
-      ))}
+    <div className="space-y-3">
+      {Object.entries(PARAM_GROUPS).map(([groupName, paramNames]) => {
+        const groupParams = paramNames
+          .map((name) => paramMap.get(name))
+          .filter(Boolean) as DomainParameterDef[];
+        if (groupParams.length === 0) return null;
+
+        const hasWideField = groupParams.some((p) => p.type === "enum" || p.type === "string" || p.type === "boolean");
+
+        return (
+          <div key={groupName}>
+            <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5 ml-0.5">
+              {groupName}
+            </p>
+            <div className={hasWideField ? "space-y-2" : "grid grid-cols-2 gap-2.5"}>
+              {groupParams.map((param) => (
+                <ParameterField
+                  key={param.name}
+                  def={param}
+                  value={values[param.name]}
+                  onChange={(val) => onChange(param.name, val)}
+                  disabled={disabled}
+                  compact
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Ungrouped params (fallback for dynamic domains) */}
+      {ungroupedParams.length > 0 && (
+        <div className={ungroupedParams.some((p) => p.type === "enum" || p.type === "string" || p.type === "boolean") ? "space-y-2" : "grid grid-cols-2 gap-2.5"}>
+          {ungroupedParams.map((param) => (
+            <ParameterField
+              key={param.name}
+              def={param}
+              value={values[param.name]}
+              onChange={(val) => onChange(param.name, val)}
+              disabled={disabled}
+              compact
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
