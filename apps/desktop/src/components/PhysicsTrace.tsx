@@ -40,7 +40,7 @@ export default function PhysicsTrace({ traces }: Props) {
             <div key={i} className="relative flex items-start gap-3 py-2">
               {/* node dot */}
               <div className="relative z-10 mt-1 w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-300 dark:border-indigo-700 flex items-center justify-center flex-shrink-0">
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">
+                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">
                   {i + 1}
                 </span>
               </div>

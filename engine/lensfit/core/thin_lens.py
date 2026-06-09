@@ -14,16 +14,24 @@ class ThinLensCalculator:
     @staticmethod
     def focal_from_wd_fov(wd: float, fov: float, sensor: float) -> float:
         """精确公式: f = (WD * sensor) / (FOV + sensor)"""
+        if sensor == 0:
+            raise ValueError("Sensor size must be non-zero")
+        if fov + sensor == 0:
+            raise ValueError("FOV + sensor cannot be zero")
         return (wd * sensor) / (fov + sensor)
 
     @staticmethod
     def fov_from_wd_focal(wd: float, focal: float, sensor: float) -> float:
         """已知工作距离和焦距，求视场."""
+        if focal == 0:
+            raise ValueError("Focal length must be non-zero")
         return (wd * sensor) / focal - sensor
 
     @staticmethod
     def wd_from_fov_focal(fov: float, focal: float, sensor: float) -> float:
         """已知视场和焦距，求工作距离."""
+        if sensor == 0:
+            raise ValueError("Sensor size must be non-zero")
         return focal * (fov + sensor) / sensor
 
     @staticmethod
@@ -35,7 +43,9 @@ class ThinLensCalculator:
 
     @staticmethod
     def afov_from_sensor_focal(sensor: float, focal: float) -> float:
-        """视角: AFOV = 2 * arctan(sensor / (2*f))"""
+        """视角: AFOV = 2 * arctan(sensor / (2*f)) [degrees]"""
+        if focal == 0:
+            raise ValueError("Focal length must be non-zero")
         return 2 * math.degrees(math.atan(sensor / (2 * focal)))
 
     def solve(self, params: OpticalParams, max_iter: int = 10) -> OpticalParams:
@@ -57,46 +67,61 @@ class ThinLensCalculator:
                 v is not None
                 for v in [result.working_distance, result.sensor_w, result.fov_w]
             ):
-                result.focal_length = self.focal_from_wd_fov(
-                    result.working_distance, result.fov_w, result.sensor_w
-                )
-                changed = True
+                try:
+                    result.focal_length = self.focal_from_wd_fov(
+                        result.working_distance, result.fov_w, result.sensor_w
+                    )
+                    changed = True
+                except ValueError:
+                    pass
 
             # Rule: focal + sensor_w → AFOV_h
             if result.afov_h is None and all(
                 v is not None for v in [result.sensor_w, result.focal_length]
             ):
-                result.afov_h = self.afov_from_sensor_focal(
-                    result.sensor_w, result.focal_length
-                )
-                changed = True
+                try:
+                    result.afov_h = self.afov_from_sensor_focal(
+                        result.sensor_w, result.focal_length
+                    )
+                    changed = True
+                except ValueError:
+                    pass
 
             # Rule: focal + WD → magnification
             if result.magnification is None and all(
                 v is not None for v in [result.focal_length, result.working_distance]
             ):
-                result.magnification = self.magnification_from_focal_wd(
-                    result.focal_length, result.working_distance
-                )
-                changed = True
+                try:
+                    result.magnification = self.magnification_from_focal_wd(
+                        result.focal_length, result.working_distance
+                    )
+                    changed = True
+                except ValueError:
+                    pass
 
             # Rule: focal + sensor_w + FOV_w ← WD
             if result.working_distance is None and all(
                 v is not None for v in [result.focal_length, result.sensor_w, result.fov_w]
             ):
-                result.working_distance = self.wd_from_fov_focal(
-                    result.fov_w, result.focal_length, result.sensor_w
-                )
-                changed = True
+                try:
+                    result.working_distance = self.wd_from_fov_focal(
+                        result.fov_w, result.focal_length, result.sensor_w
+                    )
+                    changed = True
+                except ValueError:
+                    pass
 
             # Rule: focal + sensor_w + WD ← FOV_w
             if result.fov_w is None and all(
                 v is not None for v in [result.focal_length, result.sensor_w, result.working_distance]
             ):
-                result.fov_w = self.fov_from_wd_focal(
-                    result.working_distance, result.focal_length, result.sensor_w
-                )
-                changed = True
+                try:
+                    result.fov_w = self.fov_from_wd_focal(
+                        result.working_distance, result.focal_length, result.sensor_w
+                    )
+                    changed = True
+                except ValueError:
+                    pass
 
         return result
 
@@ -109,6 +134,8 @@ class ThinLensCalculator:
         Returns:
             (near_limit, far_limit) in mm.
         """
+        if focal <= 0 or f_number <= 0 or coc_diameter <= 0 or focus_distance <= 0:
+            raise ValueError("All DOF parameters must be positive")
         hyperfocal = (focal**2) / (f_number * coc_diameter) + focal
         near = (hyperfocal * focus_distance) / (hyperfocal + focus_distance)
         if focus_distance >= hyperfocal:

@@ -15,10 +15,10 @@ const icons = {
 };
 
 const bgColors = {
-  success: "bg-emerald-50 border-emerald-200",
-  error: "bg-rose-50 border-rose-200",
-  warning: "bg-amber-50 border-amber-200",
-  info: "bg-sky-50 border-sky-200",
+  success: "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:border-emerald-800/30",
+  error: "bg-rose-50 border-rose-200 dark:bg-rose-900/30 dark:border-rose-800/30",
+  warning: "bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-800/30",
+  info: "bg-sky-50 border-sky-200 dark:bg-sky-900/30 dark:border-sky-800/30",
 };
 
 export default function ToastContainer() {
@@ -40,14 +40,14 @@ export default function ToastContainer() {
         >
           <div className="flex-shrink-0 mt-0.5">{icons[t.type]}</div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-800">{t.title}</p>
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{t.title}</p>
             {t.message && (
-              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{t.message}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{t.message}</p>
             )}
           </div>
           <button
             onClick={() => remove(t.id)}
-            className="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors"
+            className="flex-shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
           >
             <X size={14} />
           </button>

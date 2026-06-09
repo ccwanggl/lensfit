@@ -49,6 +49,8 @@ import WhatIfPanel from "../components/WhatIfPanel";
 import GlossaryTooltip from "../components/GlossaryTooltip";
 import SaveToProjectDialog from "../components/SaveToProjectDialog";
 import KnowledgePanel from "../components/KnowledgePanel";
+import PresetSelector from "../components/PresetSelector";
+import type { PresetConfigItem } from "../utils/api";
 import {
   generateCoverage,
   exportReport,
@@ -361,6 +363,14 @@ export default function IndustrialPage() {
         <Card padding="none" className="overflow-hidden">
           <div className="p-6">
             <SectionHeader title="选型参数" subtitle="配置您的光学系统需求" icon={Icons.search} />
+            <div className="mb-4">
+              <PresetSelector
+                domain="industrial"
+                onSelect={(preset: PresetConfigItem) => {
+                  setForm((prev) => ({ ...prev, ...preset.params }));
+                }}
+              />
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <DomainForm
                 domain="industrial"

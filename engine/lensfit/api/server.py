@@ -317,6 +317,7 @@ def cancel_matching(task_id: str):
 from lensfit.knowledge.formulas import ALL_FORMULAS, list_formulas as kb_list_formulas
 from lensfit.knowledge.constraints import ALL_CONSTRAINTS
 from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
+from lensfit.knowledge.presets import list_presets, get_preset_by_id
 
 _knowledge_engine = KnowledgeInferenceEngine(OpticalKnowledgeBase())
 
@@ -350,6 +351,22 @@ def knowledge_infer(req: InferReq):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
+
+
+@app.get("/api/v1/knowledge/presets")
+def list_knowledge_presets(domain: str | None = None):
+    """列出专业预设配置方案."""
+    presets = list_presets(domain)
+    return {"items": [p.to_dict() for p in presets]}
+
+
+@app.get("/api/v1/knowledge/presets/{preset_id}")
+def get_knowledge_preset(preset_id: str):
+    """获取单个预设配置详情."""
+    preset = get_preset_by_id(preset_id)
+    if not preset:
+        raise HTTPException(status_code=404, detail=f"Preset not found: {preset_id}")
+    return preset.to_dict()
 
 
 # =====================================================================

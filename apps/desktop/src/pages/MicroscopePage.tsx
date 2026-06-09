@@ -3,9 +3,10 @@ import { Microscope, Search, Ruler, Focus, Eye, Zap, Camera, DollarSign, Info, A
 import { Card, Button, Input, SectionHeader, EmptyState, Badge } from "../components/ui";
 import { type InputChangeEvent } from "../components/ui/Input";
 import LensImage from "../components/LensImage";
+import PresetSelector from "../components/PresetSelector";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { listLenses, listDetectors } from "../utils/api";
-import type { CatalogLens, CatalogDetector } from "../utils/api";
+import type { CatalogLens, CatalogDetector, PresetConfigItem } from "../utils/api";
 
 interface MicroscopeRequest {
   microscope_type: "compound" | "stereo";
@@ -118,9 +119,17 @@ export default function MicroscopePage() {
               subtitle="配置显微成像系统需求"
               icon={<Microscope size={16} />}
             />
+            <div className="mb-3">
+              <PresetSelector
+                domain="microscope"
+                onSelect={(preset: PresetConfigItem) => {
+                  setForm((prev) => ({ ...prev, ...preset.params }));
+                }}
+              />
+            </div>
             <form onSubmit={handleSubmit} className="space-y-2 mt-4">
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">显微镜类型</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">显微镜类型</p>
                 <Input
                   as="select"
                   label="类型"
@@ -184,7 +193,7 @@ export default function MicroscopePage() {
               </div>
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">光学参数</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">光学参数</p>
                 <Input
                   type="number"
                   label="照明波长"
@@ -221,7 +230,7 @@ export default function MicroscopePage() {
               </div>
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">应用与预算</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">应用与预算</p>
                 <Input
                   as="select"
                   label="应用场景"
@@ -287,24 +296,24 @@ export default function MicroscopePage() {
         {/* Quick formulas card */}
         <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border-indigo-100 dark:border-indigo-800/40">
           <SectionHeader title="光学公式" subtitle="关键计算参考" icon={<Info size={14} />} />
-          <div className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-400 dark:text-slate-500">
+          <div className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-400">
             {form.microscope_type === "stereo" && (
-              <div className="p-2 rounded-lg bg-white/60">
+              <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
                 <span className="font-semibold text-indigo-700 dark:text-indigo-300">总放大倍率</span>
-                <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">总放大 = 变焦倍率 × 10×目镜</code>
+                <code className="block mt-0.5 text-slate-500 dark:text-slate-400">总放大 = 变焦倍率 × 10×目镜</code>
               </div>
             )}
-            <div className="p-2 rounded-lg bg-white/60">
+            <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
               <span className="font-semibold text-indigo-700 dark:text-indigo-300">瑞利分辨率</span>
-              <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">d = 0.61 × λ / NA</code>
+              <code className="block mt-0.5 text-slate-500 dark:text-slate-400">d = 0.61 × λ / NA</code>
             </div>
-            <div className="p-2 rounded-lg bg-white/60">
+            <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
               <span className="font-semibold text-indigo-700 dark:text-indigo-300">数字分辨率</span>
-              <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">d = 像素尺寸 / 放大倍率</code>
+              <code className="block mt-0.5 text-slate-500 dark:text-slate-400">d = 像素尺寸 / 放大倍率</code>
             </div>
-            <div className="p-2 rounded-lg bg-white/60">
+            <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
               <span className="font-semibold text-indigo-700 dark:text-indigo-300">奈奎斯特采样</span>
-              <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">光学分辨率 / 数字分辨率 ≥ 2</code>
+              <code className="block mt-0.5 text-slate-500 dark:text-slate-400">光学分辨率 / 数字分辨率 ≥ 2</code>
             </div>
           </div>
         </Card>
@@ -502,7 +511,7 @@ export default function MicroscopePage() {
                       <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">奈奎斯特采样比</p>
+                            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">奈奎斯特采样比</p>
                             <p className={`text-sm font-bold ${
                               (selectedDerived?.nyquist_ratio as number) >= 2 ? "text-green-600 dark:text-green-400" :
                               (selectedDerived?.nyquist_ratio as number) >= 1 ? "text-blue-600 dark:text-blue-400" :
@@ -548,9 +557,9 @@ export default function MicroscopePage() {
 function SpecItem({ label, value, helper, highlight }: { label: string; value: string; helper?: string; highlight?: boolean }) {
   return (
     <div className={`p-3 rounded-[10px] border ${highlight ? "bg-indigo-50/60 dark:bg-indigo-900/30 border-indigo-100 dark:border-indigo-800/40" : "bg-slate-50/80 dark:bg-slate-800/80 border-slate-100 dark:border-slate-700"}`}>
-      <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</p>
+      <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</p>
       <p className={`text-sm font-bold truncate ${highlight ? "text-indigo-700 dark:text-indigo-300" : "text-slate-800 dark:text-slate-200"}`}>{value}</p>
-      {helper && <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{helper}</p>}
+      {helper && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{helper}</p>}
     </div>
   );
 }

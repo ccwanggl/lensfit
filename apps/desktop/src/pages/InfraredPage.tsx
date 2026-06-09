@@ -18,12 +18,13 @@ import {
 import { Card, Button, Input, SectionHeader, EmptyState } from "../components/ui";
 import { type InputChangeEvent } from "../components/ui/Input";
 import LensImage from "../components/LensImage";
+import PresetSelector from "../components/PresetSelector";
 import SaveToProjectButton from "../components/SaveToProjectButton";
 import SpecItem from "../components/SpecItem";
 import ResultCard from "../components/ResultCard";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { listLenses, listDetectors } from "../utils/api";
-import type { CatalogLens, CatalogDetector } from "../utils/api";
+import type { CatalogLens, CatalogDetector, PresetConfigItem } from "../utils/api";
 
 interface IRRequest {
   band: string;
@@ -132,9 +133,18 @@ export default function InfraredPage() {
               subtitle="配置红外成像系统需求"
               icon={<Sun size={16} />}
             />
+            <div className="mb-3">
+              <PresetSelector
+                domain="infrared"
+                onSelect={(preset: PresetConfigItem) => {
+                  setForm((prev) => ({ ...prev, ...preset.params }));
+                }}
+              />
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-2 mt-4">
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">波段与波长</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">波段与波长</p>
                 <Input
                   as="select"
                   label="工作波段"
@@ -163,7 +173,7 @@ export default function InfraredPage() {
               </div>
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">光学条件</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">光学条件</p>
                 <Input
                   type="number"
                   step="0.1"
@@ -201,7 +211,7 @@ export default function InfraredPage() {
               </div>
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">传感器</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">传感器</p>
                 <Input
                   as="select"
                   label="传感器尺寸"
@@ -230,7 +240,7 @@ export default function InfraredPage() {
               </div>
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">预算</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">预算</p>
                 <Input
                   type="number"
                   label="预算上限"
@@ -273,18 +283,18 @@ export default function InfraredPage() {
         {/* Quick formulas */}
         <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/30 dark:to-amber-900/30 border-orange-100 dark:border-orange-800/40">
           <SectionHeader title="红外公式" subtitle="关键计算参考" icon={<Info size={14} />} />
-          <div className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-400 dark:text-slate-500">
-            <div className="p-2 rounded-lg bg-white/60">
+          <div className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-400">
+            <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
               <span className="font-semibold text-orange-700 dark:text-orange-300">瞬时视场角 (IFOV)</span>
-              <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">IFOV = 像元尺寸 / 焦距 (mrad)</code>
+              <code className="block mt-0.5 text-slate-500 dark:text-slate-400">IFOV = 像元尺寸 / 焦距 (mrad)</code>
             </div>
-            <div className="p-2 rounded-lg bg-white/60">
+            <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
               <span className="font-semibold text-orange-700 dark:text-orange-300">空间分辨率</span>
-              <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">SR = IFOV × 工作距离 (m)</code>
+              <code className="block mt-0.5 text-slate-500 dark:text-slate-400">SR = IFOV × 工作距离 (m)</code>
             </div>
-            <div className="p-2 rounded-lg bg-white/60">
+            <div className="p-2 rounded-lg bg-white/60 dark:bg-slate-800/40">
               <span className="font-semibold text-orange-700 dark:text-orange-300">视场角 (FOV)</span>
-              <code className="block mt-0.5 text-slate-500 dark:text-slate-400 dark:text-slate-500">FOV = 2×arctan(传感器/2f)</code>
+              <code className="block mt-0.5 text-slate-500 dark:text-slate-400">FOV = 2×arctan(传感器/2f)</code>
             </div>
           </div>
         </Card>

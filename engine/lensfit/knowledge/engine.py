@@ -12,10 +12,11 @@ from lensfit.knowledge.base import (
 )
 from lensfit.knowledge.formulas import ALL_FORMULAS, get_formula_by_id, list_formulas
 from lensfit.knowledge.constraints import ALL_CONSTRAINTS, get_constraint_by_id, check_all_constraints
+from lensfit.knowledge.presets import list_presets, get_preset_by_id
 
 
 class OpticalKnowledgeBase:
-    """光学知识库容器 — 管理公式、约束、原理的注册与查询."""
+    """光学知识库容器 — 管理公式、约束、原理、预设配置的注册与查询."""
 
     def __init__(self):
         self._formulas = {f.id: f for f in ALL_FORMULAS}
@@ -34,6 +35,12 @@ class OpticalKnowledgeBase:
 
     def list_constraints(self) -> list[Any]:
         return list(self._constraints.values())
+
+    def list_presets(self, domain: str | None = None) -> list[Any]:
+        return list_presets(domain)
+
+    def get_preset(self, pid: str) -> Any:
+        return get_preset_by_id(pid)
 
 
 class KnowledgeInferenceEngine:

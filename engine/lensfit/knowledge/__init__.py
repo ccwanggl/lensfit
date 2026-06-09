@@ -14,6 +14,7 @@ from lensfit.knowledge.base import (
 from lensfit.knowledge.formulas import ALL_FORMULAS, get_formula_by_id, list_formulas
 from lensfit.knowledge.constraints import ALL_CONSTRAINTS, get_constraint_by_id, check_all_constraints
 from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
+from lensfit.knowledge.presets import ALL_PRESETS, list_presets, get_preset_by_id, PresetConfig
 
 __all__ = [
     "OpticalFormula",
@@ -30,4 +31,8 @@ __all__ = [
     "check_all_constraints",
     "KnowledgeInferenceEngine",
     "OpticalKnowledgeBase",
+    "ALL_PRESETS",
+    "list_presets",
+    "get_preset_by_id",
+    "PresetConfig",
 ]

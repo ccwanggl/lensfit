@@ -40,7 +40,7 @@ export default function ProgressBar({
             </span>
           )}
           {showValue && (
-            <span className="text-xs font-bold text-slate-700 tabular-nums">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 tabular-nums">
               {percentage.toFixed(0)}%
             </span>
           )}
@@ -48,7 +48,7 @@ export default function ProgressBar({
       )}
       <div
         className={`
-          w-full bg-slate-100 rounded-full overflow-hidden
+          w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden
           ${sizes[size]}
         `}
       >

@@ -19,6 +19,15 @@ def sensor_coverage_check(sensor_w: float, sensor_h: float, image_circle: float)
         }
     """
     sensor_diag = (sensor_w**2 + sensor_h**2) ** 0.5
+    if sensor_diag == 0:
+        return {
+            'fully_covered': False,
+            'coverage_ratio': 0.0,
+            'vignetting': True,
+            'vignetting_corners': True,
+            'max_safe_sensor_diag': image_circle,
+            'margin': -1.0,
+        }
     fully_covered = sensor_diag <= image_circle
     coverage_ratio = min(1.0, (image_circle / sensor_diag) ** 2) if sensor_diag > 0 else 0
 
@@ -47,11 +56,14 @@ def nyquist_match(pixel_size_um: float, lens_mtf50_lpmm: float | None = None, na
             'recommendation': str
         }
     """
+    if pixel_size_um <= 0:
+        raise ValueError("Pixel size must be positive")
+
     sensor_nyquist = 1000 / (2 * pixel_size_um)
 
     if na is not None:
-        optical_limit = na / (0.61 * wavelength_um)
-        desc = f"衍射极限 (NA={na})"
+        optical_limit = 1000 * na / (0.61 * wavelength_um)
+        desc = f"Rayleigh分辨极限 (NA={na})"
     elif lens_mtf50_lpmm is not None:
         optical_limit = lens_mtf50_lpmm
         desc = f"MTF50={lens_mtf50_lpmm} lp/mm"

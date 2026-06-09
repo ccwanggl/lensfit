@@ -22,9 +22,10 @@ import {
 import { listLenses, listDetectors } from "../utils/api";
 import { toast } from "../hooks/useToast";
 import LensImage from "../components/LensImage";
+import PresetSelector from "../components/PresetSelector";
 import { type InputChangeEvent } from "../components/ui/Input";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
-import type { CatalogLens, CatalogDetector } from "../utils/api";
+import type { CatalogLens, CatalogDetector, PresetConfigItem } from "../utils/api";
 
 interface PhotoRequest {
   format: string;
@@ -138,7 +139,7 @@ function LensCard({
         rank === 1 ? "bg-gradient-to-br from-amber-300 to-amber-500 text-white shadow-[0_2px_6px_rgba(245,158,11,0.4)]" :
         rank === 2 ? "bg-gradient-to-br from-slate-300 to-slate-400 text-white shadow-[0_2px_6px_rgba(148,163,184,0.4)]" :
         rank === 3 ? "bg-gradient-to-br from-orange-300 to-orange-400 text-white shadow-[0_2px_6px_rgba(251,146,60,0.4)]" :
-        "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 dark:text-slate-500"
+        "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400"
       }`}>{rank}</span>
 
       <div className="flex-shrink-0">
@@ -157,7 +158,7 @@ function LensCard({
           <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{lens.model}</h4>
           <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums">{(score * 100).toFixed(0)}</span>
         </div>
-        <div className="flex items-center gap-2 flex-wrap text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-2">
+        <div className="flex items-center gap-2 flex-wrap text-xs text-slate-500 dark:text-slate-400 mb-2">
           <Badge variant="neutral" size="sm">{focalDisplay}</Badge>
           <Badge variant="neutral" size="sm">f/{lens.max_aperture}</Badge>
           <Badge variant="neutral" size="sm">{lens.mount_type}</Badge>
@@ -278,9 +279,17 @@ export default function PhotographyPage() {
         <Card padding="none" className="overflow-hidden">
           <div className="p-6">
             <SectionHeader title="摄影参数" subtitle="配置您的摄影系统需求" icon={<Camera size={16} />} />
+            <div className="mb-3">
+              <PresetSelector
+                domain="photography"
+                onSelect={(preset: PresetConfigItem) => {
+                  setForm((prev) => ({ ...prev, ...preset.params }));
+                }}
+              />
+            </div>
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">相机配置</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">相机配置</p>
                 <Input as="select" label="画幅" icon={<Image size={14} />} layout="horizontal"
                   value={form.format}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, format: e.target.value })}>
@@ -313,7 +322,7 @@ export default function PhotographyPage() {
               </div>
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">品牌与预算</p>
+                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">品牌与预算</p>
                 <Input as="select" label="品牌偏好" icon={<Tag size={14} />} layout="horizontal"
                   value={form.brand}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, brand: e.target.value })}>

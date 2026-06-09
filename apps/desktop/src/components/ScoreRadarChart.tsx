@@ -41,17 +41,19 @@ export default function ScoreRadarChart({ scoreVector, size = 240 }: Props) {
     <div className="w-full" style={{ height: size }}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-          <PolarGrid stroke="#e2e8f0" />
+          <PolarGrid stroke="currentColor" className="text-slate-200 dark:text-slate-700" />
           <PolarAngleAxis
             dataKey="dimension"
-            tick={{ fontSize: 12, fill: "#475569", fontWeight: 600 }}
+            tick={{ fontSize: 12, fill: "currentColor", fontWeight: 600 }}
+            className="text-slate-600 dark:text-slate-300"
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fontSize: 10, fill: "#64748b" }}
+            tick={{ fontSize: 10, fill: "currentColor" }}
             tickCount={5}
             axisLine={false}
+            className="text-slate-500 dark:text-slate-400"
           />
           <Radar
             name="评分"

@@ -401,3 +401,27 @@ export async function knowledgeInfer(params: Record<string, unknown>, domain: st
     }
   );
 }
+
+/* ─── Preset Configs ─── */
+export interface PresetConfigItem {
+  id: string;
+  name_cn: string;
+  name_en: string;
+  domain: string;
+  description: string;
+  difficulty: string;
+  params: Record<string, unknown>;
+  lens_recommendations: Array<Record<string, unknown>>;
+  detector_recommendations: Array<Record<string, unknown>>;
+  notes: string;
+  standards: string[];
+}
+
+export async function listPresets(domain?: string) {
+  const qs = domain ? `?domain=${encodeURIComponent(domain)}` : "";
+  return apiFetch<{ items: PresetConfigItem[] }>(`/api/v1/knowledge/presets${qs}`);
+}
+
+export async function getPreset(presetId: string) {
+  return apiFetch<PresetConfigItem>(`/api/v1/knowledge/presets/${presetId}`);
+}

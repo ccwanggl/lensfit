@@ -223,7 +223,7 @@ export default function ProjectsPage() {
                 {p.description && (
                   <p className="text-xs text-slate-500 dark:text-slate-400 truncate mb-1.5">{p.description}</p>
                 )}
-                <div className="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500">
+                <div className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
                   <Calendar size={10} />
                   <span>{formatDate(p.created_at ?? "")}</span>
                 </div>
@@ -279,7 +279,7 @@ export default function ProjectsPage() {
                   >
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">{s.name}</h4>
-                      <span className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                      <span className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
                         <Calendar size={10} />
                         {formatDate(s.created_at ?? "")}
                       </span>
