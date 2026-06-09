@@ -59,16 +59,13 @@ PRESET_INDUSTRIAL_PCB_SMT = PresetConfig(
     description="针对 PCB 表面贴装焊点的高精度检测方案，要求亚像素级精度和低畸变。",
     difficulty="professional",
     params={
-        "sensor_format": "2/3",
+        "sensor_size": "2/3",
         "pixel_size_um": 3.45,
-        "resolution": "5MP",
-        "target_fov_w_mm": 20.0,
-        "target_fov_h_mm": 15.0,
+        "target_width_mm": 20.0,
+        "target_height_mm": 15.0,
         "working_distance_mm": 150.0,
-        "mount_type": "C-mount",
-        "required_accuracy_mm": 0.01,
-        "max_distortion_percent": 0.5,
-        "lighting_type": " coaxial",
+        "lens_type": "telecentric",
+        "interface": "C-mount",
     },
     lens_recommendations=[
         {
@@ -122,15 +119,13 @@ PRESET_INDUSTRIAL_LARGE_PART = PresetConfig(
     description="汽车/航空大型零部件（>200mm）的高精度尺寸测量，兼顾大视场与精度。",
     difficulty="intermediate",
     params={
-        "sensor_format": "1.1",
+        "sensor_size": "1",
         "pixel_size_um": 3.2,
-        "resolution": "12MP",
-        "target_fov_w_mm": 300.0,
-        "target_fov_h_mm": 200.0,
+        "target_width_mm": 300.0,
+        "target_height_mm": 200.0,
         "working_distance_mm": 800.0,
-        "mount_type": "F-mount",
-        "required_accuracy_mm": 0.05,
-        "max_distortion_percent": 1.0,
+        "lens_type": "FA",
+        "interface": "F-mount",
     },
     lens_recommendations=[
         {
@@ -173,16 +168,13 @@ PRESET_INDUSTRIAL_HIGH_SPEED = PresetConfig(
     description="饮料瓶、食品包装等高速产线（>500 瓶/分钟）的在线缺陷检测。",
     difficulty="intermediate",
     params={
-        "sensor_format": "1/2",
+        "sensor_size": "1/2",
         "pixel_size_um": 4.5,
-        "resolution": "2MP",
-        "target_fov_w_mm": 80.0,
-        "target_fov_h_mm": 60.0,
+        "target_width_mm": 80.0,
+        "target_height_mm": 60.0,
         "working_distance_mm": 300.0,
-        "mount_type": "C-mount",
-        "required_accuracy_mm": 0.1,
-        "max_distortion_percent": 2.0,
-        "max_fps": 500,
+        "lens_type": "FA",
+        "interface": "C-mount",
     },
     lens_recommendations=[
         {
@@ -223,11 +215,12 @@ PRESET_PHOTO_PORTRAIT = PresetConfig(
     description="经典人像焦段，提供自然透视和优美背景虚化（bokeh）。",
     difficulty="beginner",
     params={
-        "sensor_format": "Full Frame",
-        "focal_length_mm": 85.0,
+        "purpose": "portrait",
+        "sensor_format": "FF",
+        "lens_type": "prime",
+        "mount": "E-mount",
+        "budget_usd": 2000.0,
         "max_aperture": 1.8,
-        "subject_distance_m": 2.5,
-        "creative_style": "bokeh",
     },
     lens_recommendations=[
         {
@@ -264,11 +257,12 @@ PRESET_PHOTO_LANDSCAPE = PresetConfig(
     description="大场景风光摄影，要求大景深、高分辨率和低畸变。",
     difficulty="intermediate",
     params={
-        "sensor_format": "Full Frame",
-        "focal_length_mm": 16.0,
+        "purpose": "landscape",
+        "sensor_format": "FF",
+        "lens_type": "zoom",
+        "mount": "E-mount",
+        "budget_usd": 2500.0,
         "max_aperture": 2.8,
-        "subject_distance_m": 5.0,
-        "creative_style": "sharp",
     },
     lens_recommendations=[
         {
@@ -307,11 +301,12 @@ PRESET_PHOTO_MACRO = PresetConfig(
     description="昆虫、花卉、珠宝等微距题材，要求 1:1 放大倍率和长工作距离。",
     difficulty="intermediate",
     params={
-        "sensor_format": "Full Frame",
-        "focal_length_mm": 100.0,
+        "purpose": "macro",
+        "sensor_format": "FF",
+        "lens_type": "prime",
+        "mount": "E-mount",
+        "budget_usd": 1500.0,
         "max_aperture": 2.8,
-        "subject_distance_m": 0.3,
-        "creative_style": "sharp",
     },
     lens_recommendations=[
         {
@@ -356,9 +351,11 @@ PRESET_MICRO_BIOLOGICAL = PresetConfig(
         "microscope_type": "compound",
         "magnification": 400.0,
         "objective_na": 0.65,
+        "wavelength_nm": 550.0,
         "sensor_format": "1/1.8",
         "pixel_size_um": 2.4,
-        "resolution": "5MP",
+        "application": "biology",
+        "budget_usd": 5000.0,
     },
     lens_recommendations=[
         {
@@ -402,9 +399,11 @@ PRESET_MICRO_FLUORESCENCE = PresetConfig(
         "microscope_type": "compound",
         "magnification": 600.0,
         "objective_na": 1.4,
+        "wavelength_nm": 550.0,
         "sensor_format": "2/3",
         "pixel_size_um": 6.5,
-        "resolution": "1.4MP",
+        "application": "fluorescence",
+        "budget_usd": 20000.0,
     },
     lens_recommendations=[
         {
@@ -456,9 +455,11 @@ PRESET_MICRO_STEREO = PresetConfig(
         "microscope_type": "stereo",
         "magnification": 40.0,
         "objective_na": 0.1,
+        "wavelength_nm": 550.0,
         "sensor_format": "1/2.3",
         "pixel_size_um": 1.55,
-        "resolution": "12MP",
+        "application": "dissection",
+        "budget_usd": 3000.0,
     },
     lens_recommendations=[
         {
@@ -506,14 +507,14 @@ PRESET_IR_THERMAL = PresetConfig(
     description="工业测温、安防监控、建筑热桥检测等长波红外应用。",
     difficulty="intermediate",
     params={
-        "spectral_band": "LWIR",
-        "wavelength_min_um": 8.0,
-        "wavelength_max_um": 14.0,
+        "band": "lwir",
+        "wavelength_um": 10.0,
+        "fov_deg": 24.0,
+        "working_distance_m": 10.0,
+        "target_resolution_m": 0.5,
         "sensor_format": "1/2",
         "pixel_size_um": 12.0,
-        "resolution": "640×512",
-        "required_accuracy_mK": 50.0,
-        "focal_length_mm": 19.0,
+        "budget_usd": 5000.0,
     },
     lens_recommendations=[
         {
@@ -564,14 +565,14 @@ PRESET_IR_SWIR = PresetConfig(
     description="半导体硅片内部缺陷检测、农产品水分含量检测等短波红外应用。",
     difficulty="professional",
     params={
-        "spectral_band": "SWIR",
-        "wavelength_min_um": 0.9,
-        "wavelength_max_um": 1.7,
+        "band": "swir",
+        "wavelength_um": 1.2,
+        "fov_deg": 30.0,
+        "working_distance_m": 1.0,
+        "target_resolution_m": 0.1,
         "sensor_format": "1/2",
         "pixel_size_um": 5.0,
-        "resolution": "640×512",
-        "required_accuracy_mK": None,
-        "focal_length_mm": 25.0,
+        "budget_usd": 30000.0,
     },
     lens_recommendations=[
         {

@@ -11,11 +11,17 @@ def _check_image_circle_coverage(combo) -> tuple[bool, dict]:
     det = combo.detector
     image_circle = getattr(lens, "image_circle_mm", None) or 0
     sensor_diag = getattr(det, "sensor_diag_mm", None) or 0
+    if image_circle <= 0 or sensor_diag <= 0:
+        return False, {
+            "image_circle": image_circle,
+            "sensor_diag": round(sensor_diag, 2),
+            "margin": -1.0,
+        }
     ok = image_circle >= sensor_diag * 0.95
     return ok, {
         "image_circle": image_circle,
         "sensor_diag": round(sensor_diag, 2),
-        "margin": round((image_circle - sensor_diag) / image_circle, 2) if image_circle > 0 else 0,
+        "margin": round((image_circle - sensor_diag) / image_circle, 2),
     }
 
 
