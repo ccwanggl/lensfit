@@ -1,16 +1,129 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronDown, ChevronRight, Calculator, Loader2 } from "lucide-react";
-import katex from "katex";
-import "katex/dist/katex.min.css";
 import { listKnowledgeFormulas, listKnowledgeConstraints, knowledgeInfer, type KnowledgeFormula, type KnowledgeConstraint } from "../utils/api";
 import { toast } from "../hooks/useToast";
 
-function renderLatex(latex: string, display = false): string {
-  try {
-    return katex.renderToString(latex, { throwOnError: false, displayMode: display });
-  } catch {
-    return latex;
+/* ─── Lightweight LaTeX → HTML renderer (no KaTeX) ─── */
+const GREEK: Record<string, string> = {
+  alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε",
+  theta: "θ", lambda: "λ", mu: "μ", pi: "π", rho: "ρ", sigma: "σ",
+  phi: "φ", omega: "ω",
+};
+
+function findBrace(s: string, start: number): number {
+  let depth = 1;
+  for (let i = start + 1; i < s.length; i++) {
+    if (s[i] === "{") depth++;
+    else if (s[i] === "}") {
+      depth--;
+      if (depth === 0) return i;
+    }
   }
+  return -1;
+}
+
+function latexToHtml(src: string): string {
+  function parse(s: string): string {
+    let out = "";
+    let i = 0;
+    while (i < s.length) {
+      if (s[i] === "\\") {
+        const m = s.slice(i + 1).match(/^([a-zA-Z]+)/);
+        if (m) {
+          const cmd = m[1];
+          const end = i + 1 + cmd.length;
+
+          if (cmd === "frac") {
+            const a1s = s.indexOf("{", end);
+            if (a1s === -1) { out += s.slice(i); break; }
+            const a1e = findBrace(s, a1s);
+            const a2s = s.indexOf("{", a1e + 1);
+            if (a2s === -1) { out += s.slice(i); break; }
+            const a2e = findBrace(s, a2s);
+            const num = parse(s.slice(a1s + 1, a1e));
+            const den = parse(s.slice(a2s + 1, a2e));
+            out += `<span class="latex-frac"><span class="latex-num">${num}</span><span class="latex-den">${den}</span></span>`;
+            i = a2e + 1;
+            continue;
+          }
+
+          if (cmd === "text") {
+            const ts = s.indexOf("{", end);
+            const te = findBrace(s, ts);
+            out += `<span class="latex-text">${parse(s.slice(ts + 1, te))}</span>`;
+            i = te + 1;
+            continue;
+          }
+
+          if (cmd === "left" || cmd === "right") {
+            const next = s[end];
+            if (next === "(" || next === "[" || next === "{" || next === ")" || next === "]" || next === "}") {
+              out += next;
+              i = end + 1;
+              continue;
+            }
+          }
+
+          if (GREEK[cmd]) {
+            out += GREEK[cmd];
+            i = end;
+            continue;
+          }
+
+          out += `<span class="latex-fn">${cmd}</span>`;
+          i = end;
+          continue;
+        }
+
+        const next = s[i + 1];
+        if (next === ";" || next === ",") {
+          out += "&nbsp;";
+          i += 2;
+          continue;
+        }
+        if (next === " " || next === "\t") {
+          out += " ";
+          i += 2;
+          continue;
+        }
+        if (next === "(" || next === ")" || next === "[" || next === "]" || next === "{" || next === "}") {
+          out += next;
+          i += 2;
+          continue;
+        }
+      }
+
+      if (s[i] === "^") {
+        if (s[i + 1] === "{") {
+          const e = findBrace(s, i + 1);
+          out += `<sup>${parse(s.slice(i + 2, e))}</sup>`;
+          i = e + 1;
+        } else {
+          out += `<sup>${s[i + 1]}</sup>`;
+          i += 2;
+        }
+        continue;
+      }
+
+      if (s[i] === "_") {
+        if (s[i + 1] === "{") {
+          const e = findBrace(s, i + 1);
+          out += `<sub>${parse(s.slice(i + 2, e))}</sub>`;
+          i = e + 1;
+        } else {
+          out += `<sub>${s[i + 1]}</sub>`;
+          i += 2;
+        }
+        continue;
+      }
+
+      out += s[i];
+      i++;
+    }
+    return out;
+  }
+
+  return parse(src);
 }
 
 interface Props {
@@ -72,6 +185,30 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
   if (activeTab === "formulas") {
     return (
       <div className="space-y-3">
+        <style>{`
+          .latex-frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.25em;
+            font-size: 0.95em;
+          }
+          .latex-num {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.35em 0.15em;
+            text-align: center;
+            line-height: 1.2;
+          }
+          .latex-den {
+            padding: 0.15em 0.35em 0;
+            text-align: center;
+            line-height: 1.2;
+          }
+          .latex-text { font-style: normal; }
+          .latex-fn   { font-style: italic; }
+        `}</style>
+
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs text-slate-500 dark:text-slate-400">共 {formulas.length} 个公式</span>
           <button
@@ -111,8 +248,8 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
               <div className="px-4 pb-4 space-y-3">
                 {/* LaTeX formula — centered, large */}
                 <div
-                  className="py-3 flex justify-center overflow-x-auto"
-                  dangerouslySetInnerHTML={{ __html: renderLatex(f.latex || f.expression, true) }}
+                  className="py-4 flex justify-center overflow-x-auto text-base leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: latexToHtml(f.latex || f.expression) }}
                 />
 
                 {f.params.length > 0 && (

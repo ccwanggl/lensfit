@@ -30,7 +30,7 @@ magnification = OpticalFormula(
     id="magnification",
     name_cn="放大倍率",
     expression="β = f / (WD − f) = 像高 / 物高",
-    latex=r"\beta = \frac{f}{WD - f} = \frac{h_{\text{像}}}{h_{\text{物}}}",
+    latex=r"\beta = \frac{f}{WD-f} = \frac{h_{\text{像}}}{h_{\text{物}}}",
     params=[
         FormulaParam("focal", "焦距", "mm"),
         FormulaParam("wd", "工作距离", "mm"),
