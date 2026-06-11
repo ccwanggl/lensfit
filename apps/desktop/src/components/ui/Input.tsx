@@ -1,4 +1,5 @@
-import { type ReactNode, forwardRef, type InputHTMLAttributes } from "react";
+import { type ReactNode, forwardRef, type InputHTMLAttributes, useState } from "react";
+import { HelpCircle } from "lucide-react";
 
 export type InputChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>;
 
@@ -11,10 +12,12 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement | HTMLSelectEl
   as?: "input" | "select";
   compact?: boolean;
   layout?: "vertical" | "horizontal";
+  learnHint?: string;
 }
 
 const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
-  ({ label, icon, error, helper, unit, className = "", as = "input", compact = false, layout = "vertical", ...props }, ref) => {
+  ({ label, icon, error, helper, unit, className = "", as = "input", compact = false, layout = "vertical", learnHint, ...props }, ref) => {
+    const [showHint, setShowHint] = useState(false);
     const isHorizontal = layout === "horizontal";
 
     const sharedClasses = `
@@ -62,12 +65,33 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
       </div>
     );
 
+    const hintNode = learnHint ? (
+      <div className="relative inline-flex items-center">
+        <button
+          type="button"
+          className="ml-1 text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+          onMouseEnter={() => setShowHint(true)}
+          onMouseLeave={() => setShowHint(false)}
+          onClick={() => setShowHint(!showHint)}
+        >
+          <HelpCircle size={12} />
+        </button>
+        {showHint && (
+          <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 p-2.5 rounded-lg bg-slate-800 dark:bg-slate-700 text-slate-100 text-xs leading-relaxed shadow-xl border border-slate-600">
+            {learnHint}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-800 dark:border-t-slate-700" />
+          </div>
+        )}
+      </div>
+    ) : null;
+
     if (isHorizontal) {
       return (
         <div className="w-full flex items-center gap-2">
           {label && (
-            <label className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none">
+            <label className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none flex items-center justify-end">
               {label}
+              {hintNode}
             </label>
           )}
           {inputWrap}
@@ -83,8 +107,9 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className={`block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
+          <label className={`flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
             {label}
+            {hintNode}
           </label>
         )}
         {inputWrap}
