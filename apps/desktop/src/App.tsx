@@ -1,6 +1,6 @@
 import { useState, Suspense, lazy } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Monitor, Microscope, Sun, Camera, Moon, User, FolderOpen, Loader2, GraduationCap } from "lucide-react";
+import { Monitor, Microscope, Sun, Camera, Moon, User, FolderOpen, Loader2, GraduationCap, TrendingUp } from "lucide-react";
 import ToastContainer from "./components/ui/Toast";
 import { useTheme } from "./hooks/useTheme";
 import { LearningModeProvider, useLearningMode } from "./contexts/LearningModeContext";
@@ -10,10 +10,11 @@ const MicroscopePage = lazy(() => import("./pages/MicroscopePage"));
 const InfraredPage = lazy(() => import("./pages/InfraredPage"));
 const PhotographyPage = lazy(() => import("./pages/PhotographyPage"));
 const ProjectsPage = lazy(() => import("./pages/ProjectsPage"));
+const FormulaPlayground = lazy(() => import("./components/FormulaPlayground"));
 
 const queryClient = new QueryClient();
 
-type TabId = "industrial" | "microscope" | "infrared" | "photography" | "projects";
+type TabId = "industrial" | "microscope" | "infrared" | "photography" | "projects" | "playground";
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "industrial", label: "工业视觉", icon: <Monitor size={16} /> },
@@ -21,6 +22,7 @@ const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "microscope", label: "显微镜", icon: <Microscope size={16} /> },
   { id: "infrared", label: "红外成像", icon: <Sun size={16} /> },
   { id: "projects", label: "项目", icon: <FolderOpen size={16} /> },
+  { id: "playground", label: "游乐场", icon: <TrendingUp size={16} /> },
 ];
 
 function AppContent() {
@@ -117,6 +119,7 @@ function AppContent() {
           {activeTab === "microscope" && <MicroscopePage />}
           {activeTab === "infrared" && <InfraredPage />}
           {activeTab === "projects" && <ProjectsPage />}
+          {activeTab === "playground" && <FormulaPlayground />}
         </Suspense>
       </main>
     </div>

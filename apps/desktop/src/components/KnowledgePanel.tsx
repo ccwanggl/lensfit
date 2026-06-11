@@ -1,7 +1,43 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronRight, Calculator, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Calculator, Loader2, BookOpen, Play } from "lucide-react";
 import { listKnowledgeFormulas, listKnowledgeConstraints, knowledgeInfer, type KnowledgeFormula, type KnowledgeConstraint } from "../utils/api";
 import { toast } from "../hooks/useToast";
+
+/* ─── Frontend formula calculators (mirrors backend logic) ─── */
+const FORMULA_CALCULATORS: Record<string, (vals: Record<string, number>) => Record<string, number>> = {
+  thin_lens_imaging: (v) => ({ focal: (v.wd * v.sensor) / (v.fov + v.sensor) }),
+  magnification: (v) => ({ magnification: v.focal / (v.wd - v.focal) }),
+  fov_from_focal: (v) => ({ fov_w: (v.wd * v.sensor) / v.focal - v.sensor }),
+  afov_from_focal: (v) => ({ afov_h: (360 / Math.PI) * Math.atan(v.sensor / (2 * v.focal)) }),
+  nyquist_sampling: (v) => {
+    const fn = 1000 / (2 * v.pixel_size_um);
+    const fl = v.lens_mtf50_lpmm || (v.na ? (1000 * v.na) / (0.61 * (v.wavelength_um || 0.55)) : 0);
+    return { sensor_nyquist_lpmm: fn, optical_limit_lpmm: fl, oversampling_ratio: fl / fn };
+  },
+  sensor_coverage: (v) => {
+    const sd = Math.sqrt(v.sensor_w ** 2 + v.sensor_h ** 2);
+    const ratio = sd === 0 ? 0 : Math.min(1, (v.image_circle / sd) ** 2);
+    return { coverage_ratio: ratio, fully_covered: v.image_circle >= sd ? 1 : 0 };
+  },
+  depth_of_field: (v) => {
+    const H = (v.focal ** 2) / (v.f_number * v.coc_diameter) + v.focal;
+    const near = (H * v.focus_distance) / (H + v.focus_distance);
+    const far = v.focus_distance >= H ? Infinity : (H * v.focus_distance) / (H - v.focus_distance);
+    return { near_limit: near, far_limit: far, dof: far === Infinity ? Infinity : far - near };
+  },
+  pixel_accuracy: (v) => ({ pixel_accuracy_mm: v.pixel_size_um / (1000 * v.magnification) }),
+};
+
+const LEARN_LINKS: Record<string, string> = {
+  thin_lens_imaging: "docs/learning/02-geometric-optics.md",
+  magnification: "docs/learning/02-geometric-optics.md",
+  fov_from_focal: "docs/learning/02-geometric-optics.md",
+  afov_from_focal: "docs/learning/02-geometric-optics.md",
+  nyquist_sampling: "docs/learning/04-sensors.md",
+  sensor_coverage: "docs/learning/05-matching-basics.md",
+  depth_of_field: "docs/learning/03-lens-parameters.md",
+  pixel_accuracy: "docs/learning/05-matching-basics.md",
+};
 
 /* ─── Lightweight LaTeX → HTML renderer (no KaTeX) ─── */
 const GREEK: Record<string, string> = {
@@ -124,6 +160,75 @@ function latexToHtml(src: string): string {
   }
 
   return parse(src);
+}
+
+/* ─── Interactive formula calculator sub-component ─── */
+function FormulaCalculator({ formula }: { formula: KnowledgeFormula }) {
+  const calc = FORMULA_CALCULATORS[formula.id];
+  const [inputs, setInputs] = useState<Record<string, number>>({});
+  const [result, setResult] = useState<Record<string, number> | null>(null);
+
+  if (!calc) return null;
+
+  const handleCompute = () => {
+    try {
+      const vals: Record<string, number> = {};
+      for (const p of formula.params) {
+        vals[p.name] = inputs[p.name] ?? 0;
+      }
+      const out = calc(vals);
+      setResult(out);
+    } catch {
+      toast("error", "计算错误", "请检查输入值是否有效");
+    }
+  };
+
+  return (
+    <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 space-y-2.5">
+      <div className="flex items-center gap-1.5">
+        <Play size={12} className="text-indigo-500" />
+        <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-400">互动计算</span>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {formula.params.map((p) => (
+          <div key={p.name} className="flex items-center gap-1.5">
+            <span className="text-xs text-slate-600 dark:text-slate-300 w-16 truncate" title={p.name_cn}>{p.name_cn}</span>
+            <input
+              type="number"
+              step="any"
+              placeholder={p.unit || "值"}
+              className="flex-1 min-w-0 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-400"
+              value={inputs[p.name] ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                setInputs((prev) => ({ ...prev, [p.name]: v === "" ? 0 : parseFloat(v) }));
+              }}
+            />
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 w-8">{p.unit}</span>
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={handleCompute}
+        className="w-full py-1.5 rounded-md bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center gap-1"
+      >
+        <Calculator size={12} />
+        计算
+      </button>
+      {result && (
+        <div className="space-y-1 pt-1 border-t border-slate-200 dark:border-slate-700">
+          {Object.entries(result).map(([k, v]) => (
+            <div key={k} className="flex items-center justify-between text-xs">
+              <span className="text-slate-600 dark:text-slate-300">{k}</span>
+              <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                {Number.isFinite(v) ? (Math.abs(v) > 10000 ? v.toExponential(3) : v.toFixed(v % 1 === 0 ? 0 : 4)) : "∞"}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface Props {
@@ -252,6 +357,11 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
                   dangerouslySetInnerHTML={{ __html: latexToHtml(f.latex || f.expression) }}
                 />
 
+                {/* Interactive calculator */}
+                {FORMULA_CALCULATORS[f.id] && (
+                  <FormulaCalculator formula={f} />
+                )}
+
                 {f.params.length > 0 && (
                   <div className="space-y-1.5">
                     <p className="text-xs font-bold text-slate-600 dark:text-slate-300">参数</p>
@@ -274,6 +384,16 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
                   <div>
                     <p className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">适用假设</p>
                     <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{f.assumption}</p>
+                  </div>
+                )}
+
+                {/* Link to learning chapter */}
+                {LEARN_LINKS[f.id] && (
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <BookOpen size={12} className="text-emerald-500" />
+                    <span className="text-xs text-emerald-700 dark:text-emerald-400">
+                      相关学习章节：{LEARN_LINKS[f.id].includes("02") ? "几何光学" : LEARN_LINKS[f.id].includes("03") ? "镜头参数" : LEARN_LINKS[f.id].includes("04") ? "传感器" : "匹配基础"}
+                    </span>
                   </div>
                 )}
               </div>
