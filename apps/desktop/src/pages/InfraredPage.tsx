@@ -486,7 +486,7 @@ export default function InfraredPage() {
                     <SpecItem label="对角FOV" value={`${(selectedDerived?.fov_diag_deg as number)?.toFixed(1) ?? "N/A"}°`} />
                     <SpecItem
                       label="波段重叠率"
-                      value={`${((selectedDerived?.band_overlap_ratio as number) ?? 0 * 100).toFixed(0)}%`}
+                      value={`${(((selectedDerived?.band_overlap_ratio as number) ?? 0) * 100).toFixed(0)}%`}
                     />
                     <SpecItem label="组合总价" value={`$${(selectedLens.price_usd + selectedDet.price_usd).toFixed(0)}`} highlight />
                   </div>

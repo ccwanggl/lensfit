@@ -221,7 +221,7 @@ function FormulaCalculator({ formula }: { formula: KnowledgeFormula }) {
             <div key={k} className="flex items-center justify-between text-xs">
               <span className="text-slate-600 dark:text-slate-300">{k}</span>
               <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                {Number.isFinite(v) ? (Math.abs(v) > 10000 ? v.toExponential(3) : v.toFixed(v % 1 === 0 ? 0 : 4)) : "∞"}
+                {Number.isNaN(v) ? "无效" : Number.isFinite(v) ? (Math.abs(v) > 10000 ? v.toExponential(3) : v.toFixed(v % 1 === 0 ? 0 : 4)) : "∞"}
               </span>
             </div>
           ))}

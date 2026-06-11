@@ -201,7 +201,7 @@ export default function FormulaPlayground() {
                   <input
                     type="range"
                     min={0}
-                    max={p.name.includes("mm") ? 1000 : p.name.includes("um") || p.name.includes("μm") ? 20 : p.name.includes("na") || p.name.includes("mtf") ? 2 : 100}
+                    max={p.unit === "mm" ? 1000 : p.unit === "μm" || p.unit === "um" ? 20 : p.unit === "" && (p.name.includes("na") || p.name.includes("mtf")) ? 2 : 100}
                     step="any"
                     value={inputs[p.name] ?? 0}
                     onChange={(e) => {
@@ -281,7 +281,7 @@ export default function FormulaPlayground() {
                     <div key={k} className="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
                       <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">{k}</p>
                       <p className="text-sm font-mono font-bold text-slate-800 dark:text-slate-200">
-                        {Number.isFinite(v) ? (Math.abs(v) > 10000 ? v.toExponential(3) : v.toFixed(v % 1 === 0 ? 0 : 4)) : "∞"}
+                        {Number.isNaN(v) ? "无效" : Number.isFinite(v) ? (Math.abs(v) > 10000 ? v.toExponential(3) : v.toFixed(v % 1 === 0 ? 0 : 4)) : "∞"}
                       </p>
                     </div>
                   ))}

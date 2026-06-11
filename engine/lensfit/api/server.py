@@ -445,6 +445,7 @@ def list_lenses(
                         "wavelength_min_nm": l.wavelength_min_nm,
                         "wavelength_max_nm": l.wavelength_max_nm,
                         "image_url": l.image_url,
+                        "na": l.na,
                     }
                     for l in lenses
                 ],

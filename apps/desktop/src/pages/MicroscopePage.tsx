@@ -380,7 +380,7 @@ export default function MicroscopePage() {
                         <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{lens.model}</h4>
                         <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums">{match.score.toFixed(2)}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                         {form.microscope_type === "stereo" ? (
                           <span>{lens.focal_length_mm}x-{lens.focal_length_max || lens.focal_length_mm}x 变焦</span>
                         ) : (

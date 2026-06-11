@@ -459,7 +459,7 @@ export default function PhotographyPage() {
                         <div key={cam.id} className="flex items-center justify-between p-3 rounded-[10px] bg-indigo-50/60 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/40">
                           <div>
                             <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{cam.model}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">{cam.sensor_format_inch} · {cam.sensor_diag_mm}mm · {cam.pixel_size_um}μm/px</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{cam.sensor_format_inch} · {cam.sensor_diag_mm}mm · {cam.pixel_size_um}μm/px</p>
                           </div>
                           <span className="text-xs font-bold text-slate-700 dark:text-slate-300">${cam.price_usd.toFixed(0)}</span>
                         </div>
