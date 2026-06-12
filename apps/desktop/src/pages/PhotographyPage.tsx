@@ -25,6 +25,7 @@ import LensImage from "../components/LensImage";
 import PresetSelector from "../components/PresetSelector";
 import { type InputChangeEvent } from "../components/ui/Input";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
+import { useParamHint } from "../hooks/useParamHint";
 import type { CatalogLens, CatalogDetector, PresetConfigItem } from "../utils/api";
 
 interface PhotoRequest {
@@ -173,6 +174,7 @@ function LensCard({
 
 /* ─── Main Page ─── */
 export default function PhotographyPage() {
+  const hint = useParamHint();
   const [form, setForm] = useState<PhotoRequest>({
     format: "all",
     lens_type: "all",
@@ -290,31 +292,31 @@ export default function PhotographyPage() {
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
                 <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">相机配置</p>
-                <Input as="select" label="画幅" icon={<Image size={14} />} layout="horizontal"
+                <Input as="select" label="画幅" icon={<Image size={14} />} layout="horizontal" learnHint={hint("sensor_format")}
                   value={form.format}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, format: e.target.value })}>
                   {FORMATS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
                 </Input>
 
-                <Input as="select" label="镜头类型" icon={<Aperture size={14} />} layout="horizontal"
+                <Input as="select" label="镜头类型" icon={<Aperture size={14} />} layout="horizontal" learnHint={hint("lens_type")}
                   value={form.lens_type}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, lens_type: e.target.value })}>
                   {LENS_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </Input>
 
-                <Input as="select" label="焦距范围" icon={<Ruler size={14} />} layout="horizontal"
+                <Input as="select" label="焦距范围" icon={<Ruler size={14} />} layout="horizontal" learnHint={hint("focal_range")}
                   value={form.focal_range}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, focal_range: e.target.value })}>
                   {FOCAL_RANGES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </Input>
 
-                <Input as="select" label="最大光圈" icon={<Aperture size={14} />} layout="horizontal"
+                <Input as="select" label="最大光圈" icon={<Aperture size={14} />} layout="horizontal" learnHint={hint("max_aperture")}
                   value={form.max_aperture}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, max_aperture: e.target.value })}>
                   {APERTURES.map((a) => <option key={a.value} value={a.value}>{a.label}</option>)}
                 </Input>
 
-                <Input as="select" label="拍摄用途" icon={<Eye size={14} />} layout="horizontal"
+                <Input as="select" label="拍摄用途" icon={<Eye size={14} />} layout="horizontal" learnHint={hint("purpose")}
                   value={form.purpose}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, purpose: e.target.value })}>
                   {PURPOSES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
@@ -323,19 +325,19 @@ export default function PhotographyPage() {
 
               <div className="rounded-lg border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 space-y-2">
                 <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider ml-0.5">品牌与预算</p>
-                <Input as="select" label="品牌偏好" icon={<Tag size={14} />} layout="horizontal"
+                <Input as="select" label="品牌偏好" icon={<Tag size={14} />} layout="horizontal" learnHint={hint("brand")}
                   value={form.brand}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, brand: e.target.value })}>
                   {BRANDS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
                 </Input>
 
-                <Input as="select" label="卡口" icon={<Plug size={14} />} layout="horizontal"
+                <Input as="select" label="卡口" icon={<Plug size={14} />} layout="horizontal" learnHint={hint("mount")}
                   value={form.mount}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, mount: e.target.value })}>
                   {MOUNTS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
                 </Input>
 
-                <Input type="number" label="预算上限" icon={<DollarSign size={14} />} unit="USD" layout="horizontal"
+                <Input type="number" label="预算上限" icon={<DollarSign size={14} />} unit="USD" layout="horizontal" learnHint={hint("budget_usd")}
                   value={form.budget}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, budget: parseFloat(e.target.value) || 0 })} />
               </div>

@@ -3,7 +3,7 @@ import { Settings, Hash, Type, List, ToggleLeft } from "lucide-react";
 import { Input } from "./ui";
 import { type InputChangeEvent } from "./ui/Input";
 import { getDomainParameters, type DomainParameterDef } from "../utils/api";
-import { useLearningMode } from "../contexts/LearningModeContext";
+import { useParamHint } from "../hooks/useParamHint";
 
 interface DomainFormProps {
   domain: string;
@@ -11,24 +11,6 @@ interface DomainFormProps {
   onChange: (name: string, value: unknown) => void;
   disabled?: boolean;
 }
-
-/** Educational hints for common parameters — shown in Learning Mode */
-const PARAM_HINTS: Record<string, string> = {
-  sensor_size: "传感器物理尺寸（对角线）。尺寸越大，单个像素能收集的光子越多，画质通常越好。详见 docs/learning/04-sensors.md",
-  pixel_size_um: "单个像素的物理边长（μm）。像元越小，同等面积像素数越多，但进光量和动态范围可能下降。",
-  target_width_mm: "需要拍摄的区域在水平方向的物理宽度（mm）。与传感器尺寸和工作距离共同决定所需焦距。",
-  target_height_mm: "需要拍摄的区域在垂直方向的物理宽度（mm）。",
-  working_distance_mm: "镜头前端到被测物体的距离（mm）。WD、视场和传感器尺寸共同决定所需焦距。",
-  lens_type: "镜头类型决定了光学设计目标：FA（通用工业）、Telecentric（无透视畸变，精密测量）、Macro（近距离高倍率）等。",
-  interface: "机械安装接口。C-mount 最常用（法兰距17.5mm），F-mount 用于大面阵。接口不匹配无法安装。",
-  focal_length_mm: "镜头焦距（mm）。焦距越短，视角越广；焦距越长，放大倍率越高。",
-  f_number: "光圈值 F# = 焦距/入瞳直径。数字越小光圈越大，进光量越多，景深越浅。",
-  magnification: "系统总放大倍率 β = 像高/物高。在显微镜中通常 >1；在摄影中通常 <1。",
-  objective_na: "数值孔径 NA = n·sin(θ)。显微镜物镜最重要的参数，直接决定分辨率极限：d = 0.61λ/NA。",
-  wavelength_nm: "照明光的波长（nm）。波长越短，衍射极限分辨率越高。可见光中心约 550nm（绿光）。",
-  band: "红外波段：SWIR（短波红外，0.9–1.7μm）用于硅片检测；MWIR（3–5μm）用于高温；LWIR（8–14μm）用于常温热成像。",
-  fov_deg: "视场角（度）。由焦距和传感器尺寸共同决定：AFOV = (360/π)·arctan(s/2f)。",
-};
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   number: <Hash size={14} />,
@@ -149,7 +131,7 @@ function ParameterField({
 }
 
 export default function DomainForm({ domain, values, onChange, disabled }: DomainFormProps) {
-  const { learningMode } = useLearningMode();
+  const hint = useParamHint();
   const { data, isLoading, error } = useQuery({
     queryKey: ["domainParams", domain],
     queryFn: () => getDomainParameters(domain),
@@ -203,7 +185,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
                   value={values[param.name]}
                   onChange={(val) => onChange(param.name, val)}
                   disabled={disabled}
-                  learnHint={learningMode ? PARAM_HINTS[param.name] : undefined}
+                  learnHint={hint(param.name)}
                 />
               ))}
             </div>
@@ -221,7 +203,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
               value={values[param.name]}
               onChange={(val) => onChange(param.name, val)}
               disabled={disabled}
-              learnHint={learningMode ? PARAM_HINTS[param.name] : undefined}
+              learnHint={hint(param.name)}
             />
           ))}
         </div>

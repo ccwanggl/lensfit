@@ -107,6 +107,17 @@ function AppContent() {
         </div>
       </header>
 
+      {/* Learning Mode Notice */}
+      {learningMode && (
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 border-b border-emerald-100 dark:border-emerald-800/30">
+          <div className="max-w-[1440px] mx-auto px-6 py-2 flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
+            <GraduationCap size={14} />
+            <span className="font-medium">学习模式已开启</span>
+            <span className="text-emerald-600/70 dark:text-emerald-400/70">参数旁会出现提示图标，知识面板会高亮并展开相关学习章节。</span>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 py-6">
         <Suspense

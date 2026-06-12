@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronRight, Calculator, Loader2, BookOpen, Play } from "lucide-react";
+import { ChevronDown, ChevronRight, Calculator, Loader2, BookOpen, Play, GraduationCap } from "lucide-react";
 import { listKnowledgeFormulas, listKnowledgeConstraints, knowledgeInfer, type KnowledgeFormula, type KnowledgeConstraint } from "../utils/api";
 import { toast } from "../hooks/useToast";
+import { useLearningMode } from "../contexts/LearningModeContext";
 
 /* ─── Frontend formula calculators (mirrors backend logic) ─── */
 const FORMULA_CALCULATORS: Record<string, (vals: Record<string, number>) => Record<string, number>> = {
@@ -258,6 +259,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
   const [expandedConstraint, setExpandedConstraint] = useState<string | null>(null);
   const [inferResult, setInferResult] = useState<{ derived_params: Record<string, unknown>; trace_chain: Array<Record<string, unknown>> } | null>(null);
   const [inferLoading, setInferLoading] = useState(false);
+  const { learningMode } = useLearningMode();
 
   useEffect(() => {
     setLoading(true);
@@ -266,6 +268,16 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
       listKnowledgeConstraints().then((d) => setConstraints(d.items ?? [])).catch(() => toast("error", "加载失败", "无法获取约束库")),
     ]).finally(() => setLoading(false));
   }, [domain]);
+
+  // In learning mode, auto-expand the first formula that has a learning link
+  useEffect(() => {
+    if (learningMode && formulas.length > 0 && !expandedFormula) {
+      const firstLearnable = formulas.find((f) => LEARN_LINKS[f.id]);
+      if (firstLearnable) {
+        setExpandedFormula(firstLearnable.id);
+      }
+    }
+  }, [learningMode, formulas, expandedFormula]);
 
   const runInfer = useCallback(async () => {
     setInferLoading(true);
@@ -341,12 +353,20 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
         )}
 
         {formulas.map((f) => (
-          <div key={f.id} className="rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 overflow-hidden">
+          <div key={f.id} className={`rounded-lg bg-white dark:bg-slate-800 border overflow-hidden ${learningMode && LEARN_LINKS[f.id] ? "border-emerald-200 dark:border-emerald-800/40" : "border-slate-100 dark:border-slate-700"}`}>
             <button
               onClick={() => setExpandedFormula(expandedFormula === f.id ? null : f.id)}
               className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
             >
-              <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{f.name_cn}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{f.name_cn}</span>
+                {learningMode && LEARN_LINKS[f.id] && (
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+                    <GraduationCap size={10} />
+                    可学习
+                  </span>
+                )}
+              </div>
               {expandedFormula === f.id ? <ChevronDown size={16} className="text-slate-500 shrink-0" /> : <ChevronRight size={16} className="text-slate-500 shrink-0" />}
             </button>
             {expandedFormula === f.id && (
@@ -389,7 +409,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
 
                 {/* Link to learning chapter */}
                 {LEARN_LINKS[f.id] && (
-                  <div className="flex items-center gap-1.5 pt-1">
+                  <div className={`flex items-center gap-1.5 p-2 rounded-lg ${learningMode ? "bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30" : "pt-1"}`}>
                     <BookOpen size={12} className="text-emerald-500" />
                     <span className="text-xs text-emerald-700 dark:text-emerald-400">
                       相关学习章节：{LEARN_LINKS[f.id].includes("02") ? "几何光学" : LEARN_LINKS[f.id].includes("03") ? "镜头参数" : LEARN_LINKS[f.id].includes("04") ? "传感器" : "匹配基础"}
