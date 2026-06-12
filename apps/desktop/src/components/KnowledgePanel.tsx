@@ -47,6 +47,35 @@ const GREEK: Record<string, string> = {
   phi: "φ", omega: "ω",
 };
 
+/** Upright math operators and symbols (not italicized). */
+const UPRIGHT: Record<string, string> = {
+  cdot: "·",
+  times: "×",
+  div: "÷",
+  pm: "±",
+  sim: "~",
+  approx: "≈",
+  neq: "≠",
+  leq: "≤",
+  geq: "≥",
+  infty: "∞",
+  arctan: "arctan",
+  arctg: "arctan",
+  arcsin: "arcsin",
+  arccos: "arccos",
+  sin: "sin",
+  cos: "cos",
+  tan: "tan",
+  ln: "ln",
+  log: "log",
+  exp: "exp",
+};
+
+/** Functions rendered in italic (variables / multi-letter identifiers). */
+const ITALIC_FN = new Set([
+  "beta", "f", "H", "FOV", "WD", "AFOV", "acc", "coverage_ratio",
+]);
+
 function findBrace(s: string, start: number): number {
   let depth = 1;
   for (let i = start + 1; i < s.length; i++) {
@@ -95,19 +124,26 @@ function latexToHtml(src: string): string {
           if (cmd === "left" || cmd === "right") {
             const next = s[end];
             if (next === "(" || next === "[" || next === "{" || next === ")" || next === "]" || next === "}") {
-              out += next;
+              out += `<span class="latex-paren">${next}</span>`;
               i = end + 1;
               continue;
             }
           }
 
           if (GREEK[cmd]) {
-            out += GREEK[cmd];
+            out += `<span class="latex-greek">${GREEK[cmd]}</span>`;
             i = end;
             continue;
           }
 
-          out += `<span class="latex-fn">${cmd}</span>`;
+          if (UPRIGHT[cmd] !== undefined) {
+            out += `<span class="latex-up">${UPRIGHT[cmd]}</span>`;
+            i = end;
+            continue;
+          }
+
+          const cls = ITALIC_FN.has(cmd) ? "latex-fn" : "latex-up";
+          out += `<span class="${cls}">${cmd}</span>`;
           i = end;
           continue;
         }
@@ -124,7 +160,7 @@ function latexToHtml(src: string): string {
           continue;
         }
         if (next === "(" || next === ")" || next === "[" || next === "]" || next === "{" || next === "}") {
-          out += next;
+          out += `<span class="latex-paren">${next}</span>`;
           i += 2;
           continue;
         }
@@ -151,6 +187,12 @@ function latexToHtml(src: string): string {
           out += `<sub>${s[i + 1]}</sub>`;
           i += 2;
         }
+        continue;
+      }
+
+      if (s[i] === "+" || s[i] === "-" || s[i] === "=") {
+        out += `<span class="latex-op">${s[i]}</span>`;
+        i++;
         continue;
       }
 
@@ -303,27 +345,67 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
     return (
       <div className="space-y-3">
         <style>{`
-          .latex-frac {
+          .latex-formula {
+            font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", "Times New Roman", "Noto Serif CJK SC", serif;
+            font-size: 1.15rem;
+            line-height: 1.9;
+            letter-spacing: 0.01em;
+          }
+          .latex-formula .latex-frac {
             display: inline-flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             vertical-align: middle;
             margin: 0 0.25em;
-            font-size: 0.95em;
+            font-size: 0.96em;
           }
-          .latex-num {
+          .latex-formula .latex-num,
+          .latex-formula .latex-den {
+            display: inline-block;
+            min-width: 1.1em;
+            padding: 0.15em 0.55em;
+            text-align: center;
+            line-height: 1.35;
+          }
+          .latex-formula .latex-num {
             border-bottom: 1.5px solid currentColor;
-            padding: 0 0.35em 0.15em;
-            text-align: center;
-            line-height: 1.2;
           }
-          .latex-den {
-            padding: 0.15em 0.35em 0;
-            text-align: center;
-            line-height: 1.2;
+          .latex-formula .latex-den {
+            padding-top: 0.3em;
           }
-          .latex-text { font-style: normal; }
-          .latex-fn   { font-style: italic; }
+          .latex-formula .latex-text {
+            font-style: normal;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 0.78em;
+          }
+          .latex-formula .latex-fn {
+            font-style: italic;
+            padding: 0 0.04em;
+          }
+          .latex-formula .latex-up {
+            font-style: normal;
+            padding: 0 0.04em;
+          }
+          .latex-formula .latex-greek {
+            font-style: italic;
+            padding: 0 0.04em;
+          }
+          .latex-formula .latex-paren {
+            padding: 0 0.08em;
+          }
+          .latex-formula .latex-op {
+            margin: 0 0.18em;
+          }
+          .latex-formula sup,
+          .latex-formula sub {
+            font-size: 0.72em;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+          }
+          .latex-formula sup { top: -0.45em; }
+          .latex-formula sub { top: 0.25em; }
         `}</style>
 
         <div className="flex items-center justify-between mb-1">
@@ -373,7 +455,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
               <div className="px-4 pb-4 space-y-3">
                 {/* LaTeX formula — centered, large */}
                 <div
-                  className="py-4 flex justify-center overflow-x-auto text-base leading-relaxed"
+                  className="latex-formula py-5 px-4 flex justify-center overflow-x-auto rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 shadow-sm"
                   dangerouslySetInnerHTML={{ __html: latexToHtml(f.latex || f.expression) }}
                 />
 
