@@ -27,6 +27,7 @@ import {
   ChevronUp,
   ChevronDown,
   BookOpen,
+  GraduationCap,
 } from "lucide-react";
 import SensorCoveragePlot from "../components/SensorCoveragePlot";
 import ScoreRadarChart from "../components/ScoreRadarChart";
@@ -50,6 +51,7 @@ import GlossaryTooltip from "../components/GlossaryTooltip";
 import SaveToProjectDialog from "../components/SaveToProjectDialog";
 import KnowledgePanel from "../components/KnowledgePanel";
 import PresetSelector from "../components/PresetSelector";
+import IndustrialLearningHub from "../components/IndustrialLearningHub";
 import type { PresetConfigItem } from "../utils/api";
 import {
   generateCoverage,
@@ -243,7 +245,7 @@ export default function IndustrialPage() {
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<UnifiedMatchResult[]>([]);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [rightTab, setRightTab] = useState<"viz" | "trace" | "knowledge">("viz");
+  const [rightTab, setRightTab] = useState<"viz" | "trace" | "knowledge" | "learning">("viz");
   const [whatIfExpanded, setWhatIfExpanded] = useState(false);
 
   const {
@@ -543,6 +545,7 @@ export default function IndustrialPage() {
                     { key: "viz" as const, label: "可视化", icon: <BarChart3 size={13} /> },
                     { key: "trace" as const, label: "推导链", icon: <Activity size={13} /> },
                     { key: "knowledge" as const, label: "知识库", icon: <BookOpen size={13} /> },
+                    { key: "learning" as const, label: "学习指导", icon: <GraduationCap size={13} /> },
                   ]).map((t) => (
                     <button
                       key={t.key}
@@ -651,6 +654,10 @@ export default function IndustrialPage() {
                       activeTab="formulas"
                       selectedResult={selectedResult}
                     />
+                  )}
+
+                  {rightTab === "learning" && (
+                    <IndustrialLearningHub form={form} />
                   )}
                 </div>
               </>
