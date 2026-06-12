@@ -43,7 +43,7 @@ const STEREO_DEFAULTS: MicroscopeRequest = {
 };
 
 export default function MicroscopePage() {
-  const hint = useParamHint();
+  const { hint, expanded } = useParamHint();
   const [form, setForm] = useState<MicroscopeRequest>(COMPOUND_DEFAULTS);
   const [lensMap, setLensMap] = useState<Map<number, CatalogLens>>(new Map());
   const [detMap, setDetMap] = useState<Map<number, CatalogDetector>>(new Map());
@@ -137,7 +137,7 @@ export default function MicroscopePage() {
                   label="类型"
                   icon={<Microscope size={14} />}
                   layout="horizontal"
-                  learnHint={hint("microscope_type")}
+                  learnHint={hint("microscope_type")} hintExpanded={expanded}
                   value={form.microscope_type}
                   onChange={(e: InputChangeEvent) => {
                     const newType = e.target.value as "compound" | "stereo";
@@ -158,7 +158,7 @@ export default function MicroscopePage() {
                       label="数值孔径"
                       icon={<Focus size={14} />}
                       layout="horizontal"
-                      learnHint={hint("objective_na")}
+                      learnHint={hint("objective_na")} hintExpanded={expanded}
                       value={form.objective_na}
                       onChange={(e: InputChangeEvent) => setForm({ ...form, objective_na: parseFloat(e.target.value) || 0 })}
                     />
@@ -167,7 +167,7 @@ export default function MicroscopePage() {
                       label="放大倍率"
                       icon={<Eye size={14} />}
                       layout="horizontal"
-                      learnHint={hint("magnification")}
+                      learnHint={hint("magnification")} hintExpanded={expanded}
                       value={form.magnification}
                       onChange={(e: InputChangeEvent) => setForm({ ...form, magnification: parseFloat(e.target.value) || 0 })}
                     />
@@ -181,7 +181,7 @@ export default function MicroscopePage() {
                       icon={<Eye size={14} />}
                       layout="horizontal"
                       unit="×"
-                      learnHint={hint("magnification")}
+                      learnHint={hint("magnification")} hintExpanded={expanded}
                       value={form.magnification}
                       onChange={(e: InputChangeEvent) => setForm({ ...form, magnification: parseFloat(e.target.value) || 0 })}
                     />
@@ -191,7 +191,7 @@ export default function MicroscopePage() {
                       label="数值孔径"
                       icon={<Focus size={14} />}
                       layout="horizontal"
-                      learnHint={hint("objective_na")}
+                      learnHint={hint("objective_na")} hintExpanded={expanded}
                       value={form.objective_na}
                       onChange={(e: InputChangeEvent) => setForm({ ...form, objective_na: parseFloat(e.target.value) || 0 })}
                     />
@@ -207,7 +207,7 @@ export default function MicroscopePage() {
                   icon={<Ruler size={14} />}
                   unit="nm"
                   layout="horizontal"
-                  learnHint={hint("wavelength_nm")}
+                  learnHint={hint("wavelength_nm")} hintExpanded={expanded}
                   value={form.wavelength_nm}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, wavelength_nm: parseFloat(e.target.value) || 0 })}
                 />
@@ -216,7 +216,7 @@ export default function MicroscopePage() {
                   label="传感器"
                   icon={<Camera size={14} />}
                   layout="horizontal"
-                  learnHint={hint("sensor_format")}
+                  learnHint={hint("sensor_format")} hintExpanded={expanded}
                   value={form.sensor_format}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, sensor_format: e.target.value })}
                 >
@@ -233,7 +233,7 @@ export default function MicroscopePage() {
                   icon={<Ruler size={14} />}
                   unit="μm"
                   layout="horizontal"
-                  learnHint={hint("pixel_size_um")}
+                  learnHint={hint("pixel_size_um")} hintExpanded={expanded}
                   value={form.pixel_size_um}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, pixel_size_um: parseFloat(e.target.value) || 0 })}
                 />
@@ -246,7 +246,7 @@ export default function MicroscopePage() {
                   label="应用场景"
                   icon={<Zap size={14} />}
                   layout="horizontal"
-                  learnHint={hint("application")}
+                  learnHint={hint("application")} hintExpanded={expanded}
                   value={form.application}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, application: e.target.value })}
                 >
@@ -272,7 +272,7 @@ export default function MicroscopePage() {
                   icon={<DollarSign size={14} />}
                   unit="USD"
                   layout="horizontal"
-                  learnHint={hint("budget_usd")}
+                  learnHint={hint("budget_usd")} hintExpanded={expanded}
                   value={form.budget_usd}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, budget_usd: parseFloat(e.target.value) || 0 })}
                 />

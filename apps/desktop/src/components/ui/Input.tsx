@@ -13,10 +13,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement | HTMLSelectEl
   compact?: boolean;
   layout?: "vertical" | "horizontal";
   learnHint?: string;
+  hintExpanded?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
-  ({ label, icon, error, helper, unit, className = "", as = "input", compact = false, layout = "vertical", learnHint, ...props }, ref) => {
+  ({ label, icon, error, helper, unit, className = "", as = "input", compact = false, layout = "vertical", learnHint, hintExpanded = false, ...props }, ref) => {
     const [showHint, setShowHint] = useState(false);
     const isHorizontal = layout === "horizontal";
 
@@ -85,21 +86,30 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
       </div>
     ) : null;
 
+    const inlineHintNode = (hintExpanded && learnHint) ? (
+      <p className="text-[11px] leading-snug text-emerald-700 dark:text-emerald-400 bg-emerald-50/70 dark:bg-emerald-900/15 rounded-md px-2 py-1 mt-1.5">
+        {learnHint}
+      </p>
+    ) : null;
+
     if (isHorizontal) {
       return (
-        <div className="w-full flex items-center gap-2">
-          {label && (
-            <label className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none flex items-center justify-end">
-              {label}
-              {hintNode}
-            </label>
-          )}
-          {inputWrap}
-          {(unit || helper) && (
-            <span className="shrink-0 w-8 text-xs text-slate-400 dark:text-slate-500 tabular-nums text-right">
-              {unit || helper}
-            </span>
-          )}
+        <div className="w-full">
+          <div className="flex items-center gap-2">
+            {label && (
+              <label className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none flex items-center justify-end">
+                {label}
+                {!hintExpanded && hintNode}
+              </label>
+            )}
+            {inputWrap}
+            {(unit || helper) && (
+              <span className="shrink-0 w-8 text-xs text-slate-400 dark:text-slate-500 tabular-nums text-right">
+                {unit || helper}
+              </span>
+            )}
+          </div>
+          {inlineHintNode}
         </div>
       );
     }
@@ -109,10 +119,11 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
         {label && (
           <label className={`flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
             {label}
-            {hintNode}
+            {!hintExpanded && hintNode}
           </label>
         )}
         {inputWrap}
+        {inlineHintNode}
         {error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-rose-500 font-medium`}>{error}</p>}
         {helper && !error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-slate-400 dark:text-slate-500`}>{helper}</p>}
       </div>

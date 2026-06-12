@@ -33,12 +33,14 @@ function ParameterField({
   onChange,
   disabled,
   learnHint,
+  hintExpanded,
 }: {
   def: DomainParameterDef;
   value: unknown;
   onChange: (val: unknown) => void;
   disabled?: boolean;
   learnHint?: string;
+  hintExpanded?: boolean;
 }) {
   const { label, type, unit, default: defaultVal, required, options, min_value, max_value } = def;
   const currentValue = value !== undefined ? value : defaultVal;
@@ -54,6 +56,7 @@ function ParameterField({
         disabled={disabled}
         layout="horizontal"
         learnHint={learnHint}
+        hintExpanded={hintExpanded}
         onChange={(e: InputChangeEvent) => onChange(e.target.value)}
       >
         {options.map((opt) => (
@@ -80,6 +83,7 @@ function ParameterField({
         step="any"
         layout="horizontal"
         learnHint={learnHint}
+        hintExpanded={hintExpanded}
         onChange={(e: InputChangeEvent) => {
           const v = e.target.value;
           if (v === "") {
@@ -125,13 +129,14 @@ function ParameterField({
       required={required}
       layout="horizontal"
       learnHint={learnHint}
+      hintExpanded={hintExpanded}
       onChange={(e: InputChangeEvent) => onChange(e.target.value)}
     />
   );
 }
 
 export default function DomainForm({ domain, values, onChange, disabled }: DomainFormProps) {
-  const hint = useParamHint();
+  const { hint, expanded } = useParamHint();
   const { data, isLoading, error } = useQuery({
     queryKey: ["domainParams", domain],
     queryFn: () => getDomainParameters(domain),
@@ -186,6 +191,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
                   onChange={(val) => onChange(param.name, val)}
                   disabled={disabled}
                   learnHint={hint(param.name)}
+                  hintExpanded={expanded}
                 />
               ))}
             </div>
@@ -204,6 +210,7 @@ export default function DomainForm({ domain, values, onChange, disabled }: Domai
               onChange={(val) => onChange(param.name, val)}
               disabled={disabled}
               learnHint={hint(param.name)}
+                  hintExpanded={expanded}
             />
           ))}
         </div>

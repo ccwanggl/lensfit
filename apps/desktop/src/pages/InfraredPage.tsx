@@ -63,7 +63,7 @@ function getBandLabel(_min: number, max: number): string {
 }
 
 export default function InfraredPage() {
-  const hint = useParamHint();
+  const { hint, expanded } = useParamHint();
   const [form, setForm] = useState<IRRequest>(DEFAULTS);
   const [lensMap, setLensMap] = useState<Map<number, CatalogLens>>(new Map());
   const [detMap, setDetMap] = useState<Map<number, CatalogDetector>>(new Map());
@@ -152,7 +152,7 @@ export default function InfraredPage() {
                   label="工作波段"
                   icon={<Radio size={14} />}
                   layout="horizontal"
-                  learnHint={hint("band")}
+                  learnHint={hint("band")} hintExpanded={expanded}
                   value={form.band}
                   onChange={(e: InputChangeEvent) => handleBandChange(e.target.value)}
                 >
@@ -170,7 +170,7 @@ export default function InfraredPage() {
                   icon={<Waves size={14} />}
                   unit={`μm (${selectedBand?.min}-${selectedBand?.max})`}
                   layout="horizontal"
-                  learnHint={hint("wavelength_um")}
+                  learnHint={hint("wavelength_um")} hintExpanded={expanded}
                   value={form.wavelength_um}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, wavelength_um: parseFloat(e.target.value) || 0 })}
                 />
@@ -185,7 +185,7 @@ export default function InfraredPage() {
                   icon={<Eye size={14} />}
                   unit="°"
                   layout="horizontal"
-                  learnHint={hint("fov_deg")}
+                  learnHint={hint("fov_deg")} hintExpanded={expanded}
                   value={form.fov_deg}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, fov_deg: parseFloat(e.target.value) || 0 })}
                 />
@@ -197,7 +197,7 @@ export default function InfraredPage() {
                   icon={<Ruler size={14} />}
                   unit="m"
                   layout="horizontal"
-                  learnHint={hint("working_distance_m")}
+                  learnHint={hint("working_distance_m")} hintExpanded={expanded}
                   value={form.working_distance_m}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, working_distance_m: parseFloat(e.target.value) || 0 })}
                 />
@@ -209,7 +209,7 @@ export default function InfraredPage() {
                   icon={<Crosshair size={14} />}
                   unit="m"
                   layout="horizontal"
-                  learnHint={hint("target_resolution_m")}
+                  learnHint={hint("target_resolution_m")} hintExpanded={expanded}
                   value={form.target_resolution_m}
                   onChange={(e: InputChangeEvent) =>
                     setForm({ ...form, target_resolution_m: parseFloat(e.target.value) || 0 })
@@ -224,7 +224,7 @@ export default function InfraredPage() {
                   label="传感器尺寸"
                   icon={<Focus size={14} />}
                   layout="horizontal"
-                  learnHint={hint("sensor_format")}
+                  learnHint={hint("sensor_format")} hintExpanded={expanded}
                   value={form.sensor_format}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, sensor_format: e.target.value })}
                 >
@@ -242,7 +242,7 @@ export default function InfraredPage() {
                   icon={<Ruler size={14} />}
                   unit="μm"
                   layout="horizontal"
-                  learnHint={hint("pixel_size_um")}
+                  learnHint={hint("pixel_size_um")} hintExpanded={expanded}
                   value={form.pixel_size_um}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, pixel_size_um: parseFloat(e.target.value) || 0 })}
                 />
@@ -256,7 +256,7 @@ export default function InfraredPage() {
                   icon={<DollarSign size={14} />}
                   unit="USD"
                   layout="horizontal"
-                  learnHint={hint("budget_usd")}
+                  learnHint={hint("budget_usd")} hintExpanded={expanded}
                   value={form.budget_usd}
                   onChange={(e: InputChangeEvent) => setForm({ ...form, budget_usd: parseFloat(e.target.value) || 0 })}
                 />

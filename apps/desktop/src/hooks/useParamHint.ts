@@ -43,8 +43,18 @@ const PARAM_HINTS: Record<string, string> = {
   netd: "噪声等效温差（mK）。值越小，热像仪对温度差异越敏感。",
 };
 
-/** Return the educational hint for a parameter when Learning Mode is active. */
-export function useParamHint(): (name: string) => string | undefined {
+export interface ParamHintAPI {
+  /** The hint string for a parameter, or undefined when Learning Mode is off. */
+  hint: (name: string) => string | undefined;
+  /** Whether Learning Mode is active and hints should be expanded inline. */
+  expanded: boolean;
+}
+
+/** Return the educational hint API for parameters. */
+export function useParamHint(): ParamHintAPI {
   const { learningMode } = useLearningMode();
-  return (name: string) => (learningMode ? PARAM_HINTS[name] : undefined);
+  return {
+    hint: (name: string) => (learningMode ? PARAM_HINTS[name] : undefined),
+    expanded: learningMode,
+  };
 }

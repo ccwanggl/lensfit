@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronRight, Calculator, Loader2, BookOpen, Play, GraduationCap } from "lucide-react";
+import { ChevronDown, ChevronRight, Calculator, Loader2, BookOpen, Play, GraduationCap, Eye } from "lucide-react";
 import { listKnowledgeFormulas, listKnowledgeConstraints, knowledgeInfer, type KnowledgeFormula, type KnowledgeConstraint } from "../utils/api";
 import { toast } from "../hooks/useToast";
 import { useLearningMode } from "../contexts/LearningModeContext";
@@ -38,6 +38,30 @@ const LEARN_LINKS: Record<string, string> = {
   sensor_coverage: "docs/learning/05-matching-basics.md",
   depth_of_field: "docs/learning/03-lens-parameters.md",
   pixel_accuracy: "docs/learning/05-matching-basics.md",
+};
+
+/** Plain-language intuition for non-experts. */
+const FORMULA_INTUITIONS: Record<string, string> = {
+  thin_lens_imaging: "工作距离越远、视场越大，需要的焦距就越长；传感器越大，同样视场下需要的焦距也越短。",
+  magnification: "放大倍率就是像比物大多少倍。工作距离接近焦距时倍率会急剧上升。",
+  fov_from_focal: "焦距越短，能拍到的范围越广；焦距越长，视野越窄、放大越明显。",
+  afov_from_focal: "传感器尺寸不变时，焦距越短，视角越宽，适合广角场景。",
+  nyquist_sampling: "像素太疏会漏掉细节（混叠）。采样频率最好是被采样信号频率的 2 倍以上。",
+  sensor_coverage: "镜头的像圈必须覆盖住传感器，否则照片四角会变暗。",
+  depth_of_field: "光圈越小、焦距越短、对焦越远，画面中清晰的范围就越大。",
+  pixel_accuracy: "放大倍率越大，每个像素代表的物理尺寸越小，测量精度越高。",
+};
+
+/** Link formulas to the interactive Concept Explorer diagrams. */
+const FORMULA_VIZ_LINKS: Record<string, string> = {
+  thin_lens_imaging: "薄透镜光线追踪",
+  magnification: "薄透镜光线追踪",
+  fov_from_focal: "传感器覆盖与像圈",
+  afov_from_focal: "传感器覆盖与像圈",
+  nyquist_sampling: "奈奎斯特采样",
+  sensor_coverage: "传感器覆盖与像圈",
+  depth_of_field: "薄透镜光线追踪",
+  pixel_accuracy: "奈奎斯特采样",
 };
 
 /* ─── Lightweight LaTeX → HTML renderer (no KaTeX) ─── */
@@ -459,6 +483,17 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
                   dangerouslySetInnerHTML={{ __html: latexToHtml(f.latex || f.expression) }}
                 />
 
+                {/* Plain-language intuition for non-experts */}
+                {FORMULA_INTUITIONS[f.id] && (
+                  <div className="flex items-start gap-2 p-3 rounded-lg bg-indigo-50/60 dark:bg-indigo-900/15 border border-indigo-100 dark:border-indigo-800/20">
+                    <Eye size={14} className="text-indigo-500 shrink-0 mt-0.5" />
+                    <p className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed">
+                      <span className="font-semibold">一句话理解：</span>
+                      {FORMULA_INTUITIONS[f.id]}
+                    </p>
+                  </div>
+                )}
+
                 {/* Interactive calculator */}
                 {FORMULA_CALCULATORS[f.id] && (
                   <FormulaCalculator formula={f} />
@@ -495,6 +530,16 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
                     <BookOpen size={12} className="text-emerald-500" />
                     <span className="text-xs text-emerald-700 dark:text-emerald-400">
                       相关学习章节：{LEARN_LINKS[f.id].includes("02") ? "几何光学" : LEARN_LINKS[f.id].includes("03") ? "镜头参数" : LEARN_LINKS[f.id].includes("04") ? "传感器" : "匹配基础"}
+                    </span>
+                  </div>
+                )}
+
+                {/* Link to interactive concept explorer */}
+                {FORMULA_VIZ_LINKS[f.id] && (
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <Eye size={12} className="text-indigo-500" />
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                      可在<span className="font-medium text-indigo-600 dark:text-indigo-400">“概念图解”</span>页查看「{FORMULA_VIZ_LINKS[f.id]}」的交互演示
                     </span>
                   </div>
                 )}

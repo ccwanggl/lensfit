@@ -1,9 +1,10 @@
 import { useState, Suspense, lazy } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Monitor, Microscope, Sun, Camera, Moon, User, FolderOpen, Loader2, GraduationCap, TrendingUp , Eye } from "lucide-react";
+import { Monitor, Microscope, Sun, Camera, Moon, User, FolderOpen, Loader2, GraduationCap, TrendingUp, Eye, Settings } from "lucide-react";
 import ToastContainer from "./components/ui/Toast";
 import { useTheme } from "./hooks/useTheme";
 import { LearningModeProvider, useLearningMode } from "./contexts/LearningModeContext";
+import SettingsPanel from "./components/SettingsPanel";
 
 const IndustrialPage = lazy(() => import("./pages/IndustrialPage"));
 const MicroscopePage = lazy(() => import("./pages/MicroscopePage"));
@@ -29,8 +30,9 @@ const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState<TabId>("industrial");
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { theme, toggle } = useTheme();
-  const { learningMode, setLearningMode } = useLearningMode();
+  const { learningMode } = useLearningMode();
 
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-300"
@@ -84,13 +86,18 @@ function AppContent() {
 
             {/* Right side */}
             <div className="flex items-center gap-2">
+              {learningMode && (
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/30 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  <GraduationCap size={12} />
+                  学习模式
+                </span>
+              )}
               <button
-                onClick={() => setLearningMode(!learningMode)}
-                className={`h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-colors border ${learningMode ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800/40 dark:text-emerald-400" : "border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
-                title={learningMode ? "当前为学习模式" : "切换到学习模式"}
+                onClick={() => setSettingsOpen(true)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="设置"
               >
-                <GraduationCap size={14} />
-                <span>{learningMode ? "学习模式" : "学习"}</span>
+                <Settings size={16} />
               </button>
               <button
                 onClick={toggle}
@@ -136,6 +143,8 @@ function AppContent() {
           {activeTab === "explorer" && <ConceptExplorer />}
         </Suspense>
       </main>
+
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }
