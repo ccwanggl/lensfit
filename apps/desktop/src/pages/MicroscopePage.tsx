@@ -1,9 +1,13 @@
 import { useState, useMemo } from "react";
-import { Microscope, Search, Ruler, Focus, Eye, Zap, Camera, DollarSign, Info, Award } from "lucide-react";
+import { Microscope, Search, Ruler, Focus, Eye, Zap, Camera, DollarSign, Info, Award, BarChart3, Activity, BookOpen, GraduationCap } from "lucide-react";
 import { Card, Button, Input, SectionHeader, EmptyState, Badge } from "../components/ui";
 import { type InputChangeEvent } from "../components/ui/Input";
 import LensImage from "../components/LensImage";
 import PresetSelector from "../components/PresetSelector";
+import PhysicsTrace from "../components/PhysicsTrace";
+import KnowledgePanel from "../components/KnowledgePanel";
+import MicroscopeLearningHub from "../components/MicroscopeLearningHub";
+import ScoreRadarChart from "../components/ScoreRadarChart";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { useParamHint } from "../hooks/useParamHint";
 import { listLenses, listDetectors } from "../utils/api";
@@ -49,6 +53,7 @@ export default function MicroscopePage() {
   const [detMap, setDetMap] = useState<Map<number, CatalogDetector>>(new Map());
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<UnifiedMatchResult | null>(null);
+  const [rightTab, setRightTab] = useState<"viz" | "trace" | "knowledge" | "learning">("viz");
 
   const { results, isLoading, progress, stage, start } = useMatching({
     domain: "microscope",
@@ -412,153 +417,212 @@ export default function MicroscopePage() {
         </Card>
       </div>
 
-      {/* Right: Detail panel */}
+      {/* Right: Detail/Tabs panel */}
       <div className="col-span-4">
         <Card padding="none" className="overflow-hidden h-full flex flex-col">
           <div className="p-5 border-b border-slate-100 dark:border-slate-700">
             <SectionHeader
-              title="方案详情"
-              subtitle="物镜-相机组合参数分析"
+              title="方案分析"
+              subtitle="物镜-相机组合参数与学习指导"
               icon={<Award size={16} />}
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5">
-            {!selectedMatch || !selectedLens || !selectedDet ? (
-              <div className="flex-1 flex items-center justify-center h-64">
-                <EmptyState
-                  icon={<Info size={24} />}
-                  title="选择方案"
-                  description="点击左侧匹配结果查看详细参数分析"
-                />
-              </div>
-            ) : (
-              <div className="space-y-5">
-                {/* Lens image */}
-                <div className="rounded-xl overflow-hidden">
-                  <LensImage
-                    model={selectedLens.model}
-                    focal={`${selectedLens.focal_length_mm}x`}
-                    aperture={selectedLens.na ? String(selectedLens.na) : "N/A"}
-                    brand=""
-                    imageUrl={selectedLens.image_url}
-                    size="lg"
-                  />
-                </div>
+          <div className="flex-1 overflow-y-auto p-5 flex flex-col">
+            {/* Tab bar */}
+            <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+              {([
+                { key: "viz" as const, label: "方案详情", icon: <BarChart3 size={13} /> },
+                { key: "trace" as const, label: "推导链", icon: <Activity size={13} /> },
+                { key: "knowledge" as const, label: "知识库", icon: <BookOpen size={13} /> },
+                { key: "learning" as const, label: "学习指导", icon: <GraduationCap size={13} /> },
+              ]).map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setRightTab(t.key)}
+                  className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                    rightTab === t.key
+                      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                  }`}
+                >
+                  {t.icon}
+                  {t.label}
+                </button>
+              ))}
+            </div>
 
-                {/* Match score */}
-                <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-100 dark:border-indigo-800/40">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">匹配得分</span>
-                    <span className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">{selectedMatch.score.toFixed(2)}</span>
-                  </div>
-                  <div className="w-full h-2 bg-white dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all"
-                      style={{ width: `${Math.min(selectedMatch.score * 100, 100)}%` }}
-                    />
-                  </div>
-                </div>
+            {/* Tab content */}
+            <div className="flex-1 overflow-y-auto pr-1">
+              {rightTab === "viz" && (
+                <div className="space-y-5">
+                  {!selectedMatch || !selectedLens || !selectedDet ? (
+                    <div className="flex-1 flex items-center justify-center h-64">
+                      <EmptyState
+                        icon={<Info size={24} />}
+                        title="选择方案"
+                        description="点击左侧匹配结果查看详细参数分析"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      {/* Lens image */}
+                      <div className="rounded-xl overflow-hidden">
+                        <LensImage
+                          model={selectedLens.model}
+                          focal={`${selectedLens.focal_length_mm}x`}
+                          aperture={selectedLens.na ? String(selectedLens.na) : "N/A"}
+                          brand=""
+                          imageUrl={selectedLens.image_url}
+                          size="lg"
+                        />
+                      </div>
 
-                {/* Objective specs */}
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
-                    <Focus size={14} className="text-indigo-500" />
-                    {form.microscope_type === "stereo" ? "变焦主体参数" : "物镜参数"}
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <SpecItem label="型号" value={selectedLens.model} />
-                    {form.microscope_type === "stereo" ? (
-                      <>
-                        <SpecItem label="变焦范围" value={`${selectedLens.focal_length_mm}x-${selectedLens.focal_length_max || selectedLens.focal_length_mm}x`} />
-                        <SpecItem label="总放大倍率" value={`${(selectedDerived?.total_magnification as number)?.toFixed(1) ?? "N/A"}× (含10×目镜)`} />
-                        <SpecItem label="工作距离" value={selectedLens.nominal_wd_mm ? `${selectedLens.nominal_wd_mm}mm` : "N/A"} />
-                      </>
-                    ) : (
-                      <>
-                        <SpecItem label="放大倍率" value={`${selectedLens.focal_length_mm}×`} />
-                        <SpecItem label="数值孔径" value={selectedLens.na?.toFixed(2) || "N/A"} />
-                      </>
-                    )}
-                    <SpecItem label="像场数" value={`${selectedLens.image_circle_mm}mm`} />
-                    <SpecItem label="接口" value={selectedLens.mount_type || "N/A"} />
-                    <SpecItem label="价格" value={`$${selectedLens.price_usd.toFixed(0)}`} />
-                  </div>
-                </div>
-
-                {/* Camera specs */}
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
-                    <Camera size={14} className="text-indigo-500" />
-                    相机参数
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <SpecItem label="型号" value={selectedDet.model} />
-                    <SpecItem label="传感器" value={selectedDet.sensor_format_inch || "N/A"} />
-                    <SpecItem label="分辨率" value={`${selectedDet.resolution_w ?? "?"}×${selectedDet.resolution_h ?? "?"}`} />
-                    <SpecItem label="像元尺寸" value={`${selectedDet.pixel_size_um}μm`} />
-                    <SpecItem label="接口" value={selectedDet.mount_type || "N/A"} />
-                    <SpecItem label="价格" value={`$${selectedDet.price_usd.toFixed(0)}`} />
-                  </div>
-                </div>
-
-                {/* Derived optical params */}
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
-                    <Zap size={14} className="text-indigo-500" />
-                    光学分析
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <SpecItem
-                      label="光学分辨率"
-                      value={`${(selectedDerived?.optical_resolution_um as number)?.toFixed(3) ?? "N/A"}μm`}
-                      helper={`瑞利判据: 0.61×${form.wavelength_nm}nm/${selectedLens.na?.toFixed(2)}`}
-                    />
-                    <SpecItem
-                      label="数字分辨率"
-                      value={`${(selectedDerived?.digital_resolution_um as number)?.toFixed(3) ?? "N/A"}μm`}
-                      helper="像素尺寸/放大倍率"
-                    />
-                    <div className="col-span-2">
-                      <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">奈奎斯特采样比</p>
-                            <p className={`text-sm font-bold ${
-                              (selectedDerived?.nyquist_ratio as number) >= 2 ? "text-green-600 dark:text-green-400" :
-                              (selectedDerived?.nyquist_ratio as number) >= 1 ? "text-blue-600 dark:text-blue-400" :
-                              "text-orange-500"
-                            }`}>
-                              {((selectedDerived?.nyquist_ratio as number) ?? 0).toFixed(2)}
-                            </p>
-                          </div>
-                          <Badge
-                            variant={
-                              (selectedDerived?.nyquist_ratio as number) >= 2 ? "success" :
-                              (selectedDerived?.nyquist_ratio as number) >= 1 ? "info" : "warning"
-                            }
-                          >
-                            {nyquistStatus((selectedDerived?.nyquist_ratio as number) ?? 0).label}
-                          </Badge>
+                      {/* Match score */}
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-100 dark:border-indigo-800/40">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">匹配得分</span>
+                          <span className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">{selectedMatch.score.toFixed(2)}</span>
                         </div>
-                        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mt-2">
+                        <div className="w-full h-2 bg-white dark:bg-slate-800 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all ${
-                              (selectedDerived?.nyquist_ratio as number) >= 2 ? "bg-green-500" :
-                              (selectedDerived?.nyquist_ratio as number) >= 1 ? "bg-blue-500" : "bg-orange-400"
-                            }`}
-                            style={{ width: `${Math.min(((selectedDerived?.nyquist_ratio as number) ?? 0) / 3 * 100, 100)}%` }}
+                            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all"
+                            style={{ width: `${Math.min(selectedMatch.score * 100, 100)}%` }}
                           />
                         </div>
                       </div>
-                    </div>
-                    <SpecItem label="总放大倍率" value={`${(selectedDerived?.total_magnification as number)?.toFixed(1) ?? "N/A"}×`} />
-                    <SpecItem label="视场大小" value={`${(selectedDerived?.fov_w_mm as number)?.toFixed(3) ?? "N/A"}×${(selectedDerived?.fov_h_mm as number)?.toFixed(3) ?? "N/A"}mm`} />
-                    <SpecItem label="组合总价" value={`$${(selectedLens.price_usd + selectedDet.price_usd).toFixed(0)}`} highlight />
-                  </div>
+
+                      {selectedMatch?.score_vector && (
+                        <ScoreRadarChart scoreVector={selectedMatch.score_vector} />
+                      )}
+
+                      {/* Objective specs */}
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                          <Focus size={14} className="text-indigo-500" />
+                          {form.microscope_type === "stereo" ? "变焦主体参数" : "物镜参数"}
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SpecItem label="型号" value={selectedLens.model} />
+                          {form.microscope_type === "stereo" ? (
+                            <>
+                              <SpecItem label="变焦范围" value={`${selectedLens.focal_length_mm}x-${selectedLens.focal_length_max || selectedLens.focal_length_mm}x`} />
+                              <SpecItem label="总放大倍率" value={`${(selectedDerived?.total_magnification as number)?.toFixed(1) ?? "N/A"}× (含10×目镜)`} />
+                              <SpecItem label="工作距离" value={selectedLens.nominal_wd_mm ? `${selectedLens.nominal_wd_mm}mm` : "N/A"} />
+                            </>
+                          ) : (
+                            <>
+                              <SpecItem label="放大倍率" value={`${selectedLens.focal_length_mm}×`} />
+                              <SpecItem label="数值孔径" value={selectedLens.na?.toFixed(2) || "N/A"} />
+                            </>
+                          )}
+                          <SpecItem label="像场数" value={`${selectedLens.image_circle_mm}mm`} />
+                          <SpecItem label="接口" value={selectedLens.mount_type || "N/A"} />
+                          <SpecItem label="价格" value={`$${selectedLens.price_usd.toFixed(0)}`} />
+                        </div>
+                      </div>
+
+                      {/* Camera specs */}
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                          <Camera size={14} className="text-indigo-500" />
+                          相机参数
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SpecItem label="型号" value={selectedDet.model} />
+                          <SpecItem label="传感器" value={selectedDet.sensor_format_inch || "N/A"} />
+                          <SpecItem label="分辨率" value={`${selectedDet.resolution_w ?? "?"}×${selectedDet.resolution_h ?? "?"}`} />
+                          <SpecItem label="像元尺寸" value={`${selectedDet.pixel_size_um}μm`} />
+                          <SpecItem label="接口" value={selectedDet.mount_type || "N/A"} />
+                          <SpecItem label="价格" value={`$${selectedDet.price_usd.toFixed(0)}`} />
+                        </div>
+                      </div>
+
+                      {/* Derived optical params */}
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                          <Zap size={14} className="text-indigo-500" />
+                          光学分析
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SpecItem
+                            label="光学分辨率"
+                            value={`${(selectedDerived?.optical_resolution_um as number)?.toFixed(3) ?? "N/A"}μm`}
+                            helper={`瑞利判据: 0.61×${form.wavelength_nm}nm/${selectedLens.na?.toFixed(2)}`}
+                          />
+                          <SpecItem
+                            label="数字分辨率"
+                            value={`${(selectedDerived?.digital_resolution_um as number)?.toFixed(3) ?? "N/A"}μm`}
+                            helper="像素尺寸/放大倍率"
+                          />
+                          <div className="col-span-2">
+                            <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">奈奎斯特采样比</p>
+                                  <p className={`text-sm font-bold ${
+                                    (selectedDerived?.nyquist_ratio as number) >= 2 ? "text-green-600 dark:text-green-400" :
+                                    (selectedDerived?.nyquist_ratio as number) >= 1 ? "text-blue-600 dark:text-blue-400" :
+                                    "text-orange-500"
+                                  }`}>
+                                    {((selectedDerived?.nyquist_ratio as number) ?? 0).toFixed(2)}
+                                  </p>
+                                </div>
+                                <Badge
+                                  variant={
+                                    (selectedDerived?.nyquist_ratio as number) >= 2 ? "success" :
+                                    (selectedDerived?.nyquist_ratio as number) >= 1 ? "info" : "warning"
+                                  }
+                                >
+                                  {nyquistStatus((selectedDerived?.nyquist_ratio as number) ?? 0).label}
+                                </Badge>
+                              </div>
+                              <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mt-2">
+                                <div
+                                  className={`h-full rounded-full transition-all ${
+                                    (selectedDerived?.nyquist_ratio as number) >= 2 ? "bg-green-500" :
+                                    (selectedDerived?.nyquist_ratio as number) >= 1 ? "bg-blue-500" : "bg-orange-400"
+                                  }`}
+                                  style={{ width: `${Math.min(((selectedDerived?.nyquist_ratio as number) ?? 0) / 3 * 100, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <SpecItem label="总放大倍率" value={`${(selectedDerived?.total_magnification as number)?.toFixed(1) ?? "N/A"}×`} />
+                          <SpecItem label="视场大小" value={`${(selectedDerived?.fov_w_mm as number)?.toFixed(3) ?? "N/A"}×${(selectedDerived?.fov_h_mm as number)?.toFixed(3) ?? "N/A"}mm`} />
+                          <SpecItem label="组合总价" value={`$${(selectedLens.price_usd + selectedDet.price_usd).toFixed(0)}`} highlight />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
-              </div>
-            )}
+              )}
+
+              {rightTab === "trace" && (
+                <div>
+                  {selectedMatch?.derivation_chain && selectedMatch.derivation_chain.length > 0 ? (
+                    <PhysicsTrace traces={selectedMatch.derivation_chain} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {rightTab === "knowledge" && (
+                <KnowledgePanel
+                  form={form as unknown as Record<string, number | string>}
+                  domain="microscope"
+                  activeTab="formulas"
+                  selectedResult={selectedMatch}
+                />
+              )}
+
+              {rightTab === "learning" && (
+                <MicroscopeLearningHub form={form as unknown as Record<string, unknown>} />
+              )}
+            </div>
           </div>
         </Card>
       </div>

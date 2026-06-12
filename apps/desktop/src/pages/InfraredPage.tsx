@@ -14,6 +14,10 @@ import {
   Focus,
   Gauge,
   Zap,
+  BarChart3,
+  Activity,
+  BookOpen,
+  GraduationCap,
 } from "lucide-react";
 import { Card, Button, Input, SectionHeader, EmptyState } from "../components/ui";
 import { type InputChangeEvent } from "../components/ui/Input";
@@ -22,6 +26,10 @@ import PresetSelector from "../components/PresetSelector";
 import SaveToProjectButton from "../components/SaveToProjectButton";
 import SpecItem from "../components/SpecItem";
 import ResultCard from "../components/ResultCard";
+import PhysicsTrace from "../components/PhysicsTrace";
+import KnowledgePanel from "../components/KnowledgePanel";
+import InfraredLearningHub from "../components/InfraredLearningHub";
+import ScoreRadarChart from "../components/ScoreRadarChart";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { useParamHint } from "../hooks/useParamHint";
 import { listLenses, listDetectors } from "../utils/api";
@@ -69,6 +77,7 @@ export default function InfraredPage() {
   const [detMap, setDetMap] = useState<Map<number, CatalogDetector>>(new Map());
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<UnifiedMatchResult | null>(null);
+  const [rightTab, setRightTab] = useState<"viz" | "trace" | "knowledge" | "learning">("viz");
 
   const { results, isLoading, progress, stage, start } = useMatching({
     domain: "infrared",
@@ -370,139 +379,198 @@ export default function InfraredPage() {
         </Card>
       </div>
 
-      {/* ── Right: Detail ── */}
+      {/* ── Right: Detail/Tabs ── */}
       <div className="col-span-4">
         <Card padding="none" className="overflow-hidden h-full flex flex-col">
           <div className="p-5 border-b border-slate-100 dark:border-slate-700">
             <SectionHeader
-              title="方案详情"
-              subtitle="红外系统参数分析"
+              title="方案分析"
+              subtitle="红外系统参数与学习指导"
               icon={<Award size={16} />}
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5">
-            {!selectedMatch || !selectedLens || !selectedDet ? (
-              <div className="flex-1 flex items-center justify-center h-64">
-                <EmptyState
-                  icon={<Info size={24} />}
-                  title="选择方案"
-                  description="点击左侧匹配结果查看详细参数分析"
+          <div className="flex-1 overflow-y-auto p-5 flex flex-col">
+            {/* Tab bar */}
+            <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+              {([
+                { key: "viz" as const, label: "方案详情", icon: <BarChart3 size={13} /> },
+                { key: "trace" as const, label: "推导链", icon: <Activity size={13} /> },
+                { key: "knowledge" as const, label: "知识库", icon: <BookOpen size={13} /> },
+                { key: "learning" as const, label: "学习指导", icon: <GraduationCap size={13} /> },
+              ]).map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setRightTab(t.key)}
+                  className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                    rightTab === t.key
+                      ? "bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                  }`}
+                >
+                  {t.icon}
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab content */}
+            <div className="flex-1 overflow-y-auto pr-1">
+              {rightTab === "viz" && (
+                <div className="space-y-5">
+                  {!selectedMatch || !selectedLens || !selectedDet ? (
+                    <div className="flex-1 flex items-center justify-center h-64">
+                      <EmptyState
+                        icon={<Info size={24} />}
+                        title="选择方案"
+                        description="点击左侧匹配结果查看详细参数分析"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      {/* Lens image */}
+                      <div className="rounded-xl overflow-hidden">
+                        <LensImage
+                          model={selectedLens.model}
+                          focal={(selectedDerived?.focal_range as string) || `${selectedLens.focal_length_mm}mm`}
+                          aperture={String(selectedDerived?.f_number as number | undefined ?? selectedLens.max_aperture)}
+                          brand=""
+                          imageUrl={selectedLens.image_url}
+                          size="lg"
+                        />
+                      </div>
+
+                      {/* Match score */}
+                      <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/30 dark:to-amber-900/30 border border-orange-100 dark:border-orange-800/40">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">匹配得分</span>
+                          <span className="text-2xl font-extrabold text-orange-600">
+                            {selectedMatch.score.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="w-full h-2 bg-white dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all"
+                            style={{ width: `${Math.min(selectedMatch.score * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {selectedMatch?.score_vector && (
+                        <ScoreRadarChart scoreVector={selectedMatch.score_vector} />
+                      )}
+
+                      {/* Save action */}
+                      <div className="flex items-center justify-end">
+                        <SaveToProjectButton
+                          lensId={selectedMatch.lens_id}
+                          detectorId={selectedMatch.detector_id}
+                          lensModel={selectedLens.model}
+                          detectorModel={selectedDet.model}
+                        />
+                      </div>
+
+                      {/* Lens specs */}
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                          <Focus size={14} className="text-orange-500" />
+                          红外镜头参数
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SpecItem label="型号" value={selectedLens.model} />
+                          <SpecItem
+                            label="焦距"
+                            value={(selectedDerived?.focal_range as string) || `${selectedLens.focal_length_mm}mm`}
+                          />
+                          <SpecItem label="F数" value={`F/${(selectedDerived?.f_number as number | undefined ?? selectedLens.max_aperture).toFixed(1)}`} />
+                          <SpecItem label="波段" value={getBandLabel((selectedLens.wavelength_min_nm ?? 0) / 1000, (selectedLens.wavelength_max_nm ?? 0) / 1000)} />
+                          <SpecItem
+                            label="波长范围"
+                            value={`${((selectedLens.wavelength_min_nm ?? 0) / 1000).toFixed(1)}-${((selectedLens.wavelength_max_nm ?? 0) / 1000).toFixed(1)}μm`}
+                          />
+                          <SpecItem label="接口" value={selectedLens.mount_type || "N/A"} />
+                          <SpecItem label="像面" value={`${selectedLens.image_circle_mm}mm`} />
+                          <SpecItem label="价格" value={`$${selectedLens.price_usd.toFixed(0)}`} />
+                        </div>
+                      </div>
+
+                      {/* Detector specs */}
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                          <Gauge size={14} className="text-orange-500" />
+                          探测器参数
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SpecItem label="型号" value={selectedDet.model} />
+                          <SpecItem label="传感器" value={selectedDet.sensor_format_inch || "N/A"} />
+                          <SpecItem
+                            label="分辨率"
+                            value={`${selectedDet.resolution_w ?? "?"}×${selectedDet.resolution_h ?? "?"}`}
+                          />
+                          <SpecItem label="像元尺寸" value={`${selectedDet.pixel_size_um}μm`} />
+                          <SpecItem label="NETD" value={`${(selectedDet.netd_mk ?? 0).toFixed(0)}mK`} />
+                          <SpecItem
+                            label="光谱范围"
+                            value={`${selectedDet.spectral_range_min_um}-${selectedDet.spectral_range_max_um}μm`}
+                          />
+                          <SpecItem label="接口" value={selectedDet.mount_type || "N/A"} />
+                          <SpecItem label="价格" value={`$${selectedDet.price_usd.toFixed(0)}`} />
+                        </div>
+                      </div>
+
+                      {/* Derived optical params */}
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
+                          <Zap size={14} className="text-orange-500" />
+                          系统性能
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <SpecItem label="IFOV" value={`${(selectedDerived?.ifov_mrad as number)?.toFixed(3) ?? "N/A"} mrad`} />
+                          <SpecItem
+                            label="空间分辨率"
+                            value={`${(selectedDerived?.spatial_resolution_m as number)?.toFixed(3) ?? "N/A"}m`}
+                            helper={`@ ${form.working_distance_m}m 工作距离`}
+                          />
+                          <SpecItem label="水平FOV" value={`${(selectedDerived?.fov_w_deg as number)?.toFixed(1) ?? "N/A"}°`} />
+                          <SpecItem label="垂直FOV" value={`${(selectedDerived?.fov_h_deg as number)?.toFixed(1) ?? "N/A"}°`} />
+                          <SpecItem label="对角FOV" value={`${(selectedDerived?.fov_diag_deg as number)?.toFixed(1) ?? "N/A"}°`} />
+                          <SpecItem
+                            label="波段重叠率"
+                            value={`${(((selectedDerived?.band_overlap_ratio as number) ?? 0) * 100).toFixed(0)}%`}
+                          />
+                          <SpecItem label="组合总价" value={`$${(selectedLens.price_usd + selectedDet.price_usd).toFixed(0)}`} highlight />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {rightTab === "trace" && (
+                <div>
+                  {selectedMatch?.derivation_chain && selectedMatch.derivation_chain.length > 0 ? (
+                    <PhysicsTrace traces={selectedMatch.derivation_chain} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {rightTab === "knowledge" && (
+                <KnowledgePanel
+                  form={form as unknown as Record<string, number | string>}
+                  domain="infrared"
+                  activeTab="formulas"
+                  selectedResult={selectedMatch}
                 />
-              </div>
-            ) : (
-              <div className="space-y-5">
-                {/* Lens image */}
-                <div className="rounded-xl overflow-hidden">
-                  <LensImage
-                    model={selectedLens.model}
-                    focal={(selectedDerived?.focal_range as string) || `${selectedLens.focal_length_mm}mm`}
-                    aperture={String(selectedDerived?.f_number as number | undefined ?? selectedLens.max_aperture)}
-                    brand=""
-                    imageUrl={selectedLens.image_url}
-                    size="lg"
-                  />
-                </div>
+              )}
 
-                {/* Match score */}
-                <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/30 dark:to-amber-900/30 border border-orange-100 dark:border-orange-800/40">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">匹配得分</span>
-                    <span className="text-2xl font-extrabold text-orange-600">
-                      {selectedMatch.score.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-white dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all"
-                      style={{ width: `${Math.min(selectedMatch.score * 100, 100)}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Save action */}
-                <div className="flex items-center justify-end">
-                  <SaveToProjectButton
-                    lensId={selectedMatch.lens_id}
-                    detectorId={selectedMatch.detector_id}
-                    lensModel={selectedLens.model}
-                    detectorModel={selectedDet.model}
-                  />
-                </div>
-
-                {/* Lens specs */}
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
-                    <Focus size={14} className="text-orange-500" />
-                    红外镜头参数
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <SpecItem label="型号" value={selectedLens.model} />
-                    <SpecItem
-                      label="焦距"
-                      value={(selectedDerived?.focal_range as string) || `${selectedLens.focal_length_mm}mm`}
-                    />
-                    <SpecItem label="F数" value={`F/${(selectedDerived?.f_number as number | undefined ?? selectedLens.max_aperture).toFixed(1)}`} />
-                    <SpecItem label="波段" value={getBandLabel((selectedLens.wavelength_min_nm ?? 0) / 1000, (selectedLens.wavelength_max_nm ?? 0) / 1000)} />
-                    <SpecItem
-                      label="波长范围"
-                      value={`${((selectedLens.wavelength_min_nm ?? 0) / 1000).toFixed(1)}-${((selectedLens.wavelength_max_nm ?? 0) / 1000).toFixed(1)}μm`}
-                    />
-                    <SpecItem label="接口" value={selectedLens.mount_type || "N/A"} />
-                    <SpecItem label="像面" value={`${selectedLens.image_circle_mm}mm`} />
-                    <SpecItem label="价格" value={`$${selectedLens.price_usd.toFixed(0)}`} />
-                  </div>
-                </div>
-
-                {/* Detector specs */}
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
-                    <Gauge size={14} className="text-orange-500" />
-                    探测器参数
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <SpecItem label="型号" value={selectedDet.model} />
-                    <SpecItem label="传感器" value={selectedDet.sensor_format_inch || "N/A"} />
-                    <SpecItem
-                      label="分辨率"
-                      value={`${selectedDet.resolution_w ?? "?"}×${selectedDet.resolution_h ?? "?"}`}
-                    />
-                    <SpecItem label="像元尺寸" value={`${selectedDet.pixel_size_um}μm`} />
-                    <SpecItem label="NETD" value={`${(selectedDet.netd_mk ?? 0).toFixed(0)}mK`} />
-                    <SpecItem
-                      label="光谱范围"
-                      value={`${selectedDet.spectral_range_min_um}-${selectedDet.spectral_range_max_um}μm`}
-                    />
-                    <SpecItem label="接口" value={selectedDet.mount_type || "N/A"} />
-                    <SpecItem label="价格" value={`$${selectedDet.price_usd.toFixed(0)}`} />
-                  </div>
-                </div>
-
-                {/* Derived optical params */}
-                <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5">
-                    <Zap size={14} className="text-orange-500" />
-                    系统性能
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <SpecItem label="IFOV" value={`${(selectedDerived?.ifov_mrad as number)?.toFixed(3) ?? "N/A"} mrad`} />
-                    <SpecItem
-                      label="空间分辨率"
-                      value={`${(selectedDerived?.spatial_resolution_m as number)?.toFixed(3) ?? "N/A"}m`}
-                      helper={`@ ${form.working_distance_m}m 工作距离`}
-                    />
-                    <SpecItem label="水平FOV" value={`${(selectedDerived?.fov_w_deg as number)?.toFixed(1) ?? "N/A"}°`} />
-                    <SpecItem label="垂直FOV" value={`${(selectedDerived?.fov_h_deg as number)?.toFixed(1) ?? "N/A"}°`} />
-                    <SpecItem label="对角FOV" value={`${(selectedDerived?.fov_diag_deg as number)?.toFixed(1) ?? "N/A"}°`} />
-                    <SpecItem
-                      label="波段重叠率"
-                      value={`${(((selectedDerived?.band_overlap_ratio as number) ?? 0) * 100).toFixed(0)}%`}
-                    />
-                    <SpecItem label="组合总价" value={`$${(selectedLens.price_usd + selectedDet.price_usd).toFixed(0)}`} highlight />
-                  </div>
-                </div>
-              </div>
-            )}
+              {rightTab === "learning" && (
+                <InfraredLearningHub form={form as unknown as Record<string, unknown>} />
+              )}
+            </div>
           </div>
         </Card>
       </div>

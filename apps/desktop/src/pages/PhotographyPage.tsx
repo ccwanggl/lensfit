@@ -10,6 +10,10 @@ import {
   Search,
   Star,
   Image,
+  BarChart3,
+  Activity,
+  BookOpen,
+  GraduationCap,
 } from "lucide-react";
 import {
   Card,
@@ -23,6 +27,10 @@ import { listLenses, listDetectors } from "../utils/api";
 import { toast } from "../hooks/useToast";
 import LensImage from "../components/LensImage";
 import PresetSelector from "../components/PresetSelector";
+import PhysicsTrace from "../components/PhysicsTrace";
+import KnowledgePanel from "../components/KnowledgePanel";
+import PhotographyLearningHub from "../components/PhotographyLearningHub";
+import ScoreRadarChart from "../components/ScoreRadarChart";
 import { type InputChangeEvent } from "../components/ui/Input";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { useParamHint } from "../hooks/useParamHint";
@@ -190,6 +198,7 @@ export default function PhotographyPage() {
   const [detMap, setDetMap] = useState<Map<number, CatalogDetector>>(new Map());
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<UnifiedMatchResult | null>(null);
+  const [rightTab, setRightTab] = useState<"viz" | "trace" | "knowledge" | "learning">("viz");
 
   const backendRequirements = useMemo(() => ({
     purpose: form.purpose === "all" ? "portrait" : form.purpose,
@@ -396,91 +405,141 @@ export default function PhotographyPage() {
         </Card>
       </div>
 
-      {/* ── Right: Detail Panel ── */}
+      {/* ── Right: Detail/Tabs Panel ── */}
       <div className="col-span-4">
-        <Card padding="none" className="overflow-hidden">
-          <div className="p-6">
-            <SectionHeader
-              title="镜头详情"
-              subtitle={selectedLens ? selectedLens.model : "选择镜头查看详情"}
-              icon={<Camera size={16} />}
-            />
+        <Card padding="none" className="overflow-hidden h-full flex flex-col">
+          <div className="p-6 flex-1 flex flex-col">
+            {/* Tab bar */}
+            <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+              {([
+                { key: "viz" as const, label: "镜头详情", icon: <BarChart3 size={13} /> },
+                { key: "trace" as const, label: "推导链", icon: <Activity size={13} /> },
+                { key: "knowledge" as const, label: "知识库", icon: <BookOpen size={13} /> },
+                { key: "learning" as const, label: "学习指导", icon: <GraduationCap size={13} /> },
+              ]).map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setRightTab(t.key)}
+                  className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                    rightTab === t.key
+                      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                  }`}
+                >
+                  {t.icon}
+                  {t.label}
+                </button>
+              ))}
+            </div>
 
-            {selectedLens && (
-              <div className="space-y-4">
-                {/* Specs grid */}
-                <div className="mb-4 rounded-xl overflow-hidden">
-                  <LensImage
-                    model={selectedLens.model}
-                    focal={selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max ? `${selectedLens.focal_length_min}-${selectedLens.focal_length_max}mm` : `${selectedLens.focal_length_mm}mm`}
-                    aperture={String(selectedLens.max_aperture)}
-                    brand=""
-                    imageUrl={selectedLens.image_url}
-                    size="lg"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">焦距</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                      {selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max
-                        ? `${selectedLens.focal_length_min}-${selectedLens.focal_length_max}mm`
-                        : `${selectedLens.focal_length_mm}mm`}
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">最大光圈</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">f/{selectedLens.max_aperture}</p>
-                  </div>
-                  <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">卡口</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedLens.mount_type}</p>
-                  </div>
-                  <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">价格</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">${selectedLens.price_usd.toFixed(0)}</p>
-                  </div>
-                  <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">像圈</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedLens.image_circle_mm}mm</p>
-                  </div>
-                  <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                    <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">类型</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                      {selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max ? "变焦" : "定焦"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Compatible cameras */}
-                {compatibleCameras.length > 0 && (
-                  <div className="mt-4">
-                    <h3 className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">兼容机身</h3>
-                    <div className="space-y-2">
-                      {compatibleCameras.map((cam) => (
-                        <div key={cam.id} className="flex items-center justify-between p-3 rounded-[10px] bg-indigo-50/60 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/40">
-                          <div>
-                            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{cam.model}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{cam.sensor_format_inch} · {cam.sensor_diag_mm}mm · {cam.pixel_size_um}μm/px</p>
-                          </div>
-                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300">${cam.price_usd.toFixed(0)}</span>
+            {/* Tab content */}
+            <div className="flex-1 overflow-y-auto pr-1">
+              {rightTab === "viz" && (
+                <div className="space-y-4">
+                  {selectedLens && (
+                    <>
+                      <div className="mb-4 rounded-xl overflow-hidden">
+                        <LensImage
+                          model={selectedLens.model}
+                          focal={selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max ? `${selectedLens.focal_length_min}-${selectedLens.focal_length_max}mm` : `${selectedLens.focal_length_mm}mm`}
+                          aperture={String(selectedLens.max_aperture)}
+                          brand=""
+                          imageUrl={selectedLens.image_url}
+                          size="lg"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">焦距</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                            {selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max
+                              ? `${selectedLens.focal_length_min}-${selectedLens.focal_length_max}mm`
+                              : `${selectedLens.focal_length_mm}mm`}
+                          </p>
                         </div>
-                      ))}
+                        <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">最大光圈</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">f/{selectedLens.max_aperture}</p>
+                        </div>
+                        <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">卡口</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedLens.mount_type}</p>
+                        </div>
+                        <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">价格</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">${selectedLens.price_usd.toFixed(0)}</p>
+                        </div>
+                        <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">像圈</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedLens.image_circle_mm}mm</p>
+                        </div>
+                        <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">类型</p>
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                            {selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max ? "变焦" : "定焦"}
+                          </p>
+                        </div>
+                      </div>
+                      {selectedMatch?.score_vector && (
+                        <div className="mt-4">
+                          <ScoreRadarChart scoreVector={selectedMatch.score_vector} />
+                        </div>
+                      )}
+                      {compatibleCameras.length > 0 && (
+                        <div className="mt-4">
+                          <h3 className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">兼容机身</h3>
+                          <div className="space-y-2">
+                            {compatibleCameras.map((cam) => (
+                              <div key={cam.id} className="flex items-center justify-between p-3 rounded-[10px] bg-indigo-50/60 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/40">
+                                <div>
+                                  <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{cam.model}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400">{cam.sensor_format_inch} · {cam.sensor_diag_mm}mm · {cam.pixel_size_um}μm/px</p>
+                                </div>
+                                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">${cam.price_usd.toFixed(0)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {!selectedLens && (
+                    <div className="text-center py-8">
+                      <EmptyState
+                        icon={<Camera size={24} />}
+                        title="选择镜头"
+                        description="点击左侧推荐卡片查看镜头规格、兼容机身与评分雷达图"
+                      />
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
 
-            {!selectedLens && (
-              <div className="text-center py-8">
-                <EmptyState
-                  icon={<Camera size={24} />}
-                  title="选择镜头"
-                  description="点击左侧推荐卡片查看镜头规格与兼容机身"
+              {rightTab === "trace" && (
+                <div>
+                  {selectedMatch?.derivation_chain && selectedMatch.derivation_chain.length > 0 ? (
+                    <PhysicsTrace traces={selectedMatch.derivation_chain} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {rightTab === "knowledge" && (
+                <KnowledgePanel
+                  form={form as unknown as Record<string, number | string>}
+                  domain="photography"
+                  activeTab="formulas"
+                  selectedResult={selectedMatch}
                 />
-              </div>
-            )}
+              )}
+
+              {rightTab === "learning" && (
+                <PhotographyLearningHub form={form as unknown as Record<string, unknown>} />
+              )}
+            </div>
           </div>
         </Card>
       </div>
