@@ -54,9 +54,19 @@ class MatchingEngine:
     # Stage 1: IndexPreFilter
     # =====================================================================
     def index_pre_filter(
-        self, requirements: Requirements, catalog: CatalogQuery
+        self,
+        requirements: Requirements,
+        catalog: CatalogQuery,
+        strict: bool = True,
     ) -> list[DeviceCombo]:
-        """索引预筛选 — 数据库层过滤，支持多领域."""
+        """索引预筛选 — 数据库层过滤，支持多领域.
+
+        Args:
+            requirements: 用户需求.
+            catalog: 目录查询对象.
+            strict: 为 False 时放宽工作距离、接口和传感器格式等条件，
+                    用于严格过滤未命中时给出最接近的备选方案.
+        """
         params = requirements.params
         domain_id = requirements.domain
 
@@ -216,25 +226,25 @@ class MatchingEngine:
         fov_w = params.get("target_width_mm", 50)
 
         focal_estimate = calc.focal_from_wd_fov(wd, fov_w, sensor.w)
-        focal_min = focal_estimate * 0.5
-        focal_max = focal_estimate * 2.0
+        focal_min = focal_estimate * (0.5 if strict else 0.2)
+        focal_max = focal_estimate * (2.0 if strict else 5.0)
 
         # 查询镜头
         lenses = catalog.query_lenses(
             category=params.get("lens_type", "FA"),
-            mount_type=params.get("interface"),
+            mount_type=params.get("interface") if strict else None,
             focal_min=focal_min,
             focal_max=focal_max,
-            image_circle_min=sensor.diag * 0.8,
-            wd_min=wd * 0.5,
-            wd_max=wd * 2.0,
+            image_circle_min=sensor.diag * (0.8 if strict else 0.5),
+            wd_min=wd * (0.5 if strict else 0.2) if strict else None,
+            wd_max=wd * (2.0 if strict else 5.0) if strict else None,
             limit=_MAX_CANDIDATE_LENS,
         )
 
         # 查询探测器
         detectors = catalog.query_detectors(
-            sensor_format=params.get("sensor_size"),
-            mount_type=params.get("interface"),
+            sensor_format=params.get("sensor_size") if strict else None,
+            mount_type=params.get("interface") if strict else None,
             limit=_MAX_CANDIDATE_DET,
         )
 
@@ -257,9 +267,16 @@ class MatchingEngine:
     # Stage 2: QuickHardFilter
     # =====================================================================
     def quick_hard_filter(
-        self, candidates: list[DeviceCombo], diagnostics: list[FilterDiagnostic] | None = None
+        self,
+        candidates: list[DeviceCombo],
+        diagnostics: list[FilterDiagnostic] | None = None,
+        strict: bool = True,
     ) -> list[DeviceCombo]:
-        """快速硬约束剪枝 — O(1) 检查."""
+        """快速硬约束剪枝 — O(1) 检查.
+
+        Args:
+            strict: 为 False 时放宽像圆、接口和工作距离要求，用于给出备选方案.
+        """
         valid = []
         rejected: dict[str, int] = {
             "image_circle_too_small": 0,
@@ -273,19 +290,20 @@ class MatchingEngine:
 
             # 2a: 像圆覆盖
             if det.sensor_diag_mm and lens.image_circle_mm:
-                if det.sensor_diag_mm > lens.image_circle_mm * 1.05:
+                margin_factor = 1.05 if strict else 1.20
+                if det.sensor_diag_mm > lens.image_circle_mm * margin_factor:
                     rejected["image_circle_too_small"] += 1
                     continue
 
             # 2b: 接口兼容
-            if lens.mount_type and det.mount_type:
+            if strict and lens.mount_type and det.mount_type:
                 compatible, _ = is_mount_compatible(lens.mount_type, det.mount_type)
                 if not compatible:
                     rejected["mount_incompatible"] += 1
                     continue
 
             # 2c: WD 范围
-            if reqs:
+            if strict and reqs:
                 wd = reqs.params.get("working_distance_mm")
                 if wd is not None:
                     if lens.min_working_distance_mm and wd < lens.min_working_distance_mm:
@@ -300,7 +318,7 @@ class MatchingEngine:
         if diagnostics is not None:
             suggestion = self._suggest_from_rejected(rejected)
             diagnostics.append(FilterDiagnostic(
-                stage="quick_hard_filter",
+                stage="quick_hard_filter" + ("" if strict else "_fallback"),
                 before_count=len(candidates),
                 after_count=len(valid),
                 rejected_reasons={k: v for k, v in rejected.items() if v > 0},
@@ -328,8 +346,13 @@ class MatchingEngine:
         candidates: list[DeviceCombo],
         domain: DomainModule,
         diagnostics: list[FilterDiagnostic] | None = None,
+        strict: bool = True,
     ) -> list[DeviceCombo]:
-        """应用领域硬约束."""
+        """应用领域硬约束.
+
+        Args:
+            strict: 为 False 时跳过工作距离硬约束并放宽覆盖要求.
+        """
         constraints = domain.get_hard_constraints()
         valid = []
         constraint_fails: dict[str, int] = {}
@@ -337,6 +360,23 @@ class MatchingEngine:
             try:
                 passed = True
                 for c in constraints:
+                    if c.name == "wd_range" and not strict:
+                        continue
+                    if c.name == "sensor_coverage" and not strict:
+                        # 放宽覆盖要求：允许最多 15% 的渐晕
+                        lens = combo.lens
+                        det = combo.detector
+                        image_circle = getattr(lens, "image_circle_mm", None) or 0
+                        sensor_diag = getattr(det, "sensor_diag_mm", None) or 0
+                        if (
+                            sensor_diag > 0
+                            and image_circle > 0
+                            and image_circle < sensor_diag * 0.85
+                        ):
+                            constraint_fails[c.name] = constraint_fails.get(c.name, 0) + 1
+                            passed = False
+                            break
+                        continue
                     if not c.check(combo):
                         constraint_fails[c.name] = constraint_fails.get(c.name, 0) + 1
                         passed = False
@@ -353,7 +393,7 @@ class MatchingEngine:
                 top_fail = max(constraint_fails, key=constraint_fails.get)
                 suggestion = f"建议：检查领域约束「{top_fail}」是否过于严格"
             diagnostics.append(FilterDiagnostic(
-                stage="domain_constraints",
+                stage="domain_constraints" + ("" if strict else "_fallback"),
                 before_count=len(candidates),
                 after_count=len(valid),
                 rejected_reasons=constraint_fails,
@@ -448,6 +488,15 @@ class MatchingEngine:
                     lens.image_circle_mm, det.sensor_diag_mm
                 )
                 score_vector["nyquist_match"] = self._score_nyquist(nyquist)
+                score_vector["wd_match"] = self._score_wd(
+                    getattr(lens, "min_working_distance_mm", None),
+                    getattr(lens, "max_working_distance_mm", None),
+                    (
+                        combo.requirements.params.get("working_distance_mm")
+                        if combo.requirements
+                        else None
+                    ),
+                )
 
                 # Trace 4: composite score
                 trace_chain.append(PhysicsTrace(
@@ -577,6 +626,26 @@ class MatchingEngine:
             return 0.3
         return 0.6
 
+    @staticmethod
+    def _score_wd(
+        min_wd: float | None,
+        max_wd: float | None,
+        target_wd: float | None,
+    ) -> float:
+        """工作距离匹配评分 (0-1)."""
+        if target_wd is None:
+            return 0.5
+        if min_wd is None and max_wd is None:
+            return 0.5
+        if min_wd is not None and max_wd is not None and min_wd <= target_wd <= max_wd:
+            return 1.0
+        # Penalize distance outside the declared range
+        if max_wd is not None and target_wd > max_wd and max_wd > 0:
+            return max(0.0, 1.0 - (target_wd - max_wd) / max_wd)
+        if min_wd is not None and target_wd < min_wd and min_wd > 0:
+            return max(0.0, 1.0 - (min_wd - target_wd) / min_wd)
+        return 0.5
+
     def explain_result(self, result: MatchResult) -> dict[str, Any]:
         """使用知识库为匹配结果生成结构化解释."""
         return self._knowledge_engine.explain_result(result).to_dict()
@@ -597,6 +666,7 @@ class MatchingEngine:
             # 为通用维度补充默认权重
             weights.setdefault("coverage_margin", 1.5)
             weights.setdefault("nyquist_match", 1.5)
+            weights.setdefault("wd_match", 1.5)
 
         dims = domain.get_scoring_dimensions()
         # 将通用维度也加入排序维度列表
@@ -615,6 +685,14 @@ class MatchingEngine:
                 name="nyquist_match",
                 label="奈奎斯特匹配",
                 weight=weights.get("nyquist_match", 1.5),
+                is_benefit=True,
+            )
+        )
+        all_dims.append(
+            ScoringDimension(
+                name="wd_match",
+                label="工作距离匹配",
+                weight=weights.get("wd_match", 1.5),
                 is_benefit=True,
             )
         )
@@ -640,57 +718,37 @@ class MatchingEngine:
             domain = self.get_domain(requirements.domain)
             catalog = CatalogQuery(session)
 
-            # Stage 1: PreFilter
-            candidates = self.index_pre_filter(requirements, catalog)
-            if len(candidates) == 0:
-                diagnostics.append(FilterDiagnostic(
-                    stage="index_pre_filter",
-                    before_count=0,
-                    after_count=0,
-                    rejected_reasons={},
-                    suggestion="建议：放宽焦距或视场范围，或检查数据库是否已导入",
-                ))
-                yield {
-                    "stage": "completed",
-                    "progress": 1.0,
-                    "results": [],
-                    "diagnostics": [d.to_dict() for d in diagnostics],
-                }
-                return
+            # Stage 1-5: strict
+            ranked = self._match_one_pass(
+                requirements, catalog, domain, top_k, weights, diagnostics, strict=True
+            )
 
-            yield {
-                "stage": "prefilter",
-                "progress": 0.1,
-                "candidates": len(candidates),
-                "preview": [],
-            }
+            # Fallback to relaxed matching if strict mode yields nothing
+            if not ranked:
+                ranked = self._match_one_pass(
+                    requirements, catalog, domain, top_k, weights, diagnostics, strict=False
+                )
+                if ranked and diagnostics:
+                    diagnostics.append(FilterDiagnostic(
+                        stage="fallback",
+                        before_count=0,
+                        after_count=len(ranked),
+                        rejected_reasons={},
+                        suggestion="已自动放宽工作距离/接口/覆盖要求，展示最接近的备选方案",
+                    ))
 
-            # Stage 2: QuickHardFilter
-            candidates = self.quick_hard_filter(candidates, diagnostics)
-            yield {
-                "stage": "filtered",
-                "progress": 0.3,
-                "candidates": len(candidates),
-            }
+            if not ranked and diagnostics:
+                # No candidates even in fallback mode
+                last = diagnostics[-1]
+                if last.stage.startswith("index_pre_filter"):
+                    yield {
+                        "stage": "completed",
+                        "progress": 1.0,
+                        "results": [],
+                        "diagnostics": [d.to_dict() for d in diagnostics],
+                    }
+                    return
 
-            # Stage 3: DomainHardFilter
-            candidates = self.apply_domain_constraints(candidates, domain, diagnostics)
-            yield {
-                "stage": "domain_filter",
-                "progress": 0.5,
-                "candidates": len(candidates),
-            }
-
-            # Stage 4: Scoring
-            results = self.score_candidates(candidates, domain)
-            yield {
-                "stage": "scoring",
-                "progress": 0.8,
-                "candidates": len(results),
-            }
-
-            # Stage 5: Ranking
-            ranked = self.rank_results(results, domain, weights)
             yield {
                 "stage": "completed",
                 "progress": 1.0,
@@ -701,6 +759,35 @@ class MatchingEngine:
     # =====================================================================
     # Public API
     # =====================================================================
+    def _match_one_pass(
+        self,
+        requirements: Requirements,
+        catalog: CatalogQuery,
+        domain: DomainModule,
+        top_k: int,
+        weights: dict[str, float] | None,
+        diagnostics: list[FilterDiagnostic],
+        strict: bool = True,
+    ) -> list[MatchResult]:
+        """执行一次完整匹配流程（严格或宽松模式）."""
+        candidates = self.index_pre_filter(requirements, catalog, strict=strict)
+        if len(candidates) == 0:
+            if strict:
+                diagnostics.append(FilterDiagnostic(
+                    stage="index_pre_filter",
+                    before_count=0,
+                    after_count=0,
+                    rejected_reasons={},
+                    suggestion="建议：放宽焦距或视场范围，或检查数据库是否已导入",
+                ))
+            return []
+
+        candidates = self.quick_hard_filter(candidates, diagnostics, strict=strict)
+        candidates = self.apply_domain_constraints(candidates, domain, diagnostics, strict=strict)
+        results = self.score_candidates(candidates, domain)
+        ranked = self.rank_results(results, domain, weights)
+        return ranked[:top_k]
+
     def match_sync(
         self,
         requirements: Requirements,
@@ -717,25 +804,26 @@ class MatchingEngine:
             domain = self.get_domain(requirements.domain)
             catalog = CatalogQuery(session)
 
-            candidates = self.index_pre_filter(requirements, catalog)
-            if len(candidates) == 0:
-                diagnostics.append(FilterDiagnostic(
-                    stage="index_pre_filter",
-                    before_count=0,
-                    after_count=0,
-                    rejected_reasons={},
-                    suggestion="建议：放宽焦距或视场范围，或检查数据库是否已导入",
-                ))
-                self._last_diagnostics = diagnostics
-                return []
+            ranked = self._match_one_pass(
+                requirements, catalog, domain, top_k, weights, diagnostics, strict=True
+            )
 
-            candidates = self.quick_hard_filter(candidates, diagnostics)
-            candidates = self.apply_domain_constraints(candidates, domain, diagnostics)
-            results = self.score_candidates(candidates, domain)
-            ranked = self.rank_results(results, domain, weights)
+            # 严格模式无结果时，使用宽松模式给出最接近的备选方案
+            if not ranked:
+                ranked = self._match_one_pass(
+                    requirements, catalog, domain, top_k, weights, diagnostics, strict=False
+                )
+                if ranked and diagnostics:
+                    diagnostics.append(FilterDiagnostic(
+                        stage="fallback",
+                        before_count=0,
+                        after_count=len(ranked),
+                        rejected_reasons={},
+                        suggestion="已自动放宽工作距离/接口/覆盖要求，展示最接近的备选方案",
+                    ))
 
             self._last_diagnostics = diagnostics
-            return ranked[:top_k]
+            return ranked
 
     def match_async(self, requirements: Requirements) -> MatchingTask:
         """异步匹配 — 返回任务ID，前端轮询进度."""
@@ -784,52 +872,41 @@ class MatchingEngine:
                 domain = self.get_domain(requirements.domain)
                 catalog = CatalogQuery(session)
 
-                # Stage 1
-                candidates = self.index_pre_filter(requirements, catalog)
-                if len(candidates) == 0:
-                    diagnostics.append(FilterDiagnostic(
-                        stage="index_pre_filter",
-                        before_count=0,
-                        after_count=0,
-                        rejected_reasons={},
-                        suggestion="建议：放宽焦距或视场范围，或检查数据库是否已导入",
-                    ))
-                    _update(
-                        result=[],
-                        progress=1.0,
-                        status="completed",
-                        completed_at=datetime.now(UTC),
-                        diagnostics=diagnostics,
+                # Stage 1-5 (strict)
+                ranked = self._match_one_pass(
+                    requirements, catalog, domain, 20, None, diagnostics, strict=True
+                )
+                if not _update(
+                    total_candidates=sum(
+                        1 for d in diagnostics if d.stage == "index_pre_filter"
+                    ),
+                    progress=0.1 if ranked else 0.05,
+                    stage="quick_filter" if ranked else "fallback",
+                ):
+                    return
+
+                # Fallback to relaxed matching if strict mode yields nothing
+                if not ranked:
+                    ranked = self._match_one_pass(
+                        requirements, catalog, domain, 20, None, diagnostics, strict=False
                     )
-                    return
-                if not _update(
-                    total_candidates=len(candidates),
-                    progress=0.1,
-                    stage="quick_filter",
-                ):
-                    return
+                    if ranked and diagnostics:
+                        diagnostics.append(FilterDiagnostic(
+                            stage="fallback",
+                            before_count=0,
+                            after_count=len(ranked),
+                            rejected_reasons={},
+                            suggestion="已自动放宽工作距离/接口/覆盖要求，展示最接近的备选方案",
+                        ))
+                    if not _update(
+                        total_candidates=sum(
+                            1 for d in diagnostics if "pre_filter" in d.stage
+                        ),
+                        progress=0.1,
+                        stage="quick_filter",
+                    ):
+                        return
 
-                # Stage 2
-                candidates = self.quick_hard_filter(candidates, diagnostics)
-                if not _update(
-                    filtered_candidates=len(candidates),
-                    progress=0.3,
-                    stage="domain_filter",
-                ):
-                    return
-
-                # Stage 3
-                candidates = self.apply_domain_constraints(candidates, domain, diagnostics)
-                if not _update(progress=0.5, stage="scoring"):
-                    return
-
-                # Stage 4
-                results = self.score_candidates(candidates, domain)
-                if not _update(progress=0.8, stage="ranking"):
-                    return
-
-                # Stage 5
-                ranked = self.rank_results(results, domain)
                 _update(
                     result=ranked,
                     progress=1.0,
