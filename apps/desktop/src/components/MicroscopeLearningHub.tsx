@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
-import { BookOpen, Lightbulb, Microscope, Focus, Eye, Waves, Ruler } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { BookOpen, Lightbulb, Microscope, Focus, Eye, Waves, Ruler, HelpCircle } from "lucide-react";
+import LearningQuiz from "./LearningQuiz";
+import { useLearningProgress } from "../hooks/useLearningProgress";
 
 interface Props {
   form: Record<string, unknown>;
 }
 
-type SectionId = "overview" | "na" | "resolution" | "magnification" | "sampling";
+type SectionId = "overview" | "na" | "resolution" | "magnification" | "sampling" | "quiz";
 
 interface Section {
   id: SectionId;
@@ -246,15 +248,80 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   }
 }
 
+const QUIZ_QUESTIONS = [
+  {
+    question: "数值孔径 NA 主要影响显微镜的哪项性能？",
+    options: ["色彩还原", "分辨率和集光能力", "存储容量", "机械稳定性"],
+    correctIndex: 1,
+    explanation: "NA = n·sin(θ)，它决定物镜收集光线的锥角，从而影响分辨率和亮度。NA 越大，分辨率越高。",
+  },
+  {
+    question: "根据瑞利判据，提高分辨率最有效的方法是？",
+    options: ["增加放大倍率", "增大 NA 或缩短波长", "使用更大传感器", "提高 ISO"],
+    correctIndex: 1,
+    explanation: "瑞利判据 d = 0.61λ/NA。增大 NA 或使用更短波长（如蓝光/紫外）可以缩小可分辨间距。",
+  },
+  {
+    question: "奈奎斯特采样定理要求传感器采样频率至少为光学信号最高频率的多少倍？",
+    options: ["0.5 倍", "1 倍", "2 倍", "4 倍"],
+    correctIndex: 2,
+    explanation: "为避免混叠，采样频率必须至少是信号最高频率的 2 倍，即过采样比通常建议 ≥ 1。",
+  },
+  {
+    question: "在显微镜中，放大倍率越大，以下哪项通常会变小？",
+    options: ["景深和视野", "数值孔径", "工作距离和分辨率", "进光量"],
+    correctIndex: 0,
+    explanation: "放大倍率越大，视野越小，景深也越浅，但能观察到的细节更大。",
+  },
+];
+
+function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        完成以下小测验，检验你对显微成像核心概念的理解。
+      </p>
+      <LearningQuiz title="显微镜知识测验" questions={QUIZ_QUESTIONS} quizId="microscope-quiz" onComplete={onComplete} />
+    </div>
+  );
+}
+
 export default function MicroscopeLearningHub({ form }: Props) {
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
-  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection)!, [activeSection]);
+  const { getDomainProgress, markSectionViewed, markQuizCompleted } = useLearningProgress();
+  const progress = getDomainProgress("microscope");
+
+  useEffect(() => {
+    if (activeSection !== "quiz") {
+      markSectionViewed("microscope", activeSection);
+    }
+  }, [activeSection, markSectionViewed]);
+
+  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection), [activeSection]);
+
+  const totalSections = SECTIONS.length;
+  const viewedCount = SECTIONS.filter((s) => progress.sectionsViewed.includes(s.id)).length;
+  const quizCompleted = progress.quizzesCompleted.includes("microscope-quiz");
+  const progressValue = Math.round(((viewedCount + (quizCompleted ? 1 : 0)) / (totalSections + 1)) * 100);
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2">
         <BookOpen size={16} className="text-indigo-500" />
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">显微镜学习指南</h3>
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+          <span>学习进度</span>
+          <span>{progressValue}%</span>
+        </div>
+        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-indigo-500 transition-all"
+            style={{ width: `${progressValue}%` }}
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-4">
@@ -272,15 +339,40 @@ export default function MicroscopeLearningHub({ form }: Props) {
             {section.title}
           </button>
         ))}
+        <button
+          onClick={() => setActiveSection("quiz")}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            activeSection === "quiz"
+              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          <HelpCircle size={14} />
+          测验
+          {quizCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+        </button>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
         <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
-            <span className="text-indigo-500">{currentSection.icon}</span>
-            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+            {currentSection ? (
+              <>
+                <span className="text-indigo-500">{currentSection.icon}</span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+              </>
+            ) : (
+              <>
+                <span className="text-emerald-500"><HelpCircle size={14} /></span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">知识测验</h4>
+              </>
+            )}
           </div>
-          <SectionContent section={activeSection} form={form} />
+          {activeSection === "quiz" ? (
+            <QuizContent onComplete={(score) => markQuizCompleted("microscope", "microscope-quiz", score)} />
+          ) : (
+            <SectionContent section={activeSection} form={form} />
+          )}
         </div>
       </div>
 

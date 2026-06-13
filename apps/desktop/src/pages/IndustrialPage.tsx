@@ -31,12 +31,11 @@ import {
 } from "lucide-react";
 import SensorCoveragePlot from "../components/SensorCoveragePlot";
 import ScoreRadarChart from "../components/ScoreRadarChart";
+import MatchExplanation from "../components/MatchExplanation";
 import DomainForm from "../components/DomainForm";
 import {
-  Card,
   Button,
   Badge,
-  ProgressBar,
   SectionHeader,
   EmptyState,
 } from "../components/ui";
@@ -50,7 +49,6 @@ import WhatIfPanel from "../components/WhatIfPanel";
 import GlossaryTooltip from "../components/GlossaryTooltip";
 import SaveToProjectDialog from "../components/SaveToProjectDialog";
 import KnowledgePanel from "../components/KnowledgePanel";
-import PresetSelector from "../components/PresetSelector";
 import IndustrialLearningHub from "../components/IndustrialLearningHub";
 import type { PresetConfigItem } from "../utils/api";
 import {
@@ -58,6 +56,13 @@ import {
   exportReport,
   startMatchStream,
 } from "../utils/api";
+import { useDomainMatching } from "../stores/matchingStore";
+import {
+  DomainPageShell,
+  DomainFormPanel,
+  DomainResultsPanel,
+  DomainDetailPanel,
+} from "../components/domain";
 
 /* ─── Icons map (lucide-react) ─── */
 const Icons = {
@@ -114,12 +119,28 @@ function ResultCard({
   isCompareSelected?: boolean;
   onToggleCompare?: () => void;
 }) {
-  const scorePct = Math.min((result.score / 10) * 100, 100);
+  const scorePct = Math.min(result.score * 100, 100);
   const scoreColor = scorePct >= 80 ? "emerald" : scorePct >= 50 ? "amber" : "rose";
+
+  const handleActivate = () => {
+    if (compareMode) {
+      onToggleCompare?.();
+    } else {
+      onClick();
+    }
+  };
 
   return (
     <div
-      onClick={compareMode ? onToggleCompare : onClick}
+      role="button"
+      tabIndex={0}
+      onClick={handleActivate}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleActivate();
+        }
+      }}
       className={`
         group relative flex items-start gap-3 p-4 rounded-xl
         transition-all duration-200 ease-out
@@ -239,37 +260,52 @@ const INDUSTRIAL_DEFAULTS: Record<string, unknown> = {
 export default function IndustrialPage() {
   const [form, setForm] = useState<Record<string, unknown>>({ ...INDUSTRIAL_DEFAULTS });
 
-  const [selectedResult, setSelectedResult] = useState<UnifiedMatchResult | null>(null);
   const [coverageData, setCoverageData] = useState<unknown>(null);
   const [coverageLoading, setCoverageLoading] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<UnifiedMatchResult[]>([]);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [rightTab, setRightTab] = useState<"viz" | "trace" | "knowledge" | "learning">("viz");
   const [whatIfExpanded, setWhatIfExpanded] = useState(false);
+
+  const {
+    hasSearched,
+    results,
+    selectedResult,
+    rightTab,
+    setResults,
+    setSelectedResult,
+    setHasSearched,
+    setRightTab,
+  } = useDomainMatching("industrial");
+
+  const handleMatchSuccess = useCallback((matches: UnifiedMatchResult[]) => {
+    setResults(matches);
+    setCompareMode(false);
+    setCompareSelection([]);
+  }, [setResults]);
 
   const {
     progress,
     stage,
     error,
-    results,
     isLoading,
     diagnostics,
     start,
   } = useMatching({
     domain: "industrial",
     requirements: form,
-    onSuccess: (matches) => {
-      setSelectedResult(matches[0] ?? null);
-      setCompareMode(false);
-      setCompareSelection([]);
-    },
+    onSuccess: handleMatchSuccess,
   });
-
-  const [hasSearched, setHasSearched] = useState(false);
   const [whatIfResults, setWhatIfResults] = useState<UnifiedMatchResult[]>([]);
   const [whatIfRunning, setWhatIfRunning] = useState(false);
   const whatIfCloseRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      whatIfCloseRef.current?.();
+      whatIfCloseRef.current = null;
+    };
+  }, []);
 
   const handleWhatIf = useCallback(async (requirements: Record<string, unknown>) => {
     if (whatIfCloseRef.current) {
@@ -300,7 +336,6 @@ export default function IndustrialPage() {
     }
   }, []);
 
-  // Load coverage when result selected
   useEffect(() => {
     if (!selectedResult) {
       setCoverageData(null);
@@ -335,7 +370,7 @@ export default function IndustrialPage() {
     });
   };
 
-  const handleExport = async (format: "pdf" | "excel") => {
+  const handleExport = async (format: "pdf" | "excel" | "csv") => {
     if (results.length === 0) return;
     try {
       const blob = await exportReport(
@@ -346,7 +381,8 @@ export default function IndustrialPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = format === "pdf" ? "lensfit-report.pdf" : "lensfit-report.xlsx";
+      const extMap: Record<string, string> = { pdf: "pdf", excel: "xlsx", csv: "csv" };
+      a.download = `lensfit-report.${extMap[format]}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -358,314 +394,287 @@ export default function IndustrialPage() {
     }
   };
 
-  return (
-    <div className="grid grid-cols-12 gap-5">
-      {/* ── Left: Input Panel ── */}
-      <div className="col-span-3">
-        <Card padding="none" className="overflow-hidden">
-          <div className="p-6">
-            <SectionHeader title="选型参数" subtitle="配置您的光学系统需求" icon={Icons.search} />
-            <div className="mb-4">
-              <PresetSelector
-                domain="industrial"
-                onSelect={(preset: PresetConfigItem) => {
-                  setForm((prev) => ({ ...prev, ...preset.params }));
+  const leftPanel = (
+    <DomainFormPanel
+      title="选型参数"
+      subtitle="配置您的光学系统需求"
+      icon={Icons.search}
+      domain="industrial"
+      onPresetSelect={(preset: PresetConfigItem) => {
+        setForm((prev) => ({ ...prev, ...preset.params }));
+      }}
+      onSubmit={handleSubmit}
+      isLoading={isLoading}
+      progress={progress}
+      stage={stage}
+      submitIcon={Icons.search}
+    >
+      <DomainForm
+        domain="industrial"
+        values={form}
+        onChange={(name, value) => setForm((prev) => ({ ...prev, [name]: value }))}
+        disabled={isLoading}
+      />
+    </DomainFormPanel>
+  );
+
+  const resultsAction = results.length > 0 ? (
+    <div className="flex items-center gap-2">
+      {compareMode ? (
+        <>
+          <Button variant="outline" size="sm" leftIcon={<X size={14} />} onClick={() => { setCompareMode(false); setCompareSelection([]); }}>退出对比</Button>
+          {compareSelection.length >= 2 && (
+            <Button variant="primary" size="sm" leftIcon={<ArrowLeftRight size={14} />} onClick={() => setSelectedResult(null)}>开始对比</Button>
+          )}
+        </>
+      ) : (
+        <div className="flex items-center gap-1">
+          <button title="导出 PDF" onClick={() => handleExport("pdf")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+            <FileText size={14} />
+          </button>
+          <button title="导出 Excel" onClick={() => handleExport("excel")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+            <Table2 size={14} />
+          </button>
+          <button title="导出 CSV" onClick={() => handleExport("csv")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+            {Icons.table}
+          </button>
+          <button title="方案对比" onClick={() => setCompareMode(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+            <ArrowLeftRight size={14} />
+          </button>
+          <button title="保存到项目" onClick={() => setSaveDialogOpen(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+            <FolderPlus size={14} />
+          </button>
+        </div>
+      )}
+    </div>
+  ) : undefined;
+
+  const centerPanel = (
+    <DomainResultsPanel
+      title="匹配结果"
+      subtitle={results.length > 0 ? `共找到 ${results.length} 组匹配方案` : "等待参数输入"}
+      icon={<AlertTriangle size={16} />}
+      action={resultsAction}
+    >
+      {error && (
+        <div className="mb-4 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/30 rounded-xl flex items-start gap-3">
+          <div className="flex-shrink-0 mt-0.5 text-rose-500 dark:text-rose-400">{Icons.alert}</div>
+          <div>
+            <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">发生错误</p>
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-0.5">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {results.length === 0 && !isLoading && !error && (
+        <div className="flex-1">
+          {!hasSearched ? (
+            <div className="h-full flex items-center justify-center">
+              <EmptyState icon={<Search size={24} />} title="等待匹配" description="在左侧配置参数后点击「自动匹配」，系统将为您推荐最优镜头与探测器组合" />
+            </div>
+          ) : diagnostics && diagnostics.length > 0 ? (
+            <DiagnosticsPanel
+              diagnostics={diagnostics}
+              onAdjustParam={(name, value) => {
+                setForm((prev) => ({ ...prev, [name]: value }));
+                toast("info", "参数已调整", `${name} 已设为 ${String(value)}，请重新匹配`);
+              }}
+            />
+          ) : (
+            <div className="h-full flex items-center justify-center">
+              <EmptyState icon={<Search size={24} />} title="未找到匹配方案" description="系统未找到符合条件的镜头与探测器组合，请尝试放宽参数" />
+            </div>
+          )}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="mb-3">
+          <button
+            onClick={() => setWhatIfExpanded((v) => !v)}
+            className="w-full flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Zap size={12} className="text-amber-500" />
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">参数灵敏度分析</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">点击展开调整参数并查看影响</span>
+            </div>
+            {whatIfExpanded ? <ChevronUp size={12} className="text-slate-400" /> : <ChevronDown size={12} className="text-slate-400" />}
+          </button>
+          {whatIfExpanded && (
+            <div className="mt-2">
+              <WhatIfPanel
+                form={form}
+                onChange={(key, value) => {
+                  setForm((prev) => ({ ...prev, [key]: value }));
                 }}
+                onRunWhatIf={handleWhatIf}
+                baselineResults={results}
+                whatIfResults={whatIfResults}
+                isRunning={whatIfRunning}
               />
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <DomainForm
-                domain="industrial"
-                values={form}
-                onChange={(name, value) => setForm((prev) => ({ ...prev, [name]: value }))}
-                disabled={isLoading}
-              />
+          )}
+        </div>
+      )}
 
-              <div className="pt-2">
-                <Button type="submit" variant="primary" size="lg" loading={isLoading} leftIcon={Icons.search} className="w-full">
-                  {isLoading ? "计算中..." : "自动匹配"}
-                </Button>
-              </div>
+      {isLoading && results.length === 0 && (
+        <div className="space-y-2.5">
+          <ResultCardSkeleton />
+          <ResultCardSkeleton />
+          <ResultCardSkeleton />
+        </div>
+      )}
 
-              {isLoading && (
-                <div className="space-y-2 pt-1">
-                  <ProgressBar value={progress} color="indigo" label={stage || "准备中"} showValue />
-                </div>
-              )}
-            </form>
-          </div>
-        </Card>
-      </div>
-
-      {/* ── Center: Results Panel ── */}
-      <div className="col-span-5">
-        <Card padding="none" className="overflow-hidden h-full flex flex-col">
-          <div className="p-6 flex-1 flex flex-col">
-            <SectionHeader
-              title="匹配结果"
-              subtitle={results.length > 0 ? `共找到 ${results.length} 组匹配方案` : "等待参数输入"}
-              icon={<AlertTriangle size={16} />}
-              action={
-                results.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    {compareMode ? (
-                      <>
-                        <Button variant="outline" size="sm" leftIcon={<X size={14} />} onClick={() => { setCompareMode(false); setCompareSelection([]); }}>退出对比</Button>
-                        {compareSelection.length >= 2 && (
-                          <Button variant="primary" size="sm" leftIcon={<ArrowLeftRight size={14} />} onClick={() => setSelectedResult(null)}>开始对比</Button>
-                        )}
-                      </>
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <button title="导出 PDF" onClick={() => handleExport("pdf")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
-                          <FileText size={14} />
-                        </button>
-                        <button title="导出 Excel" onClick={() => handleExport("excel")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
-                          <Table2 size={14} />
-                        </button>
-                        <button title="方案对比" onClick={() => setCompareMode(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
-                          <ArrowLeftRight size={14} />
-                        </button>
-                        <button title="保存到项目" onClick={() => setSaveDialogOpen(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
-                          <FolderPlus size={14} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )
-              }
+      {results.length > 0 && (
+        <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
+          {results.slice(0, 20).map((r, i) => (
+            <ResultCard
+              key={`${r.lens_id}-${r.detector_id}`}
+              result={r}
+              rank={i + 1}
+              isSelected={selectedResult?.lens_id === r.lens_id && selectedResult?.detector_id === r.detector_id}
+              onClick={() => setSelectedResult(r)}
+              compareMode={compareMode}
+              isCompareSelected={compareSelection.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id)}
+              onToggleCompare={() => toggleCompare(r)}
             />
+          ))}
+        </div>
+      )}
+    </DomainResultsPanel>
+  );
 
-            {error && (
-              <div className="mb-4 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/30 rounded-xl flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5 text-rose-500 dark:text-rose-400">{Icons.alert}</div>
-                <div>
-                  <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">发生错误</p>
-                  <p className="text-xs text-rose-600 dark:text-rose-400 mt-0.5">{error}</p>
+  const compareView = (
+    <>
+      <SectionHeader title="方案对比" subtitle={`已选中 ${compareSelection.length} 个方案`} icon={<ArrowLeftRight size={16} />} />
+      <CompareView results={compareSelection} />
+    </>
+  );
+
+  const vizTab = (
+    <div className="space-y-5">
+      {selectedResult && (
+        <MatchExplanation result={selectedResult} domain="industrial" />
+      )}
+      {coverageLoading ? (
+        <CoverageSkeleton width={320} height={280} />
+      ) : (
+        <SensorCoveragePlot data={coverageData as { sensor_rect: { x: number; y: number; w: number; h: number }; image_circle: { cx: number; cy: number; r: number }; vignetting_regions: Array<{ points: Array<{ x: number; y: number }> }>; coverage_ratio: number; safe_zone: { x: number; y: number; w: number; h: number } } | null} width={320} height={280} />
+      )}
+
+      {selectedResult?.score_vector && (
+        <div>
+          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">评分维度</h3>
+          <ScoreRadarChart scoreVector={selectedResult.score_vector} size={220} />
+        </div>
+      )}
+
+      {selectedResult?.derived && (
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">光学参数</h3>
+          {(() => {
+            const d = selectedResult.derived as Record<string, unknown>;
+            const cov = d.coverage as Record<string, unknown> | undefined;
+            const nq = d.nyquist as Record<string, unknown> | undefined;
+            return (
+              <>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {d.focal_length != null && (
+                    <ParamCard icon={Icons.focus} label={<GlossaryTooltip term="focal_length">估算焦距</GlossaryTooltip>} value={d.focal_length as number} unit="mm" highlight />
+                  )}
+                  {d.magnification != null && (
+                    <ParamCard icon={Icons.zoom} label={<GlossaryTooltip term="magnification">放大倍率</GlossaryTooltip>} value={d.magnification as number} highlight />
+                  )}
+                  {d.pixel_accuracy_mm != null && (
+                    <ParamCard icon={Icons.crosshair} label={<GlossaryTooltip term="pixel_accuracy_mm">像素精度</GlossaryTooltip>} value={d.pixel_accuracy_mm as number} unit="mm/px" />
+                  )}
+                  {cov != null && (
+                    <ParamCard icon={Icons.layers} label={<GlossaryTooltip term="coverage_ratio">覆盖比</GlossaryTooltip>} value={`${(((cov.coverage_ratio as number) || 0) * 100).toFixed(0)}%`} highlight={((cov.coverage_ratio as number) || 0) >= 0.9} />
+                  )}
                 </div>
-              </div>
-            )}
 
-            {results.length === 0 && !isLoading && !error && (
-              <div className="flex-1">
-                {!hasSearched ? (
-                  <div className="h-full flex items-center justify-center">
-                    <EmptyState icon={<Search size={24} />} title="等待匹配" description="在左侧配置参数后点击「自动匹配」，系统将为您推荐最优镜头与探测器组合" />
-                  </div>
-                ) : diagnostics && diagnostics.length > 0 ? (
-                  <DiagnosticsPanel
-                    diagnostics={diagnostics}
-                    onAdjustParam={(name, value) => {
-                      setForm((prev) => ({ ...prev, [name]: value }));
-                      toast("info", "参数已调整", `${name} 已设为 ${String(value)}，请重新匹配`);
-                    }}
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center">
-                    <EmptyState icon={<Search size={24} />} title="未找到匹配方案" description="系统未找到符合条件的镜头与探测器组合，请尝试放宽参数" />
+                {cov != null && (
+                  <div className="mt-2 p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"><GlossaryTooltip term="vignetting">渐晕风险</GlossaryTooltip></span>
+                      <Badge variant={cov.vignetting ? "warning" : "success"} size="sm">{cov.vignetting ? "有" : "无"}</Badge>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full transition-all duration-500 ${cov.vignetting ? "bg-gradient-to-r from-amber-400 to-orange-400 w-3/4" : "bg-gradient-to-r from-emerald-400 to-teal-400 w-full"}`} />
+                    </div>
                   </div>
                 )}
-              </div>
-            )}
 
-            {/* What-if panel (collapsible, above results) */}
-            {results.length > 0 && (
-              <div className="mb-3">
-                <button
-                  onClick={() => setWhatIfExpanded((v) => !v)}
-                  className="w-full flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <Zap size={12} className="text-amber-500" />
-                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">参数灵敏度分析</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">点击展开调整参数并查看影响</span>
-                  </div>
-                  {whatIfExpanded ? <ChevronUp size={12} className="text-slate-400" /> : <ChevronDown size={12} className="text-slate-400" />}
-                </button>
-                {whatIfExpanded && (
-                  <div className="mt-2">
-                    <WhatIfPanel
-                      form={form}
-                      onChange={(key, value) => {
-                        setForm((prev) => ({ ...prev, [key]: value }));
-                      }}
-                      onRunWhatIf={handleWhatIf}
-                      baselineResults={results}
-                      whatIfResults={whatIfResults}
-                      isRunning={whatIfRunning}
-                    />
+                {nq != null && (
+                  <div className="mt-3 grid grid-cols-2 gap-2.5">
+                    <ParamCard icon={Icons.activity} label={<GlossaryTooltip term="nyquist_limit">奈奎斯特</GlossaryTooltip>} value={nq.sensor_nyquist_lpmm as number} unit="lp/mm" />
+                    <ParamCard icon={Icons.eye} label={<GlossaryTooltip term="resolution">光学极限</GlossaryTooltip>} value={nq.optical_limit_lpmm as number} unit="lp/mm" />
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* Skeleton loading during match */}
-            {isLoading && results.length === 0 && (
-              <div className="space-y-2.5">
-                <ResultCardSkeleton />
-                <ResultCardSkeleton />
-                <ResultCardSkeleton />
-              </div>
-            )}
-
-            {results.length > 0 && (
-              <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
-                {results.slice(0, 20).map((r, i) => (
-                  <ResultCard
-                    key={`${r.lens_id}-${r.detector_id}`}
-                    result={r}
-                    rank={i + 1}
-                    isSelected={selectedResult?.lens_id === r.lens_id && selectedResult?.detector_id === r.detector_id}
-                    onClick={() => setSelectedResult(r)}
-                    compareMode={compareMode}
-                    isCompareSelected={compareSelection.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id)}
-                    onToggleCompare={() => toggleCompare(r)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </Card>
-      </div>
-
-      {/* ── Right: Visualization / Trace / Knowledge Tabs ── */}
-      <div className="col-span-4">
-        <Card padding="none" className="overflow-hidden h-full flex flex-col">
-          <div className="p-6 flex-1 flex flex-col">
-            {compareMode && compareSelection.length >= 2 ? (
-              <>
-                <SectionHeader title="方案对比" subtitle={`已选中 ${compareSelection.length} 个方案`} icon={<ArrowLeftRight size={16} />} />
-                <CompareView results={compareSelection} />
               </>
-            ) : (
-              <>
-                {/* Tab bar */}
-                <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
-                  {([
-                    { key: "viz" as const, label: "可视化", icon: <BarChart3 size={13} /> },
-                    { key: "trace" as const, label: "推导链", icon: <Activity size={13} /> },
-                    { key: "knowledge" as const, label: "知识库", icon: <BookOpen size={13} /> },
-                    { key: "learning" as const, label: "学习指导", icon: <GraduationCap size={13} /> },
-                  ]).map((t) => (
-                    <button
-                      key={t.key}
-                      onClick={() => setRightTab(t.key)}
-                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
-                        rightTab === t.key
-                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-semibold"
-                          : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                      }`}
-                    >
-                      {t.icon}
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
+            );
+          })()}
+        </div>
+      )}
 
-                {/* Tab content */}
-                <div className="flex-1 overflow-y-auto pr-1">
-                  {rightTab === "viz" && (
-                    <div className="space-y-5">
-                      {coverageLoading ? (
-                        <CoverageSkeleton width={320} height={280} />
-                      ) : (
-                        <SensorCoveragePlot data={coverageData as { sensor_rect: { x: number; y: number; w: number; h: number }; image_circle: { cx: number; cy: number; r: number }; vignetting_regions: Array<{ points: Array<{ x: number; y: number }> }>; coverage_ratio: number; safe_zone: { x: number; y: number; w: number; h: number } } | null} width={320} height={280} />
-                      )}
+      {!selectedResult && !coverageLoading && (
+        <div className="text-center py-8">
+          <EmptyState icon={<Image size={24} />} title="选择匹配方案" description="点击左侧结果卡片查看覆盖图与详细参数" />
+        </div>
+      )}
+    </div>
+  );
 
-                      {selectedResult?.score_vector && (
-                        <div>
-                          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">评分维度</h3>
-                          <ScoreRadarChart scoreVector={selectedResult.score_vector} size={220} />
-                        </div>
-                      )}
+  const traceTab = (
+    <div>
+      {selectedResult?.derivation_chain && selectedResult.derivation_chain.length > 0 ? (
+        <PhysicsTrace traces={selectedResult.derivation_chain} />
+      ) : (
+        <div className="text-center py-8">
+          <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
+        </div>
+      )}
+    </div>
+  );
 
-                      {selectedResult?.derived && (
-                        <div className="space-y-3">
-                          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">光学参数</h3>
-                          {(() => {
-                            const d = selectedResult.derived as Record<string, unknown>;
-                            const cov = d.coverage as Record<string, unknown> | undefined;
-                            const nq = d.nyquist as Record<string, unknown> | undefined;
-                            return (
-                              <>
-                                <div className="grid grid-cols-2 gap-2.5">
-                                  {d.focal_length != null && (
-                                    <ParamCard icon={Icons.focus} label={<GlossaryTooltip term="focal_length">估算焦距</GlossaryTooltip>} value={d.focal_length as number} unit="mm" highlight />
-                                  )}
-                                  {d.magnification != null && (
-                                    <ParamCard icon={Icons.zoom} label={<GlossaryTooltip term="magnification">放大倍率</GlossaryTooltip>} value={d.magnification as number} highlight />
-                                  )}
-                                  {d.pixel_accuracy_mm != null && (
-                                    <ParamCard icon={Icons.crosshair} label={<GlossaryTooltip term="pixel_accuracy_mm">像素精度</GlossaryTooltip>} value={d.pixel_accuracy_mm as number} unit="mm/px" />
-                                  )}
-                                  {cov != null && (
-                                    <ParamCard icon={Icons.layers} label={<GlossaryTooltip term="coverage_ratio">覆盖比</GlossaryTooltip>} value={`${(((cov.coverage_ratio as number) || 0) * 100).toFixed(0)}%`} highlight={((cov.coverage_ratio as number) || 0) >= 0.9} />
-                                  )}
-                                </div>
+  const rightPanel = (
+    <DomainDetailPanel
+      title="可视化分析"
+      subtitle="覆盖图、评分维度与推导链"
+      icon={<BarChart3 size={16} />}
+      activeTab={rightTab}
+      onTabChange={setRightTab}
+      theme="indigo"
+      isCompareActive={compareMode && compareSelection.length >= 2}
+      compareView={compareView}
+      tabs={[
+        { key: "viz", label: "可视化", icon: <BarChart3 size={13} /> },
+        { key: "trace", label: "推导链", icon: <Activity size={13} /> },
+        { key: "knowledge", label: "知识库", icon: <BookOpen size={13} /> },
+        { key: "learning", label: "学习指导", icon: <GraduationCap size={13} /> },
+      ]}
+      viz={vizTab}
+      trace={traceTab}
+      knowledge={
+        <KnowledgePanel
+          form={form}
+          domain="industrial"
+          activeTab="formulas"
+          selectedResult={selectedResult}
+        />
+      }
+      learning={<IndustrialLearningHub form={form} />}
+    />
+  );
 
-                                {cov != null && (
-                                  <div className="mt-2 p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-                                    <div className="flex items-center justify-between mb-2">
-                                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"><GlossaryTooltip term="vignetting">渐晕风险</GlossaryTooltip></span>
-                                      <Badge variant={cov.vignetting ? "warning" : "success"} size="sm">{cov.vignetting ? "有" : "无"}</Badge>
-                                    </div>
-                                    <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                      <div className={`h-full rounded-full transition-all duration-500 ${cov.vignetting ? "bg-gradient-to-r from-amber-400 to-orange-400 w-3/4" : "bg-gradient-to-r from-emerald-400 to-teal-400 w-full"}`} />
-                                    </div>
-                                  </div>
-                                )}
-
-                                {nq != null && (
-                                  <div className="mt-3 grid grid-cols-2 gap-2.5">
-                                    <ParamCard icon={Icons.activity} label={<GlossaryTooltip term="nyquist_limit">奈奎斯特</GlossaryTooltip>} value={nq.sensor_nyquist_lpmm as number} unit="lp/mm" />
-                                    <ParamCard icon={Icons.eye} label={<GlossaryTooltip term="resolution">光学极限</GlossaryTooltip>} value={nq.optical_limit_lpmm as number} unit="lp/mm" />
-                                  </div>
-                                )}
-                              </>
-                            );
-                          })()}
-                        </div>
-                      )}
-
-                      {!selectedResult && !coverageLoading && (
-                        <div className="text-center py-8">
-                          <EmptyState icon={<Image size={24} />} title="选择匹配方案" description="点击左侧结果卡片查看覆盖图与详细参数" />
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {rightTab === "trace" && (
-                    <div>
-                      {selectedResult?.derivation_chain && selectedResult.derivation_chain.length > 0 ? (
-                        <PhysicsTrace traces={selectedResult.derivation_chain} />
-                      ) : (
-                        <div className="text-center py-8">
-                          <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {rightTab === "knowledge" && (
-                    <KnowledgePanel
-                      form={form}
-                      domain="industrial"
-                      activeTab="formulas"
-                      selectedResult={selectedResult}
-                    />
-                  )}
-
-                  {rightTab === "learning" && (
-                    <IndustrialLearningHub form={form} />
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </Card>
-      </div>
-
+  return (
+    <>
+      <DomainPageShell
+        left={leftPanel}
+        center={centerPanel}
+        right={rightPanel}
+      />
       <SaveToProjectDialog
         isOpen={saveDialogOpen}
         onClose={() => setSaveDialogOpen(false)}
@@ -673,6 +682,6 @@ export default function IndustrialPage() {
         detectorId={selectedResult?.detector_id}
         matchResultSnapshot={selectedResult ?? undefined}
       />
-    </div>
+    </>
   );
 }

@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
-import { BookOpen, Lightbulb, Activity, Eye, Focus, Layers, Maximize2, Ruler } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { BookOpen, Lightbulb, Activity, Eye, Focus, Layers, Maximize2, Ruler, HelpCircle } from "lucide-react";
+import LearningQuiz from "./LearningQuiz";
+import { useLearningProgress } from "../hooks/useLearningProgress";
 
 interface Props {
   form: Record<string, unknown>;
 }
 
-type SectionId = "overview" | "relationship" | "focal" | "pixel" | "dof" | "coverage";
+type SectionId = "overview" | "relationship" | "focal" | "pixel" | "dof" | "coverage" | "quiz";
 
 interface Section {
   id: SectionId;
@@ -359,16 +361,80 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   }
 }
 
+const QUIZ_QUESTIONS = [
+  {
+    question: "在工业视觉中，若工作距离不变、目标宽度变小，通常需要怎样调整焦距？",
+    options: ["焦距变短", "焦距变长", "焦距不变", "改用大光圈"],
+    correctIndex: 1,
+    explanation: "目标宽度变小意味着需要更大的放大倍率，因此焦距通常需要变长（或更靠近被测物）。",
+  },
+  {
+    question: "像素精度（mm/px）与放大倍率的关系是什么？",
+    options: ["放大倍率越大，像素精度越差", "放大倍率越大，像素精度越好", "两者无关", "只与像元尺寸有关"],
+    correctIndex: 1,
+    explanation: "像素精度 = 像元尺寸 ÷ 放大倍率。放大倍率越大，每个像素代表的物理尺寸越小，精度越好。",
+  },
+  {
+    question: "镜头像圈必须满足什么条件才能避免暗角？",
+    options: ["像圈大于传感器对角线", "像圈小于传感器对角线", "像圈等于焦距", "像圈等于工作距离"],
+    correctIndex: 0,
+    explanation: "像圈必须覆盖传感器的整个对角线，否则传感器四角接收到的光线不足，产生暗角。",
+  },
+  {
+    question: "以下哪种方式可以增大景深？",
+    options: ["增大光圈（减小 f 值）", "增大焦距并靠近被测物", "缩小光圈（增大 f 值）并缩短焦距", "使用更大传感器"],
+    correctIndex: 2,
+    explanation: "缩小光圈（f 值变大）、缩短焦距、增大对焦距离都会使景深变大，让更大纵深范围保持清晰。",
+  },
+];
+
+function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        完成以下小测验，检验你对工业视觉核心概念的理解。
+      </p>
+      <LearningQuiz title="工业视觉知识测验" questions={QUIZ_QUESTIONS} quizId="industrial-quiz" onComplete={onComplete} />
+    </div>
+  );
+}
+
 export default function IndustrialLearningHub({ form }: Props) {
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
+  const { getDomainProgress, markSectionViewed, markQuizCompleted } = useLearningProgress();
+  const progress = getDomainProgress("industrial");
 
-  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection)!, [activeSection]);
+  useEffect(() => {
+    if (activeSection !== "quiz") {
+      markSectionViewed("industrial", activeSection);
+    }
+  }, [activeSection, markSectionViewed]);
+
+  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection), [activeSection]);
+
+  const totalSections = SECTIONS.length;
+  const viewedCount = SECTIONS.filter((s) => progress.sectionsViewed.includes(s.id)).length;
+  const quizCompleted = progress.quizzesCompleted.includes("industrial-quiz");
+  const progressValue = Math.round(((viewedCount + (quizCompleted ? 1 : 0)) / (totalSections + 1)) * 100);
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2">
         <BookOpen size={16} className="text-indigo-500" />
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">工业视觉学习指南</h3>
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+          <span>学习进度</span>
+          <span>{progressValue}%</span>
+        </div>
+        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-indigo-500 transition-all"
+            style={{ width: `${progressValue}%` }}
+          />
+        </div>
       </div>
 
       {/* Section nav */}
@@ -387,16 +453,41 @@ export default function IndustrialLearningHub({ form }: Props) {
             {section.title}
           </button>
         ))}
+        <button
+          onClick={() => setActiveSection("quiz")}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            activeSection === "quiz"
+              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          <HelpCircle size={14} />
+          测验
+          {quizCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+        </button>
       </div>
 
       {/* Content card */}
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
         <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
-            <span className="text-indigo-500">{currentSection.icon}</span>
-            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+            {currentSection ? (
+              <>
+                <span className="text-indigo-500">{currentSection.icon}</span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+              </>
+            ) : (
+              <>
+                <span className="text-emerald-500"><HelpCircle size={14} /></span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">知识测验</h4>
+              </>
+            )}
           </div>
-          <SectionContent section={activeSection} form={form} />
+          {activeSection === "quiz" ? (
+            <QuizContent onComplete={(score) => markQuizCompleted("industrial", "industrial-quiz", score)} />
+          ) : (
+            <SectionContent section={activeSection} form={form} />
+          )}
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -69,6 +70,11 @@ async def lifespan(app: FastAPI):
     _engine.register_domain(InfraredModule())
     _engine.register_domain(PhotographyModule())
 
+    # In desktop mode, expose the API key to the local sidecar supervisor via stdout
+    # so the Tauri host can forward it to the frontend without leaking it over HTTP.
+    if getattr(app.state, "mode", None) == "desktop":
+        print(f"LENSFIT_API_KEY {_API_KEY}", flush=True)
+
     yield
     _engine = None
 
@@ -115,7 +121,7 @@ app.add_middleware(
 @app.get("/health")
 def health_check():
     """Health check endpoint — Sidecar Supervisor polls this."""
-    return {"status": "ok", "version": "1.0.0", "api_key": _API_KEY}
+    return {"status": "ok", "version": "1.0.0"}
 
 
 # =====================================================================
@@ -400,6 +406,97 @@ def generate_coverage_data(req: CoverageReq):
         return plot.generate()
 
 
+class MtfReq(BaseModel):
+    lens_id: int = Field(..., ge=1)
+    detector_id: int = Field(..., ge=1)
+
+
+@app.post("/api/v1/visualize/mtf")
+def generate_mtf_data(req: MtfReq):
+    """生成镜头 MTF 曲线数据（基于 mtf50_lpmm 估算）."""
+    from lensfit.visualization.mtf import MtfPlotData
+
+    if _engine is None or _session_maker is None:
+        raise HTTPException(status_code=503, detail="Engine not initialized")
+
+    with _session_maker() as session:
+        catalog = CatalogQuery(session)
+        lens = catalog.get_lens_by_id(req.lens_id)
+        det = catalog.get_detector_by_id(req.detector_id)
+
+        if not lens or not det:
+            raise HTTPException(status_code=404, detail="Lens or detector not found")
+
+        mtf50 = lens.mtf50_lpmm
+        if mtf50 is None or mtf50 <= 0:
+            raise HTTPException(
+                status_code=422, detail="Lens has no valid MTF50 data for plotting"
+            )
+
+        plot = MtfPlotData(
+            mtf50_lpmm=mtf50,
+            pixel_size_um=det.pixel_size_um,
+        )
+        return plot.generate()
+
+
+class CocReq(BaseModel):
+    lens_id: int = Field(..., ge=1)
+    detector_id: int = Field(..., ge=1)
+    focus_distance_m: float = Field(default=2.0, gt=0)
+
+
+@app.post("/api/v1/visualize/coc")
+def generate_coc_data(req: CocReq):
+    """生成摄影景深/弥散圆数据（基于镜头与传感器参数估算）."""
+    from lensfit.visualization.coc import CocPlotData
+
+    if _engine is None or _session_maker is None:
+        raise HTTPException(status_code=503, detail="Engine not initialized")
+
+    with _session_maker() as session:
+        catalog = CatalogQuery(session)
+        lens = catalog.get_lens_by_id(req.lens_id)
+        det = catalog.get_detector_by_id(req.detector_id)
+
+        if not lens or not det:
+            raise HTTPException(status_code=404, detail="Lens or detector not found")
+
+        focal_length = lens.focal_length_mm
+        max_aperture = lens.max_aperture
+        if not focal_length or focal_length <= 0:
+            raise HTTPException(
+                status_code=422, detail="Lens has no valid focal length for CoC plot"
+            )
+        if not max_aperture or max_aperture <= 0:
+            raise HTTPException(
+                status_code=422, detail="Lens has no valid aperture for CoC plot"
+            )
+        if (
+            not det.sensor_w_mm
+            or det.sensor_w_mm <= 0
+            or not det.sensor_h_mm
+            or det.sensor_h_mm <= 0
+        ):
+            raise HTTPException(
+                status_code=422, detail="Detector has no valid sensor dimensions for CoC plot"
+            )
+        if not det.pixel_size_um or det.pixel_size_um <= 0:
+            raise HTTPException(
+                status_code=422, detail="Detector has no valid pixel size for CoC plot"
+            )
+
+        plot = CocPlotData(
+            focal_length_mm=focal_length,
+            max_aperture=max_aperture,
+            sensor_w_mm=det.sensor_w_mm,
+            sensor_h_mm=det.sensor_h_mm,
+            pixel_size_um=det.pixel_size_um,
+            focus_distance_m=req.focus_distance_m,
+        )
+        return plot.generate()
+
+
 # =====================================================================
 # Catalog
 # =====================================================================
@@ -587,10 +684,29 @@ def list_setups(project_id: int):
                     "lens_id": s.lens_id,
                     "detector_id": s.detector_id,
                     "created_at": s.created_at.isoformat() if s.created_at else None,
+                    "lens_snapshot": _safe_json_loads(s.lens_snapshot),
+                    "detector_snapshot": _safe_json_loads(s.detector_snapshot),
+                    "match_result_snapshot": _safe_json_loads(s.match_result_snapshot),
+                    "notes": s.notes,
                 }
                 for s in setups
             ],
         }
+
+
+@app.delete("/api/v1/projects/{project_id}")
+def delete_project(project_id: int):
+    """删除项目及其下所有方案."""
+    if _session_maker is None:
+        raise HTTPException(status_code=503, detail="Engine not initialized")
+    with _session_maker() as session:
+        project = session.get(Project, project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        session.query(ProjectSetup).filter(ProjectSetup.project_id == project_id).delete()
+        session.delete(project)
+        session.commit()
+        return {"deleted": True}
 
 
 @app.post("/api/v1/projects/{project_id}/setups")
@@ -632,6 +748,34 @@ def save_setup(project_id: int, req: CreateSetupReq):
         }
 
 
+@app.delete("/api/v1/projects/{project_id}/setups/{setup_id}")
+def delete_setup(project_id: int, setup_id: int):
+    """删除方案."""
+    if _session_maker is None:
+        raise HTTPException(status_code=503, detail="Engine not initialized")
+    with _session_maker() as session:
+        setup = (
+            session.query(ProjectSetup)
+            .filter(ProjectSetup.id == setup_id, ProjectSetup.project_id == project_id)
+            .first()
+        )
+        if not setup:
+            raise HTTPException(status_code=404, detail="Setup not found")
+        session.delete(setup)
+        session.commit()
+        return {"deleted": True}
+
+
+def _safe_json_loads(raw: str | None) -> Any | None:
+    """Safely load a JSON string, returning None on failure."""
+    if not raw:
+        return None
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+
+
 def _model_to_dict(obj):
     """Convert SQLAlchemy model to plain dict (excluding relationships)."""
     from datetime import datetime
@@ -651,7 +795,7 @@ def _model_to_dict(obj):
 class ExportReq(BaseModel):
     requirements: dict
     results: list[dict]
-    format: str = Field(default="pdf", pattern=r"^(pdf|excel)$")
+    format: str = Field(default="pdf", pattern=r"^(pdf|excel|csv)$")
     top_k: int = Field(default=10, ge=1, le=1000)
     diagnostics: list[dict] | None = None
     what_if_results: list[dict] | None = None
@@ -659,7 +803,7 @@ class ExportReq(BaseModel):
 
 @app.post("/api/v1/export")
 def export_results(req: ExportReq):
-    """导出匹配结果为 PDF 或 Excel."""
+    """导出匹配结果为 PDF、Excel 或 CSV."""
     try:
         if req.format == "pdf":
             from lensfit.export.pdf_exporter import generate_pdf_report
@@ -685,8 +829,20 @@ def export_results(req: ExportReq):
                 media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 headers={"Content-Disposition": "attachment; filename=lensfit-report.xlsx"},
             )
+        elif req.format == "csv":
+            from lensfit.export.csv_exporter import generate_csv_report
+
+            csv_bytes = generate_csv_report(
+                req.requirements, req.results, req.top_k,
+                diagnostics=req.diagnostics, what_if_results=req.what_if_results,
+            )
+            return FastAPIResponse(
+                content=csv_bytes,
+                media_type="text/csv; charset=utf-8",
+                headers={"Content-Disposition": "attachment; filename=lensfit-report.csv"},
+            )
         else:
-            raise HTTPException(status_code=400, detail="Unsupported format. Use 'pdf' or 'excel'.")
+            raise HTTPException(status_code=400, detail="Unsupported format. Use 'pdf', 'excel' or 'csv'.")  # noqa: E501
     except HTTPException:
         raise
     except Exception as e:
@@ -790,6 +946,7 @@ def main():
     args = parser.parse_args()
 
     app.state.db_url = args.db
+    app.state.mode = args.mode
 
     import uvicorn
     uvicorn.run(

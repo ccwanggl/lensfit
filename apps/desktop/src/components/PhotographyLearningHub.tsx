@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
-import { BookOpen, Lightbulb, Aperture, Camera, Eye, Ruler, Focus } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { BookOpen, Lightbulb, Aperture, Camera, Eye, Ruler, Focus, HelpCircle } from "lucide-react";
+import LearningQuiz from "./LearningQuiz";
+import { useLearningProgress } from "../hooks/useLearningProgress";
 
 interface Props {
   form: Record<string, unknown>;
 }
 
-type SectionId = "overview" | "focal" | "aperture" | "sensor" | "bokeh";
+type SectionId = "overview" | "focal" | "aperture" | "sensor" | "bokeh" | "quiz";
 
 interface Section {
   id: SectionId;
@@ -240,15 +242,80 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   }
 }
 
+const QUIZ_QUESTIONS = [
+  {
+    question: "在传感器尺寸相同的情况下，焦距越短，视角会怎么变化？",
+    options: ["视角越窄", "视角越宽", "视角不变", "景深越浅"],
+    correctIndex: 1,
+    explanation: "焦距与视角成反比：焦距越短，视角越宽，适合拍摄风景、建筑等大场景。",
+  },
+  {
+    question: "光圈值 f/1.4 与 f/5.6 相比，哪个光圈孔径更大、进光更多？",
+    options: ["f/1.4", "f/5.6", "一样大", "取决于焦距"],
+    correctIndex: 0,
+    explanation: "f 值越小，光圈孔径越大，进光量越多，背景虚化也越强。",
+  },
+  {
+    question: "全画幅相机相比 APS-C 相机，在相同焦距下通常有什么特点？",
+    options: ["视角更窄", "景深更浅、高感更好", "体积更小", "像素一定更多"],
+    correctIndex: 1,
+    explanation: "画幅越大，同样焦距下视角越广、景深越浅，且单个像素面积通常更大，高感表现更好。",
+  },
+  {
+    question: "以下哪种组合最容易获得浅景深、背景虚化效果？",
+    options: ["广角 + 小光圈 + 远距离", "长焦 + 大光圈 + 近距离", "短焦 + 小光圈 + 远距离", "标准镜头 + 中等光圈"],
+    correctIndex: 1,
+    explanation: "长焦、大光圈、近距离对焦都会让景深变浅，从而增强背景虚化。",
+  },
+];
+
+function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        完成以下小测验，检验你对摄影系统核心概念的理解。
+      </p>
+      <LearningQuiz title="摄影知识测验" questions={QUIZ_QUESTIONS} quizId="photography-quiz" onComplete={onComplete} />
+    </div>
+  );
+}
+
 export default function PhotographyLearningHub({ form }: Props) {
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
-  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection)!, [activeSection]);
+  const { getDomainProgress, markSectionViewed, markQuizCompleted } = useLearningProgress();
+  const progress = getDomainProgress("photography");
+
+  useEffect(() => {
+    if (activeSection !== "quiz") {
+      markSectionViewed("photography", activeSection);
+    }
+  }, [activeSection, markSectionViewed]);
+
+  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection), [activeSection]);
+
+  const totalSections = SECTIONS.length;
+  const viewedCount = SECTIONS.filter((s) => progress.sectionsViewed.includes(s.id)).length;
+  const quizCompleted = progress.quizzesCompleted.includes("photography-quiz");
+  const progressValue = Math.round(((viewedCount + (quizCompleted ? 1 : 0)) / (totalSections + 1)) * 100);
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2">
         <BookOpen size={16} className="text-indigo-500" />
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">摄影学习指南</h3>
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+          <span>学习进度</span>
+          <span>{progressValue}%</span>
+        </div>
+        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-indigo-500 transition-all"
+            style={{ width: `${progressValue}%` }}
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-4">
@@ -266,15 +333,40 @@ export default function PhotographyLearningHub({ form }: Props) {
             {section.title}
           </button>
         ))}
+        <button
+          onClick={() => setActiveSection("quiz")}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            activeSection === "quiz"
+              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          <HelpCircle size={14} />
+          测验
+          {quizCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+        </button>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
         <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
-            <span className="text-indigo-500">{currentSection.icon}</span>
-            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+            {currentSection ? (
+              <>
+                <span className="text-indigo-500">{currentSection.icon}</span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+              </>
+            ) : (
+              <>
+                <span className="text-emerald-500"><HelpCircle size={14} /></span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">知识测验</h4>
+              </>
+            )}
           </div>
-          <SectionContent section={activeSection} form={form} />
+          {activeSection === "quiz" ? (
+            <QuizContent onComplete={(score) => markQuizCompleted("photography", "photography-quiz", score)} />
+          ) : (
+            <SectionContent section={activeSection} form={form} />
+          )}
         </div>
       </div>
 

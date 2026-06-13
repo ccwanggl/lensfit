@@ -31,17 +31,31 @@ async function getEndpoint(): Promise<string> {
 
 async function getApiKey(): Promise<string | null> {
   if (_cachedApiKey) return _cachedApiKey;
-  try {
-    const base = await getEndpoint();
-    const res = await fetch(`${base}/health`);
-    if (res.ok) {
-      const data = (await res.json()) as { api_key?: string };
-      _cachedApiKey = data.api_key ?? null;
+
+  const isTauri =
+    typeof window !== "undefined" &&
+    ("__TAURI_INTERNALS__" in window || "__TAURI__" in window);
+
+  if (isTauri) {
+    try {
+      const { invoke } = await import("@tauri-apps/api/core");
+      const key = await invoke<string | null>("get_engine_api_key");
+      _cachedApiKey = key ?? null;
+      return _cachedApiKey;
+    } catch {
+      // fall through
     }
-  } catch {
-    // ignore
   }
-  return _cachedApiKey;
+
+  // Web/dev fallback: the key can be injected via VITE_ENGINE_API_KEY.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const envKey = ((import.meta as any).env?.VITE_ENGINE_API_KEY) as string | undefined;
+  if (envKey) {
+    _cachedApiKey = envKey;
+    return _cachedApiKey;
+  }
+
+  return null;
 }
 
 /* ─── Types ─── */
@@ -105,6 +119,10 @@ export interface SetupItem {
   lens_id?: number;
   detector_id?: number;
   created_at: string;
+  lens_snapshot?: Record<string, unknown> | null;
+  detector_snapshot?: Record<string, unknown> | null;
+  match_result_snapshot?: Record<string, unknown> | null;
+  notes?: string | null;
 }
 
 /* ─── API Core ─── */
@@ -257,6 +275,57 @@ export async function generateCoverage(lensId: number, detectorId: number) {
   });
 }
 
+export interface MtfPoint {
+  frequency_lpmm: number;
+  mtf: number;
+  is_nyquist: boolean;
+}
+
+export interface MtfData {
+  lens_mtf50_lpmm: number;
+  detector_nyquist_lpmm: number | null;
+  points: MtfPoint[];
+}
+
+export async function generateMtf(lensId: number, detectorId: number) {
+  return apiFetch<MtfData>("/api/v1/visualize/mtf", {
+    method: "POST",
+    body: JSON.stringify({ lens_id: lensId, detector_id: detectorId }),
+  });
+}
+
+export interface CocApertureData {
+  aperture: number;
+  hyperfocal_m: number;
+  near_limit_m: number;
+  far_limit_m: number | null;
+  dof_total_m: number | null;
+}
+
+export interface CocData {
+  coc_mm: number;
+  sensor_diag_mm: number;
+  focus_distance_m: number;
+  focal_length_mm: number;
+  max_aperture: number;
+  apertures: CocApertureData[];
+}
+
+export async function generateCoc(
+  lensId: number,
+  detectorId: number,
+  focusDistanceM: number = 2.0
+) {
+  return apiFetch<CocData>("/api/v1/visualize/coc", {
+    method: "POST",
+    body: JSON.stringify({
+      lens_id: lensId,
+      detector_id: detectorId,
+      focus_distance_m: focusDistanceM,
+    }),
+  });
+}
+
 export async function listLenses(params?: {
   category?: string;
   mount?: string;
@@ -288,7 +357,7 @@ export async function listDetectors(params?: {
 }
 
 export async function exportReport(
-  format: "pdf" | "excel",
+  format: "pdf" | "excel" | "csv",
   requirements: object,
   results: object[],
   topK: number = 10,
@@ -346,6 +415,12 @@ export async function createProject(data: { name: string; description?: string; 
   });
 }
 
+export async function deleteProject(projectId: number) {
+  return apiFetch<{ deleted: boolean }>(`/api/v1/projects/${projectId}`, {
+    method: "DELETE",
+  });
+}
+
 /* ─── Setups ─── */
 export async function listSetups(projectId: number) {
   return apiFetch<ApiListResponse<SetupItem>>(`/api/v1/projects/${projectId}/setups`);
@@ -358,6 +433,12 @@ export async function saveSetup(
   return apiFetch<SetupItem>(`/api/v1/projects/${projectId}/setups`, {
     method: "POST",
     body: JSON.stringify(data),
+  });
+}
+
+export async function deleteSetup(projectId: number, setupId: number) {
+  return apiFetch<{ deleted: boolean }>(`/api/v1/projects/${projectId}/setups/${setupId}`, {
+    method: "DELETE",
   });
 }
 

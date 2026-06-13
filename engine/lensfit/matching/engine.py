@@ -108,6 +108,12 @@ class MatchingEngine:
                     ),
                 )
 
+                # 复式显微镜通常使用专用物镜接口，排除 C-mount 工业镜头
+                lenses = [
+                    lens_item for lens_item in lenses
+                    if str(getattr(lens_item, "mount_type", "") or "").lower() != "c-mount"
+                ]
+
             # 查询显微镜相机
             detectors = catalog.query_detectors(
                 category="microscope",
@@ -159,6 +165,26 @@ class MatchingEngine:
                     lens_item for lens_item in lenses
                     if (lens_item.focal_length_max or lens_item.focal_length_mm)
                     > lens_item.focal_length_mm * 1.01
+                ]
+
+            # 品牌过滤
+            brand = params.get("brand", "all")
+            if brand and brand != "all":
+                brand_lower = str(brand).lower()
+                lenses = [
+                    lens_item for lens_item in lenses
+                    if str(getattr(lens_item, "model", "") or "").lower().startswith(brand_lower)
+                ]
+
+            # 显式焦距范围过滤
+            focal_min = params.get("focal_range_min")
+            focal_max = params.get("focal_range_max")
+            if focal_min is not None or focal_max is not None:
+                focal_min_val = float(focal_min) if focal_min is not None else 0.0
+                focal_max_val = float(focal_max) if focal_max is not None else 9999.0
+                lenses = [
+                    lens_item for lens_item in lenses
+                    if focal_min_val <= (lens_item.focal_length_mm or 0) <= focal_max_val
                 ]
 
             # 查询相机机身（探测器）

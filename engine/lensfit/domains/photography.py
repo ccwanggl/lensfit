@@ -170,6 +170,12 @@ class PhotographyModule(DomainModule):
                 is_benefit=True,
             ),
             ScoringDimension(
+                name="brand_match",
+                label="品牌偏好",
+                weight=1.0,
+                is_benefit=True,
+            ),
+            ScoringDimension(
                 name="nyquist_match",
                 label="分辨率匹配",
                 weight=1.0,
@@ -232,6 +238,14 @@ class PhotographyModule(DomainModule):
         else:
             cost_efficiency = 0.5
 
+        # 品牌偏好
+        brand = params.get("brand", "all")
+        lens_model = getattr(lens, "model", "") or ""
+        if brand and brand != "all":
+            brand_score = 1.0 if lens_model.lower().startswith(str(brand).lower()) else 0.2
+        else:
+            brand_score = 0.5
+
         result: dict[str, Any] = {
             "focal_length_mm": round(focal, 1),
             "focal_range_mm": f"{focal_min}-{focal_max}" if is_zoom else f"{focal}",
@@ -244,6 +258,7 @@ class PhotographyModule(DomainModule):
             "lens_aperture": round(lens_aperture, 2),
             "required_aperture": round(req_aperture, 2),
             "cost_efficiency": round(cost_efficiency, 4),
+            "brand_score": round(brand_score, 4),
             "lens_price_usd": round(lens_price, 2),
         }
 

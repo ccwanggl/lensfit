@@ -9,6 +9,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
+from lensfit.export.sanitize import sanitize_spreadsheet_value
+
 
 def generate_excel_report(
     requirements: dict[str, Any],
@@ -45,11 +47,9 @@ def generate_excel_report(
     )
     alt_fill = PatternFill(start_color="F9FAFB", end_color="F9FAFB", fill_type="solid")
 
-    def _sanitize(val):
-        """防 Excel 公式注入：以 = + - @ 开头的字符串前加单引号."""
-        if isinstance(val, str) and val and val[0] in "=+-@":
-            return "'" + val
-        return val
+    def _sanitize(val: Any) -> Any:
+        """防 Excel 公式注入."""
+        return sanitize_spreadsheet_value(val)
 
     # Title
     ws["A1"] = "LensFit 选型报告"

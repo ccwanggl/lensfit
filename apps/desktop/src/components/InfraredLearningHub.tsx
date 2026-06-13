@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
-import { BookOpen, Lightbulb, Radio, Thermometer, Eye, Ruler } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { BookOpen, Lightbulb, Radio, Thermometer, Eye, Ruler, HelpCircle } from "lucide-react";
+import LearningQuiz from "./LearningQuiz";
+import { useLearningProgress } from "../hooks/useLearningProgress";
 
 interface Props {
   form: Record<string, unknown>;
 }
 
-type SectionId = "overview" | "bands" | "fov" | "resolution" | "sensitivity";
+type SectionId = "overview" | "bands" | "fov" | "resolution" | "sensitivity" | "quiz";
 
 interface Section {
   id: SectionId;
@@ -275,15 +277,80 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   }
 }
 
+const QUIZ_QUESTIONS = [
+  {
+    question: "红外成像中，LWIR 波段通常用于检测什么类型的目标？",
+    options: ["高温火焰", "常温人体/热目标", "硅片内部缺陷", "短距离光纤通信"],
+    correctIndex: 1,
+    explanation: "LWIR（长波红外，8–14 μm）主要用于常温目标热成像，如人体、建筑热损耗检测。",
+  },
+  {
+    question: "IFOV（瞬时视场角）越小，通常意味着什么？",
+    options: ["覆盖范围越广", "空间分辨率越高", "热灵敏度越好", "帧率越高"],
+    correctIndex: 1,
+    explanation: "IFOV 越小，单个像素对应的地物尺寸越小，空间分辨率越高，适合远距离小目标检测。",
+  },
+  {
+    question: "NETD 是衡量红外系统哪方面性能的指标？",
+    options: ["空间分辨率", "热灵敏度", "帧率", "波段范围"],
+    correctIndex: 1,
+    explanation: "NETD（噪声等效温差）表示系统能分辨的最小温度差，值越小热灵敏度越好。",
+  },
+  {
+    question: "红外镜头与普通可见光镜头的主要区别是什么？",
+    options: ["焦距更长", "需要针对红外波段镀膜", "光圈更大", "重量更轻"],
+    correctIndex: 1,
+    explanation: "红外镜头需要在特定波段具有高透过率，因此镀膜和玻璃材料都与可见光镜头不同。",
+  },
+];
+
+function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        完成以下小测验，检验你对红外成像核心概念的理解。
+      </p>
+      <LearningQuiz title="红外成像知识测验" questions={QUIZ_QUESTIONS} quizId="infrared-quiz" onComplete={onComplete} />
+    </div>
+  );
+}
+
 export default function InfraredLearningHub({ form }: Props) {
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
-  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection)!, [activeSection]);
+  const { getDomainProgress, markSectionViewed, markQuizCompleted } = useLearningProgress();
+  const progress = getDomainProgress("infrared");
+
+  useEffect(() => {
+    if (activeSection !== "quiz") {
+      markSectionViewed("infrared", activeSection);
+    }
+  }, [activeSection, markSectionViewed]);
+
+  const currentSection = useMemo(() => SECTIONS.find((s) => s.id === activeSection), [activeSection]);
+
+  const totalSections = SECTIONS.length;
+  const viewedCount = SECTIONS.filter((s) => progress.sectionsViewed.includes(s.id)).length;
+  const quizCompleted = progress.quizzesCompleted.includes("infrared-quiz");
+  const progressValue = Math.round(((viewedCount + (quizCompleted ? 1 : 0)) / (totalSections + 1)) * 100);
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2">
         <BookOpen size={16} className="text-indigo-500" />
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">红外成像学习指南</h3>
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+          <span>学习进度</span>
+          <span>{progressValue}%</span>
+        </div>
+        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-indigo-500 transition-all"
+            style={{ width: `${progressValue}%` }}
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-4">
@@ -301,15 +368,40 @@ export default function InfraredLearningHub({ form }: Props) {
             {section.title}
           </button>
         ))}
+        <button
+          onClick={() => setActiveSection("quiz")}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            activeSection === "quiz"
+              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
+              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          <HelpCircle size={14} />
+          测验
+          {quizCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+        </button>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
         <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
-            <span className="text-indigo-500">{currentSection.icon}</span>
-            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+            {currentSection ? (
+              <>
+                <span className="text-indigo-500">{currentSection.icon}</span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{currentSection.title}</h4>
+              </>
+            ) : (
+              <>
+                <span className="text-emerald-500"><HelpCircle size={14} /></span>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">知识测验</h4>
+              </>
+            )}
           </div>
-          <SectionContent section={activeSection} form={form} />
+          {activeSection === "quiz" ? (
+            <QuizContent onComplete={(score) => markQuizCompleted("infrared", "infrared-quiz", score)} />
+          ) : (
+            <SectionContent section={activeSection} form={form} />
+          )}
         </div>
       </div>
 

@@ -24,6 +24,7 @@ class ScoringEngine:
             # Photography domain scorers
             "focal_match": self._score_focal_match,
             "aperture_value": self._score_aperture_value,
+            "brand_match": self._score_brand_match,
             # Microscope / Infrared domain scorers
             "resolution_match": self._score_resolution_match,
             "magnification_accuracy": self._score_magnification_accuracy,
@@ -157,6 +158,12 @@ class ScoringEngine:
         """摄影光圈价值评分 — 直接使用 calculate_derived 中计算的 aperture_score."""
         derived = getattr(candidate, "derived", {}) or {}
         return derived.get("aperture_score", 0.5)
+
+    @staticmethod
+    def _score_brand_match(candidate: Any) -> float:
+        """摄影品牌偏好评分 — 直接使用 calculate_derived 中计算的 brand_score."""
+        derived = getattr(candidate, "derived", {}) or {}
+        return derived.get("brand_score", 0.5)
 
     # ── Microscope domain scorers ──
 
