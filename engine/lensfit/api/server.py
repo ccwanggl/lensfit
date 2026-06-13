@@ -952,8 +952,10 @@ def main():
     app.state.mode = args.mode
 
     import uvicorn
+    # Pass the app object directly so uvicorn does not re-import the module
+    # and discard state (e.g. mode/db_url) set above.
     uvicorn.run(
-        "lensfit.api.server:app",
+        app,
         host=args.host,
         port=args.port,
         log_level="info",
