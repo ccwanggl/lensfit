@@ -35,6 +35,16 @@ def npm_executable() -> str:
     return shutil.which("npm") or "npm"
 
 
+def uv_executable() -> str | None:
+    """Return uv command path if available."""
+    return shutil.which("uv")
+
+
+def use_uv() -> bool:
+    """Check whether to use uv for venv/pip operations."""
+    return uv_executable() is not None
+
+
 def run(cmd: list[str], cwd: Path | None = None, check: bool = True) -> None:
     """Run a command, printing it first."""
     printable = " ".join(str(c) for c in cmd)
@@ -42,13 +52,33 @@ def run(cmd: list[str], cwd: Path | None = None, check: bool = True) -> None:
     subprocess.run(cmd, cwd=cwd, check=check)
 
 
+def create_venv(venv_dir: Path) -> None:
+    """Create a Python virtual environment, preferring uv when available."""
+    if use_uv():
+        print("[BUILD] Creating Python virtual environment with uv...")
+        run([uv_executable(), "venv", str(venv_dir)], cwd=project_root())
+    else:
+        print("[BUILD] Creating Python virtual environment with venv module...")
+        run([sys.executable, "-m", "venv", str(venv_dir)], cwd=project_root())
+
+
+def install_engine_deps(py: Path, engine_dir: Path) -> None:
+    """Install engine dependencies in editable mode."""
+    if use_uv():
+        print("[BUILD] Installing engine dependencies with uv (editable mode)...")
+        run([uv_executable(), "pip", "install", "-e", ".[dev]"], cwd=engine_dir)
+    else:
+        print("[BUILD] Installing engine dependencies with pip (editable mode)...")
+        run([str(py), "-m", "pip", "install", "--upgrade", "pip"], cwd=engine_dir)
+        run([str(py), "-m", "pip", "install", "-e", ".[dev]"], cwd=engine_dir)
+
+
 def ensure_venv(venv_dir: Path) -> Path:
     """Create virtual environment and install engine dependencies if needed."""
     py = python_executable(venv_dir)
 
     if not venv_dir.exists():
-        print("[BUILD] Creating Python virtual environment...")
-        run([sys.executable, "-m", "venv", str(venv_dir)], cwd=project_root())
+        create_venv(venv_dir)
 
     if not py.exists():
         print(f"[ERROR] Python not found at {py}", file=sys.stderr)
@@ -63,10 +93,7 @@ def ensure_venv(venv_dir: Path) -> Path:
             text=True,
         )
     except subprocess.CalledProcessError:
-        print("[BUILD] Installing engine dependencies (editable mode)...")
-        engine_dir = project_root() / "engine"
-        run([str(py), "-m", "pip", "install", "--upgrade", "pip"], cwd=engine_dir)
-        run([str(py), "-m", "pip", "install", "-e", ".[dev]"], cwd=engine_dir)
+        install_engine_deps(py, project_root() / "engine")
 
     return py
 

@@ -79,6 +79,16 @@ def npm_executable() -> str:
     return shutil.which("npm") or "npm"
 
 
+def uv_executable() -> str | None:
+    """Return uv command path if available."""
+    return shutil.which("uv")
+
+
+def use_uv() -> bool:
+    """Check whether to use uv for venv/pip operations."""
+    return uv_executable() is not None
+
+
 def run(
     cmd: list[str],
     cwd: Path | None = None,
@@ -109,13 +119,33 @@ def wait_for_backend(url: str, timeout: float = 30.0, interval: float = 0.5) -> 
     return False
 
 
+def create_venv(venv_dir: Path) -> None:
+    """Create a Python virtual environment, preferring uv when available."""
+    if use_uv():
+        info("Creating Python virtual environment with uv...")
+        run([uv_executable(), "venv", str(venv_dir)], cwd=project_root())
+    else:
+        info("Creating Python virtual environment with venv module...")
+        run([sys.executable, "-m", "venv", str(venv_dir)], cwd=project_root())
+
+
+def install_engine_deps(py: Path, engine_dir: Path) -> None:
+    """Install engine dependencies in editable mode."""
+    if use_uv():
+        info("Installing engine dependencies with uv (editable mode)...")
+        run([uv_executable(), "pip", "install", "-e", ".[dev]"], cwd=engine_dir)
+    else:
+        info("Installing engine dependencies with pip (editable mode)...")
+        run([str(py), "-m", "pip", "install", "--upgrade", "pip"], cwd=engine_dir)
+        run([str(py), "-m", "pip", "install", "-e", ".[dev]"], cwd=engine_dir)
+
+
 def ensure_venv(venv_dir: Path) -> Path:
     """Create virtual environment and install engine dependencies if needed."""
     py = python_executable(venv_dir)
 
     if not venv_dir.exists():
-        info("Creating Python virtual environment...")
-        run([sys.executable, "-m", "venv", str(venv_dir)], cwd=project_root())
+        create_venv(venv_dir)
 
     if not py.exists():
         error(f"Virtual environment created but Python not found at {py}")
@@ -125,10 +155,7 @@ def ensure_venv(venv_dir: Path) -> Path:
     try:
         run([str(py), "-c", "import lensfit"], capture=True, check=True)
     except subprocess.CalledProcessError:
-        info("Installing engine dependencies (editable mode)...")
-        engine_dir = project_root() / "engine"
-        run([str(py), "-m", "pip", "install", "--upgrade", "pip"], cwd=engine_dir)
-        run([str(py), "-m", "pip", "install", "-e", ".[dev]"], cwd=engine_dir)
+        install_engine_deps(py, project_root() / "engine")
 
     return py
 

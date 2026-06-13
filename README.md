@@ -81,6 +81,7 @@ LensFit 是一款面向光学工程师和系统集成商的智能镜头与传感
 - Node.js 20+
 - Python 3.12+
 - Rust 1.75+（用于 Tauri 构建）
+- [uv](https://docs.astral.sh/uv/)（可选但强烈推荐，用于加速虚拟环境与依赖安装）
 
 #### 一键启动开发环境（推荐）
 
@@ -100,6 +101,8 @@ python3 scripts/dev.py
 
 脚本会：
 1. 创建 `engine/.venv` 并安装 Python 依赖（可编辑模式）
+   - 若已安装 [uv](https://docs.astral.sh/uv/)，自动使用 `uv venv` + `uv pip install`
+   - 否则回退到标准 `venv` + `pip`
 2. 安装前端 `node_modules`
 3. 运行 Alembic 数据库迁移
 4. 导入种子数据（如数据库不存在）
@@ -113,10 +116,18 @@ python3 scripts/dev.py
 ```bash
 # 终端 1：启动后端
 cd engine
-python -m venv .venv
+
+# 创建虚拟环境（二选一）
+uv venv .venv
+# python -m venv .venv
+
 .venv\Scripts\activate          # Windows
 # source .venv/bin/activate     # macOS / Linux
-pip install -e ".[dev]"
+
+# 安装依赖（二选一）
+uv pip install -e ".[dev]"
+# pip install -e ".[dev]"
+
 alembic upgrade head
 python database/import_scripts/import_seed.py
 python -m lensfit.api.server --port 8765
@@ -253,11 +264,14 @@ LensFit is an intelligent lens and sensor matching system for optical engineers 
 
 ### Quick Start
 
+> Note: Python version is 3.12+ to match `pyproject.toml`.
+
 #### Prerequisites
 
 - Node.js 20+
 - Python 3.12+
 - Rust 1.75+ (for Tauri builds)
+- [uv](https://docs.astral.sh/uv/) (optional but strongly recommended for faster venv and dependency management)
 
 #### One-Command Development Launcher (Recommended)
 
@@ -277,6 +291,8 @@ python3 scripts/dev.py
 
 The script will:
 1. Create `engine/.venv` and install Python dependencies in editable mode
+   - If [uv](https://docs.astral.sh/uv/) is installed, it uses `uv venv` + `uv pip install`
+   - Otherwise falls back to standard `venv` + `pip`
 2. Install frontend `node_modules`
 3. Run Alembic database migrations
 4. Import seed data (if the database does not exist)
@@ -290,10 +306,18 @@ If you prefer to start the backend and frontend separately:
 ```bash
 # Terminal 1: Start backend
 cd engine
-python -m venv .venv
+
+# Create virtual environment (choose one)
+uv venv .venv
+# python -m venv .venv
+
 .venv\Scripts\activate          # Windows
 # source .venv/bin/activate     # macOS / Linux
-pip install -e ".[dev]"
+
+# Install dependencies (choose one)
+uv pip install -e ".[dev]"
+# pip install -e ".[dev]"
+
 alembic upgrade head
 python database/import_scripts/import_seed.py
 python -m lensfit.api.server --port 8765

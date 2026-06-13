@@ -16,6 +16,18 @@ LensFit 采用 **Tauri v2 + React 前端 + Python FastAPI 后端引擎** 的架�
 
 > 提示：Windows 用户请确保 Python 与 Node.js 已加入系统 `PATH`。
 
+### 可选但强烈推荐：uv
+
+[uv](https://docs.astral.sh/uv/) 是 Astral 出品的极速 Python 包管理器与虚拟环境工具。安装 uv 后，启动脚本会自动使用 `uv venv` 和 `uv pip install` 替代标准库的 `venv` 与 `pip`，显著提升依赖安装速度。
+
+```bash
+# 安装 uv（任选一种）
+curl -LsSf https://astral.sh/uv/install.sh | sh          # macOS / Linux
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex" # Windows
+```
+
+如果未安装 uv，脚本会自动回退到 `python -m venv` + `pip`。
+
 ---
 
 ## 2. 仓库结构与约定
@@ -59,14 +71,19 @@ python3 scripts/dev.py
 
 脚本行为：
 
-1. 检测 `engine/.venv`；不存在则创建并安装 `pip install -e ".[dev]"`
-2. 检测 `apps/desktop/node_modules`；不存在则执行 `npm install`
-3. 运行 `alembic upgrade head` 应用数据库迁移
-4. 若 `lensfit.db` 不存在，执行种子数据导入
-5. 启动 FastAPI 后端（默认 `127.0.0.1:8765`）
-6. 等待 `/health` 就绪
-7. 启动 Vite 前端开发服务器（默认 `http://localhost:5173`）
-8. 捕获 `Ctrl+C` 后优雅停止两个子进程
+1. 检测 `engine/.venv`；不存在则创建虚拟环境
+   - 若系统已安装 [uv](https://docs.astral.sh/uv/)，使用 `uv venv`
+   - 否则回退到 `python -m venv`
+2. 安装引擎依赖（可编辑模式）
+   - uv 环境：`uv pip install -e ".[dev]"`
+   - 标准环境：`pip install -e ".[dev]"`
+3. 检测 `apps/desktop/node_modules`；不存在则执行 `npm install`
+4. 运行 `alembic upgrade head` 应用数据库迁移
+5. 若 `lensfit.db` 不存在，执行种子数据导入
+6. 启动 FastAPI 后端（默认 `127.0.0.1:8765`）
+7. 等待 `/health` 就绪
+8. 启动 Vite 前端开发服务器（默认 `http://localhost:5173`）
+9. 捕获 `Ctrl+C` 后优雅停止两个子进程
 
 ### 3.2 包装器脚本
 
@@ -106,8 +123,11 @@ python scripts/dev.py --port 9876
 ```bash
 cd engine
 
-# 创建虚拟环境
-python -m venv .venv
+# 创建虚拟环境（二选一）
+# 方式 A：使用 uv（推荐，更快）
+uv venv .venv
+# 方式 B：使用标准库 venv
+# python -m venv .venv
 
 # 激活虚拟环境
 # Windows:
@@ -115,8 +135,9 @@ python -m venv .venv
 # macOS / Linux:
 # source .venv/bin/activate
 
-# 安装依赖
-pip install -e ".[dev]"
+# 安装依赖（二选一）
+uv pip install -e ".[dev]"
+# 或：pip install -e ".[dev]"
 
 # 应用数据库迁移
 alembic upgrade head
