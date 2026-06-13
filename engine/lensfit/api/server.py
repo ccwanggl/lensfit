@@ -84,8 +84,11 @@ _API_KEY = os.environ.get("LENSFIT_API_KEY") or os.urandom(32).hex()
 
 
 def verify_api_key(request: Request) -> None:
-    """Verify X-API-Key header for non-health endpoints."""
+    """Verify X-API-Key header for non-health endpoints in desktop mode."""
     if request.url.path == "/health":
+        return
+    # In dev/web mode we rely on local network/CORS instead of the API key.
+    if getattr(request.app.state, "mode", "desktop") != "desktop":
         return
     key = request.headers.get("X-API-Key")
     if key != _API_KEY:

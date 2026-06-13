@@ -238,6 +238,8 @@ def main() -> NoReturn:
         str(args.port),
         "--host",
         BACKEND_HOST,
+        "--mode",
+        "dev",
         "--db",
         "sqlite:///lensfit.db",
     ]
