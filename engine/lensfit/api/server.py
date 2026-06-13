@@ -97,7 +97,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",   # Vite dev
+        "http://127.0.0.1:5173",   # Vite dev
+        "http://localhost:5173",   # Vite dev fallback
         "http://localhost:1420",   # Tauri dev
         "http://localhost:3000",   # Alternative dev
         "tauri://localhost",       # Tauri production
