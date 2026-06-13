@@ -193,7 +193,6 @@ class InfraredModule(DomainModule):
         focal = getattr(lens, "focal_length_mm", None) or 25.0
         focal_max = getattr(lens, "focal_length_max", None)
         fn = getattr(lens, "max_aperture", None) or 1.0
-        ic = getattr(lens, "image_circle_mm", None) or 21.0
         wl_min = getattr(lens, "wavelength_min_nm", None) or 8000
         wl_max = getattr(lens, "wavelength_max_nm", None) or 14000
 
@@ -214,7 +213,11 @@ class InfraredModule(DomainModule):
         # FOV = 2 * arctan(sensor_size / (2 * focal))
         fov_w_deg = 2.0 * math.degrees(math.atan(sensor_w / (2.0 * focal))) if focal > 0 else 0
         fov_h_deg = 2.0 * math.degrees(math.atan(sensor_h / (2.0 * focal))) if focal > 0 else 0
-        fov_diag_deg = 2.0 * math.degrees(math.atan(math.sqrt(sensor_w**2 + sensor_h**2) / (2.0 * focal))) if focal > 0 else 0
+        sensor_diag = math.sqrt(sensor_w**2 + sensor_h**2)
+        fov_diag_deg = (
+            2.0 * math.degrees(math.atan(sensor_diag / (2.0 * focal)))
+            if focal > 0 else 0
+        )
 
         # 波段中心匹配度
         lens_center_um = (wl_min + wl_max) / 2000.0  # nm -> um
@@ -227,7 +230,10 @@ class InfraredModule(DomainModule):
         netd_score = max(0, 1.0 - (netd / PhysicsConstants.NETD_BASELINE_MK))
 
         # 视场偏差
-        fov_error = abs(fov_diag_deg - target_fov_deg) / target_fov_deg if target_fov_deg > 0 else 1.0
+        fov_error = (
+            abs(fov_diag_deg - target_fov_deg) / target_fov_deg
+            if target_fov_deg > 0 else 1.0
+        )
         fov_match = max(0, 1.0 - fov_error)
 
         # 分辨率偏差
@@ -266,11 +272,17 @@ class InfraredModule(DomainModule):
             "total_price_usd": round(total_price, 2),
             "pixel_size_um": round(pixel_um, 2),
             "sensor_size_mm": f"{round(sensor_w, 2)}×{round(sensor_h, 2)}",
+            "fov_match": round(fov_match, 4),
+            "res_match": round(res_match, 4),
+            "cost_efficiency": round(cost_efficiency, 4),
         }
 
         # 变焦镜头
         if focal_max and focal_max > focal:
-            fov_w_max = 2.0 * math.degrees(math.atan(sensor_w / (2.0 * focal_max))) if focal_max > 0 else 0
+            fov_w_max = (
+                2.0 * math.degrees(math.atan(sensor_w / (2.0 * focal_max)))
+                if focal_max > 0 else 0
+            )
             fov_w_min = fov_w_deg
             result["zoom_range"] = f"{round(fov_w_max, 1)}°-{round(fov_w_min, 1)}°"
             result["focal_range"] = f"{focal}-{focal_max}mm"

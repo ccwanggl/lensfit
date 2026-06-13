@@ -5,8 +5,8 @@ Revises:
 Create Date: 2025-01-01 00:00:00.000000
 
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 revision = '001'
 down_revision = None
@@ -63,6 +63,8 @@ def upgrade() -> None:
         sa.Column('coating_type', sa.String(), nullable=True),
         sa.Column('price_usd', sa.Float(), nullable=True),
         sa.Column('datasheet_url', sa.String(), nullable=True),
+        sa.Column('image_url', sa.String(), nullable=True),
+        sa.Column('data_source', sa.String(), nullable=True),
         sa.Column('data_quality_score', sa.Float(), nullable=True),
         sa.Column('verified', sa.Boolean(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -74,8 +76,14 @@ def upgrade() -> None:
     op.create_index('idx_lens_focal', 'lens_catalog', ['focal_length_mm'])
     op.create_index('idx_lens_mount', 'lens_catalog', ['mount_type'])
     op.create_index('idx_lens_image_circle', 'lens_catalog', ['image_circle_mm'])
-    op.create_index('idx_lens_wd', 'lens_catalog', ['min_working_distance_mm', 'max_working_distance_mm'])
-    op.create_index('idx_lens_composite', 'lens_catalog', ['category', 'mount_type', 'focal_length_mm'])
+    op.create_index(
+        'idx_lens_wd', 'lens_catalog',
+        ['min_working_distance_mm', 'max_working_distance_mm']
+    )
+    op.create_index(
+        'idx_lens_composite', 'lens_catalog',
+        ['category', 'mount_type', 'focal_length_mm']
+    )
 
     op.create_table(
         'detector_catalog',
@@ -103,6 +111,7 @@ def upgrade() -> None:
         sa.Column('max_fps_full', sa.Float(), nullable=True),
         sa.Column('price_usd', sa.Float(), nullable=True),
         sa.Column('datasheet_url', sa.String(), nullable=True),
+        sa.Column('data_source', sa.String(), nullable=True),
         sa.Column('data_quality_score', sa.Float(), nullable=True),
         sa.Column('verified', sa.Boolean(), nullable=True),
         sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -114,7 +123,10 @@ def upgrade() -> None:
     op.create_index('idx_det_sensor_size', 'detector_catalog', ['sensor_diag_mm'])
     op.create_index('idx_det_pixel_size', 'detector_catalog', ['pixel_size_um'])
     op.create_index('idx_det_mount', 'detector_catalog', ['mount_type'])
-    op.create_index('idx_det_composite', 'detector_catalog', ['category', 'mount_type', 'sensor_diag_mm'])
+    op.create_index(
+        'idx_det_composite', 'detector_catalog',
+        ['category', 'mount_type', 'sensor_diag_mm']
+    )
 
     op.create_table(
         'compatibility_cache',
@@ -134,7 +146,10 @@ def upgrade() -> None:
         sa.Column('last_accessed', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('cache_key')
     )
-    op.create_index('idx_compat_cache_lookup', 'compatibility_cache', ['lens_id', 'detector_id', 'adapter_id'])
+    op.create_index(
+        'idx_compat_cache_lookup', 'compatibility_cache',
+        ['lens_id', 'detector_id', 'adapter_id']
+    )
     op.create_index('idx_compat_cache_lru', 'compatibility_cache', ['last_accessed'])
     op.create_index('idx_compat_cache_score', 'compatibility_cache', ['compatibility_score'])
 

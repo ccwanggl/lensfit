@@ -6,8 +6,6 @@ Create Date: 2026-06-04 10:16:30.446072
 
 """
 from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision = 'c53e30ed595b'
@@ -21,12 +19,18 @@ def upgrade() -> None:
     op.create_index('ix_detector_category', 'detector_catalog', ['category'], unique=False)
     op.create_index('ix_detector_mount_type', 'detector_catalog', ['mount_type'], unique=False)
     op.create_index('ix_detector_pixel_size', 'detector_catalog', ['pixel_size_um'], unique=False)
-    op.create_index('ix_detector_sensor_format', 'detector_catalog', ['sensor_format_inch'], unique=False)
+    op.create_index(
+        'ix_detector_sensor_format', 'detector_catalog',
+        ['sensor_format_inch'], unique=False,
+    )
     op.create_index('ix_lens_category', 'lens_catalog', ['category'], unique=False)
     op.create_index('ix_lens_focal_length', 'lens_catalog', ['focal_length_mm'], unique=False)
     op.create_index('ix_lens_mount_type', 'lens_catalog', ['mount_type'], unique=False)
     op.create_index('ix_lens_price', 'lens_catalog', ['price_usd'], unique=False)
-    op.create_index('ix_lens_wavelength', 'lens_catalog', ['wavelength_min_nm', 'wavelength_max_nm'], unique=False)
+    op.create_index(
+        'ix_lens_wavelength', 'lens_catalog',
+        ['wavelength_min_nm', 'wavelength_max_nm'], unique=False,
+    )
     # ### end Alembic commands ###
 
 

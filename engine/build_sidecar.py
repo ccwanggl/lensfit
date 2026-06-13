@@ -32,6 +32,37 @@ def build() -> None:
 
     print(f"Building sidecar for {target} ...")
 
+    hidden_imports = [
+        "lensfit.api.server",
+        "lensfit.core.thin_lens",
+        "lensfit.core.sensor",
+        "lensfit.core.utils",
+        "lensfit.core.types",
+        "lensfit.db.models",
+        "lensfit.db.catalog",
+        "lensfit.domains.base",
+        "lensfit.domains.industrial",
+        "lensfit.domains.photography",
+        "lensfit.domains.microscope",
+        "lensfit.domains.infrared",
+        "lensfit.matching.engine",
+        "lensfit.matching.scoring",
+        "lensfit.visualization.coverage",
+        "lensfit.knowledge.formulas",
+        "lensfit.knowledge.constraints",
+        "lensfit.knowledge.presets",
+        "lensfit.knowledge.engine",
+        "lensfit.export.pdf_exporter",
+        "lensfit.export.excel_exporter",
+        "lensfit.db.migrations.versions.001_init",
+        "lensfit.db.migrations.versions.002_add_match_snapshot",
+        "lensfit.db.migrations.versions.c53e30ed595b_add_catalog_indexes",
+        "lensfit.db.migrations.versions.003_merge_heads",
+        "uvicorn",
+        "fastapi",
+        "sqlalchemy.ext.baked",
+    ]
+
     cmd = [
         sys.executable,
         "-m",
@@ -45,36 +76,14 @@ def build() -> None:
         str(engine_dir / "build"),
         "--specpath",
         str(engine_dir),
-        "--hidden-import",
-        "lensfit.api.server",
-        "--hidden-import",
-        "lensfit.core.thin_lens",
-        "--hidden-import",
-        "lensfit.core.sensor",
-        "--hidden-import",
-        "lensfit.core.utils",
-        "--hidden-import",
-        "lensfit.db.models",
-        "--hidden-import",
-        "lensfit.db.catalog",
-        "--hidden-import",
-        "lensfit.domains.base",
-        "--hidden-import",
-        "lensfit.domains.industrial",
-        "--hidden-import",
-        "lensfit.matching.engine",
-        "--hidden-import",
-        "lensfit.matching.scoring",
-        "--hidden-import",
-        "lensfit.visualization.coverage",
-        "--hidden-import",
-        "uvicorn",
-        "--hidden-import",
-        "fastapi",
-        "--hidden-import",
-        "sqlalchemy.ext.baked",
-        str(engine_dir / "lensfit" / "__main__.py"),
+        "--collect-data",
+        "alembic",
+        "--collect-data",
+        "sqlalchemy",
     ]
+    for imp in hidden_imports:
+        cmd.extend(["--hidden-import", imp])
+    cmd.append(str(engine_dir / "lensfit" / "__main__.py"))
 
     subprocess.run(cmd, check=True)
 

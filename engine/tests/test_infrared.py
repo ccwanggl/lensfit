@@ -1,6 +1,7 @@
 """Tests for infrared domain module."""
 
 import pytest
+
 from lensfit.domains.base import DeviceCombo, Requirements
 from lensfit.domains.infrared import InfraredModule
 

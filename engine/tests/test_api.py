@@ -6,8 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from lensfit.api.server import app, lifespan
+from lensfit.api.server import app
 from lensfit.db.models import Base
+
+TEST_API_KEY = "test-api-key"
 
 
 @pytest.fixture
@@ -33,6 +35,7 @@ def client():
 
     server_module._engine = MatchingEngine(session_factory)
     server_module._engine.register_domain(IndustrialVisionModule())
+    server_module._API_KEY = TEST_API_KEY
 
     with TestClient(app) as c:
         yield c
@@ -42,21 +45,31 @@ def client():
     server_module._session_maker = None
 
 
+@pytest.fixture
+def auth_headers():
+    """Return API key headers for authenticated requests."""
+    return {"X-API-Key": TEST_API_KEY}
+
+
 def test_health_check(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     assert resp.json()["status"] == "ok"
 
 
-def test_calculate(client):
-    resp = client.post("/api/v1/calculate", json={"working_distance": 200, "sensor_w": 8.8, "fov_w": 50})
+def test_calculate(client, auth_headers):
+    resp = client.post(
+        "/api/v1/calculate",
+        json={"working_distance": 200, "sensor_w": 8.8, "fov_w": 50},
+        headers=auth_headers,
+    )
     assert resp.status_code == 200
     data = resp.json()
     assert "focal_length" in data
     assert data["focal_length"] == pytest.approx(29.93, rel=0.01)
 
 
-def test_match_async_and_poll(client):
+def test_match_async_and_poll(client, auth_headers):
     resp = client.post(
         "/api/v1/match/async",
         json={
@@ -71,6 +84,7 @@ def test_match_async_and_poll(client):
                 "interface": "C-mount",
             },
         },
+        headers=auth_headers,
     )
     assert resp.status_code == 200
     task = resp.json()
@@ -79,7 +93,7 @@ def test_match_async_and_poll(client):
 
     # Poll until completion or timeout
     for _ in range(50):
-        resp = client.get(f"/api/v1/match/async/{task['task_id']}")
+        resp = client.get(f"/api/v1/match/async/{task['task_id']}", headers=auth_headers)
         assert resp.status_code == 200
         status = resp.json()
         if status["status"] == "completed":
@@ -90,31 +104,35 @@ def test_match_async_and_poll(client):
         pytest.fail("Match did not complete in time")
 
     # Get results
-    resp = client.get(f"/api/v1/match/async/{task['task_id']}/result")
+    resp = client.get(f"/api/v1/match/async/{task['task_id']}/result", headers=auth_headers)
     assert resp.status_code == 200
     result = resp.json()
     assert "top_matches" in result
 
 
-def test_list_lenses_empty(client):
-    resp = client.get("/api/v1/catalog/lenses?limit=5")
+def test_list_lenses_empty(client, auth_headers):
+    resp = client.get("/api/v1/catalog/lenses?limit=5", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 0
     assert data["items"] == []
 
 
-def test_list_detectors_empty(client):
-    resp = client.get("/api/v1/catalog/detectors?limit=5")
+def test_list_detectors_empty(client, auth_headers):
+    resp = client.get("/api/v1/catalog/detectors?limit=5", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 0
     assert data["items"] == []
 
 
-def test_project_crud(client):
+def test_project_crud(client, auth_headers):
     # Create
-    resp = client.post("/api/v1/projects", json={"name": "Test Project", "domain": "industrial"})
+    resp = client.post(
+        "/api/v1/projects",
+        json={"name": "Test Project", "domain": "industrial"},
+        headers=auth_headers,
+    )
     assert resp.status_code == 200
     proj = resp.json()
     assert proj["name"] == "Test Project"
@@ -122,23 +140,27 @@ def test_project_crud(client):
     proj_id = proj["id"]
 
     # List
-    resp = client.get("/api/v1/projects")
+    resp = client.get("/api/v1/projects", headers=auth_headers)
     assert resp.status_code == 200
     assert len(resp.json()["items"]) >= 1
 
     # Create setup
-    resp = client.post(f"/api/v1/projects/{proj_id}/setups", json={"name": "Setup 1", "lens_id": None, "detector_id": None})
+    resp = client.post(
+        f"/api/v1/projects/{proj_id}/setups",
+        json={"name": "Setup 1", "lens_id": None, "detector_id": None},
+        headers=auth_headers,
+    )
     assert resp.status_code == 200
     setup = resp.json()
     assert setup["name"] == "Setup 1"
 
     # List setups
-    resp = client.get(f"/api/v1/projects/{proj_id}/setups")
+    resp = client.get(f"/api/v1/projects/{proj_id}/setups", headers=auth_headers)
     assert resp.status_code == 200
     assert len(resp.json()["items"]) == 1
 
 
-def test_export_pdf(client):
+def test_export_pdf(client, auth_headers):
     resp = client.post(
         "/api/v1/export",
         json={
@@ -147,13 +169,14 @@ def test_export_pdf(client):
             "results": [],
             "top_k": 5,
         },
+        headers=auth_headers,
     )
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/pdf"
     assert len(resp.content) > 500
 
 
-def test_export_excel(client):
+def test_export_excel(client, auth_headers):
     resp = client.post(
         "/api/v1/export",
         json={
@@ -162,12 +185,13 @@ def test_export_excel(client):
             "results": [],
             "top_k": 5,
         },
+        headers=auth_headers,
     )
     assert resp.status_code == 200
     assert len(resp.content) > 500
 
 
-def test_export_invalid_format(client):
+def test_export_invalid_format(client, auth_headers):
     resp = client.post(
         "/api/v1/export",
         json={
@@ -176,6 +200,7 @@ def test_export_invalid_format(client):
             "results": [],
             "top_k": 5,
         },
+        headers=auth_headers,
     )
     # FastAPI/Pydantic v2 returns 422 for enum validation errors
     assert resp.status_code == 422

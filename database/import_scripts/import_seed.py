@@ -9,10 +9,10 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
 from lensfit.db.models import (
-    Base,
     DetectorCatalog,
     LensCatalog,
     Manufacturer,
+    init_db,
 )
 
 
@@ -39,6 +39,16 @@ def import_manufacturers(session: Session, csv_path: Path) -> dict[str, int]:
     return name_to_id
 
 
+def _float(value: str) -> float | None:
+    """Parse a CSV string to float, returning None for empty values."""
+    return float(value) if value else None
+
+
+def _int(value: str) -> int | None:
+    """Parse a CSV string to int, returning None for empty values."""
+    return int(value) if value else None
+
+
 def import_lenses(session: Session, csv_path: Path) -> int:
     """Import lens catalog."""
     count = 0
@@ -50,15 +60,15 @@ def import_lenses(session: Session, csv_path: Path) -> int:
                 model=row["model"],
                 category=row["category"],
                 status=row.get("status", "active"),
-                focal_length_mm=float(row["focal_length_mm"]) if row["focal_length_mm"] else None,
-                max_aperture=float(row["max_aperture"]) if row["max_aperture"] else None,
-                image_circle_mm=float(row["image_circle_mm"]) if row["image_circle_mm"] else None,
-                min_working_distance_mm=float(row["min_working_distance_mm"]) if row["min_working_distance_mm"] else None,
-                max_working_distance_mm=float(row["max_working_distance_mm"]) if row["max_working_distance_mm"] else None,
+                focal_length_mm=_float(row["focal_length_mm"]),
+                max_aperture=_float(row["max_aperture"]),
+                image_circle_mm=_float(row["image_circle_mm"]),
+                min_working_distance_mm=_float(row["min_working_distance_mm"]),
+                max_working_distance_mm=_float(row["max_working_distance_mm"]),
                 mount_type=row.get("mount_type") or None,
-                length_mm=float(row["length_mm"]) if row["length_mm"] else None,
-                weight_g=float(row["weight_g"]) if row["weight_g"] else None,
-                price_usd=float(row["price_usd"]) if row["price_usd"] else None,
+                length_mm=_float(row["length_mm"]),
+                weight_g=_float(row["weight_g"]),
+                price_usd=_float(row["price_usd"]),
                 data_source="seed",
                 data_quality_score=0.8,
                 verified=True,
@@ -81,16 +91,16 @@ def import_detectors(session: Session, csv_path: Path) -> int:
                 model=row["model"],
                 category=row["category"],
                 sensor_format_inch=row.get("sensor_format_inch") or None,
-                sensor_w_mm=float(row["sensor_w_mm"]) if row["sensor_w_mm"] else None,
-                sensor_h_mm=float(row["sensor_h_mm"]) if row["sensor_h_mm"] else None,
-                sensor_diag_mm=float(row["sensor_diag_mm"]) if row["sensor_diag_mm"] else None,
-                resolution_w=int(row["resolution_w"]) if row["resolution_w"] else None,
-                resolution_h=int(row["resolution_h"]) if row["resolution_h"] else None,
-                pixel_size_um=float(row["pixel_size_um"]) if row["pixel_size_um"] else None,
+                sensor_w_mm=_float(row["sensor_w_mm"]),
+                sensor_h_mm=_float(row["sensor_h_mm"]),
+                sensor_diag_mm=_float(row["sensor_diag_mm"]),
+                resolution_w=_int(row["resolution_w"]),
+                resolution_h=_int(row["resolution_h"]),
+                pixel_size_um=_float(row["pixel_size_um"]),
                 mount_type=row.get("mount_type") or None,
                 data_interface=row.get("data_interface") or None,
-                max_fps_full=float(row["max_fps_full"]) if row["max_fps_full"] else None,
-                price_usd=float(row["price_usd"]) if row["price_usd"] else None,
+                max_fps_full=_float(row["max_fps_full"]),
+                price_usd=_float(row["price_usd"]),
                 data_source="seed",
                 data_quality_score=0.8,
                 verified=True,
@@ -104,8 +114,10 @@ def import_detectors(session: Session, csv_path: Path) -> int:
 
 def main(db_url: str = "sqlite:///lensfit.db") -> None:
     """Import all seed data."""
+    # 通过 Alembic 迁移创建/更新 schema，保证与模型一致
+    init_db(db_url)
+
     engine = create_engine(db_url, echo=False)
-    Base.metadata.create_all(engine)
 
     base_dir = Path(__file__).parent.parent
     seed_dir = base_dir / "seed_data"
@@ -116,14 +128,19 @@ def main(db_url: str = "sqlite:///lensfit.db") -> None:
         session.query(DetectorCatalog).filter(DetectorCatalog.data_source == "seed").delete()
         session.query(Manufacturer).filter(Manufacturer.data_source == "seed").delete()
 
-        # Reset SQLite auto-increment sequences so IDs start from 1
-        session.execute(
-            text(
-                "DELETE FROM sqlite_sequence WHERE name IN "
-                "('manufacturers', 'lens_catalog', 'detector_catalog')"
+        # Reset SQLite auto-increment sequences so IDs start from 1.
+        # sqlite_sequence only exists after rows have been inserted, so ignore
+        # the error on a fresh database.
+        try:
+            session.execute(
+                text(
+                    "DELETE FROM sqlite_sequence WHERE name IN "
+                    "('manufacturers', 'lens_catalog', 'detector_catalog')"
+                )
             )
-        )
-        session.commit()
+            session.commit()
+        except Exception:
+            session.rollback()
 
         # Import in order: manufacturers -> lenses -> detectors
         import_manufacturers(session, seed_dir / "manufacturers.csv")

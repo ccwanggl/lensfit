@@ -1,6 +1,7 @@
 """Tests for thin lens calculator."""
 
 import pytest
+
 from lensfit.core.thin_lens import ThinLensCalculator
 from lensfit.core.types import OpticalParams
 

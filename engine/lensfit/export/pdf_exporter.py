@@ -7,7 +7,7 @@ from typing import Any
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
     Paragraph,
@@ -97,7 +97,11 @@ def generate_pdf_report(
         ["参数", "值"],
         ["传感器尺寸", requirements.get("sensor_size", "-")],
         ["像元尺寸", f"{requirements.get('pixel_size_um', '-')} μm"],
-        ["目标尺寸", f"{requirements.get('target_width_mm', '-')} × {requirements.get('target_height_mm', '-')} mm"],
+        [
+            "目标尺寸",
+            f"{requirements.get('target_width_mm', '-')} × "
+            f"{requirements.get('target_height_mm', '-')} mm",
+        ],
         ["工作距离", f"{requirements.get('working_distance_mm', '-')} mm"],
         ["镜头类型", requirements.get("lens_type", "-")],
         ["接口类型", requirements.get("interface", "-")],
@@ -165,7 +169,10 @@ def generate_pdf_report(
                 "是" if r.get("vignetting") else "否",
             ])
 
-        result_table = Table(result_data, colWidths=[15 * mm, 45 * mm, 45 * mm, 20 * mm, 20 * mm, 15 * mm])
+        result_table = Table(
+            result_data,
+            colWidths=[15 * mm, 45 * mm, 45 * mm, 20 * mm, 20 * mm, 15 * mm],
+        )
         result_table.setStyle(
             TableStyle([
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1a56db")),
@@ -193,7 +200,10 @@ def generate_pdf_report(
         for i, r in enumerate(results[:top_k], 1):
             reason = r.get("reason", "")
             if reason:
-                story.append(Paragraph(f"#{i} {r.get('lens_model', '')} — {_reason_badge_style(reason)}", body_style))
+                story.append(Paragraph(
+                    f"#{i} {r.get('lens_model', '')} — {_reason_badge_style(reason)}",
+                    body_style,
+                ))
         story.append(Spacer(1, 6 * mm))
 
     # Derivation chain section
@@ -213,7 +223,10 @@ def generate_pdf_report(
                         str(step.get("output", "-"))[:40],
                         step.get("principle", "-"),
                     ])
-                chain_table = Table(chain_data, colWidths=[15 * mm, 40 * mm, 50 * mm, 35 * mm, 40 * mm])
+                chain_table = Table(
+                    chain_data,
+                    colWidths=[15 * mm, 40 * mm, 50 * mm, 35 * mm, 40 * mm],
+                )
                 chain_table.setStyle(
                     TableStyle([
                         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#10b981")),
@@ -222,7 +235,11 @@ def generate_pdf_report(
                         ("FONTSIZE", (0, 0), (-1, 0), 8),
                         ("ALIGN", (0, 0), (-1, -1), "LEFT"),
                         ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#d1d5db")),
-                        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9fafb")]),
+                        (
+                            "ROWBACKGROUNDS",
+                            (0, 1), (-1, -1),
+                            [colors.white, colors.HexColor("#f9fafb")],
+                        ),
                         ("TOPPADDING", (0, 0), (-1, -1), 3),
                         ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
                     ])

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -58,7 +59,6 @@ class ScoringEngine:
         根据镜头实际焦距与理想焦距的偏差评分.
         """
         derived = getattr(candidate, "derived", {}) or {}
-        reqs = getattr(candidate, "requirements", None)
         lens = candidate.lens
 
         actual_focal = getattr(lens, "focal_length_mm", None)
@@ -163,7 +163,6 @@ class ScoringEngine:
     @staticmethod
     def _score_resolution_match(candidate: Any) -> float:
         """显微镜分辨率匹配评分 — 基于 NA 达标程度."""
-        derived = getattr(candidate, "derived", {}) or {}
         reqs = getattr(candidate, "requirements", None)
         lens = candidate.lens
 
@@ -243,16 +242,18 @@ class TopsisRanker:
             row = [r.score_vector.get(name, 0) for name in dim_names]
             matrix.append(row)
 
-        X = np.array(matrix, dtype=float)
+        x = np.array(matrix, dtype=float)
 
         # 向量归一化
-        norm = np.sqrt((X**2).sum(axis=0))
+        norm = np.sqrt((x**2).sum(axis=0))
         norm = np.where(norm == 0, 1, norm)
-        X_norm = X / norm
+        x_norm = x / norm
 
         # 加权
-        W = np.array([weights.get(name, 1.0 / len(dim_names)) for name in dim_names])
-        X_weighted = X_norm * W
+        weights_array = np.array(
+            [weights.get(name, 1.0 / len(dim_names)) for name in dim_names]
+        )
+        x_weighted = x_norm * weights_array
 
         # 确定正理想解和负理想解
         ideal_best = np.zeros(len(dim_names))
@@ -260,15 +261,15 @@ class TopsisRanker:
 
         for j, is_benefit in enumerate(benefit_flags):
             if is_benefit:
-                ideal_best[j] = X_weighted[:, j].max()
-                ideal_worst[j] = X_weighted[:, j].min()
+                ideal_best[j] = x_weighted[:, j].max()
+                ideal_worst[j] = x_weighted[:, j].min()
             else:
-                ideal_best[j] = X_weighted[:, j].min()
-                ideal_worst[j] = X_weighted[:, j].max()
+                ideal_best[j] = x_weighted[:, j].min()
+                ideal_worst[j] = x_weighted[:, j].max()
 
         # 计算欧氏距离
-        d_best = np.sqrt(((X_weighted - ideal_best) ** 2).sum(axis=1))
-        d_worst = np.sqrt(((X_weighted - ideal_worst) ** 2).sum(axis=1))
+        d_best = np.sqrt(((x_weighted - ideal_best) ** 2).sum(axis=1))
+        d_worst = np.sqrt(((x_weighted - ideal_worst) ** 2).sum(axis=1))
 
         # 相对贴近度 — 避免除零
         denominator = d_best + d_worst

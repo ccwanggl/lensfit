@@ -4,15 +4,18 @@ from __future__ import annotations
 
 from typing import Any
 
-from lensfit.core.types import PhysicsTrace, MatchResult
+from lensfit.core.types import MatchResult, PhysicsTrace
 from lensfit.knowledge.base import (
     ConstraintViolation,
     InferenceResult,
     ResultExplanation,
 )
-from lensfit.knowledge.formulas import ALL_FORMULAS, get_formula_by_id, list_formulas
-from lensfit.knowledge.constraints import ALL_CONSTRAINTS, get_constraint_by_id, check_all_constraints
-from lensfit.knowledge.presets import list_presets, get_preset_by_id
+from lensfit.knowledge.constraints import (
+    ALL_CONSTRAINTS,
+    check_all_constraints,
+)
+from lensfit.knowledge.formulas import ALL_FORMULAS, get_formula_by_id
+from lensfit.knowledge.presets import get_preset_by_id, list_presets
 
 
 class OpticalKnowledgeBase:
@@ -114,7 +117,11 @@ class KnowledgeInferenceEngine:
                         "formula_name": formula.name_cn,
                         "expression": formula.expression,
                         "inputs": kwargs,
-                        "outputs": result if isinstance(result, dict) else {formula.outputs[0]: result} if formula.outputs else {},
+                        "outputs": (
+                            result if isinstance(result, dict)
+                            else {formula.outputs[0]: result} if formula.outputs
+                            else {}
+                        ),
                         "principle": formula.principle,
                         "assumption": formula.assumption,
                     })

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from lensfit.physics import PhysicsConstants
 from lensfit.domains.base import (
     Constraint,
     DeviceCombo,
@@ -12,6 +11,7 @@ from lensfit.domains.base import (
     ParameterDef,
     ScoringDimension,
 )
+from lensfit.physics import PhysicsConstants
 
 
 class PhotographyModule(DomainModule):
@@ -198,7 +198,6 @@ class PhotographyModule(DomainModule):
 
         # 用途理想焦距区间
         ideal_min, ideal_max = self.PURPOSE_FOCAL_RANGES.get(purpose, (35.0, 85.0))
-        ideal_center = (ideal_min + ideal_max) / 2.0
 
         # 焦距匹配分 (0-1)
         if ideal_min <= focal <= ideal_max:
@@ -226,7 +225,10 @@ class PhotographyModule(DomainModule):
         lens_price = getattr(lens, "price_usd", None) or 0
         budget = params.get("budget_usd")
         if budget and budget > 0:
-            cost_efficiency = max(0.0, 1.0 - lens_price / budget) if lens_price <= budget else max(0.0, 1.0 - (lens_price - budget) / budget)
+            if lens_price <= budget:
+                cost_efficiency = max(0.0, 1.0 - lens_price / budget)
+            else:
+                cost_efficiency = max(0.0, 1.0 - (lens_price - budget) / budget)
         else:
             cost_efficiency = 0.5
 

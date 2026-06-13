@@ -6,7 +6,7 @@ from io import BytesIO
 from typing import Any
 
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 
@@ -75,7 +75,10 @@ def generate_excel_report(
 
     # Results header
     result_start = 13
-    headers = ["排名", "镜头型号", "探测器型号", "评分", "覆盖度", "渐晕", "估算焦距 (mm)", "放大倍率", "匹配理由"]
+    headers = [
+        "排名", "镜头型号", "探测器型号", "评分", "覆盖度",
+        "渐晕", "估算焦距 (mm)", "放大倍率", "匹配理由",
+    ]
     for col, h in enumerate(headers, start=1):
         cell = ws.cell(row=result_start, column=col, value=h)
         cell.font = header_font
@@ -88,8 +91,10 @@ def generate_excel_report(
         row = result_start + idx
         derived = r.get("derived", {})
         ws.cell(row=row, column=1, value=idx)
-        ws.cell(row=row, column=2, value=_sanitize(r.get("lens_model", f"#{r.get('lens_id', '?')}")))
-        ws.cell(row=row, column=3, value=_sanitize(r.get("detector_model", f"#{r.get('detector_id', '?')}")))
+        lens_name = _sanitize(r.get("lens_model", f"#{r.get('lens_id', '?')}"))
+        det_name = _sanitize(r.get("detector_model", f"#{r.get('detector_id', '?')}"))
+        ws.cell(row=row, column=2, value=lens_name)
+        ws.cell(row=row, column=3, value=det_name)
         ws.cell(row=row, column=4, value=round(r.get("score", 0), 3))
         ws.cell(row=row, column=5, value=f"{(r.get('coverage_ratio', 0) * 100):.0f}%")
         ws.cell(row=row, column=6, value="是" if r.get("vignetting") else "否")
@@ -173,8 +178,10 @@ def generate_excel_report(
                 ws_chain.cell(row=row, column=1, value=_sanitize(lens_name))
                 ws_chain.cell(row=row, column=2, value=step.get("step", "-"))
                 ws_chain.cell(row=row, column=3, value=_sanitize(step.get("formula", "-")))
-                ws_chain.cell(row=row, column=4, value=_sanitize(str(step.get("inputs", "-"))[:200]))
-                ws_chain.cell(row=row, column=5, value=_sanitize(str(step.get("output", "-"))[:100]))
+                inputs_str = _sanitize(str(step.get("inputs", "-"))[:200])
+                output_str = _sanitize(str(step.get("output", "-"))[:100])
+                ws_chain.cell(row=row, column=4, value=inputs_str)
+                ws_chain.cell(row=row, column=5, value=output_str)
                 ws_chain.cell(row=row, column=6, value=_sanitize(step.get("principle", "-")))
                 for col in range(1, 7):
                     cell = ws_chain.cell(row=row, column=col)

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import math
-
 
 def sensor_coverage_check(sensor_w: float, sensor_h: float, image_circle: float) -> dict:
     """检查传感器是否被镜头像圆完全覆盖.
@@ -44,7 +42,12 @@ def sensor_coverage_check(sensor_w: float, sensor_h: float, image_circle: float)
     }
 
 
-def nyquist_match(pixel_size_um: float, lens_mtf50_lpmm: float | None = None, na: float | None = None, wavelength_um: float = 0.55) -> dict:
+def nyquist_match(
+    pixel_size_um: float,
+    lens_mtf50_lpmm: float | None = None,
+    na: float | None = None,
+    wavelength_um: float = 0.55,
+) -> dict:
     """奈奎斯特采样匹配分析.
 
     Returns:

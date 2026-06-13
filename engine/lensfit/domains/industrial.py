@@ -156,16 +156,14 @@ class IndustrialVisionModule(DomainModule):
 
     def calculate_derived(self, combo: DeviceCombo) -> dict[str, Any]:
         """计算工业视觉领域的派生参数."""
-        lens = combo.lens
-        det = combo.detector
         reqs = combo.requirements
 
         if not reqs:
             return {}
 
         params = reqs.params
-        from lensfit.core.thin_lens import ThinLensCalculator
         from lensfit.core.sensor import sensor_size_from_format
+        from lensfit.core.thin_lens import ThinLensCalculator
 
         calc = ThinLensCalculator()
         sensor = sensor_size_from_format(params.get("sensor_size", "2/3"))

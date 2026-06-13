@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from lensfit.core.thin_lens import ThinLensCalculator
-from lensfit.core.utils import sensor_coverage_check, nyquist_match, is_mount_compatible
-from lensfit.knowledge.base import OpticalFormula, FormulaParam
-
+from lensfit.core.utils import is_mount_compatible, nyquist_match, sensor_coverage_check
+from lensfit.knowledge.base import FormulaParam, OpticalFormula
 
 # ─── 薄透镜成像公式 ───
 thin_lens_imaging = OpticalFormula(
@@ -71,7 +70,10 @@ afov_from_focal = OpticalFormula(
         FormulaParam("focal", "焦距", "mm", "镜头焦距"),
     ],
     outputs=["afov_h"],
-    principle="视角（Angle of Field of View）描述镜头能看到的场景范围，由传感器尺寸和焦距共同决定。",
+    principle=(
+        "视角（Angle of Field of View）描述镜头能看到的场景范围，"
+        "由传感器尺寸和焦距共同决定。"
+    ),
     assumption="薄透镜近似。",
     domain="all",
     compute_fn=ThinLensCalculator.afov_from_sensor_focal,
@@ -82,14 +84,27 @@ nyquist_sampling = OpticalFormula(
     id="nyquist_sampling",
     name_cn="奈奎斯特采样定理",
     expression="f_Nyquist = 1000 / (2 × p)  [lp/mm]  (p in μm)",
-    latex=r"f_{\text{Nyquist}} = \frac{1000}{2p} \; [\text{lp/mm}] \quad (p \text{ in } \mu\text{m})",
+    latex=(
+        r"f_{\text{Nyquist}} = \frac{1000}{2p} \; [\text{lp/mm}]"
+        r" \quad (p \text{ in } \mu\text{m})"
+    ),
     params=[
         FormulaParam("pixel_size_um", "像元尺寸", "μm", "传感器单个像素的物理边长"),
         FormulaParam("lens_mtf50_lpmm", "镜头MTF50", "lp/mm", "可选，镜头在50%对比度下的空间频率"),
         FormulaParam("na", "数值孔径", "", "可选，显微镜物镜的数值孔径"),
     ],
-    outputs=["sensor_nyquist_lpmm", "optical_limit_lpmm", "optical_limit_description", "matched", "oversampling_ratio", "recommendation"],
-    principle="奈奎斯特-香农采样定理：数字系统能无失真恢复的最高空间频率为采样频率的一半。在成像中，镜头光学分辨率必须高于传感器奈奎斯特频率，否则产生混叠（Aliasing）。",
+    outputs=[
+        "sensor_nyquist_lpmm",
+        "optical_limit_lpmm",
+        "optical_limit_description",
+        "matched",
+        "oversampling_ratio",
+        "recommendation",
+    ],
+    principle=(
+        "奈奎斯特-香农采样定理：数字系统能无失真恢复的最高空间频率为采样频率的一半。"
+        "在成像中，镜头光学分辨率必须高于传感器奈奎斯特频率，否则产生混叠（Aliasing）。"
+    ),
     assumption="方形像素，无抗混叠滤波器，忽略镜头MTF在截止频率外的衰减。",
     domain="all",
     compute_fn=nyquist_match,
@@ -100,14 +115,27 @@ sensor_coverage = OpticalFormula(
     id="sensor_coverage",
     name_cn="传感器覆盖检查",
     expression="coverage_ratio = (image_circle / sensor_diag)²",
-    latex=r"\text{coverage\_ratio} = \left(\frac{\text{image\_circle}}{\text{sensor\_diag}}\right)^2",
+    latex=(
+        r"\text{coverage\_ratio} ="
+        r" \left(\frac{\text{image\_circle}}{\text{sensor\_diag}}\right)^2"
+    ),
     params=[
         FormulaParam("sensor_w", "传感器宽度", "mm", "传感器感光区域的物理宽度"),
         FormulaParam("sensor_h", "传感器高度", "mm", "传感器感光区域的物理高度"),
         FormulaParam("image_circle", "像圈直径", "mm", "镜头能均匀成像的圆形区域直径"),
     ],
-    outputs=["coverage_ratio", "vignetting", "vignetting_corners", "fully_covered", "margin", "max_safe_sensor_diag"],
-    principle="镜头像圈必须大于或等于传感器对角线，否则传感器四角无法接收到足够光线，产生渐晕（暗角）。覆盖比定义为像圈面积与传感器面积之比。",
+    outputs=[
+        "coverage_ratio",
+        "vignetting",
+        "vignetting_corners",
+        "fully_covered",
+        "margin",
+        "max_safe_sensor_diag",
+    ],
+    principle=(
+        "镜头像圈必须大于或等于传感器对角线，否则传感器四角无法接收到足够光线，"
+        "产生渐晕（暗角）。覆盖比定义为像圈面积与传感器面积之比。"
+    ),
     assumption="像圈内部亮度均匀，忽略轴外透过率下降。",
     domain="all",
     compute_fn=sensor_coverage_check,
@@ -118,7 +146,11 @@ depth_of_field = OpticalFormula(
     id="depth_of_field",
     name_cn="景深计算",
     expression="H = f² / (F × c) + f;  near = H×d / (H+d);  far = H×d / (H−d)",
-    latex=r"H = \frac{f^2}{F \cdot c} + f; \quad d_{\text{near}} = \frac{H \cdot d}{H+d}; \quad d_{\text{far}} = \frac{H \cdot d}{H-d}",
+    latex=(
+        r"H = \frac{f^2}{F \cdot c} + f;"
+        r" \quad d_{\text{near}} = \frac{H \cdot d}{H+d};"
+        r" \quad d_{\text{far}} = \frac{H \cdot d}{H-d}"
+    ),
     params=[
         FormulaParam("focal", "焦距", "mm", "镜头焦距"),
         FormulaParam("f_number", "F值", "", "光圈值，F值越小光圈越大"),
@@ -139,11 +171,20 @@ mount_compatibility = OpticalFormula(
     expression="兼容 = mount_lens == mount_detector 或 存在标准转接方案",
     latex=r"\text{兼容} = \text{mount}_{\text{lens}} = \text{mount}_{\text{det}}",
     params=[
-        FormulaParam("lens_mount", "镜头接口", "", "镜头的机械安装接口类型，如 C-mount、F-mount"),
-        FormulaParam("det_mount", "探测器接口", "", "相机/探测器的机械安装接口类型，如 C-mount、F-mount"),
+        FormulaParam(
+            "lens_mount", "镜头接口", "",
+            "镜头的机械安装接口类型，如 C-mount、F-mount",
+        ),
+        FormulaParam(
+            "det_mount", "探测器接口", "",
+            "相机/探测器的机械安装接口类型，如 C-mount、F-mount",
+        ),
     ],
     outputs=["compatible", "adapter_needed"],
-    principle="镜头与相机的机械接口必须匹配，且法兰距（Flange Distance）必须一致，否则无法合焦。C-mount 与 CS-mount 可通过 5mm 垫片转换。",
+    principle=(
+        "镜头与相机的机械接口必须匹配，且法兰距（Flange Distance）必须一致，"
+        "否则无法合焦。C-mount 与 CS-mount 可通过 5mm 垫片转换。"
+    ),
     assumption="标准接口规格，无自定义改装。",
     domain="all",
     compute_fn=is_mount_compatible,
@@ -163,7 +204,10 @@ pixel_accuracy = OpticalFormula(
     principle="每个像素对应的物理尺寸。放大倍率越大，单位像素代表的物理尺寸越小，系统分辨率越高。",
     assumption="无亚像素处理，理想成像。",
     domain="industrial",
-    compute_fn=lambda pixel_size_um, magnification: round(pixel_size_um / 1000 / magnification, 6) if magnification else float("inf"),
+    compute_fn=lambda pixel_size_um, magnification: (
+        round(pixel_size_um / 1000 / magnification, 6)
+        if magnification else float("inf")
+    ),
 )
 
 

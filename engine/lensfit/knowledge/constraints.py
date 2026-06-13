@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from lensfit.core.utils import is_mount_compatible
-from lensfit.knowledge.base import OpticalConstraint, ConstraintViolation
+from lensfit.knowledge.base import ConstraintViolation, OpticalConstraint
 
 
 def _check_image_circle_coverage(combo) -> tuple[bool, dict]:
@@ -96,7 +96,10 @@ image_circle_coverage = OpticalConstraint(
     name_cn="像圈覆盖约束",
     principle="镜头像圈必须至少覆盖传感器感光区域，否则成像边缘会出现亮度衰减（渐晕），影响测量精度。",
     check_fn=_check_image_circle_coverage,
-    failure_explanation_tpl="镜头像圈 {image_circle}mm 不足以覆盖传感器对角线 {sensor_diag}mm，覆盖裕量仅 {margin}，会导致渐晕。",
+    failure_explanation_tpl=(
+        "镜头像圈 {image_circle}mm 不足以覆盖传感器对角线 {sensor_diag}mm，"
+        "覆盖裕量仅 {margin}，会导致渐晕。"
+    ),
     suggestion="建议：选用像圈更大的镜头，或缩小传感器靶面（如从 2/3\" 改为 1/2\"）。",
     severity="error",
 )
@@ -126,7 +129,11 @@ nyquist_satisfied = OpticalConstraint(
     name_cn="奈奎斯特采样约束",
     principle="镜头光学分辨率应高于传感器奈奎斯特频率，否则高频细节无法被采样，产生混叠伪影。",
     check_fn=_check_nyquist_satisfied,
-    failure_explanation_tpl="镜头 MTF50={mtf50_lpmm} lp/mm，传感器奈奎斯特频率={sensor_nyquist_lpmm} lp/mm，过采样率 {oversampling_ratio}，不匹配。",
+    failure_explanation_tpl=(
+        "镜头 MTF50={mtf50_lpmm} lp/mm，"
+        "传感器奈奎斯特频率={sensor_nyquist_lpmm} lp/mm，"
+        "过采样率 {oversampling_ratio}，不匹配。"
+    ),
     suggestion="建议：过采样率偏低时选用更高分辨率镜头；过采样率过高时选用更小像元或更低倍率。",
     severity="warning",
 )

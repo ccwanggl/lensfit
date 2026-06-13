@@ -4,17 +4,16 @@ from __future__ import annotations
 
 import argparse
 import json
-from contextlib import asynccontextmanager
-from pathlib import Path
-
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response as FastAPIResponse, StreamingResponse
-from pydantic import BaseModel, Field, field_validator
+from fastapi.responses import Response as FastAPIResponse
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from lensfit.db.catalog import CatalogQuery
@@ -30,6 +29,10 @@ from lensfit.domains.industrial import IndustrialVisionModule
 from lensfit.domains.infrared import InfraredModule
 from lensfit.domains.microscope import MicroscopyModule
 from lensfit.domains.photography import PhotographyModule
+from lensfit.knowledge.constraints import ALL_CONSTRAINTS
+from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
+from lensfit.knowledge.formulas import list_formulas as kb_list_formulas
+from lensfit.knowledge.presets import get_preset_by_id, list_presets
 from lensfit.matching.engine import MatchingEngine
 
 # Global instances
@@ -154,7 +157,7 @@ def get_domain_parameters(domain: str):
                 "unit": p.unit,
                 "default": p.default,
                 "required": p.required,
-                "options": [{"value": v, "label": l} for v, l in (p.options or [])],
+                "options": [{"value": v, "label": label} for v, label in (p.options or [])],
                 "min_value": p.min_value,
                 "max_value": p.max_value,
                 "description": p.description,
@@ -314,11 +317,6 @@ def cancel_matching(task_id: str):
 # =====================================================================
 # Knowledge Base
 # =====================================================================
-from lensfit.knowledge.formulas import ALL_FORMULAS, list_formulas as kb_list_formulas
-from lensfit.knowledge.constraints import ALL_CONSTRAINTS
-from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
-from lensfit.knowledge.presets import list_presets, get_preset_by_id
-
 _knowledge_engine = KnowledgeInferenceEngine(OpticalKnowledgeBase())
 
 
@@ -432,22 +430,22 @@ def list_lenses(
             return {
                 "items": [
                     {
-                        "id": l.id,
-                        "model": l.model,
-                        "manufacturer_id": l.manufacturer_id,
-                        "category": l.category,
-                        "focal_length_mm": l.focal_length_mm,
-                        "focal_length_max": l.focal_length_max,
-                        "max_aperture": l.max_aperture,
-                        "image_circle_mm": l.image_circle_mm,
-                        "mount_type": l.mount_type,
-                        "price_usd": l.price_usd,
-                        "wavelength_min_nm": l.wavelength_min_nm,
-                        "wavelength_max_nm": l.wavelength_max_nm,
-                        "image_url": l.image_url,
-                        "na": l.na,
+                        "id": lens_item.id,
+                        "model": lens_item.model,
+                        "manufacturer_id": lens_item.manufacturer_id,
+                        "category": lens_item.category,
+                        "focal_length_mm": lens_item.focal_length_mm,
+                        "focal_length_max": lens_item.focal_length_max,
+                        "max_aperture": lens_item.max_aperture,
+                        "image_circle_mm": lens_item.image_circle_mm,
+                        "mount_type": lens_item.mount_type,
+                        "price_usd": lens_item.price_usd,
+                        "wavelength_min_nm": lens_item.wavelength_min_nm,
+                        "wavelength_max_nm": lens_item.wavelength_max_nm,
+                        "image_url": lens_item.image_url,
+                        "na": lens_item.na,
                     }
-                    for l in lenses
+                    for lens_item in lenses
                 ],
                 "total": len(lenses),
             }
@@ -614,7 +612,10 @@ def save_setup(project_id: int, req: CreateSetupReq):
             detector_id=req.detector_id,
             lens_snapshot=json.dumps(_model_to_dict(lens)) if lens else None,
             detector_snapshot=json.dumps(_model_to_dict(detector)) if detector else None,
-            match_result_snapshot=json.dumps(req.match_result_snapshot, default=str) if req.match_result_snapshot else None,
+            match_result_snapshot=(
+                json.dumps(req.match_result_snapshot, default=str)
+                if req.match_result_snapshot else None
+            ),
             notes=req.notes,
         )
         session.add(setup)
@@ -752,15 +753,25 @@ def generate_project_report(project_id: int, req: ProjectReportReq):
                 return FastAPIResponse(
                     content=pdf_bytes,
                     media_type="application/pdf",
-                    headers={"Content-Disposition": f"attachment; filename=lensfit-project-{project_id}-report.pdf"},
+                    headers={
+                        "Content-Disposition": (
+                            f"attachment; filename=lensfit-project-{project_id}-report.pdf"
+                        ),
+                    },
                 )
             else:
                 from lensfit.export.excel_exporter import generate_excel_report
-                excel_bytes = generate_excel_report(synthetic_requirements, unique_results, top_k=50)
+                excel_bytes = generate_excel_report(
+                    synthetic_requirements, unique_results, top_k=50
+                )
                 return FastAPIResponse(
                     content=excel_bytes,
                     media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    headers={"Content-Disposition": f"attachment; filename=lensfit-project-{project_id}-report.xlsx"},
+                    headers={
+                        "Content-Disposition": (
+                            f"attachment; filename=lensfit-project-{project_id}-report.xlsx"
+                        ),
+                    },
                 )
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Report generation failed: {str(e)}")

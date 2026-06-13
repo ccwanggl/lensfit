@@ -1,6 +1,7 @@
 """Tests for sensor utilities."""
 
 import pytest
+
 from lensfit.core.sensor import (
     SENSOR_FORMAT_TABLE,
     sensor_diag_from_format,

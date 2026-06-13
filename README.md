@@ -79,44 +79,69 @@ LensFit 是一款面向光学工程师和系统集成商的智能镜头与传感
 #### 环境要求
 
 - Node.js 20+
-- Python 3.11+
-- Rust（用于 Tauri 构建）
+- Python 3.12+
+- Rust 1.75+（用于 Tauri 构建）
 
-#### 安装依赖
+#### 一键启动开发环境（推荐）
+
+LensFit 提供了跨平台的启动脚本，自动创建 Python 虚拟环境、安装依赖、初始化数据库并同时启动前后端。
 
 ```bash
-# 前端依赖
-cd apps/desktop
-npm install
+# Windows
+cd lensfit
+python scripts/dev.py
 
-# 后端依赖
-cd ../../engine
-pip install -e .
+# macOS / Linux
+cd lensfit
+python3 scripts/dev.py
+# 或
+./scripts/dev.sh
 ```
 
-#### 开发模式
+脚本会：
+1. 创建 `engine/.venv` 并安装 Python 依赖（可编辑模式）
+2. 安装前端 `node_modules`
+3. 运行 Alembic 数据库迁移
+4. 导入种子数据（如数据库不存在）
+5. 启动 FastAPI 后端（`http://127.0.0.1:8765`）
+6. 启动 Vite 前端开发服务器（`http://localhost:5173`）
+
+#### 手动启动
+
+如果你希望分别启动前后端：
 
 ```bash
 # 终端 1：启动后端
 cd engine
-python -m lensfit
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
+pip install -e ".[dev]"
+alembic upgrade head
+python database/import_scripts/import_seed.py
+python -m lensfit.api.server --port 8765
 
 # 终端 2：启动前端
 cd apps/desktop
+npm install
 npm run dev
 ```
 
-#### 构建生产版本
+#### 构建桌面生产版本
 
 ```bash
-# 构建后端 sidecar
-cd engine
-python build_sidecar.py
+# Windows
+cd lensfit
+python scripts/build-desktop.py
 
-# 构建桌面应用
-cd ../apps/desktop
-npm run tauri build
+# macOS / Linux
+cd lensfit
+python3 scripts/build-desktop.py
+# 或
+./scripts/build-desktop.sh
 ```
+
+该脚本会先使用 PyInstaller 构建当前平台的 sidecar，再调用 Tauri 打包桌面应用。
 
 ### 项目结构
 
@@ -231,44 +256,69 @@ LensFit is an intelligent lens and sensor matching system for optical engineers 
 #### Prerequisites
 
 - Node.js 20+
-- Python 3.11+
-- Rust (for Tauri builds)
+- Python 3.12+
+- Rust 1.75+ (for Tauri builds)
 
-#### Install Dependencies
+#### One-Command Development Launcher (Recommended)
+
+LensFit provides cross-platform launch scripts that automatically create the Python virtual environment, install dependencies, initialize the database, and start both the backend and frontend.
 
 ```bash
-# Frontend dependencies
-cd apps/desktop
-npm install
+# Windows
+cd lensfit
+python scripts/dev.py
 
-# Backend dependencies
-cd ../../engine
-pip install -e .
+# macOS / Linux
+cd lensfit
+python3 scripts/dev.py
+# or
+./scripts/dev.sh
 ```
 
-#### Development Mode
+The script will:
+1. Create `engine/.venv` and install Python dependencies in editable mode
+2. Install frontend `node_modules`
+3. Run Alembic database migrations
+4. Import seed data (if the database does not exist)
+5. Start the FastAPI backend (`http://127.0.0.1:8765`)
+6. Start the Vite frontend dev server (`http://localhost:5173`)
+
+#### Manual Start
+
+If you prefer to start the backend and frontend separately:
 
 ```bash
 # Terminal 1: Start backend
 cd engine
-python -m lensfit
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
+pip install -e ".[dev]"
+alembic upgrade head
+python database/import_scripts/import_seed.py
+python -m lensfit.api.server --port 8765
 
 # Terminal 2: Start frontend
 cd apps/desktop
+npm install
 npm run dev
 ```
 
-#### Build Production
+#### Build Desktop Production Bundle
 
 ```bash
-# Build backend sidecar
-cd engine
-python build_sidecar.py
+# Windows
+cd lensfit
+python scripts/build-desktop.py
 
-# Build desktop app
-cd ../apps/desktop
-npm run tauri build
+# macOS / Linux
+cd lensfit
+python3 scripts/build-desktop.py
+# or
+./scripts/build-desktop.sh
 ```
+
+This script first builds the platform-specific sidecar with PyInstaller, then invokes Tauri to bundle the desktop application.
 
 ### Project Structure
 

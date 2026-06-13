@@ -3,24 +3,24 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 
 @dataclass
 class OpticalParams:
     """光学系统核心参数."""
 
-    focal_length: Optional[float] = None
-    working_distance: Optional[float] = None
-    fov_w: Optional[float] = None
-    fov_h: Optional[float] = None
-    sensor_w: Optional[float] = None
-    sensor_h: Optional[float] = None
-    magnification: Optional[float] = None
-    afov_h: Optional[float] = None
-    afov_v: Optional[float] = None
-    extension: Optional[float] = None
+    focal_length: float | None = None
+    working_distance: float | None = None
+    fov_w: float | None = None
+    fov_h: float | None = None
+    sensor_w: float | None = None
+    sensor_h: float | None = None
+    magnification: float | None = None
+    afov_h: float | None = None
+    afov_v: float | None = None
+    extension: float | None = None
 
 
 @dataclass
@@ -121,8 +121,8 @@ class MatchingTask:
     stage: str = ""
     total_candidates: int = 0
     filtered_candidates: int = 0
-    result: Optional[list[MatchResult]] = None
-    diagnostics: Optional[list[FilterDiagnostic]] = None
-    error: Optional[str] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    completed_at: Optional[datetime] = None
+    result: list[MatchResult] | None = None
+    diagnostics: list[FilterDiagnostic] | None = None
+    error: str | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime | None = None

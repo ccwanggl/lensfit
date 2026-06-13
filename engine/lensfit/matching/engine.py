@@ -6,18 +6,18 @@ import threading
 import traceback
 import uuid
 from collections.abc import Callable
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from sqlalchemy.orm import Session
 
-from lensfit.core.types import MatchResult, MatchingTask, PhysicsTrace, FilterDiagnostic
+from lensfit.core.types import FilterDiagnostic, MatchingTask, MatchResult, PhysicsTrace
 from lensfit.core.utils import is_mount_compatible, nyquist_match, sensor_coverage_check
 from lensfit.db.catalog import CatalogQuery
 from lensfit.db.models import DetectorCatalog, LensCatalog
 from lensfit.domains.base import DeviceCombo, DomainModule, Requirements
-from lensfit.matching.scoring import ScoringEngine, TopsisRanker
 from lensfit.knowledge.engine import KnowledgeInferenceEngine, OpticalKnowledgeBase
+from lensfit.matching.scoring import ScoringEngine, TopsisRanker
 
 # Constants
 _MAX_CANDIDATE_COMBOS = 100_000
@@ -60,8 +60,8 @@ class MatchingEngine:
         params = requirements.params
         domain_id = requirements.domain
 
-        from lensfit.core.thin_lens import ThinLensCalculator
         from lensfit.core.sensor import sensor_size_from_format
+        from lensfit.core.thin_lens import ThinLensCalculator
 
         # --- Microscopy domain: filter by magnification and NA ---
         if domain_id == "microscope":
@@ -84,7 +84,11 @@ class MatchingEngine:
                 # 按变焦范围接近度和NA排序
                 lenses = sorted(
                     lenses,
-                    key=lambda l: abs((l.focal_length_mm or 0) - zoom_target) + abs((l.focal_length_max or zoom_target) - zoom_target) + abs((l.na or 0) - target_na) * 5,
+                    key=lambda lens_item: (
+                        abs((lens_item.focal_length_mm or 0) - zoom_target)
+                        + abs((lens_item.focal_length_max or zoom_target) - zoom_target)
+                        + abs((lens_item.na or 0) - target_na) * 5
+                    ),
                 )
             else:
                 # 复式显微镜: 查询物镜
@@ -98,7 +102,10 @@ class MatchingEngine:
                 # 按NA接近度排序
                 lenses = sorted(
                     lenses,
-                    key=lambda l: abs((l.na or 0) - target_na) * 10 + abs((l.focal_length_mm or 0) - target_mag),
+                    key=lambda lens_item: (
+                        abs((lens_item.na or 0) - target_na) * 10
+                        + abs((lens_item.focal_length_mm or 0) - target_mag)
+                    ),
                 )
 
             # 查询显微镜相机
@@ -137,14 +144,22 @@ class MatchingEngine:
             center = (ideal_min + ideal_max) / 2.0
             lenses = sorted(
                 lenses,
-                key=lambda l: abs((l.focal_length_mm or 0) - center),
+                key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - center),
             )
 
             # 变焦/定焦过滤
             if lens_type == "prime":
-                lenses = [l for l in lenses if (l.focal_length_max or l.focal_length_mm) <= l.focal_length_mm * 1.01]
+                lenses = [
+                    lens_item for lens_item in lenses
+                    if (lens_item.focal_length_max or lens_item.focal_length_mm)
+                    <= lens_item.focal_length_mm * 1.01
+                ]
             elif lens_type == "zoom":
-                lenses = [l for l in lenses if (l.focal_length_max or l.focal_length_mm) > l.focal_length_mm * 1.01]
+                lenses = [
+                    lens_item for lens_item in lenses
+                    if (lens_item.focal_length_max or lens_item.focal_length_mm)
+                    > lens_item.focal_length_mm * 1.01
+                ]
 
             # 查询相机机身（探测器）
             sensor_format = params.get("sensor_format", "FF")
@@ -203,7 +218,7 @@ class MatchingEngine:
             # 优先保留焦距最接近估计值的镜头
             lenses = sorted(
                 lenses,
-                key=lambda l: abs((l.focal_length_mm or 0) - focal_estimate),
+                key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - focal_estimate),
             )[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
 
         combos = []
@@ -220,7 +235,11 @@ class MatchingEngine:
     ) -> list[DeviceCombo]:
         """快速硬约束剪枝 — O(1) 检查."""
         valid = []
-        rejected: dict[str, int] = {"image_circle_too_small": 0, "mount_incompatible": 0, "wd_out_of_range": 0}
+        rejected: dict[str, int] = {
+            "image_circle_too_small": 0,
+            "mount_incompatible": 0,
+            "wd_out_of_range": 0,
+        }
         for combo in candidates:
             lens: LensCatalog = combo.lens
             det: DetectorCatalog = combo.detector
@@ -279,7 +298,10 @@ class MatchingEngine:
     # Stage 3: DomainHardFilter
     # =====================================================================
     def apply_domain_constraints(
-        self, candidates: list[DeviceCombo], domain: DomainModule, diagnostics: list[FilterDiagnostic] | None = None
+        self,
+        candidates: list[DeviceCombo],
+        domain: DomainModule,
+        diagnostics: list[FilterDiagnostic] | None = None,
     ) -> list[DeviceCombo]:
         """应用领域硬约束."""
         constraints = domain.get_hard_constraints()
@@ -381,7 +403,10 @@ class MatchingEngine:
                                 "pixel_size_um": det.pixel_size_um,
                                 "mtf50_lpmm": lens.mtf50_lpmm or 0,
                             },
-                            output=nyquist.get("sensor_nyquist_lpmm", 0) if isinstance(nyquist, dict) else 0,
+                            output=(
+                                nyquist.get("sensor_nyquist_lpmm", 0)
+                                if isinstance(nyquist, dict) else 0
+                            ),
                             unit="lp/mm",
                             assumption="sampling theorem",
                             principle="采样定理：光学分辨率需高于奈奎斯特频率以避免混叠",
@@ -551,8 +576,22 @@ class MatchingEngine:
         # 将通用维度也加入排序维度列表
         from lensfit.domains.base import ScoringDimension
         all_dims = list(dims)
-        all_dims.append(ScoringDimension(name="coverage_margin", label="覆盖裕量", weight=weights.get("coverage_margin", 1.5), is_benefit=True))
-        all_dims.append(ScoringDimension(name="nyquist_match", label="奈奎斯特匹配", weight=weights.get("nyquist_match", 1.5), is_benefit=True))
+        all_dims.append(
+            ScoringDimension(
+                name="coverage_margin",
+                label="覆盖裕量",
+                weight=weights.get("coverage_margin", 1.5),
+                is_benefit=True,
+            )
+        )
+        all_dims.append(
+            ScoringDimension(
+                name="nyquist_match",
+                label="奈奎斯特匹配",
+                weight=weights.get("nyquist_match", 1.5),
+                is_benefit=True,
+            )
+        )
 
         return self._ranker.rank(results, all_dims, weights)
 
@@ -729,14 +768,28 @@ class MatchingEngine:
                         rejected_reasons={},
                         suggestion="建议：放宽焦距或视场范围，或检查数据库是否已导入",
                     ))
-                    _update(result=[], progress=1.0, status="completed", completed_at=datetime.now(timezone.utc), diagnostics=diagnostics)
+                    _update(
+                        result=[],
+                        progress=1.0,
+                        status="completed",
+                        completed_at=datetime.now(UTC),
+                        diagnostics=diagnostics,
+                    )
                     return
-                if not _update(total_candidates=len(candidates), progress=0.1, stage="quick_filter"):
+                if not _update(
+                    total_candidates=len(candidates),
+                    progress=0.1,
+                    stage="quick_filter",
+                ):
                     return
 
                 # Stage 2
                 candidates = self.quick_hard_filter(candidates, diagnostics)
-                if not _update(filtered_candidates=len(candidates), progress=0.3, stage="domain_filter"):
+                if not _update(
+                    filtered_candidates=len(candidates),
+                    progress=0.3,
+                    stage="domain_filter",
+                ):
                     return
 
                 # Stage 3
@@ -751,10 +804,20 @@ class MatchingEngine:
 
                 # Stage 5
                 ranked = self.rank_results(results, domain)
-                _update(result=ranked, progress=1.0, status="completed", completed_at=datetime.now(timezone.utc), diagnostics=diagnostics)
+                _update(
+                    result=ranked,
+                    progress=1.0,
+                    status="completed",
+                    completed_at=datetime.now(UTC),
+                    diagnostics=diagnostics,
+                )
 
         except Exception as e:
-            _update(status="failed", error=f"{e}\n{traceback.format_exc()}", completed_at=datetime.now(timezone.utc))
+            _update(
+                status="failed",
+                error=f"{e}\n{traceback.format_exc()}",
+                completed_at=datetime.now(UTC),
+            )
 
     def get_task(self, task_id: str) -> MatchingTask | None:
         """获取任务状态."""
@@ -772,7 +835,7 @@ class MatchingEngine:
 
     def _evict_old_tasks(self) -> None:
         """淘汰过期任务 — 优先清理 completed/failed 的过时任务，保留 running 任务."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ttl_completed = timedelta(hours=1)
         ttl_running = timedelta(hours=24)
 
@@ -801,7 +864,11 @@ class MatchingEngine:
             # Phase 3: 如果仍然超过上限，淘汰最旧的 completed/failed 任务
             if len(self._tasks) > _MAX_RETAINED_TASKS:
                 finished = sorted(
-                    [(tid, t) for tid, t in self._tasks.items() if t.status in ("completed", "failed", "cancelled")],
+                    [
+                        (tid, t)
+                        for tid, t in self._tasks.items()
+                        if t.status in ("completed", "failed", "cancelled")
+                    ],
                     key=lambda kv: kv[1].completed_at or kv[1].created_at,
                 )
                 to_evict = len(self._tasks) - _MAX_RETAINED_TASKS

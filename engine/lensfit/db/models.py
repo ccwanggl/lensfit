@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import List, Optional
+from datetime import datetime
 
 from sqlalchemy import (
     Boolean,
@@ -14,7 +13,6 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
-    create_engine,
     func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -31,16 +29,16 @@ class Manufacturer(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    name_en: Mapped[Optional[str]] = mapped_column(String)
-    name_cn: Mapped[Optional[str]] = mapped_column(String)
-    country: Mapped[Optional[str]] = mapped_column(String)
-    website: Mapped[Optional[str]] = mapped_column(String)
+    name_en: Mapped[str | None] = mapped_column(String)
+    name_cn: Mapped[str | None] = mapped_column(String)
+    country: Mapped[str | None] = mapped_column(String)
+    website: Mapped[str | None] = mapped_column(String)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
-    data_source: Mapped[Optional[str]] = mapped_column(String)
+    data_source: Mapped[str | None] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
-    lenses: Mapped[List["LensCatalog"]] = relationship(back_populates="manufacturer")
-    detectors: Mapped[List["DetectorCatalog"]] = relationship(back_populates="manufacturer")
+    lenses: Mapped[list[LensCatalog]] = relationship(back_populates="manufacturer")
+    detectors: Mapped[list[DetectorCatalog]] = relationship(back_populates="manufacturer")
 
 
 class LensCatalog(Base):
@@ -52,54 +50,54 @@ class LensCatalog(Base):
     manufacturer_id: Mapped[int] = mapped_column(ForeignKey("manufacturers.id"))
 
     model: Mapped[str] = mapped_column(String, nullable=False)
-    sku: Mapped[Optional[str]] = mapped_column(String)
+    sku: Mapped[str | None] = mapped_column(String)
     category: Mapped[str] = mapped_column(String, nullable=False)
     status: Mapped[str] = mapped_column(String, default="active")
 
     # 光学参数
-    focal_length_mm: Mapped[Optional[float]] = mapped_column(Float)
-    focal_length_min: Mapped[Optional[float]] = mapped_column(Float)
-    focal_length_max: Mapped[Optional[float]] = mapped_column(Float)
-    max_aperture: Mapped[Optional[float]] = mapped_column(Float)
-    min_aperture: Mapped[Optional[float]] = mapped_column(Float)
-    image_circle_mm: Mapped[Optional[float]] = mapped_column(Float)
+    focal_length_mm: Mapped[float | None] = mapped_column(Float)
+    focal_length_min: Mapped[float | None] = mapped_column(Float)
+    focal_length_max: Mapped[float | None] = mapped_column(Float)
+    max_aperture: Mapped[float | None] = mapped_column(Float)
+    min_aperture: Mapped[float | None] = mapped_column(Float)
+    image_circle_mm: Mapped[float | None] = mapped_column(Float)
 
     # 工作距离
-    min_working_distance_mm: Mapped[Optional[float]] = mapped_column(Float)
-    max_working_distance_mm: Mapped[Optional[float]] = mapped_column(Float)
-    nominal_wd_mm: Mapped[Optional[float]] = mapped_column(Float)
+    min_working_distance_mm: Mapped[float | None] = mapped_column(Float)
+    max_working_distance_mm: Mapped[float | None] = mapped_column(Float)
+    nominal_wd_mm: Mapped[float | None] = mapped_column(Float)
 
     # 机械参数
-    mount_type: Mapped[Optional[str]] = mapped_column(String)
-    mount_flange_mm: Mapped[Optional[float]] = mapped_column(Float)
-    outer_diameter_mm: Mapped[Optional[float]] = mapped_column(Float)
-    length_mm: Mapped[Optional[float]] = mapped_column(Float)
-    weight_g: Mapped[Optional[float]] = mapped_column(Float)
+    mount_type: Mapped[str | None] = mapped_column(String)
+    mount_flange_mm: Mapped[float | None] = mapped_column(Float)
+    outer_diameter_mm: Mapped[float | None] = mapped_column(Float)
+    length_mm: Mapped[float | None] = mapped_column(Float)
+    weight_g: Mapped[float | None] = mapped_column(Float)
 
     # 性能参数
-    mtf50_lpmm: Mapped[Optional[float]] = mapped_column(Float)
-    distortion_percent: Mapped[Optional[float]] = mapped_column(Float)
-    telecentricity_deg: Mapped[Optional[float]] = mapped_column(Float)
-    na: Mapped[Optional[float]] = mapped_column(Float)
-    working_f_number: Mapped[Optional[float]] = mapped_column(Float)
+    mtf50_lpmm: Mapped[float | None] = mapped_column(Float)
+    distortion_percent: Mapped[float | None] = mapped_column(Float)
+    telecentricity_deg: Mapped[float | None] = mapped_column(Float)
+    na: Mapped[float | None] = mapped_column(Float)
+    working_f_number: Mapped[float | None] = mapped_column(Float)
 
     # 光谱参数
-    wavelength_min_nm: Mapped[Optional[int]] = mapped_column(Integer)
-    wavelength_max_nm: Mapped[Optional[int]] = mapped_column(Integer)
-    coating_type: Mapped[Optional[str]] = mapped_column(String)
+    wavelength_min_nm: Mapped[int | None] = mapped_column(Integer)
+    wavelength_max_nm: Mapped[int | None] = mapped_column(Integer)
+    coating_type: Mapped[str | None] = mapped_column(String)
 
     # 商业参数
-    price_usd: Mapped[Optional[float]] = mapped_column(Float)
-    datasheet_url: Mapped[Optional[str]] = mapped_column(String)
-    image_url: Mapped[Optional[str]] = mapped_column(String)
+    price_usd: Mapped[float | None] = mapped_column(Float)
+    datasheet_url: Mapped[str | None] = mapped_column(String)
+    image_url: Mapped[str | None] = mapped_column(String)
 
     # 元数据
-    data_source: Mapped[Optional[str]] = mapped_column(String)
+    data_source: Mapped[str | None] = mapped_column(String)
     data_quality_score: Mapped[float] = mapped_column(Float, default=0.0)
     verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
-    manufacturer: Mapped["Manufacturer"] = relationship(back_populates="lenses")
+    manufacturer: Mapped[Manufacturer] = relationship(back_populates="lenses")
 
     __table_args__ = (
         # 核心复合索引 — 匹配引擎 Stage 1 使用
@@ -124,44 +122,44 @@ class DetectorCatalog(Base):
     category: Mapped[str] = mapped_column(String, nullable=False)
 
     # 传感器物理参数
-    sensor_format_inch: Mapped[Optional[str]] = mapped_column(String)
-    sensor_w_mm: Mapped[Optional[float]] = mapped_column(Float)
-    sensor_h_mm: Mapped[Optional[float]] = mapped_column(Float)
-    sensor_diag_mm: Mapped[Optional[float]] = mapped_column(Float)
+    sensor_format_inch: Mapped[str | None] = mapped_column(String)
+    sensor_w_mm: Mapped[float | None] = mapped_column(Float)
+    sensor_h_mm: Mapped[float | None] = mapped_column(Float)
+    sensor_diag_mm: Mapped[float | None] = mapped_column(Float)
 
     # 分辨率参数
-    resolution_w: Mapped[Optional[int]] = mapped_column(Integer)
-    resolution_h: Mapped[Optional[int]] = mapped_column(Integer)
-    pixel_size_um: Mapped[Optional[float]] = mapped_column(Float)
+    resolution_w: Mapped[int | None] = mapped_column(Integer)
+    resolution_h: Mapped[int | None] = mapped_column(Integer)
+    pixel_size_um: Mapped[float | None] = mapped_column(Float)
 
     # 性能参数 (EMVA 1288)
-    quantum_efficiency_peak: Mapped[Optional[float]] = mapped_column(Float)
-    read_noise_e: Mapped[Optional[float]] = mapped_column(Float)
-    dark_current_e_s: Mapped[Optional[float]] = mapped_column(Float)
-    full_well_e: Mapped[Optional[float]] = mapped_column(Float)
-    dynamic_range_db: Mapped[Optional[float]] = mapped_column(Float)
+    quantum_efficiency_peak: Mapped[float | None] = mapped_column(Float)
+    read_noise_e: Mapped[float | None] = mapped_column(Float)
+    dark_current_e_s: Mapped[float | None] = mapped_column(Float)
+    full_well_e: Mapped[float | None] = mapped_column(Float)
+    dynamic_range_db: Mapped[float | None] = mapped_column(Float)
 
     # 红外探测器专用
-    netd_mk: Mapped[Optional[float]] = mapped_column(Float)
-    spectral_range_min_um: Mapped[Optional[float]] = mapped_column(Float)
-    spectral_range_max_um: Mapped[Optional[float]] = mapped_column(Float)
+    netd_mk: Mapped[float | None] = mapped_column(Float)
+    spectral_range_min_um: Mapped[float | None] = mapped_column(Float)
+    spectral_range_max_um: Mapped[float | None] = mapped_column(Float)
 
     # 接口与数据
-    mount_type: Mapped[Optional[str]] = mapped_column(String)
-    data_interface: Mapped[Optional[str]] = mapped_column(String)
-    max_fps_full: Mapped[Optional[float]] = mapped_column(Float)
+    mount_type: Mapped[str | None] = mapped_column(String)
+    data_interface: Mapped[str | None] = mapped_column(String)
+    max_fps_full: Mapped[float | None] = mapped_column(Float)
 
     # 商业参数
-    price_usd: Mapped[Optional[float]] = mapped_column(Float)
-    datasheet_url: Mapped[Optional[str]] = mapped_column(String)
+    price_usd: Mapped[float | None] = mapped_column(Float)
+    datasheet_url: Mapped[str | None] = mapped_column(String)
 
     # 元数据
-    data_source: Mapped[Optional[str]] = mapped_column(String)
+    data_source: Mapped[str | None] = mapped_column(String)
     data_quality_score: Mapped[float] = mapped_column(Float, default=0.0)
     verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
-    manufacturer: Mapped["Manufacturer"] = relationship(back_populates="detectors")
+    manufacturer: Mapped[Manufacturer] = relationship(back_populates="detectors")
 
     __table_args__ = (
         Index("ix_detector_category", "category"),
@@ -180,13 +178,13 @@ class CompatibilityCache(Base):
     cache_key: Mapped[str] = mapped_column(String, primary_key=True)
     lens_id: Mapped[int] = mapped_column(Integer, nullable=False)
     detector_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    adapter_id: Mapped[Optional[int]] = mapped_column(Integer)
+    adapter_id: Mapped[int | None] = mapped_column(Integer)
 
     result_json: Mapped[str] = mapped_column(Text, nullable=False)
     is_compatible: Mapped[bool] = mapped_column(Boolean, default=True)
-    compatibility_score: Mapped[Optional[float]] = mapped_column(Float)
-    coverage_ratio: Mapped[Optional[float]] = mapped_column(Float)
-    nyquist_ratio: Mapped[Optional[float]] = mapped_column(Float)
+    compatibility_score: Mapped[float | None] = mapped_column(Float)
+    coverage_ratio: Mapped[float | None] = mapped_column(Float)
+    nyquist_ratio: Mapped[float | None] = mapped_column(Float)
     vignetting_risk: Mapped[bool] = mapped_column(Boolean, default=False)
 
     algorithm_version: Mapped[str] = mapped_column(String, nullable=False)
@@ -204,14 +202,14 @@ class Project(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text)
-    domain: Mapped[Optional[str]] = mapped_column(String)
+    description: Mapped[str | None] = mapped_column(Text)
+    domain: Mapped[str | None] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     modified_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()
     )
 
-    setups: Mapped[List["ProjectSetup"]] = relationship(back_populates="project")
+    setups: Mapped[list[ProjectSetup]] = relationship(back_populates="project")
 
 
 class ProjectSetup(Base):
@@ -224,36 +222,51 @@ class ProjectSetup(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
 
     # 引用目录
-    lens_id: Mapped[Optional[int]] = mapped_column(ForeignKey("lens_catalog.id"))
-    detector_id: Mapped[Optional[int]] = mapped_column(ForeignKey("detector_catalog.id"))
-    adapter_id: Mapped[Optional[int]] = mapped_column(Integer)
+    lens_id: Mapped[int | None] = mapped_column(ForeignKey("lens_catalog.id"))
+    detector_id: Mapped[int | None] = mapped_column(ForeignKey("detector_catalog.id"))
+    adapter_id: Mapped[int | None] = mapped_column(Integer)
 
     # 快照
-    lens_snapshot: Mapped[Optional[str]] = mapped_column(Text)
-    detector_snapshot: Mapped[Optional[str]] = mapped_column(Text)
-    adapter_snapshot: Mapped[Optional[str]] = mapped_column(Text)
-    snapshot_version: Mapped[Optional[int]] = mapped_column(Integer)
-    snapshot_date: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    lens_snapshot: Mapped[str | None] = mapped_column(Text)
+    detector_snapshot: Mapped[str | None] = mapped_column(Text)
+    adapter_snapshot: Mapped[str | None] = mapped_column(Text)
+    snapshot_version: Mapped[int | None] = mapped_column(Integer)
+    snapshot_date: Mapped[datetime | None] = mapped_column(DateTime)
     drift_detected: Mapped[bool] = mapped_column(Boolean, default=False)
-    drift_details: Mapped[Optional[str]] = mapped_column(Text)
+    drift_details: Mapped[str | None] = mapped_column(Text)
 
     # 自定义参数
-    custom_lens_params: Mapped[Optional[str]] = mapped_column(Text)
-    custom_detector_params: Mapped[Optional[str]] = mapped_column(Text)
+    custom_lens_params: Mapped[str | None] = mapped_column(Text)
+    custom_detector_params: Mapped[str | None] = mapped_column(Text)
 
     # 计算结果缓存
-    calculated_params: Mapped[Optional[str]] = mapped_column(Text)
+    calculated_params: Mapped[str | None] = mapped_column(Text)
 
     # 匹配结果快照（含 reason, derivation_chain, diagnostics, score_vector）
-    match_result_snapshot: Mapped[Optional[str]] = mapped_column(Text)
+    match_result_snapshot: Mapped[str | None] = mapped_column(Text)
 
-    notes: Mapped[Optional[str]] = mapped_column(Text)
+    notes: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
-    project: Mapped["Project"] = relationship(back_populates="setups")
+    project: Mapped[Project] = relationship(back_populates="setups")
 
 
 def init_db(db_url: str = "sqlite:///lensfit.db") -> None:
-    """初始化数据库."""
-    engine = create_engine(db_url, echo=False)
-    Base.metadata.create_all(engine)
+    """初始化数据库.
+
+    使用 Alembic 迁移管理 schema，确保模型定义与迁移脚本保持一致，
+    避免 ``Base.metadata.create_all`` 与后续 migration 产生索引冲突。
+    """
+    from pathlib import Path
+
+    from alembic import command
+    from alembic.config import Config
+
+    engine_dir = Path(__file__).parent.parent.parent
+    alembic_cfg = Config(str(engine_dir / "alembic.ini"))
+    alembic_cfg.set_main_option("sqlalchemy.url", db_url)
+    # 让 script_location 指向 alembic.ini 所在目录下的相对路径，避免依赖 CWD
+    alembic_cfg.set_main_option(
+        "script_location", str(engine_dir / "lensfit" / "db" / "migrations")
+    )
+    command.upgrade(alembic_cfg, "head")

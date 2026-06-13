@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from typing import Optional
 
 from lensfit.core.types import OpticalParams
 
@@ -113,7 +112,8 @@ class ThinLensCalculator:
 
             # Rule: focal + sensor_w + WD ← FOV_w
             if result.fov_w is None and all(
-                v is not None for v in [result.focal_length, result.sensor_w, result.working_distance]
+                v is not None
+                for v in [result.focal_length, result.sensor_w, result.working_distance]
             ):
                 try:
                     result.fov_w = self.fov_from_wd_focal(

@@ -223,7 +223,10 @@ class MicroscopyModule(DomainModule):
         fov_h = sensor_h / total_mag
 
         # 奈奎斯特采样比
-        nyquist_ratio = optical_resolution_um / digital_resolution_um if digital_resolution_um > 0 else 0
+        nyquist_ratio = (
+            optical_resolution_um / digital_resolution_um
+            if digital_resolution_um > 0 else 0
+        )
 
         # 覆盖比
         sensor_diag = (sensor_w ** 2 + sensor_h ** 2) ** 0.5
