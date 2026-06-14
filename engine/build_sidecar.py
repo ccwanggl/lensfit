@@ -13,18 +13,28 @@ def build() -> None:
     root_dir = engine_dir.parent
     tauri_bin_dir = root_dir / "apps" / "desktop" / "src-tauri" / "binaries"
 
-    # Detect target triple
+    # Detect Rust target triple from Python platform info.
     system = platform.system()
     machine = platform.machine().lower()
 
+    # Normalize Python machine names to Rust LLVM target architectures.
+    arch_map = {
+        "amd64": "x86_64",
+        "x86": "i686",
+        "win32": "i686",
+        "arm64": "aarch64",
+        "aarch64": "aarch64",
+    }
+    arch = arch_map.get(machine, machine)
+
     if system == "Darwin":
-        target = f"{machine}-apple-darwin"
+        target = f"{arch}-apple-darwin"
     elif system == "Linux":
-        target = f"{machine}-unknown-linux-gnu"
+        target = f"{arch}-unknown-linux-gnu"
     elif system == "Windows":
-        target = f"{machine}-pc-windows-msvc"
+        target = f"{arch}-pc-windows-msvc"
     else:
-        target = f"{machine}-{system.lower()}"
+        target = f"{arch}-{system.lower()}"
 
     binary_name = f"lensfit-engine-{target}"
     if system == "Windows":
