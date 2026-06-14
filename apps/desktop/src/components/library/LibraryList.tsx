@@ -1,6 +1,5 @@
-import { Package, Camera, Building2, Pencil, Trash2 } from "lucide-react";
+import { Package, Camera, Building2, Pencil, Trash2, Download } from "lucide-react";
 import { Card, Badge, EmptyState, Button, SectionHeader } from "../ui";
-import { Download } from "lucide-react";
 import type { CatalogLens, CatalogDetector } from "../../utils/api";
 
 export type Kind = "lens" | "detector";
@@ -74,7 +73,7 @@ export default function LibraryList({
               title={`暂无${KIND_LABEL[kind]}`}
               description={`点击「新建」或「批量导入」添加${KIND_LABEL[kind]}`}
               action={
-                <Button size="sm" leftIcon={<Package size={14} />} onClick={onNew}>
+                <Button size="sm" leftIcon={kind === "lens" ? <Package size={14} /> : <Camera size={14} />} onClick={onNew}>
                   新建
                 </Button>
               }

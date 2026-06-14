@@ -15,8 +15,8 @@ export function computeParetoFrontier(results: UnifiedMatchResult[]): UnifiedMat
   return results.filter((a, i) => {
     return !results.some((b, j) => {
       if (i === j) return false;
-      const aVec = a.score_vector;
-      const bVec = b.score_vector;
+      const aVec = a.score_vector ?? {};
+      const bVec = b.score_vector ?? {};
       const keys = new Set([...Object.keys(aVec), ...Object.keys(bVec)]);
       let strictlyBetter = false;
       for (const k of keys) {

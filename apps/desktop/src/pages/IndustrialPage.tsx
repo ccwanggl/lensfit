@@ -373,7 +373,10 @@ export default function IndustrialPage() {
       if (exists) {
         return prev.filter((x) => x.lens_id !== r.lens_id || x.detector_id !== r.detector_id);
       }
-      if (prev.length >= 3) return prev;
+      if (prev.length >= 4) {
+        toast("warning", "最多对比 4 个方案", "请先取消已选方案再添加");
+        return prev;
+      }
       return [...prev, r];
     });
   };

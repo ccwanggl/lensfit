@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, Up
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from starlette.concurrency import run_in_threadpool
 
 from lensfit.db.models import DetectorCatalog, LensCatalog, Manufacturer
 
@@ -366,6 +367,17 @@ def update_lens(
         raise HTTPException(status_code=403, detail="Cannot modify seed lens")
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
+    duplicate = (
+        session.query(LensCatalog)
+        .filter_by(manufacturer_id=item.manufacturer_id, model=item.model)
+        .filter(LensCatalog.id != item.id)
+        .first()
+    )
+    if duplicate:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Lens '{item.model}' already exists for this manufacturer",
+        )
     session.commit()
     session.refresh(item)
     return item
@@ -495,6 +507,17 @@ def update_detector(
         raise HTTPException(status_code=403, detail="Cannot modify seed detector")
     for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
+    duplicate = (
+        session.query(DetectorCatalog)
+        .filter_by(manufacturer_id=item.manufacturer_id, model=item.model)
+        .filter(DetectorCatalog.id != item.id)
+        .first()
+    )
+    if duplicate:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Detector '{item.model}' already exists for this manufacturer",
+        )
     session.commit()
     session.refresh(item)
     return item
@@ -525,5 +548,5 @@ async def import_catalog(
     from lensfit.api.import_pipe import import_from_upload
 
     content = await file.read()
-    result = import_from_upload(file.filename or "", content, session)
+    result = await run_in_threadpool(import_from_upload, file.filename or "", content, session)
     return result

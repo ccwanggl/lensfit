@@ -231,7 +231,14 @@ export default function LibraryPage() {
       }
       toast("success", "已删除", `${deleteTarget.model} 已删除`);
       setDeleteTarget(null);
-      await loadData();
+      // Adjust page if the last item of the current page was removed
+      const newTotal = Math.max(0, total - 1);
+      const maxPage = Math.max(0, Math.ceil(newTotal / PAGE_SIZE) - 1);
+      if (page > maxPage) {
+        setPage(maxPage);
+      } else {
+        await loadData();
+      }
       await loadCounts();
     } catch (err) {
       console.error("Delete failed:", err);
@@ -273,7 +280,10 @@ export default function LibraryPage() {
           search={search}
           onSearchChange={setSearch}
           sourceFilter={sourceFilter}
-          onSourceFilterChange={setSourceFilter}
+          onSourceFilterChange={(v) => {
+            setSourceFilter(v);
+            setPage(0);
+          }}
           lensCount={lensTotal}
           detectorCount={detectorTotal}
           onNew={handleOpenCreate}
