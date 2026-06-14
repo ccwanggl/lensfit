@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from collections.abc import Generator
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -17,6 +18,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from lensfit.api import catalog_router
 from lensfit.db.catalog import CatalogQuery
 from lensfit.db.models import (
     DetectorCatalog,
@@ -39,6 +41,17 @@ from lensfit.matching.engine import MatchingEngine
 # Global instances
 _engine: MatchingEngine | None = None
 _session_maker = None
+
+
+def get_db_session() -> Generator[Any, None, None]:
+    """Yield a database session for FastAPI dependency injection."""
+    if _session_maker is None:
+        raise RuntimeError("Database session maker not initialized")
+    session = _session_maker()
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 @asynccontextmanager
@@ -113,9 +126,11 @@ app.add_middleware(
         "tauri://localhost",       # Tauri production
     ],
     allow_credentials=False,
-    allow_methods=["GET", "POST", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "X-API-Key"],
 )
+
+app.include_router(catalog_router.router)
 
 
 # =====================================================================
@@ -498,111 +513,6 @@ def generate_coc_data(req: CocReq):
             focus_distance_m=req.focus_distance_m,
         )
         return plot.generate()
-
-
-# =====================================================================
-# Catalog
-# =====================================================================
-@app.get("/api/v1/catalog/lenses")
-def list_lenses(
-    category: str | None = None,
-    mount: str | None = None,
-    focal_min: float | None = None,
-    focal_max: float | None = None,
-    limit: int = 100,
-):
-    """查询镜头目录."""
-    if _engine is None or _session_maker is None:
-        raise HTTPException(status_code=503, detail="Engine not initialized")
-
-    limit = min(max(limit, 1), 1000)
-
-    try:
-        with _session_maker() as session:
-            catalog = CatalogQuery(session)
-            lenses = catalog.query_lenses(
-                category=category,
-                mount_type=mount,
-                focal_min=focal_min,
-                focal_max=focal_max,
-                limit=limit,
-            )
-
-            return {
-                "items": [
-                    {
-                        "id": lens_item.id,
-                        "model": lens_item.model,
-                        "manufacturer_id": lens_item.manufacturer_id,
-                        "category": lens_item.category,
-                        "focal_length_mm": lens_item.focal_length_mm,
-                        "focal_length_max": lens_item.focal_length_max,
-                        "max_aperture": lens_item.max_aperture,
-                        "image_circle_mm": lens_item.image_circle_mm,
-                        "mount_type": lens_item.mount_type,
-                        "price_usd": lens_item.price_usd,
-                        "wavelength_min_nm": lens_item.wavelength_min_nm,
-                        "wavelength_max_nm": lens_item.wavelength_max_nm,
-                        "image_url": lens_item.image_url,
-                        "na": lens_item.na,
-                    }
-                    for lens_item in lenses
-                ],
-                "total": len(lenses),
-            }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Catalog query error: {str(e)}")
-
-
-@app.get("/api/v1/catalog/detectors")
-def list_detectors(
-    category: str | None = None,
-    sensor_format: str | None = None,
-    mount: str | None = None,
-    limit: int = 100,
-):
-    """查询探测器目录."""
-    if _engine is None or _session_maker is None:
-        raise HTTPException(status_code=503, detail="Engine not initialized")
-
-    limit = min(max(limit, 1), 1000)
-
-    try:
-        with _session_maker() as session:
-            catalog = CatalogQuery(session)
-            detectors = catalog.query_detectors(
-                category=category,
-                sensor_format=sensor_format,
-                mount_type=mount,
-                limit=limit,
-            )
-
-            return {
-                "items": [
-                    {
-                        "id": d.id,
-                        "model": d.model,
-                        "manufacturer_id": d.manufacturer_id,
-                        "category": d.category,
-                        "sensor_format_inch": d.sensor_format_inch,
-                        "sensor_w_mm": d.sensor_w_mm,
-                        "sensor_h_mm": d.sensor_h_mm,
-                        "sensor_diag_mm": d.sensor_diag_mm,
-                        "resolution_w": d.resolution_w,
-                        "resolution_h": d.resolution_h,
-                        "pixel_size_um": d.pixel_size_um,
-                        "mount_type": d.mount_type,
-                        "price_usd": d.price_usd,
-                        "netd_mk": d.netd_mk,
-                        "spectral_range_min_um": d.spectral_range_min_um,
-                        "spectral_range_max_um": d.spectral_range_max_um,
-                    }
-                    for d in detectors
-                ],
-                "total": len(detectors),
-            }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Catalog query error: {str(e)}")
 
 
 # =====================================================================
