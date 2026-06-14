@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Monitor,
   Ruler,
@@ -20,7 +20,6 @@ import {
   Image,
   Download,
   ArrowLeftRight,
-  X,
   FolderPlus,
   BarChart3,
   Zap,
@@ -44,6 +43,7 @@ import { toast } from "../hooks/useToast";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import PhysicsTrace from "../components/PhysicsTrace";
 import CompareView from "../components/CompareView";
+import CompareParetoToolbar, { computeParetoFrontier } from "../components/CompareParetoToolbar";
 import DiagnosticsPanel from "../components/DiagnosticsPanel";
 import WhatIfPanel from "../components/WhatIfPanel";
 import GlossaryTooltip from "../components/GlossaryTooltip";
@@ -264,6 +264,7 @@ export default function IndustrialPage() {
   const [coverageLoading, setCoverageLoading] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<UnifiedMatchResult[]>([]);
+  const [paretoOnly, setParetoOnly] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [whatIfExpanded, setWhatIfExpanded] = useState(false);
 
@@ -282,6 +283,7 @@ export default function IndustrialPage() {
     setResults(matches);
     setCompareMode(false);
     setCompareSelection([]);
+    setParetoOnly(false);
   }, [setResults]);
 
   const {
@@ -299,6 +301,11 @@ export default function IndustrialPage() {
   const [whatIfResults, setWhatIfResults] = useState<UnifiedMatchResult[]>([]);
   const [whatIfRunning, setWhatIfRunning] = useState(false);
   const whatIfCloseRef = useRef<(() => void) | null>(null);
+
+  const paretoResults = useMemo(() => computeParetoFrontier(results), [results]);
+  const displayResults = useMemo(() => {
+    return paretoOnly ? paretoResults : results;
+  }, [results, paretoResults, paretoOnly]);
 
   useEffect(() => {
     return () => {
@@ -355,6 +362,7 @@ export default function IndustrialPage() {
     setSelectedResult(null);
     setCompareMode(false);
     setCompareSelection([]);
+    setParetoOnly(false);
     setHasSearched(true);
     start();
   };
@@ -420,14 +428,21 @@ export default function IndustrialPage() {
 
   const resultsAction = results.length > 0 ? (
     <div className="flex items-center gap-2">
-      {compareMode ? (
-        <>
-          <Button variant="outline" size="sm" leftIcon={<X size={14} />} onClick={() => { setCompareMode(false); setCompareSelection([]); }}>退出对比</Button>
-          {compareSelection.length >= 2 && (
-            <Button variant="primary" size="sm" leftIcon={<ArrowLeftRight size={14} />} onClick={() => setSelectedResult(null)}>开始对比</Button>
-          )}
-        </>
-      ) : (
+      <CompareParetoToolbar
+        compareMode={compareMode}
+        onCompareModeChange={(v) => {
+          setCompareMode(v);
+          if (!v) setCompareSelection([]);
+        }}
+        paretoOnly={paretoOnly}
+        onParetoChange={setParetoOnly}
+        selectionCount={compareSelection.length}
+        onClearSelection={() => setCompareSelection([])}
+      />
+      {compareMode && compareSelection.length >= 2 && (
+        <Button variant="primary" size="sm" leftIcon={<ArrowLeftRight size={14} />} onClick={() => setSelectedResult(null)}>开始对比</Button>
+      )}
+      {!compareMode && (
         <div className="flex items-center gap-1">
           <button title="导出 PDF" onClick={() => handleExport("pdf")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             <FileText size={14} />
@@ -437,9 +452,6 @@ export default function IndustrialPage() {
           </button>
           <button title="导出 CSV" onClick={() => handleExport("csv")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             {Icons.table}
-          </button>
-          <button title="方案对比" onClick={() => setCompareMode(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
-            <ArrowLeftRight size={14} />
           </button>
           <button title="保存到项目" onClick={() => setSaveDialogOpen(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             <FolderPlus size={14} />
@@ -452,7 +464,7 @@ export default function IndustrialPage() {
   const centerPanel = (
     <DomainResultsPanel
       title="匹配结果"
-      subtitle={results.length > 0 ? `共找到 ${results.length} 组匹配方案` : "等待参数输入"}
+      subtitle={displayResults.length > 0 ? `共找到 ${displayResults.length} 组匹配方案${paretoOnly ? "（Pareto 前沿）" : ""}` : "等待参数输入"}
       icon={<AlertTriangle size={16} />}
       action={resultsAction}
     >
@@ -466,7 +478,7 @@ export default function IndustrialPage() {
         </div>
       )}
 
-      {results.length === 0 && !isLoading && !error && (
+      {displayResults.length === 0 && !isLoading && !error && (
         <div className="flex-1">
           {!hasSearched ? (
             <div className="h-full flex items-center justify-center">
@@ -480,6 +492,10 @@ export default function IndustrialPage() {
                 toast("info", "参数已调整", `${name} 已设为 ${String(value)}，请重新匹配`);
               }}
             />
+          ) : paretoOnly ? (
+            <div className="h-full flex items-center justify-center">
+              <EmptyState icon={<Layers size={24} />} title="Pareto 前沿为空" description="当前结果中没有被支配关系明显的领先方案，请关闭 Pareto 过滤查看全部" />
+            </div>
           ) : (
             <div className="h-full flex items-center justify-center">
               <EmptyState icon={<Search size={24} />} title="未找到匹配方案" description="系统未找到符合条件的镜头与探测器组合，请尝试放宽参数" />
@@ -526,9 +542,9 @@ export default function IndustrialPage() {
         </div>
       )}
 
-      {results.length > 0 && (
+      {displayResults.length > 0 && (
         <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
-          {results.slice(0, 20).map((r, i) => (
+          {displayResults.slice(0, 20).map((r, i) => (
             <ResultCard
               key={`${r.lens_id}-${r.detector_id}`}
               result={r}

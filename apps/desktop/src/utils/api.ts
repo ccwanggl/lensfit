@@ -334,33 +334,40 @@ export async function generateCoc(
   });
 }
 
-export async function listLenses(params?: {
+export interface CatalogListParams {
   category?: string;
   mount?: string;
-  focal_min?: number;
-  focal_max?: number;
+  data_source?: "seed" | "user" | "all";
+  q?: string;
+  offset?: number;
   limit?: number;
-}) {
+  sort_by?: string;
+  sort_order?: "asc" | "desc";
+}
+
+export async function listLenses(params?: CatalogListParams) {
   const qs = new URLSearchParams();
   if (params?.category) qs.set("category", params.category);
-  if (params?.mount) qs.set("mount", params.mount);
-  if (params?.focal_min != null) qs.set("focal_min", String(params.focal_min));
-  if (params?.focal_max != null) qs.set("focal_max", String(params.focal_max));
+  if (params?.mount) qs.set("mount_type", params.mount);
+  if (params?.data_source && params.data_source !== "all") qs.set("data_source", params.data_source);
+  if (params?.q) qs.set("q", params.q);
+  if (params?.offset != null) qs.set("skip", String(params.offset));
   if (params?.limit != null) qs.set("limit", String(params.limit));
+  if (params?.sort_by) qs.set("sort_by", params.sort_by);
+  if (params?.sort_order) qs.set("sort_order", params.sort_order);
   return apiFetch<ApiListResponse<CatalogLens>>(`/api/v1/catalog/lenses?${qs.toString()}`);
 }
 
-export async function listDetectors(params?: {
-  category?: string;
-  sensor_format?: string;
-  mount?: string;
-  limit?: number;
-}) {
+export async function listDetectors(params?: CatalogListParams) {
   const qs = new URLSearchParams();
   if (params?.category) qs.set("category", params.category);
-  if (params?.sensor_format) qs.set("sensor_format", params.sensor_format);
-  if (params?.mount) qs.set("mount", params.mount);
+  if (params?.mount) qs.set("mount_type", params.mount);
+  if (params?.data_source && params.data_source !== "all") qs.set("data_source", params.data_source);
+  if (params?.q) qs.set("q", params.q);
+  if (params?.offset != null) qs.set("skip", String(params.offset));
   if (params?.limit != null) qs.set("limit", String(params.limit));
+  if (params?.sort_by) qs.set("sort_by", params.sort_by);
+  if (params?.sort_order) qs.set("sort_order", params.sort_order);
   return apiFetch<ApiListResponse<CatalogDetector>>(`/api/v1/catalog/detectors?${qs.toString()}`);
 }
 
