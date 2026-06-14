@@ -268,8 +268,16 @@ export async function startMatchStream(
   };
 }
 
+export interface CoverageData {
+  sensor_rect: { x: number; y: number; w: number; h: number };
+  image_circle: { cx: number; cy: number; r: number };
+  vignetting_regions: Array<{ points: Array<{ x: number; y: number }> }>;
+  coverage_ratio: number;
+  safe_zone: { x: number; y: number; w: number; h: number };
+}
+
 export async function generateCoverage(lensId: number, detectorId: number) {
-  return apiFetch<unknown>("/api/v1/visualize/coverage", {
+  return apiFetch<CoverageData>("/api/v1/visualize/coverage", {
     method: "POST",
     body: JSON.stringify({ lens_id: lensId, detector_id: detectorId }),
   });
@@ -354,6 +362,93 @@ export async function listDetectors(params?: {
   if (params?.mount) qs.set("mount", params.mount);
   if (params?.limit != null) qs.set("limit", String(params.limit));
   return apiFetch<ApiListResponse<CatalogDetector>>(`/api/v1/catalog/detectors?${qs.toString()}`);
+}
+
+export interface Manufacturer {
+  id: number;
+  name: string;
+  name_en?: string | null;
+  name_cn?: string | null;
+  country?: string | null;
+  website?: string | null;
+  is_verified?: boolean | null;
+  data_source?: string | null;
+}
+
+export async function listManufacturers() {
+  return apiFetch<{ items: Manufacturer[] }>("/api/v1/catalog/manufacturers");
+}
+
+export async function createManufacturer(data: { name: string; name_en?: string; name_cn?: string }) {
+  return apiFetch<Manufacturer>("/api/v1/catalog/manufacturers", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export type LensCreatePayload = Omit<Partial<CatalogLens>, "id" | "data_source" | "verified">;
+
+export async function createLens(payload: LensCreatePayload) {
+  return apiFetch<CatalogLens>("/api/v1/catalog/lenses", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateLens(id: number, payload: LensCreatePayload) {
+  return apiFetch<CatalogLens>(`/api/v1/catalog/lenses/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteLens(id: number) {
+  return apiFetch<unknown>(`/api/v1/catalog/lenses/${id}`, { method: "DELETE" });
+}
+
+export type DetectorCreatePayload = Omit<Partial<CatalogDetector>, "id" | "data_source" | "verified">;
+
+export async function createDetector(payload: DetectorCreatePayload) {
+  return apiFetch<CatalogDetector>("/api/v1/catalog/detectors", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateDetector(id: number, payload: DetectorCreatePayload) {
+  return apiFetch<CatalogDetector>(`/api/v1/catalog/detectors/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteDetector(id: number) {
+  return apiFetch<unknown>(`/api/v1/catalog/detectors/${id}`, { method: "DELETE" });
+}
+
+export interface ImportResult {
+  kind: "lenses" | "detectors";
+  inserted: number;
+  skipped: number;
+  errors: string[];
+}
+
+export async function importCatalog(file: File): Promise<ImportResult> {
+  const base = await getEndpoint();
+  const apiKey = await getApiKey();
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(`${base}/api/v1/catalog/import`, {
+    method: "POST",
+    headers: {
+      ...(apiKey ? { "X-API-Key": apiKey } : {}),
+    },
+    body: formData,
+  });
+  if (!res.ok) {
+    throw new Error(`Import error: ${res.status} ${res.statusText}`);
+  }
+  return res.json() as Promise<ImportResult>;
 }
 
 export async function exportReport(

@@ -23,14 +23,18 @@ import KnowledgePanel from "../components/KnowledgePanel";
 import MicroscopeLearningHub from "../components/MicroscopeLearningHub";
 import ScoreRadarChart from "../components/ScoreRadarChart";
 import MtfCurve from "../components/MtfCurve";
+import SensorCoveragePlot from "../components/SensorCoveragePlot";
 import ExportActions from "../components/ExportActions";
 import MatchExplanation from "../components/MatchExplanation";
+import DiagnosticsPanel from "../components/DiagnosticsPanel";
+import CompareView from "../components/CompareView";
+import CompareParetoToolbar, { computeParetoFrontier } from "../components/CompareParetoToolbar";
 import SpecItem from "../components/SpecItem";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { useParamHint } from "../hooks/useParamHint";
 import { toast } from "../hooks/useToast";
 import { listLenses, listDetectors } from "../utils/api";
-import { generateMtf, type MtfData } from "../utils/api";
+import { generateMtf, generateCoverage, type MtfData, type CoverageData } from "../utils/api";
 import type { CatalogLens, CatalogDetector, PresetConfigItem } from "../utils/api";
 import { useDomainMatching } from "../stores/matchingStore";
 import {
@@ -93,12 +97,16 @@ export default function MicroscopePage() {
   const { lensMap, detMap } = catalogs;
 
   const [mtfData, setMtfData] = useState<MtfData | null>(null);
+  const [coverageData, setCoverageData] = useState<CoverageData | null>(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareSelection, setCompareSelection] = useState<UnifiedMatchResult[]>([]);
+  const [paretoOnly, setParetoOnly] = useState(false);
 
   const handleMatchSuccess = useCallback((matches: UnifiedMatchResult[]) => {
     setResults(matches);
   }, [setResults]);
 
-  const { isLoading, progress, stage, start } = useMatching({
+  const { isLoading, progress, stage, diagnostics, start } = useMatching({
     domain: "microscope",
     requirements: form,
     onSuccess: handleMatchSuccess,
@@ -154,18 +162,50 @@ export default function MicroscopePage() {
   const selectedDet = selectedMatch ? detMap.get(selectedMatch.detector_id) : undefined;
   const selectedDerived = selectedMatch?.derived as Record<string, unknown> | undefined;
 
+  const paretoResults = useMemo(() => computeParetoFrontier(enrichedResults.map((e) => e.match)), [enrichedResults]);
+  const displayResults = useMemo(() => {
+    if (!paretoOnly) return enrichedResults;
+    const paretoSet = new Set(paretoResults.map((r) => `${r.lens_id}-${r.detector_id}`));
+    return enrichedResults.filter((e) => paretoSet.has(`${e.match.lens_id}-${e.match.detector_id}`));
+  }, [enrichedResults, paretoResults, paretoOnly]);
+
+  const isCompareSelected = (r: UnifiedMatchResult) =>
+    compareSelection.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id);
+
+  const toggleCompare = (r: UnifiedMatchResult) => {
+    setCompareSelection((prev) => {
+      const exists = prev.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id);
+      if (exists) return prev.filter((x) => !(x.lens_id === r.lens_id && x.detector_id === r.detector_id));
+      if (prev.length >= 4) {
+        toast("warning", "最多对比 4 个方案", "请先取消已选方案再添加");
+        return prev;
+      }
+      return [...prev, r];
+    });
+  };
+
   useEffect(() => {
     if (!selectedMatch || !selectedLens || !selectedDet) {
       setMtfData(null);
+      setCoverageData(null);
       return;
     }
     let cancelled = false;
     (async () => {
       try {
-        const mtf = await generateMtf(selectedLens.id, selectedDet.id);
-        if (!cancelled) setMtfData(mtf);
+        const [mtf, coverage] = await Promise.all([
+          generateMtf(selectedLens.id, selectedDet.id),
+          generateCoverage(selectedLens.id, selectedDet.id),
+        ]);
+        if (!cancelled) {
+          setMtfData(mtf);
+          setCoverageData(coverage);
+        }
       } catch {
-        if (!cancelled) setMtfData(null);
+        if (!cancelled) {
+          setMtfData(null);
+          setCoverageData(null);
+        }
       }
     })();
     return () => {
@@ -366,17 +406,30 @@ export default function MicroscopePage() {
 
   const centerPanel = (
     <DomainResultsPanel
-      title="匹配结果"
-      subtitle={`${enrichedResults.length} 组物镜-相机组合`}
+      title={compareMode ? "方案对比" : "匹配结果"}
+      subtitle={`${displayResults.length} 组物镜-相机组合${paretoOnly ? "（Pareto 前沿）" : ""}`}
       icon={<Microscope size={16} />}
       headerBorder
       action={
         hasSearched ? (
-          <ExportActions
-            requirements={form}
-            results={results}
-            disabled={results.length === 0}
-          />
+          <div className="flex items-center gap-2">
+            <CompareParetoToolbar
+              compareMode={compareMode}
+              onCompareModeChange={(v) => {
+                setCompareMode(v);
+                if (!v) setCompareSelection([]);
+              }}
+              paretoOnly={paretoOnly}
+              onParetoChange={setParetoOnly}
+              selectionCount={compareSelection.length}
+              onClearSelection={() => setCompareSelection([])}
+            />
+            <ExportActions
+              requirements={form}
+              results={results}
+              disabled={results.length === 0}
+            />
+          </div>
         ) : undefined
       }
     >
@@ -388,62 +441,93 @@ export default function MicroscopePage() {
             description="设置左侧参数并点击「自动匹配」，系统将推荐最优的显微镜物镜与相机组合"
           />
         </div>
-      ) : enrichedResults.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center h-64">
-          <EmptyState
-            icon={<Search size={24} />}
-            title={isLoading ? "计算中..." : "无匹配结果"}
-            description={isLoading ? "后端正在执行光学计算与评分..." : "请放宽预算或调整参数后重试"}
-          />
+      ) : displayResults.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center h-auto min-h-[16rem]">
+          {!isLoading && diagnostics && diagnostics.length > 0 ? (
+            <DiagnosticsPanel
+              diagnostics={diagnostics}
+              onAdjustParam={(name, value) => {
+                setForm((prev) => ({ ...prev, [name]: value as number | string }));
+                toast("info", "参数已调整", `${name} 已设为 ${String(value)}，请重新匹配`);
+              }}
+            />
+          ) : (
+            <EmptyState
+              icon={<Search size={24} />}
+              title={isLoading ? "计算中..." : "无匹配结果"}
+              description={isLoading ? "后端正在执行光学计算与评分..." : "请放宽预算或调整参数后重试"}
+            />
+          )}
         </div>
       ) : (
-        enrichedResults.map(({ match, lens, det }, idx) => (
-          <button
-            key={`${match.lens_id}-${match.detector_id}`}
-            onClick={() => setSelectedResult(match)}
-            className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
-              selectedMatch?.lens_id === match.lens_id && selectedMatch?.detector_id === match.detector_id
-                ? "border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-900/30 shadow-sm"
-                : "border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 hover:shadow-sm"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <span className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
-                idx === 0 ? "bg-gradient-to-br from-amber-400 to-amber-500 text-white" :
-                idx === 1 ? "bg-gradient-to-br from-slate-300 to-slate-400 text-white" :
-                idx === 2 ? "bg-gradient-to-br from-orange-300 to-orange-400 text-white" :
-                "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400"
-              }`}>{idx + 1}</span>
-
-              <LensImage
-                model={lens.model}
-                focal={`${lens.focal_length_mm}x`}
-                aperture={lens.na ? String(lens.na) : "N/A"}
-                brand=""
-                imageUrl={lens.image_url}
-                size="sm"
-              />
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{lens.model}</h4>
-                  <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums">{match.score.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                  {form.microscope_type === "stereo" ? (
-                    <span>{lens.focal_length_mm}x-{lens.focal_length_max || lens.focal_length_mm}x 变焦</span>
-                  ) : (
-                    <span>NA {lens.na}</span>
-                  )}
-                  <span>·</span>
-                  <span>{det.model}</span>
-                  <span>·</span>
-                  <span className="font-medium text-slate-700 dark:text-slate-300">${(lens.price_usd + det.price_usd).toFixed(0)}</span>
-                </div>
-              </div>
+        <>
+          {compareSelection.length >= 2 && (
+            <div className="mb-4">
+              <CompareView results={compareSelection} />
             </div>
-          </button>
-        ))
+          )}
+          <div className="space-y-2.5">
+            {displayResults.map(({ match, lens, det }, idx) => (
+              <div key={`${match.lens_id}-${match.detector_id}`} className="relative">
+                {compareMode && (
+                  <label className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 shadow-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 accent-indigo-600"
+                      checked={isCompareSelected(match)}
+                      onChange={() => toggleCompare(match)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </label>
+                )}
+                <button
+                  onClick={() => setSelectedResult(match)}
+                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
+                    selectedMatch?.lens_id === match.lens_id && selectedMatch?.detector_id === match.detector_id
+                      ? "border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-900/30 shadow-sm"
+                      : "border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 hover:shadow-sm"
+                  } ${compareMode ? "pl-12" : ""}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
+                      idx === 0 ? "bg-gradient-to-br from-amber-400 to-amber-500 text-white" :
+                      idx === 1 ? "bg-gradient-to-br from-slate-300 to-slate-400 text-white" :
+                      idx === 2 ? "bg-gradient-to-br from-orange-300 to-orange-400 text-white" :
+                      "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400"
+                    }`}>{idx + 1}</span>
+
+                    <LensImage
+                      model={lens.model}
+                      focal={`${lens.focal_length_mm}x`}
+                      aperture={lens.na ? String(lens.na) : "N/A"}
+                      brand=""
+                      imageUrl={lens.image_url}
+                      size="sm"
+                    />
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{lens.model}</h4>
+                        <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums">{match.score.toFixed(2)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                        {form.microscope_type === "stereo" ? (
+                          <span>{lens.focal_length_mm}x-{lens.focal_length_max || lens.focal_length_mm}x 变焦</span>
+                        ) : (
+                          <span>NA {lens.na}</span>
+                        )}
+                        <span>·</span>
+                        <span>{det.model}</span>
+                        <span>·</span>
+                        <span className="font-medium text-slate-700 dark:text-slate-300">${(lens.price_usd + det.price_usd).toFixed(0)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </DomainResultsPanel>
   );
@@ -489,6 +573,12 @@ export default function MicroscopePage() {
 
           {selectedMatch?.score_vector && (
             <ScoreRadarChart scoreVector={selectedMatch.score_vector} />
+          )}
+
+          {selectedLens && selectedDet && (
+            <div className="mt-4">
+              <SensorCoveragePlot data={coverageData} width={320} height={280} />
+            </div>
           )}
 
           {selectedLens && selectedDet && (

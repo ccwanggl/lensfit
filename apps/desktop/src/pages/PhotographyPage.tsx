@@ -27,11 +27,15 @@ import MtfCurve from "../components/MtfCurve";
 import CocChart from "../components/CocChart";
 import ExportActions from "../components/ExportActions";
 import MatchExplanation from "../components/MatchExplanation";
+import SensorCoveragePlot from "../components/SensorCoveragePlot";
+import DiagnosticsPanel from "../components/DiagnosticsPanel";
+import CompareView from "../components/CompareView";
+import CompareParetoToolbar, { computeParetoFrontier } from "../components/CompareParetoToolbar";
 import { type InputChangeEvent } from "../components/ui/Input";
 import { useMatching, type UnifiedMatchResult } from "../hooks/useMatching";
 import { useParamHint } from "../hooks/useParamHint";
 import type { CatalogLens, CatalogDetector, PresetConfigItem } from "../utils/api";
-import { generateMtf, generateCoc, type MtfData, type CocData } from "../utils/api";
+import { generateMtf, generateCoc, generateCoverage, type MtfData, type CocData, type CoverageData } from "../utils/api";
 import { useDomainMatching } from "../stores/matchingStore";
 import {
   DomainPageShell,
@@ -221,6 +225,10 @@ export default function PhotographyPage() {
 
   const [mtfData, setMtfData] = useState<MtfData | null>(null);
   const [cocData, setCocData] = useState<CocData | null>(null);
+  const [coverageData, setCoverageData] = useState<CoverageData | null>(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareSelection, setCompareSelection] = useState<UnifiedMatchResult[]>([]);
+  const [paretoOnly, setParetoOnly] = useState(false);
 
   const backendRequirements = useMemo(() => {
     const range = FOCAL_RANGES.find((r) => r.value === form.focal_range);
@@ -241,7 +249,7 @@ export default function PhotographyPage() {
     setResults(matches);
   }, [setResults]);
 
-  const { isLoading, progress, stage, start } = useMatching({
+  const { isLoading, progress, stage, diagnostics, start } = useMatching({
     domain: "photography",
     requirements: backendRequirements,
     onSuccess: handleMatchSuccess,
@@ -282,27 +290,53 @@ export default function PhotographyPage() {
   const selectedLens = selectedMatch ? lensMap.get(selectedMatch.lens_id) : undefined;
   const selectedDet = selectedMatch ? detMap.get(selectedMatch.detector_id) : undefined;
 
+  const paretoResults = useMemo(() => computeParetoFrontier(enrichedResults.map((e) => e.match)), [enrichedResults]);
+  const displayResults = useMemo(() => {
+    if (!paretoOnly) return enrichedResults;
+    const paretoSet = new Set(paretoResults.map((r) => `${r.lens_id}-${r.detector_id}`));
+    return enrichedResults.filter((e) => paretoSet.has(`${e.match.lens_id}-${e.match.detector_id}`));
+  }, [enrichedResults, paretoResults, paretoOnly]);
+
+  const isCompareSelected = (r: UnifiedMatchResult) =>
+    compareSelection.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id);
+
+  const toggleCompare = (r: UnifiedMatchResult) => {
+    setCompareSelection((prev) => {
+      const exists = prev.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id);
+      if (exists) return prev.filter((x) => !(x.lens_id === r.lens_id && x.detector_id === r.detector_id));
+      if (prev.length >= 4) {
+        toast("warning", "最多对比 4 个方案", "请先取消已选方案再添加");
+        return prev;
+      }
+      return [...prev, r];
+    });
+  };
+
   useEffect(() => {
     if (!selectedMatch || !selectedLens || !selectedDet) {
       setMtfData(null);
       setCocData(null);
+      setCoverageData(null);
       return;
     }
     let cancelled = false;
     (async () => {
       try {
-        const [mtf, coc] = await Promise.all([
+        const [mtf, coc, coverage] = await Promise.all([
           generateMtf(selectedLens.id, selectedDet.id),
           generateCoc(selectedLens.id, selectedDet.id),
+          generateCoverage(selectedLens.id, selectedDet.id),
         ]);
         if (!cancelled) {
           setMtfData(mtf);
           setCocData(coc);
+          setCoverageData(coverage);
         }
       } catch (e) {
         if (!cancelled) {
           setMtfData(null);
           setCocData(null);
+          setCoverageData(null);
         }
       }
     })();
@@ -389,16 +423,29 @@ export default function PhotographyPage() {
 
   const centerPanel = (
     <DomainResultsPanel
-      title="推荐镜头"
-      subtitle={hasSearched ? `从后端匹配结果中筛选出 ${enrichedResults.length} 支推荐` : "等待参数输入"}
+      title={compareMode ? "方案对比" : "推荐镜头"}
+      subtitle={hasSearched ? `从后端匹配结果中筛选出 ${displayResults.length} 支推荐${paretoOnly ? "（Pareto 前沿）" : ""}` : "等待参数输入"}
       icon={<Star size={16} />}
       action={
         hasSearched ? (
-          <ExportActions
-            requirements={backendRequirements}
-            results={results}
-            disabled={results.length === 0}
-          />
+          <div className="flex items-center gap-2">
+            <CompareParetoToolbar
+              compareMode={compareMode}
+              onCompareModeChange={(v) => {
+                setCompareMode(v);
+                if (!v) setCompareSelection([]);
+              }}
+              paretoOnly={paretoOnly}
+              onParetoChange={setParetoOnly}
+              selectionCount={compareSelection.length}
+              onClearSelection={() => setCompareSelection([])}
+            />
+            <ExportActions
+              requirements={backendRequirements}
+              results={results}
+              disabled={results.length === 0}
+            />
+          </div>
         ) : undefined
       }
     >
@@ -410,27 +457,56 @@ export default function PhotographyPage() {
             description="在左侧配置摄影参数后点击「自动匹配」，系统将为您推荐最适合的镜头"
           />
         </div>
-      ) : enrichedResults.length === 0 ? (
+      ) : displayResults.length === 0 ? (
         <div className="flex-1 flex items-center justify-center">
-          <EmptyState
-            icon={<Search size={24} />}
-            title={isLoading ? "计算中..." : "无匹配结果"}
-            description={isLoading ? "后端正在执行光学计算与评分..." : "当前参数组合没有找到匹配的镜头，请放宽条件后重试"}
-          />
+          {!isLoading && diagnostics && diagnostics.length > 0 ? (
+            <DiagnosticsPanel
+              diagnostics={diagnostics}
+              onAdjustParam={(name, value) => {
+                setForm((prev) => ({ ...prev, [name]: value as string | number }));
+                toast("info", "参数已调整", `${name} 已设为 ${String(value)}，请重新匹配`);
+              }}
+            />
+          ) : (
+            <EmptyState
+              icon={<Search size={24} />}
+              title={isLoading ? "计算中..." : "无匹配结果"}
+              description={isLoading ? "后端正在执行光学计算与评分..." : "当前参数组合没有找到匹配的镜头，请放宽条件后重试"}
+            />
+          )}
         </div>
       ) : (
-        <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
-          {enrichedResults.slice(0, 20).map(({ match, lens }, i) => (
-            <LensCard
-              key={lens.id}
-              lens={lens}
-              rank={i + 1}
-              isSelected={selectedMatch?.lens_id === lens.id}
-              onClick={() => setSelectedResult(match)}
-              score={match.score}
-            />
-          ))}
-        </div>
+        <>
+          {compareSelection.length >= 2 && (
+            <div className="mb-4">
+              <CompareView results={compareSelection} />
+            </div>
+          )}
+          <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
+            {displayResults.slice(0, 20).map(({ match, lens }, i) => (
+              <div key={lens.id} className="relative">
+                {compareMode && (
+                  <label className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 shadow-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 accent-indigo-600"
+                      checked={isCompareSelected(match)}
+                      onChange={() => toggleCompare(match)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </label>
+                )}
+                <LensCard
+                  lens={lens}
+                  rank={i + 1}
+                  isSelected={selectedMatch?.lens_id === lens.id}
+                  onClick={() => setSelectedResult(match)}
+                  score={match.score}
+                />
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </DomainResultsPanel>
   );
@@ -491,6 +567,9 @@ export default function PhotographyPage() {
           )}
           {selectedLens && selectedDet && (
             <>
+              <div className="mt-4">
+                <SensorCoveragePlot data={coverageData} width={320} height={280} />
+              </div>
               <div className="mt-4">
                 <MtfCurve data={mtfData} />
               </div>
