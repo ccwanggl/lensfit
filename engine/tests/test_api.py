@@ -475,6 +475,57 @@ def test_detector_crud(client, auth_headers):
     assert resp.status_code == 204
 
 
+def test_create_duplicate_lens_returns_409(client, auth_headers):
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "DupLensMfg"},
+        headers=auth_headers,
+    )
+    mfg_id = resp.json()["id"]
+
+    payload = {
+        "manufacturer_id": mfg_id,
+        "model": "DupLens-25mm",
+        "category": "industrial",
+        "focal_length_mm": 25,
+        "max_aperture": 2.8,
+        "image_circle_mm": 11,
+        "mount_type": "C",
+        "price_usd": 299,
+    }
+    resp = client.post("/api/v1/catalog/lenses", json=payload, headers=auth_headers)
+    assert resp.status_code == 201
+
+    resp = client.post("/api/v1/catalog/lenses", json=payload, headers=auth_headers)
+    assert resp.status_code == 409
+
+
+def test_create_duplicate_detector_returns_409(client, auth_headers):
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "DupDetMfg"},
+        headers=auth_headers,
+    )
+    mfg_id = resp.json()["id"]
+
+    payload = {
+        "manufacturer_id": mfg_id,
+        "model": "DupDet-5M",
+        "category": "industrial",
+        "sensor_format_inch": "1/1.8",
+        "resolution_w": 2592,
+        "resolution_h": 1944,
+        "pixel_size_um": 2.2,
+        "mount_type": "C",
+        "price_usd": 199,
+    }
+    resp = client.post("/api/v1/catalog/detectors", json=payload, headers=auth_headers)
+    assert resp.status_code == 201
+
+    resp = client.post("/api/v1/catalog/detectors", json=payload, headers=auth_headers)
+    assert resp.status_code == 409
+
+
 def test_import_lenses_csv(client, auth_headers):
     import io
 

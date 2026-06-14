@@ -185,7 +185,7 @@ def import_from_upload(
 
     if filename_lower.endswith(".csv"):
         rows = _rows_from_csv(content)
-    elif filename_lower.endswith((".xlsx", ".xls")):
+    elif filename_lower.endswith(".xlsx"):
         rows = _rows_from_excel(content)
     else:
         raise HTTPException(

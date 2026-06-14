@@ -818,8 +818,9 @@ export default function LibraryPage() {
               </div>
               <Input
                 type="file"
-                accept=".csv,.xlsx,.xls"
+                accept=".csv,.xlsx"
                 label="选择文件"
+                helper="支持 CSV 或 .xlsx 格式"
                 onChange={(e: InputChangeEvent) => {
                   const file = (e.target as HTMLInputElement).files?.[0] ?? null;
                   setImportFile(file);

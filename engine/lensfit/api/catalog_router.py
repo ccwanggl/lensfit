@@ -307,6 +307,16 @@ def list_lenses(
 @router.post("/lenses", response_model=LensOut, status_code=201)
 def create_lens(payload: LensCreate, session: Session = Depends(get_db_session)):
     """Create a user-defined lens."""
+    existing = (
+        session.query(LensCatalog)
+        .filter_by(manufacturer_id=payload.manufacturer_id, model=payload.model)
+        .first()
+    )
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Lens '{payload.model}' already exists for this manufacturer",
+        )
     data = payload.model_dump(exclude_unset=True)
     data["data_source"] = "user"
     data["data_quality_score"] = 1.0
@@ -414,6 +424,16 @@ def create_detector(
     payload: DetectorCreate, session: Session = Depends(get_db_session)
 ):
     """Create a user-defined detector."""
+    existing = (
+        session.query(DetectorCatalog)
+        .filter_by(manufacturer_id=payload.manufacturer_id, model=payload.model)
+        .first()
+    )
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Detector '{payload.model}' already exists for this manufacturer",
+        )
     data = payload.model_dump(exclude_unset=True)
     data["data_source"] = "user"
     data["data_quality_score"] = 1.0
