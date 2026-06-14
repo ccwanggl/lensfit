@@ -106,6 +106,8 @@ class LensCatalog(Base):
         Index("ix_lens_focal_length", "focal_length_mm"),
         Index("ix_lens_wavelength", "wavelength_min_nm", "wavelength_max_nm"),
         Index("ix_lens_price", "price_usd"),
+        Index("ix_lens_data_source", "data_source"),
+        Index("ix_lens_manufacturer_id", "manufacturer_id"),
         {"sqlite_autoincrement": True},
     )
 
@@ -166,6 +168,8 @@ class DetectorCatalog(Base):
         Index("ix_detector_mount_type", "mount_type"),
         Index("ix_detector_sensor_format", "sensor_format_inch"),
         Index("ix_detector_pixel_size", "pixel_size_um"),
+        Index("ix_detector_data_source", "data_source"),
+        Index("ix_detector_manufacturer_id", "manufacturer_id"),
         {"sqlite_autoincrement": True},
     )
 

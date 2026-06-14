@@ -8,6 +8,9 @@ from sqlalchemy.pool import StaticPool
 
 from lensfit.api.server import app
 from lensfit.db.models import Base, DetectorCatalog, LensCatalog, Manufacturer
+from lensfit.domains.infrared import InfraredModule
+from lensfit.domains.microscope import MicroscopyModule
+from lensfit.domains.photography import PhotographyModule
 
 TEST_API_KEY = "test-api-key"
 
@@ -73,6 +76,9 @@ def client():
 
     server_module._engine = MatchingEngine(session_factory)
     server_module._engine.register_domain(IndustrialVisionModule())
+    server_module._engine.register_domain(MicroscopyModule())
+    server_module._engine.register_domain(InfraredModule())
+    server_module._engine.register_domain(PhotographyModule())
     server_module._API_KEY = TEST_API_KEY
 
     with TestClient(app) as c:
@@ -148,6 +154,206 @@ def test_match_async_and_poll(client, auth_headers):
     assert "top_matches" in result
 
 
+def _seed_domain_catalog(session, domain: str):
+    """Insert a minimal lens+detector pair for the given domain."""
+    from lensfit.db.models import DetectorCatalog, LensCatalog, Manufacturer
+
+    mfg = Manufacturer(name=f"TestMfg-{domain}")
+    session.add(mfg)
+    session.flush()
+
+    if domain == "industrial":
+        lens = LensCatalog(
+            manufacturer_id=mfg.id,
+            model="FA-25mm",
+            category="fa",
+            focal_length_mm=25,
+            max_aperture=2.8,
+            image_circle_mm=11,
+            mount_type="C-mount",
+            price_usd=299,
+        )
+        det = DetectorCatalog(
+            manufacturer_id=mfg.id,
+            model="IMX-2/3",
+            category="industrial",
+            sensor_format_inch="2/3",
+            sensor_w_mm=8.45,
+            sensor_h_mm=7.07,
+            sensor_diag_mm=11.0,
+            resolution_w=2448,
+            resolution_h=2048,
+            pixel_size_um=3.45,
+            mount_type="C-mount",
+            price_usd=199,
+        )
+    elif domain == "photography":
+        lens = LensCatalog(
+            manufacturer_id=mfg.id,
+            model="Photo-50mm",
+            category="photography",
+            focal_length_mm=50,
+            max_aperture=1.8,
+            image_circle_mm=44,
+            mount_type="E-mount",
+            price_usd=499,
+        )
+        det = DetectorCatalog(
+            manufacturer_id=mfg.id,
+            model="FullFrame-24MP",
+            category="photography",
+            sensor_format_inch="FF",
+            sensor_w_mm=36,
+            sensor_h_mm=24,
+            sensor_diag_mm=43.27,
+            resolution_w=6000,
+            resolution_h=4000,
+            pixel_size_um=5.0,
+            mount_type="E-mount",
+            price_usd=999,
+        )
+    elif domain == "microscope":
+        lens = LensCatalog(
+            manufacturer_id=mfg.id,
+            model="Micro-20x",
+            category="microscope",
+            focal_length_mm=20,
+            max_aperture=0.65,
+            image_circle_mm=20,
+            na=0.65,
+            price_usd=999,
+        )
+        det = DetectorCatalog(
+            manufacturer_id=mfg.id,
+            model="MicroCam-5M",
+            category="microscope",
+            sensor_format_inch="2/3",
+            sensor_w_mm=8.45,
+            sensor_h_mm=7.07,
+            sensor_diag_mm=11.0,
+            resolution_w=2448,
+            resolution_h=2048,
+            pixel_size_um=3.45,
+            price_usd=499,
+        )
+    else:  # infrared
+        lens = LensCatalog(
+            manufacturer_id=mfg.id,
+            model="IR-25mm",
+            category="infrared",
+            focal_length_mm=25,
+            max_aperture=1.4,
+            image_circle_mm=16,
+            wavelength_min_nm=8000,
+            wavelength_max_nm=14000,
+            price_usd=1999,
+        )
+        det = DetectorCatalog(
+            manufacturer_id=mfg.id,
+            model="IR-640",
+            category="infrared",
+            sensor_format_inch="1/2",
+            sensor_w_mm=6.4,
+            sensor_h_mm=4.8,
+            sensor_diag_mm=8.0,
+            resolution_w=640,
+            resolution_h=512,
+            pixel_size_um=12,
+            price_usd=999,
+        )
+
+    session.add(lens)
+    session.add(det)
+    session.commit()
+
+
+def _poll_match_result(client, auth_headers, task_id: str):
+    for _ in range(50):
+        resp = client.get(f"/api/v1/match/async/{task_id}", headers=auth_headers)
+        assert resp.status_code == 200
+        status = resp.json()
+        if status["status"] == "completed":
+            break
+        if status["status"] == "failed":
+            pytest.fail(f"Match failed: {status.get('error')}")
+    else:
+        pytest.fail("Match did not complete in time")
+
+    resp = client.get(f"/api/v1/match/async/{task_id}/result", headers=auth_headers)
+    assert resp.status_code == 200
+    return resp.json()
+
+
+@pytest.mark.parametrize(
+    "domain,requirements",
+    [
+        (
+            "industrial",
+            {
+                "sensor_size": "2/3",
+                "pixel_size_um": 3.45,
+                "target_width_mm": 50,
+                "target_height_mm": 40,
+                "working_distance_mm": 200,
+                "lens_type": "FA",
+                "interface": "C-mount",
+            },
+        ),
+        (
+            "photography",
+            {
+                "purpose": "portrait",
+                "sensor_format": "FF",
+                "lens_type": "prime",
+                "mount": "E-mount",
+                "budget_usd": 3000,
+                "max_aperture": 2.8,
+            },
+        ),
+        (
+            "microscope",
+            {
+                "microscope_type": "compound",
+                "objective_na": 0.65,
+                "magnification": 20,
+                "wavelength_nm": 550,
+                "sensor_format": "2/3",
+                "pixel_size_um": 3.45,
+                "application": "biology",
+                "budget_usd": 5000,
+            },
+        ),
+        (
+            "infrared",
+            {
+                "band": "lwir",
+                "focal_length_mm": 25,
+                "f_number": 1.4,
+                "sensor_format": "1/2",
+                "pixel_size_um": 12,
+                "working_distance_m": 10,
+                "budget_usd": 5000,
+            },
+        ),
+    ],
+)
+def test_match_regression_all_domains(client, auth_headers, domain, requirements):
+    import lensfit.api.server as server_module
+
+    with server_module._session_maker() as session:
+        _seed_domain_catalog(session, domain)
+
+    resp = client.post(
+        "/api/v1/match/async",
+        json={"domain": domain, "requirements": requirements},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    task = resp.json()
+    result = _poll_match_result(client, auth_headers, task["task_id"])
+    assert len(result.get("top_matches", [])) > 0, f"{domain} should return at least one match"
+
+
 def test_list_lenses_empty(client, auth_headers):
     resp = client.get("/api/v1/catalog/lenses?limit=5", headers=auth_headers)
     assert resp.status_code == 200
@@ -162,6 +368,143 @@ def test_list_detectors_empty(client, auth_headers):
     data = resp.json()
     assert data["total"] == 0
     assert data["items"] == []
+
+
+def test_manufacturer_create_and_list(client, auth_headers):
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "AcmeOptics"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 201
+    mfg = resp.json()
+    assert mfg["name"] == "AcmeOptics"
+
+    resp = client.get("/api/v1/catalog/manufacturers", headers=auth_headers)
+    assert resp.status_code == 200
+    assert any(item["name"] == "AcmeOptics" for item in resp.json()["items"])
+
+
+def test_lens_crud(client, auth_headers):
+    # Create manufacturer
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "LensMfg"},
+        headers=auth_headers,
+    )
+    mfg_id = resp.json()["id"]
+
+    # Create lens
+    resp = client.post(
+        "/api/v1/catalog/lenses",
+        json={
+            "manufacturer_id": mfg_id,
+            "model": "LM-25mm",
+            "category": "industrial",
+            "focal_length_mm": 25,
+            "max_aperture": 2.8,
+            "image_circle_mm": 11,
+            "mount_type": "C",
+            "price_usd": 299,
+        },
+        headers=auth_headers,
+    )
+    assert resp.status_code == 201
+    lens = resp.json()
+    assert lens["model"] == "LM-25mm"
+    assert lens["data_source"] == "user"
+
+    # Get
+    resp = client.get(f"/api/v1/catalog/lenses/{lens['id']}", headers=auth_headers)
+    assert resp.status_code == 200
+    assert resp.json()["model"] == "LM-25mm"
+
+    # Update
+    resp = client.put(
+        f"/api/v1/catalog/lenses/{lens['id']}",
+        json={"price_usd": 399},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    assert resp.json()["price_usd"] == 399
+
+    # Delete
+    resp = client.delete(f"/api/v1/catalog/lenses/{lens['id']}", headers=auth_headers)
+    assert resp.status_code == 204
+
+    resp = client.get(f"/api/v1/catalog/lenses/{lens['id']}", headers=auth_headers)
+    assert resp.status_code == 404
+
+
+def test_detector_crud(client, auth_headers):
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "DetMfg"},
+        headers=auth_headers,
+    )
+    mfg_id = resp.json()["id"]
+
+    resp = client.post(
+        "/api/v1/catalog/detectors",
+        json={
+            "manufacturer_id": mfg_id,
+            "model": "DM-5M",
+            "category": "industrial",
+            "sensor_format_inch": "1/1.8",
+            "resolution_w": 2592,
+            "resolution_h": 1944,
+            "pixel_size_um": 2.2,
+            "mount_type": "C",
+            "price_usd": 199,
+        },
+        headers=auth_headers,
+    )
+    assert resp.status_code == 201
+    det = resp.json()
+    assert det["model"] == "DM-5M"
+
+    resp = client.put(
+        f"/api/v1/catalog/detectors/{det['id']}",
+        json={"pixel_size_um": 2.5},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    assert resp.json()["pixel_size_um"] == 2.5
+
+    resp = client.delete(f"/api/v1/catalog/detectors/{det['id']}", headers=auth_headers)
+    assert resp.status_code == 204
+
+
+def test_import_lenses_csv(client, auth_headers):
+    import io
+
+    csv_content = (
+        "manufacturer_name,model,category,focal_length_mm,max_aperture,"
+        "image_circle_mm,mount_type,nominal_wd_mm,price_usd\n"
+        "ImportMfg,IM-35mm,industrial,35,2.8,17,C,150,399\n"
+        "ImportMfg,IM-50mm,industrial,50,2.8,22,C,200,499\n"
+    )
+    resp = client.post(
+        "/api/v1/catalog/import",
+        files={"file": ("lenses_import.csv", io.BytesIO(csv_content.encode("utf-8")), "text/csv")},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["kind"] == "lenses"
+    assert data["inserted"] == 2
+    assert data["skipped"] == 0
+
+    # Duplicate import should skip
+    resp = client.post(
+        "/api/v1/catalog/import",
+        files={"file": ("lenses_import.csv", io.BytesIO(csv_content.encode("utf-8")), "text/csv")},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["inserted"] == 0
+    assert data["skipped"] == 2
 
 
 def test_project_crud(client, auth_headers):
