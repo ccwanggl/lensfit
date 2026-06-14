@@ -380,6 +380,13 @@ def test_manufacturer_create_and_list(client, auth_headers):
     mfg = resp.json()
     assert mfg["name"] == "AcmeOptics"
 
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "AcmeOptics"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+
     resp = client.get("/api/v1/catalog/manufacturers", headers=auth_headers)
     assert resp.status_code == 200
     assert any(item["name"] == "AcmeOptics" for item in resp.json()["items"])
@@ -434,6 +441,48 @@ def test_lens_crud(client, auth_headers):
 
     resp = client.get(f"/api/v1/catalog/lenses/{lens['id']}", headers=auth_headers)
     assert resp.status_code == 404
+
+
+def test_list_lenses_search_and_pagination(client, auth_headers):
+    resp = client.post(
+        "/api/v1/catalog/manufacturers",
+        json={"name": "SearchMfg"},
+        headers=auth_headers,
+    )
+    mfg_id = resp.json()["id"]
+
+    for i in range(3):
+        client.post(
+            "/api/v1/catalog/lenses",
+            json={
+                "manufacturer_id": mfg_id,
+                "model": f"SearchLens-{i}",
+                "category": "industrial",
+                "focal_length_mm": 25 + i,
+                "max_aperture": 2.8,
+                "image_circle_mm": 11,
+                "mount_type": "C",
+                "price_usd": 100 + i,
+            },
+            headers=auth_headers,
+        )
+
+    resp = client.get("/api/v1/catalog/lenses?q=SearchLens-1&limit=10", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total"] == 1
+    assert len(data["items"]) == 1
+
+    resp = client.get("/api/v1/catalog/lenses?limit=2&skip=0", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total"] == 3
+    assert len(data["items"]) == 2
+
+    resp = client.get("/api/v1/catalog/lenses?limit=2&skip=2", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data["items"]) == 1
 
 
 def test_detector_crud(client, auth_headers):
@@ -556,6 +605,25 @@ def test_import_lenses_csv(client, auth_headers):
     data = resp.json()
     assert data["inserted"] == 0
     assert data["skipped"] == 2
+
+
+def test_import_lenses_csv_rejects_invalid_manufacturer_id(client, auth_headers):
+    import io
+
+    csv_content = (
+        "manufacturer_id,model,category,focal_length_mm,max_aperture,"
+        "image_circle_mm,mount_type,nominal_wd_mm,price_usd\n"
+        "999999,IM-35mm,industrial,35,2.8,17,C,150,399\n"
+    )
+    resp = client.post(
+        "/api/v1/catalog/import",
+        files={"file": ("lenses_import.csv", io.BytesIO(csv_content.encode("utf-8")), "text/csv")},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["inserted"] == 0
+    assert any("manufacturer_id 999999 does not exist" in err for err in data["errors"])
 
 
 def test_project_crud(client, auth_headers):

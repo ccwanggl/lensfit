@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -237,7 +237,9 @@ def list_manufacturers(
 
 @router.post("/manufacturers", response_model=ManufacturerOut, status_code=201)
 def create_manufacturer(
-    payload: ManufacturerCreate, session: Session = Depends(get_db_session)
+    payload: ManufacturerCreate,
+    response: Response,
+    session: Session = Depends(get_db_session),
 ):
     """Create a new manufacturer if one with the same name does not exist."""
     existing = (
@@ -246,6 +248,7 @@ def create_manufacturer(
         .first()
     )
     if existing:
+        response.status_code = 200
         return existing
     item = Manufacturer(
         name=payload.name,
@@ -263,20 +266,30 @@ def create_manufacturer(
 
 
 def _build_lens_stmt(
-    session: Session,
     category: str | None,
     mount_type: str | None,
     data_source: str | None,
+    q: str | None,
 ):
+    from sqlalchemy import or_
     from sqlalchemy import select as core_select
 
     stmt = core_select(LensCatalog)
     if category:
-        stmt = stmt.where(LensCatalog.category.ilike(category))
+        stmt = stmt.where(LensCatalog.category.ilike(f"%{category}%"))
     if mount_type:
-        stmt = stmt.where(LensCatalog.mount_type.ilike(mount_type))
+        stmt = stmt.where(LensCatalog.mount_type.ilike(f"%{mount_type}%"))
     if data_source:
         stmt = stmt.where(LensCatalog.data_source == data_source)
+    if q:
+        like_q = f"%{q}%"
+        stmt = stmt.where(
+            or_(
+                LensCatalog.model.ilike(like_q),
+                LensCatalog.category.ilike(like_q),
+                LensCatalog.mount_type.ilike(like_q),
+            )
+        )
     return stmt
 
 
@@ -285,22 +298,24 @@ def list_lenses(
     category: str | None = None,
     mount_type: str | None = None,
     data_source: str | None = None,
-    limit: int = Query(1000, ge=1, le=5000),
+    q: str | None = None,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=5000),
+    sort_by: str | None = None,
+    sort_order: str = Query("asc", pattern="^(asc|desc)$"),
     session: Session = Depends(get_db_session),
 ):
-    """List lens catalog (seed + user-defined)."""
-    from sqlalchemy import select as core_select
+    """List lens catalog (seed + user-defined) with pagination and search."""
 
-    stmt = _build_lens_stmt(session, category, mount_type, data_source)
-    count_stmt = core_select(func.count(LensCatalog.id)).select_from(LensCatalog)
-    if category:
-        count_stmt = count_stmt.where(LensCatalog.category.ilike(category))
-    if mount_type:
-        count_stmt = count_stmt.where(LensCatalog.mount_type.ilike(mount_type))
-    if data_source:
-        count_stmt = count_stmt.where(LensCatalog.data_source == data_source)
+    stmt = _build_lens_stmt(category, mount_type, data_source, q)
+    count_stmt = _build_lens_stmt(category, mount_type, data_source, q).with_only_columns(
+        func.count(LensCatalog.id)
+    )
+    if sort_by and hasattr(LensCatalog, sort_by):
+        col = getattr(LensCatalog, sort_by)
+        stmt = stmt.order_by(col.desc() if sort_order == "desc" else col.asc())
     total = session.execute(count_stmt).scalar() or 0
-    items = list(session.execute(stmt.limit(limit)).scalars().all())
+    items = list(session.execute(stmt.offset(skip).limit(limit)).scalars().all())
     return {"items": items, "total": total}
 
 
@@ -378,20 +393,30 @@ class DetectorListOut(BaseModel):
 
 
 def _build_detector_stmt(
-    session: Session,
     category: str | None,
     mount_type: str | None,
     data_source: str | None,
+    q: str | None,
 ):
+    from sqlalchemy import or_
     from sqlalchemy import select as core_select
 
     stmt = core_select(DetectorCatalog)
     if category:
-        stmt = stmt.where(DetectorCatalog.category.ilike(category))
+        stmt = stmt.where(DetectorCatalog.category.ilike(f"%{category}%"))
     if mount_type:
-        stmt = stmt.where(DetectorCatalog.mount_type.ilike(mount_type))
+        stmt = stmt.where(DetectorCatalog.mount_type.ilike(f"%{mount_type}%"))
     if data_source:
         stmt = stmt.where(DetectorCatalog.data_source == data_source)
+    if q:
+        like_q = f"%{q}%"
+        stmt = stmt.where(
+            or_(
+                DetectorCatalog.model.ilike(like_q),
+                DetectorCatalog.category.ilike(like_q),
+                DetectorCatalog.mount_type.ilike(like_q),
+            )
+        )
     return stmt
 
 
@@ -400,22 +425,24 @@ def list_detectors(
     category: str | None = None,
     mount_type: str | None = None,
     data_source: str | None = None,
-    limit: int = Query(1000, ge=1, le=5000),
+    q: str | None = None,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=5000),
+    sort_by: str | None = None,
+    sort_order: str = Query("asc", pattern="^(asc|desc)$"),
     session: Session = Depends(get_db_session),
 ):
-    """List detector catalog (seed + user-defined)."""
-    from sqlalchemy import select as core_select
+    """List detector catalog (seed + user-defined) with pagination and search."""
 
-    stmt = _build_detector_stmt(session, category, mount_type, data_source)
-    count_stmt = core_select(func.count(DetectorCatalog.id)).select_from(DetectorCatalog)
-    if category:
-        count_stmt = count_stmt.where(DetectorCatalog.category.ilike(category))
-    if mount_type:
-        count_stmt = count_stmt.where(DetectorCatalog.mount_type.ilike(mount_type))
-    if data_source:
-        count_stmt = count_stmt.where(DetectorCatalog.data_source == data_source)
+    stmt = _build_detector_stmt(category, mount_type, data_source, q)
+    count_stmt = _build_detector_stmt(category, mount_type, data_source, q).with_only_columns(
+        func.count(DetectorCatalog.id)
+    )
+    if sort_by and hasattr(DetectorCatalog, sort_by):
+        col = getattr(DetectorCatalog, sort_by)
+        stmt = stmt.order_by(col.desc() if sort_order == "desc" else col.asc())
     total = session.execute(count_stmt).scalar() or 0
-    items = list(session.execute(stmt.limit(limit)).scalars().all())
+    items = list(session.execute(stmt.offset(skip).limit(limit)).scalars().all())
     return {"items": items, "total": total}
 
 

@@ -60,6 +60,18 @@ def _str(val: Any) -> str | None:
     return val if val else None
 
 
+def _validated_manufacturer_id(session: Session, val: Any) -> int | None:
+    m_id = _int(val)
+    if m_id is None:
+        return None
+    if session.get(Manufacturer, m_id) is None:
+        raise HTTPException(
+            status_code=400,
+            detail=f"manufacturer_id {m_id} does not exist",
+        )
+    return m_id
+
+
 def _rows_from_csv(content: bytes) -> list[dict[str, Any]]:
     text = content.decode("utf-8-sig")
     reader = csv.DictReader(io.StringIO(text))
@@ -96,9 +108,9 @@ def _rows_from_excel(content: bytes) -> list[dict[str, Any]]:
     return result
 
 
-def _build_lens(row: dict[str, Any]) -> LensCatalog:
+def _build_lens(row: dict[str, Any], session: Session) -> LensCatalog:
     return LensCatalog(
-        manufacturer_id=_int(row.get("manufacturer_id")),
+        manufacturer_id=_validated_manufacturer_id(session, row.get("manufacturer_id")),
         model=_str(row.get("model")),
         category=(_str(row.get("category")) or "unknown"),
         status=_str(row.get("status")) or "active",
@@ -126,9 +138,9 @@ def _build_lens(row: dict[str, Any]) -> LensCatalog:
     )
 
 
-def _build_detector(row: dict[str, Any]) -> DetectorCatalog:
+def _build_detector(row: dict[str, Any], session: Session) -> DetectorCatalog:
     return DetectorCatalog(
-        manufacturer_id=_int(row.get("manufacturer_id")),
+        manufacturer_id=_validated_manufacturer_id(session, row.get("manufacturer_id")),
         model=_str(row.get("model")),
         category=(_str(row.get("category")) or "unknown"),
         sensor_format_inch=_str(row.get("sensor_format_inch")),
@@ -219,7 +231,7 @@ def import_from_upload(
                 continue
             try:
                 row["manufacturer_id"] = m_id
-                item = _build_lens(row)
+                item = _build_lens(row, session)
                 session.add(item)
                 existing.add((m_id, model))
                 inserted += 1
@@ -245,7 +257,7 @@ def import_from_upload(
                 continue
             try:
                 row["manufacturer_id"] = m_id
-                item = _build_detector(row)
+                item = _build_detector(row, session)
                 session.add(item)
                 existing.add((m_id, model))
                 inserted += 1
