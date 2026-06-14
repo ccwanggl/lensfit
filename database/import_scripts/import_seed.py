@@ -16,6 +16,17 @@ from lensfit.db.models import (
 )
 
 
+def _seed_csv_files(seed_dir: Path, prefix: str) -> list[Path]:
+    """Return all seed CSV files matching prefix (e.g. lenses*.csv)."""
+    files = sorted(seed_dir.glob(f"{prefix}*.csv"))
+    # Ensure the legacy base files come first if they exist
+    base = seed_dir / f"{prefix}.csv"
+    if base in files:
+        files.remove(base)
+        files.insert(0, base)
+    return files
+
+
 def import_manufacturers(session: Session, csv_path: Path) -> dict[str, int]:
     """Import manufacturers and return name -> id mapping."""
     name_to_id = {}
@@ -60,15 +71,24 @@ def import_lenses(session: Session, csv_path: Path) -> int:
                 model=row["model"],
                 category=row["category"],
                 status=row.get("status", "active"),
-                focal_length_mm=_float(row["focal_length_mm"]),
-                max_aperture=_float(row["max_aperture"]),
-                image_circle_mm=_float(row["image_circle_mm"]),
-                min_working_distance_mm=_float(row["min_working_distance_mm"]),
-                max_working_distance_mm=_float(row["max_working_distance_mm"]),
+                focal_length_mm=_float(row.get("focal_length_mm")),
+                focal_length_min=_float(row.get("focal_length_min")),
+                focal_length_max=_float(row.get("focal_length_max")),
+                max_aperture=_float(row.get("max_aperture")),
+                min_aperture=_float(row.get("min_aperture")),
+                image_circle_mm=_float(row.get("image_circle_mm")),
+                min_working_distance_mm=_float(row.get("min_working_distance_mm")),
+                max_working_distance_mm=_float(row.get("max_working_distance_mm")),
+                nominal_wd_mm=_float(row.get("nominal_wd_mm")),
                 mount_type=row.get("mount_type") or None,
-                length_mm=_float(row["length_mm"]),
-                weight_g=_float(row["weight_g"]),
-                price_usd=_float(row["price_usd"]),
+                length_mm=_float(row.get("length_mm")),
+                weight_g=_float(row.get("weight_g")),
+                price_usd=_float(row.get("price_usd")),
+                na=_float(row.get("na")),
+                wavelength_min_nm=_int(row.get("wavelength_min_nm")),
+                wavelength_max_nm=_int(row.get("wavelength_max_nm")),
+                distortion_percent=_float(row.get("distortion_percent")),
+                mtf50_lpmm=_float(row.get("mtf50_lpmm")),
                 data_source="seed",
                 data_quality_score=0.8,
                 verified=True,
@@ -76,7 +96,7 @@ def import_lenses(session: Session, csv_path: Path) -> int:
             session.add(lens)
             count += 1
     session.commit()
-    print(f"Imported {count} lenses")
+    print(f"Imported {count} lenses from {csv_path.name}")
     return count
 
 
@@ -91,16 +111,19 @@ def import_detectors(session: Session, csv_path: Path) -> int:
                 model=row["model"],
                 category=row["category"],
                 sensor_format_inch=row.get("sensor_format_inch") or None,
-                sensor_w_mm=_float(row["sensor_w_mm"]),
-                sensor_h_mm=_float(row["sensor_h_mm"]),
-                sensor_diag_mm=_float(row["sensor_diag_mm"]),
-                resolution_w=_int(row["resolution_w"]),
-                resolution_h=_int(row["resolution_h"]),
-                pixel_size_um=_float(row["pixel_size_um"]),
+                sensor_w_mm=_float(row.get("sensor_w_mm")),
+                sensor_h_mm=_float(row.get("sensor_h_mm")),
+                sensor_diag_mm=_float(row.get("sensor_diag_mm")),
+                resolution_w=_int(row.get("resolution_w")),
+                resolution_h=_int(row.get("resolution_h")),
+                pixel_size_um=_float(row.get("pixel_size_um")),
                 mount_type=row.get("mount_type") or None,
                 data_interface=row.get("data_interface") or None,
-                max_fps_full=_float(row["max_fps_full"]),
-                price_usd=_float(row["price_usd"]),
+                max_fps_full=_float(row.get("max_fps_full")),
+                price_usd=_float(row.get("price_usd")),
+                netd_mk=_float(row.get("netd_mk")),
+                spectral_range_min_um=_float(row.get("spectral_range_min_um")),
+                spectral_range_max_um=_float(row.get("spectral_range_max_um")),
                 data_source="seed",
                 data_quality_score=0.8,
                 verified=True,
@@ -108,7 +131,7 @@ def import_detectors(session: Session, csv_path: Path) -> int:
             session.add(det)
             count += 1
     session.commit()
-    print(f"Imported {count} detectors")
+    print(f"Imported {count} detectors from {csv_path.name}")
     return count
 
 
@@ -123,10 +146,14 @@ def main(db_url: str = "sqlite:///lensfit.db") -> None:
     seed_dir = base_dir / "seed_data"
 
     with Session(engine) as session:
-        # Clear existing seed data
-        session.query(LensCatalog).filter(LensCatalog.data_source == "seed").delete()
-        session.query(DetectorCatalog).filter(DetectorCatalog.data_source == "seed").delete()
+        # Clear all catalog data so seed IDs remain deterministic and imports
+        # are reproducible. Compatibility cache is also cleared because it
+        # references lens/detector IDs.
+        session.execute(text("DELETE FROM compatibility_cache"))
+        session.execute(text("DELETE FROM detector_catalog"))
+        session.execute(text("DELETE FROM lens_catalog"))
         session.query(Manufacturer).filter(Manufacturer.data_source == "seed").delete()
+        session.commit()
 
         # Reset SQLite auto-increment sequences so IDs start from 1.
         # sqlite_sequence only exists after rows have been inserted, so ignore
@@ -135,7 +162,7 @@ def main(db_url: str = "sqlite:///lensfit.db") -> None:
             session.execute(
                 text(
                     "DELETE FROM sqlite_sequence WHERE name IN "
-                    "('manufacturers', 'lens_catalog', 'detector_catalog')"
+                    "('manufacturers', 'lens_catalog', 'detector_catalog', 'compatibility_cache')"
                 )
             )
             session.commit()
@@ -144,8 +171,10 @@ def main(db_url: str = "sqlite:///lensfit.db") -> None:
 
         # Import in order: manufacturers -> lenses -> detectors
         import_manufacturers(session, seed_dir / "manufacturers.csv")
-        import_lenses(session, seed_dir / "lenses.csv")
-        import_detectors(session, seed_dir / "detectors.csv")
+        for lens_csv in _seed_csv_files(seed_dir, "lenses"):
+            import_lenses(session, lens_csv)
+        for det_csv in _seed_csv_files(seed_dir, "detectors"):
+            import_detectors(session, det_csv)
 
     print("Seed data import complete.")
 

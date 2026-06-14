@@ -1,0 +1,6 @@
+manufacturer_id,model,category,sensor_format_inch,sensor_w_mm,sensor_h_mm,sensor_diag_mm,resolution_w,resolution_h,pixel_size_um,mount_type,data_interface,max_fps_full,price_usd,netd_mk,spectral_range_min_um,spectral_range_max_um
+10,FLIR Boson 640,infrared,1/2,6.40,4.80,8.00,640,512,12.0,M34x0.5,MIPI,60,2500,50,8,14
+10,FLIR Lepton 3.5,infrared,1/4,4.00,3.00,5.00,160,120,12.0,M34x0.5,MIPI,9,200,75,8,14
+18,Hamamatsu C14041-10U SWIR,infrared,1/2,6.40,4.80,8.00,640,512,20.0,C-mount,GigE,120,12000,,0.9,1.7
+2,Edmund Optics InGaAs 640,infrared,1/2,6.40,4.80,8.00,640,512,20.0,C-mount,GigE,110,15000,,0.9,1.7
+10,FLIR A700 640,infrared,1/2,6.40,4.80,8.00,640,512,12.0,M34x0.5,GigE,30,4000,30,8,14

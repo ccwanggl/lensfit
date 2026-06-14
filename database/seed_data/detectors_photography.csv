@@ -1,0 +1,8 @@
+manufacturer_id,model,category,sensor_format_inch,sensor_w_mm,sensor_h_mm,sensor_diag_mm,resolution_w,resolution_h,pixel_size_um,mount_type,data_interface,max_fps_full,price_usd,netd_mk,spectral_range_min_um,spectral_range_max_um
+12,Canon EOS R6,photography,FF,36.0,24.0,43.3,5472,3648,6.56,RF,SD,20,2500,,
+14,Sony A7 IV,photography,FF,35.8,23.9,43.0,7008,4672,5.11,E-mount,SD,10,2500,,
+13,Nikon Z6 II,photography,FF,35.9,23.9,43.1,6048,4024,5.94,Z-mount,SD,14,2000,,
+20,Fujifilm X-T5,photography,APS-C,23.5,15.6,28.2,7728,5152,3.04,X-mount,SD,20,1700,,
+12,Canon EOS R7,photography,APS-C,22.2,14.8,26.7,6960,4640,3.19,RF,SD,30,1500,,
+13,Nikon Z50,photography,APS-C,23.5,15.7,28.3,5568,3712,4.22,Z-mount,SD,11,900,,
+14,Sony A6700,photography,APS-C,23.3,15.5,28.0,6192,4128,3.76,E-mount,SD,11,1400,,

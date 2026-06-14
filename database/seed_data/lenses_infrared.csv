@@ -1,0 +1,8 @@
+manufacturer_id,model,category,status,focal_length_mm,focal_length_min,focal_length_max,max_aperture,image_circle_mm,min_working_distance_mm,max_working_distance_mm,nominal_wd_mm,mount_type,length_mm,weight_g,price_usd,na,wavelength_min_nm,wavelength_max_nm,distortion_percent
+10,FLIR LWIR 24mm f/1.0,infrared,active,24,,,1.0,21.0,,,,M34x0.5,45,180,2000,,8000,14000,
+10,FLIR LWIR 42mm f/1.0,infrared,active,42,,,1.0,21.0,,,,M34x0.5,55,220,2000,,8000,14000,
+18,Hamamatsu C14041-10U 25mm SWIR,infrared,active,25,,,1.4,11.0,,,,C-mount,40,150,3500,,900,1700,
+2,Edmund Optics LWIR 50mm f/2.0,infrared,active,50,,,2.0,21.0,,,,M34x0.5,60,200,1500,,8000,14000,
+18,Hamamatsu C12741-03 15mm SWIR,infrared,active,15,,,1.4,11.0,,,,C-mount,35,120,3000,,900,1700,
+10,FLIR LWIR 14mm f/1.0,infrared,active,14,,,1.0,21.0,,,,M34x0.5,40,140,1800,,8000,14000,
+2,Edmund Optics SWIR 35mm f/1.4,infrared,active,35,,,1.4,11.0,,,,C-mount,45,160,2800,,900,1700,

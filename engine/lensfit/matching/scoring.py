@@ -280,11 +280,12 @@ class TopsisRanker:
 
         # 相对贴近度 — 避免除零
         denominator = d_best + d_worst
-        closeness = np.where(
-            denominator == 0,
-            0.5,
-            d_worst / denominator,
-        )
+        with np.errstate(divide="ignore", invalid="ignore"):
+            closeness = np.where(
+                denominator == 0,
+                0.5,
+                d_worst / denominator,
+            )
 
         for i, r in enumerate(results):
             r.score = float(closeness[i])

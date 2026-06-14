@@ -78,20 +78,22 @@ class MatchingEngine:
             target_mag = params.get("magnification", 20)
             target_na = params.get("objective_na", 0.1)
             scope_type = params.get("microscope_type", "compound")
-            sensor = sensor_size_from_format(params.get("sensor_format", "2/3"))
+            sensor = (
+                sensor_size_from_format(params.get("sensor_format", "2/3"))
+                if strict
+                else None
+            )
             sensor_diag = sensor.diag if sensor else 11.0
 
             if scope_type == "stereo":
-                # 体视显微镜: 查询变焦主体，变焦倍率范围匹配目标放大倍率/10(目镜)
-                zoom_target = target_mag / 10.0  # 去掉10x目镜
+                zoom_target = target_mag / 10.0
                 lenses = catalog.query_lenses(
                     category="microscope_stereo",
-                    focal_min=zoom_target * 0.2,
-                    focal_max=zoom_target * 2.0,
-                    image_circle_min=sensor_diag * 0.3,
+                    focal_min=zoom_target * (0.2 if strict else 0.1),
+                    focal_max=zoom_target * (2.0 if strict else 5.0),
+                    image_circle_min=sensor_diag * (0.3 if strict else 0.2),
                     limit=_MAX_CANDIDATE_LENS,
                 )
-                # 按变焦范围接近度和NA排序
                 lenses = sorted(
                     lenses,
                     key=lambda lens_item: (
@@ -101,15 +103,13 @@ class MatchingEngine:
                     ),
                 )
             else:
-                # 复式显微镜: 查询物镜
                 lenses = catalog.query_lenses(
                     category="microscope",
-                    focal_min=target_mag * 0.3,
-                    focal_max=target_mag * 2.5,
-                    image_circle_min=sensor_diag * 0.5,
+                    focal_min=target_mag * (0.3 if strict else 0.1),
+                    focal_max=target_mag * (2.5 if strict else 5.0),
+                    image_circle_min=sensor_diag * (0.5 if strict else 0.2),
                     limit=_MAX_CANDIDATE_LENS,
                 )
-                # 按NA接近度排序
                 lenses = sorted(
                     lenses,
                     key=lambda lens_item: (
@@ -117,17 +117,15 @@ class MatchingEngine:
                         + abs((lens_item.focal_length_mm or 0) - target_mag)
                     ),
                 )
+                if strict:
+                    lenses = [
+                        lens_item for lens_item in lenses
+                        if str(getattr(lens_item, "mount_type", "") or "").lower() != "c-mount"
+                    ]
 
-                # 复式显微镜通常使用专用物镜接口，排除 C-mount 工业镜头
-                lenses = [
-                    lens_item for lens_item in lenses
-                    if str(getattr(lens_item, "mount_type", "") or "").lower() != "c-mount"
-                ]
-
-            # 查询显微镜相机
             detectors = catalog.query_detectors(
                 category="microscope",
-                sensor_format=params.get("sensor_format"),
+                sensor_format=params.get("sensor_format") if strict else None,
                 limit=_MAX_CANDIDATE_DET,
             )
 
@@ -138,7 +136,7 @@ class MatchingEngine:
             return combos
 
         # --- Photography domain ---
-        if domain_id == "photography":
+        elif domain_id == "photography":
             from lensfit.domains.photography import PhotographyModule
 
             photo = PhotographyModule()
@@ -147,65 +145,129 @@ class MatchingEngine:
             lens_type = params.get("lens_type", "all")
             mount = params.get("mount", "all")
 
-            # 查询镜头：焦距在用途理想区间的扩展范围内
             lenses = catalog.query_lenses(
-                category="photography" if lens_type == "all" else None,
-                mount_type=mount if mount != "all" else None,
-                focal_min=ideal_min * 0.3,
-                focal_max=ideal_max * 2.5,
+                category="photography" if lens_type == "all" or not strict else None,
+                mount_type=mount if mount != "all" and strict else None,
+                focal_min=ideal_min * (0.3 if strict else 0.1),
+                focal_max=ideal_max * (2.5 if strict else 5.0),
                 limit=_MAX_CANDIDATE_LENS,
             )
 
-            # 按焦距接近理想区间中心排序
             center = (ideal_min + ideal_max) / 2.0
             lenses = sorted(
                 lenses,
                 key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - center),
             )
 
-            # 变焦/定焦过滤
-            if lens_type == "prime":
-                lenses = [
-                    lens_item for lens_item in lenses
-                    if (lens_item.focal_length_max or lens_item.focal_length_mm)
-                    <= lens_item.focal_length_mm * 1.01
-                ]
-            elif lens_type == "zoom":
-                lenses = [
-                    lens_item for lens_item in lenses
-                    if (lens_item.focal_length_max or lens_item.focal_length_mm)
-                    > lens_item.focal_length_mm * 1.01
-                ]
+            if strict:
+                if lens_type == "prime":
+                    lenses = [
+                        lens_item for lens_item in lenses
+                        if (lens_item.focal_length_max or lens_item.focal_length_mm)
+                        <= lens_item.focal_length_mm * 1.01
+                    ]
+                elif lens_type == "zoom":
+                    lenses = [
+                        lens_item for lens_item in lenses
+                        if (lens_item.focal_length_max or lens_item.focal_length_mm)
+                        > lens_item.focal_length_mm * 1.01
+                    ]
 
-            # 品牌过滤
-            brand = params.get("brand", "all")
-            if brand and brand != "all":
-                brand_lower = str(brand).lower()
-                lenses = [
-                    lens_item for lens_item in lenses
-                    if str(getattr(lens_item, "model", "") or "").lower().startswith(brand_lower)
-                ]
+                brand = params.get("brand", "all")
+                if brand and brand != "all":
+                    brand_lower = str(brand).lower()
+                    lenses = [
+                        lens_item for lens_item in lenses
+                        if str(getattr(lens_item, "model", "") or "")
+                        .lower()
+                        .startswith(brand_lower)
+                    ]
 
-            # 显式焦距范围过滤
-            focal_min = params.get("focal_range_min")
-            focal_max = params.get("focal_range_max")
-            if focal_min is not None or focal_max is not None:
-                focal_min_val = float(focal_min) if focal_min is not None else 0.0
-                focal_max_val = float(focal_max) if focal_max is not None else 9999.0
-                lenses = [
-                    lens_item for lens_item in lenses
-                    if focal_min_val <= (lens_item.focal_length_mm or 0) <= focal_max_val
-                ]
+                focal_min = params.get("focal_range_min")
+                focal_max = params.get("focal_range_max")
+                if focal_min is not None or focal_max is not None:
+                    focal_min_val = float(focal_min) if focal_min is not None else 0.0
+                    focal_max_val = float(focal_max) if focal_max is not None else 9999.0
+                    lenses = [
+                        lens_item for lens_item in lenses
+                        if focal_min_val <= (lens_item.focal_length_mm or 0) <= focal_max_val
+                    ]
 
-            # 查询相机机身（探测器）
             sensor_format = params.get("sensor_format", "FF")
             detectors = catalog.query_detectors(
-                sensor_format=sensor_format,
-                mount_type=mount if mount != "all" else None,
+                sensor_format=sensor_format if strict else None,
+                mount_type=mount if mount != "all" and strict else None,
                 limit=_MAX_CANDIDATE_DET,
             )
 
-            # 生成组合 — 带上限保护
+            total_combos = len(lenses) * len(detectors)
+            if total_combos > _MAX_CANDIDATE_COMBOS:
+                lenses = lenses[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
+
+            combos = []
+            for lens in lenses:
+                for det in detectors:
+                    combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
+            return combos
+
+        # --- Infrared domain ---
+        elif domain_id == "infrared":
+            from math import radians, tan
+
+            sensor = (
+                sensor_size_from_format(params.get("sensor_format", "1/2"))
+                if strict
+                else None
+            )
+            sensor_w = sensor.w if sensor else 7.68
+            sensor_diag = sensor.diag if sensor else 9.6
+
+            fov_deg = params.get("fov_deg", 24.0)
+            focal_estimate = (
+                sensor_w / (2.0 * tan(radians(fov_deg / 2.0)))
+                if fov_deg > 0
+                else 25.0
+            )
+
+            focal_min = focal_estimate * (0.5 if strict else 0.2)
+            focal_max = focal_estimate * (2.0 if strict else 5.0)
+
+            lenses = catalog.query_lenses(
+                category="infrared",
+                mount_type=(
+                    params.get("interface")
+                    if strict and params.get("interface")
+                    else None
+                ),
+                focal_min=focal_min,
+                focal_max=focal_max,
+                image_circle_min=sensor_diag * (0.8 if strict else 0.5),
+                limit=_MAX_CANDIDATE_LENS,
+            )
+
+            if strict:
+                target_wl_um = params.get("wavelength_um", 10.0)
+                target_wl_nm = target_wl_um * 1000.0
+                lenses = [
+                    lens_item for lens_item in lenses
+                    if (
+                        getattr(lens_item, "wavelength_min_nm", 0) or 0
+                    ) <= target_wl_nm <= (
+                        getattr(lens_item, "wavelength_max_nm", 0) or 0
+                    )
+                ]
+
+            detectors = catalog.query_detectors(
+                category="infrared",
+                sensor_format=params.get("sensor_format") if strict else None,
+                limit=_MAX_CANDIDATE_DET,
+            )
+
+            lenses = sorted(
+                lenses,
+                key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - focal_estimate),
+            )
+
             total_combos = len(lenses) * len(detectors)
             if total_combos > _MAX_CANDIDATE_COMBOS:
                 lenses = lenses[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
@@ -217,51 +279,51 @@ class MatchingEngine:
             return combos
 
         # --- Industrial domain: original logic ---
-        calc = ThinLensCalculator()
-        sensor = sensor_size_from_format(params.get("sensor_size", "2/3"))
-        if not sensor:
+        elif domain_id == "industrial":
+            calc = ThinLensCalculator()
+            sensor = sensor_size_from_format(params.get("sensor_size", "2/3"))
+            if not sensor:
+                return []
+
+            wd = params.get("working_distance_mm", 200)
+            fov_w = params.get("target_width_mm", 50)
+
+            focal_estimate = calc.focal_from_wd_fov(wd, fov_w, sensor.w)
+            focal_min = focal_estimate * (0.5 if strict else 0.2)
+            focal_max = focal_estimate * (2.0 if strict else 5.0)
+
+            lenses = catalog.query_lenses(
+                category=params.get("lens_type", "FA"),
+                mount_type=params.get("interface") if strict else None,
+                focal_min=focal_min,
+                focal_max=focal_max,
+                image_circle_min=sensor.diag * (0.8 if strict else 0.5),
+                wd_min=wd * (0.5 if strict else 0.2) if strict else None,
+                wd_max=wd * (2.0 if strict else 5.0) if strict else None,
+                limit=_MAX_CANDIDATE_LENS,
+            )
+
+            detectors = catalog.query_detectors(
+                sensor_format=params.get("sensor_size") if strict else None,
+                mount_type=params.get("interface") if strict else None,
+                limit=_MAX_CANDIDATE_DET,
+            )
+
+            total_combos = len(lenses) * len(detectors)
+            if total_combos > _MAX_CANDIDATE_COMBOS:
+                lenses = sorted(
+                    lenses,
+                    key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - focal_estimate),
+                )[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
+
+            combos = []
+            for lens in lenses:
+                for det in detectors:
+                    combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
+            return combos
+
+        else:
             return []
-
-        wd = params.get("working_distance_mm", 200)
-        fov_w = params.get("target_width_mm", 50)
-
-        focal_estimate = calc.focal_from_wd_fov(wd, fov_w, sensor.w)
-        focal_min = focal_estimate * (0.5 if strict else 0.2)
-        focal_max = focal_estimate * (2.0 if strict else 5.0)
-
-        # 查询镜头
-        lenses = catalog.query_lenses(
-            category=params.get("lens_type", "FA"),
-            mount_type=params.get("interface") if strict else None,
-            focal_min=focal_min,
-            focal_max=focal_max,
-            image_circle_min=sensor.diag * (0.8 if strict else 0.5),
-            wd_min=wd * (0.5 if strict else 0.2) if strict else None,
-            wd_max=wd * (2.0 if strict else 5.0) if strict else None,
-            limit=_MAX_CANDIDATE_LENS,
-        )
-
-        # 查询探测器
-        detectors = catalog.query_detectors(
-            sensor_format=params.get("sensor_size") if strict else None,
-            mount_type=params.get("interface") if strict else None,
-            limit=_MAX_CANDIDATE_DET,
-        )
-
-        # 生成组合 — 带上限保护
-        total_combos = len(lenses) * len(detectors)
-        if total_combos > _MAX_CANDIDATE_COMBOS:
-            # 优先保留焦距最接近估计值的镜头
-            lenses = sorted(
-                lenses,
-                key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - focal_estimate),
-            )[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
-
-        combos = []
-        for lens in lenses:
-            for det in detectors:
-                combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
-        return combos
 
     # =====================================================================
     # Stage 2: QuickHardFilter
@@ -354,12 +416,26 @@ class MatchingEngine:
             strict: 为 False 时跳过工作距离硬约束并放宽覆盖要求.
         """
         constraints = domain.get_hard_constraints()
+        domain_id = getattr(domain, "domain_id", "")
+
+        # 非严格模式下跳过的“偏好类”硬约束
+        relaxed_skip: set[str] = set()
+        if not strict:
+            relaxed_skip = {
+                "photography": {"budget", "mount_compatibility"},
+                "microscope": {"budget", "na_sufficient"},
+                "infrared": {"budget", "wavelength_coverage", "mount_compatibility"},
+                "industrial": {"wd_range"},
+            }.get(domain_id, set())
+
         valid = []
         constraint_fails: dict[str, int] = {}
         for combo in candidates:
             try:
                 passed = True
                 for c in constraints:
+                    if c.name in relaxed_skip:
+                        continue
                     if c.name == "wd_range" and not strict:
                         continue
                     if c.name == "sensor_coverage" and not strict:
@@ -376,6 +452,26 @@ class MatchingEngine:
                             constraint_fails[c.name] = constraint_fails.get(c.name, 0) + 1
                             passed = False
                             break
+                        continue
+                    if c.name == "format_coverage" and not strict:
+                        # 摄影领域放宽画幅覆盖到 70%
+                        lens = combo.lens
+                        reqs = combo.requirements
+                        if lens and reqs:
+                            format_circles = {
+                                "FF": 43.3,
+                                "APS-C": 28.3,
+                                "M43": 21.6,
+                            }
+                            sensor_format = reqs.params.get("sensor_format", "FF")
+                            req_circle = format_circles.get(sensor_format, 43.3)
+                            lens_circle = getattr(lens, "image_circle_mm", None) or 0
+                            if lens_circle < req_circle * 0.70:
+                                constraint_fails[c.name] = (
+                                    constraint_fails.get(c.name, 0) + 1
+                                )
+                                passed = False
+                                break
                         continue
                     if not c.check(combo):
                         constraint_fails[c.name] = constraint_fails.get(c.name, 0) + 1
