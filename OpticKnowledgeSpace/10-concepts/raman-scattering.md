@@ -1,14 +1,14 @@
 ---
+
 id: concept.raman-scattering
 title: 拉曼散射
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [raman-scattering, Raman光谱, 拉曼效应]
----
+aliases: [raman-scattering, Raman光谱, 拉曼效应]---
 # 拉曼散射
 
 ## 定义

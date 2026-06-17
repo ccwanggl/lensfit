@@ -41,8 +41,9 @@ EMBEDS: dict[str, list[str]] = {
     "10-concepts/工作距离.md": ["lens-selection-checklist.svg"],
     "10-concepts/法兰距.md": ["lens-selection-checklist.svg"],
     "10-concepts/混叠.md": ["nyquist-aliasing.svg"],
-    "10-concepts/渐晕.md": ["image-circle-coverage.svg"],
+    "10-concepts/渐晕.md": ["vignetting.svg"],
     "10-concepts/焦距.md": ["thin-lens-geometry.svg", "angle-of-view.svg"],
+    "10-concepts/数值孔径.md": ["numerical-aperture.svg"],
     "10-concepts/瑞利判据.md": ["airy-disk.svg"],
     "10-concepts/色差.md": ["chromatic-aberration.svg"],
     "10-concepts/色温.md": ["color-temperature.svg"],
@@ -61,6 +62,12 @@ EMBEDS: dict[str, list[str]] = {
     "20-formulas/coverage-ratio.md": ["image-circle-coverage.svg"],
     "20-formulas/nyquist-frequency.md": ["nyquist-aliasing.svg"],
     "20-formulas/rayleigh-criterion.md": ["airy-disk.svg"],
+    # Additional concept visuals
+    "10-concepts/abbe-number.md": ["abbe-number.svg"],
+    "10-concepts/chromaticity-diagram.md": ["chromaticity-diagram.svg"],
+    "10-concepts/spectral-resolution.md": ["spectral-resolution.svg"],
+    "10-concepts/numerical-aperture.md": ["numerical-aperture.svg"],
+    "10-concepts/vignetting.md": ["vignetting.svg"],
     # Learning chapters
     "50-learning/05-matching-basics.md": ["image-circle-coverage.svg", "matching-workflow.svg", "lens-selection-checklist.svg"],
     "50-learning/03-lens-parameters.md": ["lens-selection-checklist.svg"],

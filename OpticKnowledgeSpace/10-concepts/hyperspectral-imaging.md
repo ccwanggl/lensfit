@@ -1,14 +1,14 @@
 ---
+
 id: concept.hyperspectral-imaging
 title: 高光谱成像
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [hyperspectral-imaging, 高光谱, HSI, 成像光谱]
----
+aliases: [hyperspectral-imaging, 高光谱, HSI, 成像光谱]---
 # 高光谱成像
 
 ## 定义

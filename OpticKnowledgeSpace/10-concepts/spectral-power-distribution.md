@@ -1,14 +1,14 @@
 ---
+
 id: concept.spectral-power-distribution
 title: 光谱分布函数
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [spectral-power-distribution, SPD, 光谱功率分布, 光谱分布]
----
+aliases: [spectral-power-distribution, SPD, 光谱功率分布, 光谱分布]---
 # 光谱分布函数
 
 ## 定义

@@ -56,6 +56,11 @@ aliases: [spectral-resolution, 分辨本领]
 2. **像素分辨率 vs 光谱分辨率**：相机像素多不代表光谱分辨率高，取决于色散元件和狭缝。
 3. **忽略狭缝宽度**：狭缝越窄分辨率越高，但进光量越少，需权衡。
 
+## 可视化辅助
+
+![[attachments/visuals/spectral-resolution.svg]]
+*图：Spectral Resolution*
+
 ## 来源
 
 - 光学工程教材，第 16 章 光谱学

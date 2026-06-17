@@ -1,14 +1,14 @@
 ---
+
 id: concept.pixel
 title: 像元
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Pixel, 像素, 光敏单元, photosite, 感光像素]
----
+aliases: [Pixel, 像素, 光敏单元, photosite, 感光像素]---
 
 # 像元
 

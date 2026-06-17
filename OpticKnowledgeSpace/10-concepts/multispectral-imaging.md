@@ -1,14 +1,14 @@
 ---
+
 id: concept.multispectral-imaging
 title: 多光谱成像
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [multispectral-imaging, 多光谱, MSI]
----
+aliases: [multispectral-imaging, 多光谱, MSI]---
 # 多光谱成像
 
 ## 定义

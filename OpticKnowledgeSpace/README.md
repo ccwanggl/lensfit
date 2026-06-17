@@ -107,6 +107,11 @@ Frontmatter 的 `status` 使用以下值：
 | `raman-scattering.svg` | 拉曼散射能级图 | [[10-concepts/raman-scattering\|拉曼散射]] |
 | `global-vs-rolling-shutter.svg` | 全局快门 vs 卷帘快门 | [[10-concepts/全局快门\|全局快门]]、[[10-concepts/卷帘快门\|卷帘快门]] |
 | `telecentricity.svg` | 远心镜头主光线 | [[40-devices/telecentric-lens\|远心镜头]] |
+| `abbe-number.svg` | 阿贝图 | [[10-concepts/abbe-number\|阿贝数]] |
+| `numerical-aperture.svg` | 数值孔径示意图 | [[10-concepts/数值孔径\|数值孔径]] |
+| `vignetting.svg` | 渐晕亮度分布 | [[10-concepts/渐晕\|渐晕]] |
+| `chromaticity-diagram.svg` | CIE 1931 色度图 | [[10-concepts/chromaticity-diagram\|色度图]] |
+| `spectral-resolution.svg` | 光谱分辨率对比 | [[10-concepts/spectral-resolution\|光谱分辨率]] |
 | `domain-selection-map.svg` | 如何选择应用领域 | [[30-domains/README\|应用领域]]、[[90-maps/Visual Index\|可视化索引]] |
 | `matching-workflow.svg` | LensFit 匹配工作流程 | [[50-learning/05-matching-basics\|匹配基础]] |
 | `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/04-sensors\|传感器]]、[[40-devices/README\|设备类型]] |

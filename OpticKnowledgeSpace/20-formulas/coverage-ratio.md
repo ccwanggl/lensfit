@@ -1,14 +1,14 @@
 ---
+
 id: formula.coverage-ratio
 title: 像圈覆盖比
 type: formula
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 像圈覆盖比
 

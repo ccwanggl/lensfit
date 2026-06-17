@@ -1,14 +1,14 @@
 ---
+
 id: concept.image-circle
 title: 像圈
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Image Circle, 像场, 均匀成像区域, 覆盖范围]
----
+aliases: [Image Circle, 像场, 均匀成像区域, 覆盖范围]---
 
 # 像圈
 

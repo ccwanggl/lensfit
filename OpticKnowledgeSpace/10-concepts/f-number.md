@@ -1,14 +1,14 @@
 ---
+
 id: concept.f-number
 title: F值
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [f-number, F#, 光圈值, F数, 焦比]
----
+aliases: [f-number, F#, 光圈值, F数, 焦比]---
 
 # F值
 

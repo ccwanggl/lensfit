@@ -1,14 +1,14 @@
 ---
+
 id: concept.dispersion
 title: 色散
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [dispersion, 色散现象, 光谱色散]
----
+aliases: [dispersion, 色散现象, 光谱色散]---
 # 色散
 
 ## 定义

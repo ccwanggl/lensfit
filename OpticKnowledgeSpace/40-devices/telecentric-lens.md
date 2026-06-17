@@ -1,14 +1,14 @@
 ---
+
 id: device.telecentric-lens
 title: 远心镜头
 type: device
 domains: []
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 远心镜头
 

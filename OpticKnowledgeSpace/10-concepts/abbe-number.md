@@ -69,6 +69,11 @@ Vd = (nd - 1) / (nF - nC)
 4. **ED 玻璃无色散**：ED 只是“超低色散”（Extra-low Dispersion），色散仍不为零。
 5. **阿贝数与镜头分辨率直接相关**：阿贝数影响色差，但镜头分辨率还受衍射、球差、像散等影响。
 
+## 可视化辅助
+
+![[attachments/visuals/abbe-number.svg]]
+*图：Abbe Number*
+
 ## 来源
 
 - Schott Glass Technical Data Sheets

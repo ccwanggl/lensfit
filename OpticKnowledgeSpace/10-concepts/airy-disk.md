@@ -1,14 +1,14 @@
 ---
+
 id: concept.airy-disk
 title: 艾里斑
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Airy Disk, 艾里斑直径, 衍射极限光斑]
----
+aliases: [Airy Disk, 艾里斑直径, 衍射极限光斑]---
 
 # 艾里斑
 

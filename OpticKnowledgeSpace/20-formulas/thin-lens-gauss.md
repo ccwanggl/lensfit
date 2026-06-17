@@ -1,14 +1,14 @@
 ---
+
 id: formula.thin-lens-gauss
 title: 薄透镜高斯公式
 type: formula
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 薄透镜高斯公式
 

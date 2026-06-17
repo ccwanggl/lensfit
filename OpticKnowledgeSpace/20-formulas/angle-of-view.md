@@ -1,14 +1,14 @@
 ---
+
 id: formula.angle-of-view
 title: 视角公式
 type: formula
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 视角公式
 

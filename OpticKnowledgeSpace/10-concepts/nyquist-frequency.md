@@ -1,14 +1,14 @@
 ---
+
 id: concept.nyquist-frequency
 title: 奈奎斯特频率
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Nyquist Frequency, 奈奎斯特极限, 采样极限频率, 传感器分辨极限]
----
+aliases: [Nyquist Frequency, 奈奎斯特极限, 采样极限频率, 传感器分辨极限]---
 
 # 奈奎斯特频率
 

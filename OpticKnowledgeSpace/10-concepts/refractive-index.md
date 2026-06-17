@@ -1,14 +1,14 @@
 ---
+
 id: concept.refractive-index
 title: 折射率
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [refractive index, 折射率 n]
----
+aliases: [refractive index, 折射率 n]---
 
 # 折射率
 

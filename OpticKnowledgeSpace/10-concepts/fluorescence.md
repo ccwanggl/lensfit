@@ -1,14 +1,14 @@
 ---
+
 id: concept.fluorescence
 title: 荧光
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [fluorescence, 荧光现象, 光致发光]
----
+aliases: [fluorescence, 荧光现象, 光致发光]---
 # 荧光
 
 ## 定义

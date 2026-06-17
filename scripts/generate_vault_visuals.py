@@ -693,6 +693,112 @@ def draw_telecentricity() -> Path:
     return save(fig, "telecentricity.svg")
 
 
+def draw_abbe_number() -> Path:
+    """Abbe diagram: refractive index vs Abbe number."""
+    import numpy as np
+    fig, ax = plt.subplots(figsize=(7, 5))
+    # Mock glass types
+    np.random.seed(0)
+    nd = np.random.uniform(1.45, 2.0, 40)
+    vd = 80 - 60 * (nd - 1.45) / 0.55 + np.random.normal(0, 5, 40)
+    ax.scatter(nd, vd, c="#3b82f6", alpha=0.6, s=60)
+    ax.set_xlabel("折射率 n_d")
+    ax.set_ylabel("阿贝数 V_d")
+    ax.set_title("阿贝图：折射率越高，阿贝数通常越低（色散越大）", fontsize=13, fontweight="bold")
+    ax.text(1.55, 35, "高色散\n（低阿贝数）", fontsize=9, color="#7f1d1d")
+    ax.text(1.85, 70, "低色散\n（高阿贝数）", fontsize=9, color="#064e3b")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    return save(fig, "abbe-number.svg")
+
+
+def draw_chromaticity_diagram() -> Path:
+    """Simplified CIE 1931 chromaticity diagram."""
+    fig, ax = plt.subplots(figsize=(7, 6))
+    from matplotlib.patches import Polygon
+    # Approximate horseshoe boundary
+    x = [0.17, 0.0, 0.13, 0.43, 0.73, 0.83, 0.73, 0.52, 0.27, 0.17]
+    y = [0.01, 0.0, 0.55, 0.83, 0.83, 0.55, 0.27, 0.08, 0.01, 0.01]
+    ax.fill(x, y, color="#e0f2fe", alpha=0.6)
+    ax.plot(x + [x[0]], y + [y[0]], color="#0369a1", lw=2)
+    # RGB gamut triangle
+    ax.plot([0.64, 0.30, 0.15, 0.64], [0.33, 0.60, 0.06, 0.33], "r--", lw=2)
+    ax.text(0.33, 0.33, "sRGB 色域", color="#b91c1c", fontsize=10)
+    ax.scatter([0.3127], [0.3290], color="#000", s=40, zorder=3)
+    ax.text(0.33, 0.34, "D65 白点", fontsize=9)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title("CIE 1931 色度图（示意）：马蹄形色域与 sRGB 三角", fontsize=13, fontweight="bold")
+    ax.set_aspect("equal")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    return save(fig, "chromaticity-diagram.svg")
+
+
+def draw_spectral_resolution() -> Path:
+    """Two close spectral peaks separated vs unresolved."""
+    import numpy as np
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+    x = np.linspace(600, 700, 500)
+    y1 = np.exp(-((x - 640) ** 2) / 50) + np.exp(-((x - 660) ** 2) / 50)
+    y2 = np.exp(-((x - 640) ** 2) / 400) + np.exp(-((x - 660) ** 2) / 400)
+
+    ax1.plot(x, y1, color="#2563eb", lw=2)
+    ax1.set_title("高光谱分辨率：两峰可分辨", fontsize=12, fontweight="bold")
+    ax1.set_xlabel("波长 (nm)")
+    ax1.set_ylabel("强度")
+
+    ax2.plot(x, y2, color="#dc2626", lw=2)
+    ax2.set_title("低光谱分辨率：两峰合并", fontsize=12, fontweight="bold")
+    ax2.set_xlabel("波长 (nm)")
+
+    for ax in (ax1, ax2):
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+    return save(fig, "spectral-resolution.svg")
+
+
+def draw_numerical_aperture() -> Path:
+    """Cone angle for numerical aperture."""
+    fig, ax = plt.subplots(figsize=(6, 6))
+    from matplotlib.patches import Arc
+    # Object point and lens
+    ax.scatter([0], [0], color="#f59e0b", s=80, zorder=3)
+    ax.text(-0.15, 0.05, "物点", fontsize=10, color="#b45309")
+    ax.axvline(1.5, ymin=0.2, ymax=0.8, color="#374151", linewidth=4)
+    ax.text(1.5, 0.12, "物镜", ha="center", fontsize=10)
+
+    # Cone
+    ax.plot([0, 1.5], [0, 0.7], color="#2563eb", lw=1.5)
+    ax.plot([0, 1.5], [0, -0.7], color="#2563eb", lw=1.5)
+    ax.plot([0.3, 1.5], [0, 0.14], color="#9ca3af", linestyle="--", lw=1)
+    ax.text(0.5, 0.18, "θ", fontsize=11)
+    ax.text(0.75, -0.35, "NA = n · sin θ", fontsize=12, fontweight="bold", color="#1e40af")
+
+    ax.set_xlim(-0.5, 2.2)
+    ax.set_ylim(-1, 1)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    ax.set_title("数值孔径 NA：半孔径角越大，NA 越大", fontsize=13, fontweight="bold")
+    return save(fig, "numerical-aperture.svg")
+
+
+def draw_vignetting() -> Path:
+    """Brightness falloff from center to corner."""
+    import numpy as np
+    fig, ax = plt.subplots(figsize=(6, 6))
+    x = np.linspace(-1, 1, 200)
+    y = np.linspace(-1, 1, 200)
+    X, Y = np.meshgrid(x, y)
+    R = np.sqrt(X**2 + Y**2)
+    Z = np.cos(R * np.pi / 2.2) ** 2
+    Z[R > 1] = np.nan
+    ax.imshow(Z, extent=[-1, 1, -1, 1], origin="lower", cmap="gray")
+    ax.set_title("渐晕：图像边缘亮度低于中心", fontsize=13, fontweight="bold")
+    ax.axis("off")
+    return save(fig, "vignetting.svg")
+
+
 def main():
     paths = []
     paths.append(draw_learning_path_roadmap())
@@ -718,6 +824,11 @@ def main():
     paths.append(draw_raman_scattering())
     paths.append(draw_global_vs_rolling_shutter())
     paths.append(draw_telecentricity())
+    paths.append(draw_abbe_number())
+    paths.append(draw_chromaticity_diagram())
+    paths.append(draw_spectral_resolution())
+    paths.append(draw_numerical_aperture())
+    paths.append(draw_vignetting())
     print(f"Generated {len(paths)} visuals in {OUTDIR}:")
     for p in paths:
         print(f"  - {p}")

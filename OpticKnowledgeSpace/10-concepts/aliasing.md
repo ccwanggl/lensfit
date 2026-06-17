@@ -1,14 +1,14 @@
 ---
+
 id: concept.aliasing
 title: 混叠
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Aliasing, 走样, 采样混叠, 摩尔纹, 虚假频率]
----
+aliases: [Aliasing, 走样, 采样混叠, 摩尔纹, 虚假频率]---
 
 # 混叠
 

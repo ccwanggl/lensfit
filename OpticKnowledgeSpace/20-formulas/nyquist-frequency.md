@@ -1,14 +1,14 @@
 ---
+
 id: formula.nyquist-frequency
 title: 奈奎斯特频率
 type: formula
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 奈奎斯特频率
 

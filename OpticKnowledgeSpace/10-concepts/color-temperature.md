@@ -1,14 +1,14 @@
 ---
+
 id: concept.color-temperature
 title: 色温
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [color-temperature, CCT, 相关色温, correlated-color-temperature]
----
+aliases: [color-temperature, CCT, 相关色温, correlated-color-temperature]---
 # 色温
 
 ## 定义

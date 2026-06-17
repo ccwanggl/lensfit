@@ -40,6 +40,9 @@ aliases:
 | ![[attachments/visuals/refractive-index.svg]] | [[10-concepts/refractive-index\|折射率]] |
 | ![[attachments/visuals/dispersion.svg]] | [[10-concepts/dispersion\|色散]] |
 | ![[attachments/visuals/chromatic-aberration.svg]] | [[10-concepts/chromatic-aberration\|色差]] |
+| ![[attachments/visuals/abbe-number.svg]] | [[10-concepts/abbe-number\|阿贝数]] |
+| ![[attachments/visuals/numerical-aperture.svg]] | [[10-concepts/数值孔径\|数值孔径]] |
+| ![[attachments/visuals/vignetting.svg]] | [[10-concepts/渐晕\|渐晕]] |
 
 ---
 
@@ -52,6 +55,8 @@ aliases:
 | ![[attachments/visuals/multispectral-hyperspectral.svg]] | [[10-concepts/multispectral-imaging\|多光谱成像]]、[[10-concepts/hyperspectral-imaging\|高光谱成像]] |
 | ![[attachments/visuals/fluorescence.svg]] | [[10-concepts/fluorescence\|荧光]] |
 | ![[attachments/visuals/raman-scattering.svg]] | [[10-concepts/raman-scattering\|拉曼散射]] |
+| ![[attachments/visuals/chromaticity-diagram.svg]] | [[10-concepts/chromaticity-diagram\|色度图]] |
+| ![[attachments/visuals/spectral-resolution.svg]] | [[10-concepts/spectral-resolution\|光谱分辨率]] |
 
 ---
 

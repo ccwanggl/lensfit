@@ -1,14 +1,14 @@
 ---
+
 id: concept.depth-of-field
 title: 景深
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Depth of Field, DOF, 清晰范围, 焦深范围]
----
+aliases: [Depth of Field, DOF, 清晰范围, 焦深范围]---
 
 # 景深
 

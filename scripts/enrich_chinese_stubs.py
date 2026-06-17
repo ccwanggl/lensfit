@@ -89,6 +89,97 @@ DEFINITIONS: dict[str, tuple[str, str | None]] = {
         "优点：提高测量精度、降低混叠风险、便于后期缩放。缺点：数据量大、对镜头分辨率要求更高。",
         "10-concepts/oversampling",
     ),
+    "10-concepts/近轴近似.md": (
+        "近轴近似（Paraxial Approximation）指光线与光轴夹角很小（sin θ ≈ tan θ ≈ θ）时的简化模型。"
+        "在该近似下，球面折射和反射公式可线性化，得到高斯光学公式（薄透镜公式、放大率公式等）。"
+        "当角度较大时，近轴近似失效，需要考虑像差和非近轴光线追迹。",
+        "10-concepts/paraxial-approximation",
+    ),
+    "10-concepts/双远心.md": (
+        "双远心（Bi-telecentric / Double Telecentricity）指镜头在物方和像方均保持远心光路："
+        "物方主光线与光轴平行，像方主光线也与光轴平行。"
+        "优点：放大倍率不随工作距离变化，适合精密尺寸测量；缺点：体积大、成本高、需要更大传感器。",
+        "10-concepts/bi-telecentricity",
+    ),
+    "10-concepts/远心照明.md": (
+        "远心照明（Telecentric Illumination）使用准直光照射被测物，光线方向几乎平行于光轴。"
+        "配合远心镜头可显著减少阴影、镜面反射和边缘模糊，提高边缘检测和尺寸测量精度。"
+        "常用于工业视觉中的背光或同轴远心照明系统。",
+        "10-concepts/telecentric-illumination",
+    ),
+    "10-concepts/同轴照明.md": (
+        "同轴照明（Coaxial Illumination）将光源通过分光镜与镜头同轴耦合，光线沿镜头光轴照射样品。"
+        "优点：可照亮垂直表面、减少阴影，适合检测镜面、光滑平面上的划痕或凹陷。"
+        "缺点：对粗糙或倾斜表面效果差，可能产生强烈反光。",
+        "10-concepts/coaxial-illumination",
+    ),
+    "10-concepts/低角度照明.md": (
+        "低角度照明（Low-angle Illumination）让光线以接近水平的角度照射样品表面。"
+        "优点：能突出表面纹理、划痕、凸起和凹陷（浮雕效应），常用于缺陷检测。"
+        "缺点：对颜色信息不敏感，可能丢失部分表面细节。",
+        "10-concepts/low-angle-illumination",
+    ),
+    "10-concepts/分光镜.md": (
+        "分光镜（Beam Splitter）是将一束光按波长、偏振或能量比例分成两束或多束的光学元件。"
+        "常见类型包括：立方体分光镜、平板分光镜、二向色镜、偏振分光镜。"
+        "广泛用于同轴照明、干涉仪、光谱仪、荧光显微镜等系统。",
+        "10-concepts/beam-splitter",
+    ),
+    "10-concepts/镜面反射.md": (
+        "镜面反射（Specular Reflection）指光线在光滑表面按入射角等于反射角的规律反射。"
+        "成像中常导致高光或过曝；在机器视觉中可利用同轴照明或偏振滤光片抑制。"
+        "与漫反射相对，后者将光向多个方向散射。",
+        "10-concepts/specular-reflection",
+    ),
+    "10-concepts/漫射.md": (
+        "漫射（Diffuse Reflection / Diffusion）指光线照射粗糙表面后向多个方向散射的现象。"
+        "漫射光源（如乳白罩、积分球）可提供均匀照明，减少高光和阴影。"
+        "在视觉检测中常用于均匀照亮漫反射材料。",
+        "10-concepts/diffuse-reflection",
+    ),
+    "10-concepts/半影.md": (
+        "半影（Penumbra）指光源有一定大小时，被不透明物体遮挡后形成的部分阴影区。"
+        "在半影区内，只有部分光源被遮挡，亮度介于全影（本影）和亮区之间。"
+        "照明设计时应尽量减小半影，以获得锐利的物体边缘。",
+        "10-concepts/penumbra",
+    ),
+    "10-concepts/透视畸变.md": (
+        "透视畸变（Perspective Distortion）指由于拍摄角度或物体离镜头距离不同，导致图像中平行线汇聚、近大远小的几何变形。"
+        "在工业测量中通常需要避免；远心镜头和同轴照明可有效抑制透视畸变。",
+        "10-concepts/perspective-distortion",
+    ),
+    "10-concepts/视差.md": (
+        "视差（Parallax）指从不同位置观察同一物体时，物体相对于背景的相对位置变化。"
+        "在镜头选型中，普通镜头因透视会产生视差；远心镜头主光线平行，可消除视差，适合高精度测量。",
+        "10-concepts/parallax",
+    ),
+    "10-concepts/放大倍率.md": (
+        "放大倍率（Magnification）指像高与物高之比，β = v / u = 像高 / 物高。"
+        "在显微镜和远心镜头中常直接标注倍率。"
+        "测量应用中，稳定的放大倍率是像素精度换算的基础。",
+        "10-concepts/magnification",
+    ),
+    "10-concepts/平场.md": (
+        "平场（Flat-field Correction）指消除镜头渐晕、传感器不均匀性和照明不均匀性对图像亮度影响的过程。"
+        "通常通过拍摄均匀参考图像（平场帧）获得增益/偏移系数，再对实际图像进行校正。",
+        "10-concepts/flat-field-correction",
+    ),
+    "10-concepts/均匀性.md": (
+        "均匀性（Uniformity）指照明或成像系统在整个视场内亮度/响应的一致程度。"
+        "不均匀会导致检测阈值难以设定，常用平场校正、漫射光源或匀光板改善。",
+        "10-concepts/uniformity",
+    ),
+    "10-concepts/果冻效应.md": (
+        "果冻效应（Jello Effect）是卷帘快门拍摄快速运动物体时出现的倾斜、摇摆或局部形变现象。"
+        "成因是不同行曝光时刻不同，物体在行间移动。"
+        "避免方法：使用全局快门、降低运动速度、提高帧率、减少振动。",
+        "10-concepts/jello-effect",
+    ),
+    "10-concepts/边缘检测.md": (
+        "边缘检测（Edge Detection）是图像处理中提取物体轮廓的算法，常用 Sobel、Canny、Laplacian 等算子。"
+        "在机器视觉中，边缘位置精度直接影响尺寸测量结果；照明和镜头 MTF 对边缘质量至关重要。",
+        "10-concepts/edge-detection",
+    ),
 }
 
 

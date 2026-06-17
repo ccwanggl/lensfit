@@ -1,14 +1,14 @@
 ---
+
 id: concept.chromatic-aberration
 title: 色差
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [Chromatic Aberration, CA, 色散像差, 轴向色差, 倍率色差]
----
+aliases: [Chromatic Aberration, CA, 色散像差, 轴向色差, 倍率色差]---
 
 # 色差
 

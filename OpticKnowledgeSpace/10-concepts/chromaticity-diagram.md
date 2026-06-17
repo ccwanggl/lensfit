@@ -62,6 +62,11 @@ z = 1 - x - y
 3. **色度图不表示亮度**：Y（亮度）信息需单独给出。
 4. **所有颜色都可由 RGB 显示**：显示屏色域（三角形）远小于人眼可见色域。
 
+## 可视化辅助
+
+![[attachments/visuals/chromaticity-diagram.svg]]
+*图：Chromaticity Diagram*
+
 ## 来源
 
 - CIE 15:2004, Colorimetry, 4th edition

@@ -1,14 +1,14 @@
 ---
+
 id: concept.focal-length
 title: 焦距
 type: concept
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [focal length, 焦距 f, 焦长]
----
+aliases: [focal length, 焦距 f, 焦长]---
 
 # 焦距
 
