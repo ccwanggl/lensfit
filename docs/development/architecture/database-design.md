@@ -228,7 +228,10 @@ CREATE INDEX idx_det_spectral ON detector_catalog(spectral_range_min_um, spectra
 CREATE INDEX idx_det_composite ON detector_catalog(category, mount_type, sensor_diag_mm);
 ```
 
-### 3.4 适配器/转接环表 (adapter_catalog)
+### 3.4 适配器/转接环表 (adapter_catalog) — **尚未实现**
+
+> 当前代码中没有 `AdapterCatalog` 模型，也没有对应的 Alembic 迁移。以下设计保留为参考。
+
 
 ```sql
 CREATE TABLE adapter_catalog (
@@ -257,7 +260,10 @@ CREATE TABLE adapter_catalog (
 );
 ```
 
-### 3.5 光谱响应曲线表 (spectral_responses)
+### 3.5 光谱响应曲线表 (spectral_responses) — **尚未实现**
+
+> 当前数据库中不存在该表，光谱匹配逻辑暂未依赖离散光谱数据。以下设计保留为参考。
+
 
 存储镜头透过率、探测器QE、光源光谱等离散光谱数据。
 
@@ -280,6 +286,8 @@ CREATE INDEX idx_spectral_wl ON spectral_responses(wavelength_nm);
 ```
 
 ### 3.6 兼容性缓存表 (compatibility_cache)
+
+> **当前状态**：表和索引已创建，但**没有任何运行时代码读写该表**。匹配引擎尚未接入缓存。
 
 **按需计算 + 结果缓存**，替代预计算的 compatibility_matrix 大表。避免 5000镜头 × 2000探测器 = 10M 行预计算。
 
@@ -369,7 +377,11 @@ CREATE TABLE project_setups (
 );
 ```
 
-### 3.8 公式注册表 (formula_registry)
+### 3.8 公式注册表 (formula_registry) — **尚未实现**
+
+> 当前公式以内建 Python 函数为主（`core/thin_lens.py`、`matching/scoring.py` 等），
+> L1/L2/L3 分级表达式系统尚未落地。以下设计保留为参考。
+
 
 分级公式系统：L0（内建代码）→ L1（安全表达式）→ L2（受限DSL）→ L3（沙箱脚本）。避免全量 `eval()` 的安全风险。
 
@@ -512,7 +524,8 @@ result = aeval.eval(expr, focal=25, sensor=8.8, fov=50)
 ```python
 def calculate_data_quality_score(record: dict) -> float:
     """
-    计算单条记录的数据完整度评分 (0-1)
+    计算单条记录的数据完整度评分 (0-1)。
+    **当前状态**：该函数尚未实现；模型中 `data_quality_score` 字段默认 0，仅作占位。
     """
     required_fields = {
         'lens': ['model', 'focal_length_mm', 'max_aperture', 'image_circle_mm', 'mount_type'],

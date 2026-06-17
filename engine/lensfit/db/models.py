@@ -265,12 +265,28 @@ def init_db(db_url: str = "sqlite:///lensfit.db") -> None:
 
     from alembic import command
     from alembic.config import Config
+    from sqlalchemy import create_engine
+    from sqlalchemy.pool import NullPool
 
     engine_dir = Path(__file__).parent.parent.parent
     alembic_cfg = Config(str(engine_dir / "alembic.ini"))
-    alembic_cfg.set_main_option("sqlalchemy.url", db_url)
     # 让 script_location 指向 alembic.ini 所在目录下的相对路径，避免依赖 CWD
     alembic_cfg.set_main_option(
         "script_location", str(engine_dir / "lensfit" / "db" / "migrations")
     )
-    command.upgrade(alembic_cfg, "head")
+    # Keep the URL configured as well; some Alembic internals still reference it
+    # even when a connection is provided explicitly.
+    alembic_cfg.set_main_option("sqlalchemy.url", db_url)
+
+    # Provide our own connection/engine so we can dispose it explicitly after the
+    # upgrade. NullPool closes connections immediately on return, which avoids
+    # the ResourceWarnings caused by Alembic keeping an engine alive.
+    engine = create_engine(
+        db_url,
+        connect_args={"check_same_thread": False},
+        poolclass=NullPool,
+    )
+    with engine.connect() as connection:
+        alembic_cfg.attributes["connection"] = connection
+        command.upgrade(alembic_cfg, "head")
+    engine.dispose()

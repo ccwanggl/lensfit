@@ -2,9 +2,21 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    Response,
+    UploadFile,
+)
+from fastapi import (
+    Request as _Request,
+)
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -14,15 +26,52 @@ from lensfit.db.models import DetectorCatalog, LensCatalog, Manufacturer
 
 router = APIRouter(prefix="/api/v1/catalog", tags=["catalog"])
 
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5 MB
+_ALLOWED_EXTENSIONS = {".csv", ".xlsx"}
+_ALLOWED_MIME_TYPES = {
+    "text/csv",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+}
+
+
+def _validate_import_upload(filename: str | None, content_type: str | None) -> None:
+    """Validate extension and MIME type before reading upload contents."""
+    ext = Path(filename or "").suffix.lower()
+    if ext not in _ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file extension '{ext}'. Allowed: .csv, .xlsx",
+        )
+    if content_type not in _ALLOWED_MIME_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Unsupported MIME type '{content_type}'. "
+                "Allowed: text/csv, "
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ),
+        )
+
 
 # ---------------------------------------------------------------------------
 # Shared helpers
 # ---------------------------------------------------------------------------
-def get_db_session():
-    """Lazy dependency to avoid circular import with server.py."""
-    from lensfit.api.server import get_db_session as _server_get_db
+def get_db_session(request: _Request):
+    """Yield a database session from application state.
 
-    yield from _server_get_db()
+    Reading the session maker from ``request.app.state`` avoids relying on
+    module-level globals, which can be duplicated when the server is launched
+    via ``python -m lensfit.api.server`` (``__main__`` vs the imported module
+    are distinct module objects).
+    """
+    session_maker = request.app.state.session_maker
+    if session_maker is None:
+        raise RuntimeError("Database session maker not initialized")
+    session = session_maker()
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 def _float_or_none(val: Any) -> float | None:
@@ -547,6 +596,15 @@ async def import_catalog(
     """Upload a CSV or Excel file of lenses/detectors and import as user data."""
     from lensfit.api.import_pipe import import_from_upload
 
+    _validate_import_upload(file.filename, file.content_type)
     content = await file.read()
+    if len(content) > MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                f"File size {len(content)} bytes exceeds maximum of "
+                f"{MAX_UPLOAD_SIZE} bytes (5 MB)"
+            ),
+        )
     result = await run_in_threadpool(import_from_upload, file.filename or "", content, session)
     return result

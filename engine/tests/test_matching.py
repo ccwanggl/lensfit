@@ -20,7 +20,8 @@ class TestMatchingEngine:
         session_factory = sessionmaker(bind=db_engine)
         e = MatchingEngine(session_factory)
         e.register_domain(IndustrialVisionModule())
-        return e
+        yield e
+        db_engine.dispose()
 
     def test_register_domain(self, engine):
         assert "industrial" in engine.domains

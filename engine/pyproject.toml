@@ -1,6 +1,6 @@
 [project]
 name = "lensfit-engine"
-version = "0.1.0"
+version = "1.1.0"
 description = "LensFit optical matching engine"
 requires-python = ">=3.12"
 dependencies = [
@@ -8,16 +8,12 @@ dependencies = [
     "alembic>=1.13",
     "numpy>=1.26",
     "scipy>=1.11",
-    "python-constraint>=1.4",
-    "asteval>=1.0",
-    "diskcache>=5.6",
     "fastapi>=0.109",
     "uvicorn>=0.27",
     "pydantic>=2.5",
     "python-multipart>=0.0.9",
     "openpyxl>=3.1",
     "reportlab>=4.0",
-    "matplotlib>=3.8",
 ]
 
 [project.optional-dependencies]

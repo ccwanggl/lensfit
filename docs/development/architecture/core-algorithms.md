@@ -315,6 +315,14 @@ def nyquist_match(pixel_size_um: float, na: float = None,
 
 ### 3.3 光谱匹配算法（红外/多光谱场景）
 
+> **实现状态**：独立的 `spectral_overlap()` 函数尚未创建；波段匹配逻辑分散在 `InfraredModule.calculate_derived` 和 `ScoringEngine._score_band_match` 中。
+
+> **实现状态**：独立的 `spectral_overlap()` 函数尚未创建；波段匹配逻辑分散在 `InfraredModule.calculate_derived` 和 `ScoringEngine._score_band_match` 中。
+
+> **实现状态**：独立的 `spectral_overlap()` 函数尚未创建；波段匹配逻辑分散在 `InfraredModule.calculate_derived` 和 `ScoringEngine._score_band_match` 中。
+
+> **实现状态**：独立的 `spectral_overlap()` 函数尚未创建；波段匹配逻辑分散在 `InfraredModule.calculate_derived` 和 `ScoringEngine._score_band_match` 中。
+
 ```python
 from typing import List, Tuple
 
@@ -373,6 +381,14 @@ def spectral_overlap(lens_band: Tuple[float, float],
 ```
 
 ### 3.4 显微镜 C-Mount 适配器匹配
+
+> **实现状态**：独立的 `microscope_adapter_match()` 函数尚未创建；适配器相关计算在 `MicroscopeModule.calculate_derived` 中处理。当前也没有 `adapter_catalog` 表。
+
+> **实现状态**：独立的 `microscope_adapter_match()` 函数尚未创建；适配器相关计算在 `MicroscopeModule.calculate_derived` 中处理。当前也没有 `adapter_catalog` 表。
+
+> **实现状态**：独立的 `microscope_adapter_match()` 函数尚未创建；适配器相关计算在 `MicroscopeModule.calculate_derived` 中处理。当前也没有 `adapter_catalog` 表。
+
+> **实现状态**：独立的 `microscope_adapter_match()` 函数尚未创建；适配器相关计算在 `MicroscopeModule.calculate_derived` 中处理。当前也没有 `adapter_catalog` 表。
 
 ```python
 def microscope_adapter_match(objective_mag: float, eyepiece_mag: float,

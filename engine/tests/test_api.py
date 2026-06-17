@@ -87,6 +87,7 @@ def client():
     # Cleanup
     server_module._engine = None
     server_module._session_maker = None
+    engine.dispose()
 
 
 @pytest.fixture

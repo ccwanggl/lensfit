@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -126,3 +127,5 @@ class MatchingTask:
     error: str | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     completed_at: datetime | None = None
+    # Internal cancellation signal — not serialized.
+    cancel_event: threading.Event = field(default_factory=threading.Event)

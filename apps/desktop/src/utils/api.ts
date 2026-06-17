@@ -125,6 +125,34 @@ export interface SetupItem {
   notes?: string | null;
 }
 
+/* ─── Errors ─── */
+export class ApiError extends Error {
+  status: number;
+  detail: string;
+
+  constructor(status: number, detail: string) {
+    super(detail);
+    this.name = "ApiError";
+    this.status = status;
+    this.detail = detail;
+  }
+}
+
+async function apiErrorFromResponse(res: Response): Promise<ApiError> {
+  let detail = res.statusText;
+  try {
+    const data = (await res.json()) as Record<string, unknown>;
+    if (typeof data.detail === "string") {
+      detail = data.detail;
+    } else if (data.detail != null) {
+      detail = JSON.stringify(data.detail);
+    }
+  } catch {
+    // leave detail as statusText
+  }
+  return new ApiError(res.status, detail);
+}
+
 /* ─── API Core ─── */
 async function apiFetch<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
   const base = await getEndpoint();
@@ -139,7 +167,7 @@ async function apiFetch<T = unknown>(path: string, options: RequestInit = {}): P
     headers,
   });
   if (!res.ok) {
-    throw new Error(`API error: ${res.status} ${res.statusText}`);
+    throw await apiErrorFromResponse(res);
   }
   return res.json() as Promise<T>;
 }
@@ -224,7 +252,10 @@ export async function startMatchStream(
     signal: abortController.signal,
   });
 
-  if (!res.ok || !res.body) {
+  if (!res.ok) {
+    throw await apiErrorFromResponse(res);
+  }
+  if (!res.body) {
     throw new Error(`Stream error: ${res.status} ${res.statusText}`);
   }
 
@@ -453,7 +484,7 @@ export async function importCatalog(file: File): Promise<ImportResult> {
     body: formData,
   });
   if (!res.ok) {
-    throw new Error(`Import error: ${res.status} ${res.statusText}`);
+    throw await apiErrorFromResponse(res);
   }
   return res.json() as Promise<ImportResult>;
 }
@@ -480,7 +511,7 @@ export async function exportReport(
     }),
   });
   if (!res.ok) {
-    throw new Error(`Export error: ${res.status} ${res.statusText}`);
+    throw await apiErrorFromResponse(res);
   }
   return res.blob();
 }
@@ -500,7 +531,7 @@ export async function generateProjectReport(
     body: JSON.stringify({ format }),
   });
   if (!res.ok) {
-    throw new Error(`Report error: ${res.status} ${res.statusText}`);
+    throw await apiErrorFromResponse(res);
   }
   return res.blob();
 }

@@ -306,6 +306,6 @@ npm run build
 
 ## 10. 相关文档
 
-- [软件架构](02-software-architecture.md)
-- [数据库设计](04-database-design.md)
-- [技术栈](06-tech-stack.md)
+- [软件架构](../architecture/software-architecture.md)
+- [数据库设计](../architecture/database-design.md)
+- [技术栈](../architecture/tech-stack.md)

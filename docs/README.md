@@ -1,67 +1,43 @@
-# LensFit 知识库文档
+# LensFit 研发文档
 
-> LensFit 定位为「成像光学学习输出产品」。本目录包含系统性的学习教程和领域参考资料。
+本目录记录 LensFit 的产品规划、现行架构、工程决策、开发指南、审查结果和发布过程。通用光学知识与学习资料位于仓库顶层的 [knowledge](../knowledge/README.md) Obsidian Vault。
 
----
+## 文档边界
 
-## 📖 学习教程（`learning/`）— 建议按顺序阅读
+- `docs/development/` 描述 LensFit 当前如何设计、开发、测试和发布。
+- `knowledge/` 保存不依赖当前代码实现的光学知识、公式、教程和领域资料。
+- 当前实现与目标设计必须分开记录，旧计划应归档，不能继续作为现状说明。
 
-面向成像光学初学者，从零开始建立系统性知识框架。
+## 研发文档导航
 
-| 章节 | 内容 | 难度 |
-|------|------|------|
-| [00 绪论](learning/00-introduction.md) | 成像光学是什么？学习路线图 | ⭐ 入门 |
-| [01 光与波](learning/01-light-and-waves.md) | 波长、折射、衍射、艾里斑 | ⭐ 入门 |
-| [02 几何光学](learning/02-geometric-optics.md) | 薄透镜公式、放大倍率、视角 | ⭐⭐ 基础 |
-| [03 镜头参数](learning/03-lens-parameters.md) | 焦距、光圈、景深、MTF、畸变 | ⭐⭐ 基础 |
-| [04 传感器](learning/04-sensors.md) | CCD/CMOS、像元尺寸、奈奎斯特、动态范围 | ⭐⭐ 基础 |
-| [05 匹配基础](learning/05-matching-basics.md) | 像圈覆盖、分辨率匹配、像素精度、接口兼容 | ⭐⭐⭐ 进阶 |
-| 06 像差 | *待编写* | ⭐⭐⭐ 进阶 |
-| 07 接口与安装 | *待编写* | ⭐⭐⭐ 进阶 |
-| 08 领域应用 | *待编写* | ⭐⭐⭐⭐ 深入 |
-| 09 习题与练习 | *待编写* | ⭐⭐⭐⭐ 深入 |
+### 产品
 
-每章遵循统一结构：**直觉 → 公式 → 沙盒 → 示例 → 误区 → 自检**
+- [竞品分析](development/product/competitor-analysis.md)
+- [功能与路线图](development/product/roadmap.md)
 
----
+### 架构
 
-## 📚 领域参考（`reference/`）— 按需查阅
+- [软件架构](development/architecture/software-architecture.md)
+- [核心算法实现](development/architecture/core-algorithms.md)
+- [数据库设计](development/architecture/database-design.md)
+- [技术栈](development/architecture/tech-stack.md)
 
-面向有基础的工程师和研究人员，提供各领域的深入技术参考。
+### 指南
 
-| 文档 | 领域 | 内容 |
-|------|------|------|
-| [工业视觉](reference/industrial-vision.md) | Industrial Vision | 工业镜头与传感器选型原理、典型配置、行业标准 |
-| [摄影](reference/photography.md) | Photography | 摄影镜头与传感器成像原理、焦段选择、创作应用 |
-| [红外成像](reference/infrared-imaging.md) | Infrared Imaging | 热成像/SWIR光学原理、探测器类型、测温应用 |
-| [显微镜](reference/microscopy.md) | Microscopy | 光学显微镜成像原理、NA、物镜校正、数码匹配 |
+- [跨平台开发环境](development/guides/cross-platform-setup.md)
 
----
+### 审查
 
-## 🔧 工程文档
+- [2026-06-15 仓库审查报告](development/reviews/2026-06-15-repository-review.md)
 
-| 文档 | 说明 |
-|------|------|
-| [01 竞品分析](01-competitor-analysis.md) | 市场同类产品对比 |
-| [02 软件架构](02-software-architecture.md) | 系统架构设计 |
-| [03 核心算法](03-core-algorithms.md) | 匹配引擎算法详解 |
-| [04 数据库设计](04-database-design.md) | 数据模型设计 |
-| [05 功能与 MVP](05-features-and-mvp.md) | 功能规划与版本路线图 |
-| [06 技术栈](06-tech-stack.md) | 技术选型说明 |
+### 过程目录
 
----
+- `development/decisions/`：架构决策记录，采用 ADR 编号。
+- `development/specifications/`：已确认的功能和技术规格。
+- `development/plans/active/`：正在执行的开发计划。
+- `development/plans/archive/`：完成或停止的计划。
+- `development/releases/`：版本发布说明和验证记录。
 
-## 与软件的关联
+## 文档状态
 
-| 软件功能 | 对应学习章节 |
-|---------|------------|
-| 参数输入与公式推导 | 第 02–05 章 |
-| 匹配评分与约束检查 | 第 05 章 |
-| 预设配置方案 | 第 08 章（领域应用） |
-| What-if 灵敏度分析 | 第 05 章（匹配基础） |
-| 导出报告中的物理摘要 | 各章「公式汇总」 |
-| 学习模式 / 知识面板 | 全部学习教程 |
-
----
-
-*本文档集为 LensFit 学习产品的一部分。学习教程首版以科普性为主，参考文档以技术深度为主。*
+研发文档应在开头标明适用版本、状态或日期。会随实现变化的文档需要在相关代码变更中同步更新。

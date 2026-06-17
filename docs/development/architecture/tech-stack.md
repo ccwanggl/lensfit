@@ -118,59 +118,88 @@ lensfit/
 │
 ├── engine/                         # Python 核心引擎
 │   ├── pyproject.toml
+│   ├── alembic.ini
+│   ├── build_sidecar.py            # PyInstaller 打包脚本
 │   ├── lensfit/
 │   │   ├── __init__.py
+│   │   ├── __main__.py             # 命令行入口
 │   │   ├── core/                   # 基础光学计算
 │   │   │   ├── __init__.py
-│   │   │   ├── thin_lens.py        # 薄透镜公式
+│   │   │   ├── thin_lens.py        # 薄透镜公式 + 景深计算
 │   │   │   ├── sensor.py           # 传感器标准化
-│   │   │   ├── dof.py              # 景深计算
-│   │   │   └── units.py            # 单位换算
+│   │   │   ├── types.py            # 共享数据类型
+│   │   │   └── utils.py            # 通用工具
 │   │   ├── matching/               # 匹配引擎
 │   │   │   ├── __init__.py
-│   │   │   ├── engine.py           # 主匹配引擎
-│   │   │   ├── constraints.py      # 约束定义
-│   │   │   ├── scoring.py          # 评分算法
-│   │   │   └── solver.py           # TOPSIS/Pareto
+│   │   │   ├── engine.py           # 主匹配引擎 + 流水线
+│   │   │   └── scoring.py          # 评分与 TOPSIS 排序
 │   │   ├── domains/                # 领域模块
 │   │   │   ├── __init__.py
+│   │   │   ├── base.py             # DomainModule 接口
 │   │   │   ├── industrial.py
 │   │   │   ├── microscope.py
-│   │   │   └── infrared.py
+│   │   │   ├── infrared.py
+│   │   │   └── photography.py      # 摄影领域（已加入）
 │   │   ├── db/                     # 数据访问层
 │   │   │   ├── __init__.py
-│   │   │   ├── models.py           # SQLAlchemy模型
-│   │   │   ├── catalog.py          # 目录查询
-│   │   │   └── migrations/         # Alembic迁移
+│   │   │   ├── models.py           # SQLAlchemy 模型
+│   │   │   ├── catalog.py          # 目录查询（参数化）
+│   │   │   └── migrations/         # Alembic 迁移
 │   │   ├── visualization/          # 可视化数据生成
 │   │   │   ├── __init__.py
-│   │   │   ├── coverage_plot.py    # 覆盖图数据
-│   │   │   └── report.py           # 报告生成
-│   │   └── api/                    # 对外API（FastAPI）
+│   │   │   ├── coverage.py         # 传感器覆盖图数据
+│   │   │   ├── coc.py              # 弥散圆/景深图数据
+│   │   │   └── mtf.py              # MTF 曲线数据
+│   │   ├── export/                 # 报告导出
+│   │   │   ├── csv_exporter.py
+│   │   │   ├── excel_exporter.py
+│   │   │   ├── pdf_exporter.py
+│   │   │   └── sanitize.py
+│   │   ├── knowledge/              # 知识推理与预设
+│   │   │   ├── base.py
+│   │   │   ├── constraints.py
+│   │   │   ├── engine.py
+│   │   │   ├── formulas.py
+│   │   │   └── presets.py
+│   │   ├── physics/                # 物理常数
+│   │   │   ├── __init__.py
+│   │   │   └── constants.py
+│   │   └── api/                    # 对外 API（FastAPI）
 │   │       ├── __init__.py
-│   │       └── server.py
-│   └── tests/                      # 单元测试
-│       ├── test_thin_lens.py
+│   │       ├── server.py           # 路由、生命周期、认证（待拆分）
+│   │       ├── catalog_router.py   # 器件目录 CRUD + 导入
+│   │       └── import_pipe.py      # CSV/Excel 导入管道
+│   └── tests/                      # 单元/集成测试
+│       ├── test_api.py
 │       ├── test_matching.py
-│       └── test_compatibility.py
+│       ├── test_migrations.py
+│       ├── test_lifecycle.py
+│       └── test_catalog_import.py
 │
 ├── database/                       # 数据库与数据
-│   ├── schema.sql                  # 完整Schema
 │   ├── seed_data/                  # 种子数据
-│   │   ├── lenses/
-│   │   ├── detectors/
-│   │   └── manufacturers.csv
+│   │   ├── import_scripts/
+│   │   └── ...
 │   └── import_scripts/             # 数据导入脚本
-│       ├── crawler/
-│       └── pdf_parser/
+│       └── ...
+> **注意**：Schema 由 Alembic 迁移管理，不存在单独的 `schema.sql`。
 │
-├── docs/                           # 文档
-│   ├── 01-competitor-analysis.md
-│   ├── 02-software-architecture.md
-│   ├── 03-core-algorithms.md
-│   ├── 04-database-design.md
-│   ├── 05-features-and-mvp.md
-│   └── 06-tech-stack.md
+├── docs/                           # 研发文档
+│   └── development/
+│       ├── product/
+│       ├── architecture/
+│       ├── decisions/
+│       ├── plans/
+│       ├── reviews/
+│       └── guides/
+│
+├── knowledge/                      # Obsidian 光学知识库
+│   ├── 10-concepts/
+│   ├── 20-formulas/
+│   ├── 30-domains/
+│   ├── 50-learning/
+│   ├── 80-sources/
+│   └── 90-maps/
 │
 ├── scripts/                        # 构建与发布脚本
 │   ├── build-desktop.sh
@@ -190,6 +219,8 @@ lensfit/
 
 ### 4.1 Python 依赖 (engine/pyproject.toml)
 
+> 以下清单与 `engine/pyproject.toml` 一致。标注“未使用”的依赖已在代码中确认无引用，计划清理或启用。
+
 ```toml
 [project]
 name = "lensfit-engine"
@@ -205,13 +236,12 @@ dependencies = [
     "scipy>=1.11",
     
     # 约束求解
-    "python-constraint>=1.4",
+    "python-constraint>=1.4",  # 已引入但未在代码中使用
     
     # 安全表达式引擎（formula_registry L1级别）
-    "asteval>=1.0",
+    "asteval>=1.0",              # 已引入但未在代码中使用（formula_registry 尚未实现）
     
     # 缓存
-    "diskcache>=5.6",     # 本地文件缓存（单机版）
     
     # API服务（桌面版通过HTTP本地调用）
     "fastapi>=0.109",
@@ -701,6 +731,9 @@ jobs:
           name: lensfit-${{ matrix.platform }}
           path: apps/desktop/src-tauri/target/release/bundle/
 ```
+
+> **注意**：当前仓库中 `.github/workflows/release.yml` 尚未创建，仅有 `ci.yml`。
+> 上述 release 流水线为目标设计，需在后续迭代中落地。
 
 ### 7.2 发布产物
 

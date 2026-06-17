@@ -78,7 +78,7 @@ def _rows_from_csv(content: bytes) -> list[dict[str, Any]]:
     return [row for row in reader]
 
 
-def _rows_from_excel(content: bytes) -> list[dict[str, Any]]:
+def _rows_from_excel(content: bytes, max_rows: int = 10000) -> list[dict[str, Any]]:
     try:
         from openpyxl import load_workbook
     except ImportError as exc:  # pragma: no cover
@@ -86,7 +86,7 @@ def _rows_from_excel(content: bytes) -> list[dict[str, Any]]:
             status_code=400, detail="Excel support not available (openpyxl missing)"
         ) from exc
 
-    wb = load_workbook(filename=io.BytesIO(content), data_only=True)
+    wb = load_workbook(filename=io.BytesIO(content), data_only=True, read_only=True)
     ws = wb.active
     if ws is None:
         return []
@@ -94,6 +94,11 @@ def _rows_from_excel(content: bytes) -> list[dict[str, Any]]:
     rows: list[list[Any]] = []
     for row in ws.iter_rows(values_only=True):
         rows.append(list(row))
+        if len(rows) > max_rows + 1:  # header + max_rows data rows
+            raise HTTPException(
+                status_code=413,
+                detail=f"Excel sheet exceeds maximum of {max_rows} data rows",
+            )
     if len(rows) < 2:
         return []
 

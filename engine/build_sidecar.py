@@ -64,14 +64,15 @@ def build() -> None:
         "lensfit.knowledge.engine",
         "lensfit.export.pdf_exporter",
         "lensfit.export.excel_exporter",
-        "lensfit.db.migrations.versions.001_init",
-        "lensfit.db.migrations.versions.002_add_match_snapshot",
-        "lensfit.db.migrations.versions.c53e30ed595b_add_catalog_indexes",
-        "lensfit.db.migrations.versions.003_merge_heads",
         "uvicorn",
         "fastapi",
         "sqlalchemy.ext.baked",
     ]
+
+    # PyInstaller data separator is ``;`` on Windows and ``:`` elsewhere.
+    data_sep = ";" if system == "Windows" else ":"
+    migrations_dir = engine_dir / "lensfit" / "db" / "migrations"
+    alembic_ini = engine_dir / "alembic.ini"
 
     cmd = [
         sys.executable,
@@ -90,6 +91,14 @@ def build() -> None:
         "alembic",
         "--collect-data",
         "sqlalchemy",
+        "--collect-submodules",
+        "lensfit.db.migrations",
+        "--collect-data",
+        "lensfit.db.migrations",
+        "--add-data",
+        f"{migrations_dir}{data_sep}lensfit/db/migrations",
+        "--add-data",
+        f"{alembic_ini}{data_sep}.",
     ]
     for imp in hidden_imports:
         cmd.extend(["--hidden-import", imp])

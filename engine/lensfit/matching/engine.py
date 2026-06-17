@@ -6,6 +6,7 @@ import threading
 import traceback
 import uuid
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -26,6 +27,10 @@ _MAX_CANDIDATE_DET = 2_000
 _MAX_RETAINED_TASKS = 1_000
 
 
+class TaskCancelledError(Exception):
+    """Raised when a matching task is cancelled mid-flight."""
+
+
 class MatchingEngine:
     """通用匹配骨架 — 零领域知识，通过 DomainModule 插件扩展."""
 
@@ -38,6 +43,42 @@ class MatchingEngine:
         self._lock = threading.Lock()
         self._last_diagnostics: list[FilterDiagnostic] = []
         self._knowledge_engine = KnowledgeInferenceEngine(OpticalKnowledgeBase())
+        # Bound the number of concurrent matching tasks to avoid unbounded
+        # thread/database growth under repeated clicks or batch calls.
+        self._executor = ThreadPoolExecutor(
+            max_workers=4, thread_name_prefix="lensfit-match"
+        )
+        # Allow up to 4 running + 8 queued tasks. Submitting beyond that returns
+        # an explicit error instead of silently piling up work.
+        self._task_semaphore = threading.Semaphore(12)
+
+    @staticmethod
+    def _check_cancelled(cancel_event: threading.Event | None) -> None:
+        """Raise TaskCancelledError if the event has been set."""
+        if cancel_event is not None and cancel_event.is_set():
+            raise TaskCancelledError()
+
+    def _build_combos(
+        self,
+        lenses: list[Any],
+        detectors: list[Any],
+        requirements: Requirements,
+        cancel_event: threading.Event | None,
+        check_every: int = 100,
+    ) -> list[DeviceCombo]:
+        """Pair lenses and detectors into DeviceCombo objects.
+
+        Periodically checks ``cancel_event`` so long cartesian products can be
+        interrupted promptly.
+        """
+        combos: list[DeviceCombo] = []
+        det_count = len(detectors)
+        for i, lens in enumerate(lenses):
+            for j, det in enumerate(detectors):
+                if (i * det_count + j) % check_every == 0:
+                    self._check_cancelled(cancel_event)
+                combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
+        return combos
 
     def register_domain(self, module: DomainModule) -> None:
         """注册领域模块."""
@@ -58,6 +99,7 @@ class MatchingEngine:
         requirements: Requirements,
         catalog: CatalogQuery,
         strict: bool = True,
+        cancel_event: threading.Event | None = None,
     ) -> list[DeviceCombo]:
         """索引预筛选 — 数据库层过滤，支持多领域.
 
@@ -129,11 +171,7 @@ class MatchingEngine:
                 limit=_MAX_CANDIDATE_DET,
             )
 
-            combos = []
-            for lens in lenses:
-                for det in detectors:
-                    combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
-            return combos
+            return self._build_combos(lenses, detectors, requirements, cancel_event)
 
         # --- Photography domain ---
         elif domain_id == "photography":
@@ -204,11 +242,7 @@ class MatchingEngine:
             if total_combos > _MAX_CANDIDATE_COMBOS:
                 lenses = lenses[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
 
-            combos = []
-            for lens in lenses:
-                for det in detectors:
-                    combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
-            return combos
+            return self._build_combos(lenses, detectors, requirements, cancel_event)
 
         # --- Infrared domain ---
         elif domain_id == "infrared":
@@ -272,11 +306,7 @@ class MatchingEngine:
             if total_combos > _MAX_CANDIDATE_COMBOS:
                 lenses = lenses[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
 
-            combos = []
-            for lens in lenses:
-                for det in detectors:
-                    combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
-            return combos
+            return self._build_combos(lenses, detectors, requirements, cancel_event)
 
         # --- Industrial domain: original logic ---
         elif domain_id == "industrial":
@@ -316,11 +346,7 @@ class MatchingEngine:
                     key=lambda lens_item: abs((lens_item.focal_length_mm or 0) - focal_estimate),
                 )[: _MAX_CANDIDATE_COMBOS // max(len(detectors), 1)]
 
-            combos = []
-            for lens in lenses:
-                for det in detectors:
-                    combos.append(DeviceCombo(lens=lens, detector=det, requirements=requirements))
-            return combos
+            return self._build_combos(lenses, detectors, requirements, cancel_event)
 
         else:
             return []
@@ -333,6 +359,7 @@ class MatchingEngine:
         candidates: list[DeviceCombo],
         diagnostics: list[FilterDiagnostic] | None = None,
         strict: bool = True,
+        cancel_event: threading.Event | None = None,
     ) -> list[DeviceCombo]:
         """快速硬约束剪枝 — O(1) 检查.
 
@@ -345,7 +372,9 @@ class MatchingEngine:
             "mount_incompatible": 0,
             "wd_out_of_range": 0,
         }
-        for combo in candidates:
+        for idx, combo in enumerate(candidates):
+            if idx % 100 == 0:
+                self._check_cancelled(cancel_event)
             lens: LensCatalog = combo.lens
             det: DetectorCatalog = combo.detector
             reqs = combo.requirements
@@ -409,6 +438,7 @@ class MatchingEngine:
         domain: DomainModule,
         diagnostics: list[FilterDiagnostic] | None = None,
         strict: bool = True,
+        cancel_event: threading.Event | None = None,
     ) -> list[DeviceCombo]:
         """应用领域硬约束.
 
@@ -430,7 +460,9 @@ class MatchingEngine:
 
         valid = []
         constraint_fails: dict[str, int] = {}
-        for combo in candidates:
+        for idx, combo in enumerate(candidates):
+            if idx % 100 == 0:
+                self._check_cancelled(cancel_event)
             try:
                 passed = True
                 for c in constraints:
@@ -501,13 +533,18 @@ class MatchingEngine:
     # Stage 4: FullScoring
     # =====================================================================
     def score_candidates(
-        self, candidates: list[DeviceCombo], domain: DomainModule
+        self,
+        candidates: list[DeviceCombo],
+        domain: DomainModule,
+        cancel_event: threading.Event | None = None,
     ) -> list[MatchResult]:
         """全量评分."""
         scoring_dims = domain.get_scoring_dimensions()
         results = []
 
-        for combo in candidates:
+        for idx, combo in enumerate(candidates):
+            if idx % 100 == 0:
+                self._check_cancelled(cancel_event)
             try:
                 # 计算派生参数
                 combo.derived = domain.calculate_derived(combo)
@@ -804,53 +841,115 @@ class MatchingEngine:
         top_k: int = 20,
         weights: dict[str, float] | None = None,
     ):
-        """渐进式匹配生成器 — 流式推送各阶段结果."""
+        """渐进式匹配生成器 — 流式推送各阶段结果.
+
+        The actual matching runs in a background thread so that stage events are
+        pushed into the stream as soon as each stage finishes, instead of being
+        buffered until the entire pass is complete.
+        """
         if not self._session_factory:
             raise RuntimeError("Database session factory required for progressive matching")
 
+        import queue
+
         diagnostics: list[FilterDiagnostic] = []
+        result_queue: queue.Queue[dict[str, Any] | None] = queue.Queue()
+        final: dict[str, Any] = {}
 
-        with self._session_factory() as session:
-            domain = self.get_domain(requirements.domain)
-            catalog = CatalogQuery(session)
+        def _worker() -> None:
+            try:
+                with self._session_factory() as session:
+                    domain = self.get_domain(requirements.domain)
+                    catalog = CatalogQuery(session)
 
-            # Stage 1-5: strict
-            ranked = self._match_one_pass(
-                requirements, catalog, domain, top_k, weights, diagnostics, strict=True
-            )
+                    def _on_stage(stage: str, before: int, after: int, progress: float) -> None:
+                        result_queue.put({
+                            "stage": stage,
+                            "progress": progress,
+                            "input_count": before,
+                            "output_count": after,
+                        })
 
-            # Fallback to relaxed matching if strict mode yields nothing
-            if not ranked:
-                ranked = self._match_one_pass(
-                    requirements, catalog, domain, top_k, weights, diagnostics, strict=False
-                )
-                if ranked and diagnostics:
-                    diagnostics.append(FilterDiagnostic(
-                        stage="fallback",
-                        before_count=0,
-                        after_count=len(ranked),
-                        rejected_reasons={},
-                        suggestion="已自动放宽工作距离/接口/覆盖要求，展示最接近的备选方案",
-                    ))
+                    # Stage 1-5: strict
+                    ranked = self._match_one_pass(
+                        requirements,
+                        catalog,
+                        domain,
+                        top_k,
+                        weights,
+                        diagnostics,
+                        strict=True,
+                        on_stage=_on_stage,
+                        progress_offset=0.05,
+                        progress_scale=0.45,
+                    )
 
-            if not ranked and diagnostics:
-                # No candidates even in fallback mode
-                last = diagnostics[-1]
-                if last.stage.startswith("index_pre_filter"):
-                    yield {
-                        "stage": "completed",
-                        "progress": 1.0,
-                        "results": [],
-                        "diagnostics": [d.to_dict() for d in diagnostics],
-                    }
-                    return
+                    # Fallback to relaxed matching if strict mode yields nothing
+                    if not ranked:
+                        ranked = self._match_one_pass(
+                            requirements,
+                            catalog,
+                            domain,
+                            top_k,
+                            weights,
+                            diagnostics,
+                            strict=False,
+                            on_stage=_on_stage,
+                            progress_offset=0.55,
+                            progress_scale=0.4,
+                        )
+                        if ranked and diagnostics:
+                            diagnostics.append(FilterDiagnostic(
+                                stage="fallback",
+                                before_count=0,
+                                after_count=len(ranked),
+                                rejected_reasons={},
+                                suggestion="已自动放宽工作距离/接口/覆盖要求，展示最接近的备选方案",
+                            ))
+                            result_queue.put({
+                                "stage": "fallback",
+                                "progress": 0.95,
+                                "input_count": 0,
+                                "output_count": len(ranked),
+                            })
 
-            yield {
-                "stage": "completed",
-                "progress": 1.0,
-                "results": [r.to_dict() for r in ranked[:top_k]],
-                "diagnostics": [d.to_dict() for d in diagnostics],
-            }
+                    final["ranked"] = ranked
+            except Exception as exc:  # pragma: no cover
+                final["error"] = exc
+            finally:
+                result_queue.put(None)
+
+        thread = threading.Thread(target=_worker, daemon=True)
+        thread.start()
+
+        while True:
+            chunk = result_queue.get()
+            if chunk is None:
+                break
+            yield chunk
+
+        if final.get("error"):
+            raise final["error"]
+
+        ranked = final.get("ranked")
+        if not ranked and diagnostics:
+            # No candidates even in fallback mode
+            last = diagnostics[-1]
+            if last.stage.startswith("index_pre_filter"):
+                yield {
+                    "stage": "completed",
+                    "progress": 1.0,
+                    "results": [],
+                    "diagnostics": [d.to_dict() for d in diagnostics],
+                }
+                return
+
+        yield {
+            "stage": "completed",
+            "progress": 1.0,
+            "results": [r.to_dict() for r in ranked[:top_k]],
+            "diagnostics": [d.to_dict() for d in diagnostics],
+        }
 
     # =====================================================================
     # Public API
@@ -864,9 +963,26 @@ class MatchingEngine:
         weights: dict[str, float] | None,
         diagnostics: list[FilterDiagnostic],
         strict: bool = True,
+        on_stage: Callable[[str, int, int, float], None] | None = None,
+        progress_offset: float = 0.0,
+        progress_scale: float = 1.0,
+        cancel_event: threading.Event | None = None,
     ) -> list[MatchResult]:
-        """执行一次完整匹配流程（严格或宽松模式）."""
-        candidates = self.index_pre_filter(requirements, catalog, strict=strict)
+        """执行一次完整匹配流程（严格或宽松模式）.
+
+        ``on_stage`` is called after each stage with
+        ``(stage, input_count, output_count, progress)``. This is used by both
+        the SSE stream and the polling task model.
+        """
+
+        def _notify(stage: str, before: int, after: int, progress: float) -> None:
+            if on_stage is not None:
+                on_stage(stage, before, after, progress_offset + progress * progress_scale)
+
+        self._check_cancelled(cancel_event)
+        candidates = self.index_pre_filter(
+            requirements, catalog, strict=strict, cancel_event=cancel_event
+        )
         if len(candidates) == 0:
             if strict:
                 diagnostics.append(FilterDiagnostic(
@@ -876,12 +992,29 @@ class MatchingEngine:
                     rejected_reasons={},
                     suggestion="建议：放宽焦距或视场范围，或检查数据库是否已导入",
                 ))
+            _notify("index_pre_filter", 0, 0, 0.15)
             return []
 
-        candidates = self.quick_hard_filter(candidates, diagnostics, strict=strict)
-        candidates = self.apply_domain_constraints(candidates, domain, diagnostics, strict=strict)
-        results = self.score_candidates(candidates, domain)
+        _notify("index_pre_filter", 0, len(candidates), 0.15)
+
+        before = len(candidates)
+        candidates = self.quick_hard_filter(
+            candidates, diagnostics, strict=strict, cancel_event=cancel_event
+        )
+        _notify("quick_hard_filter", before, len(candidates), 0.35)
+
+        before = len(candidates)
+        candidates = self.apply_domain_constraints(
+            candidates, domain, diagnostics, strict=strict, cancel_event=cancel_event
+        )
+        _notify("domain_constraints", before, len(candidates), 0.55)
+
+        before = len(candidates)
+        results = self.score_candidates(candidates, domain, cancel_event=cancel_event)
+        _notify("score", before, len(results), 0.75)
+
         ranked = self.rank_results(results, domain, weights)
+        _notify("rank", len(results), len(ranked), 0.95)
         return ranked[:top_k]
 
     def match_sync(
@@ -922,7 +1055,10 @@ class MatchingEngine:
             return ranked
 
     def match_async(self, requirements: Requirements) -> MatchingTask:
-        """异步匹配 — 返回任务ID，前端轮询进度."""
+        """异步匹配 — 返回任务ID，前端轮询进度.
+
+        任务提交到固定大小的线程池，避免重复点击或批量调用时创建大量线程。
+        """
         task_id = str(uuid.uuid4())
         task = MatchingTask(task_id=task_id, status="pending")
 
@@ -931,25 +1067,50 @@ class MatchingEngine:
 
         self._evict_old_tasks()
 
-        thread = threading.Thread(
-            target=self._run_match_task,
-            args=(task_id, requirements),
-            daemon=True,
-        )
-        thread.start()
+        # Enforce a combined bound of running + queued tasks. If the limit is
+        # reached, fail fast with a clear message instead of allowing unbounded
+        # backlog.
+        if not self._task_semaphore.acquire(blocking=False):
+            with self._lock:
+                task.status = "failed"
+                task.error = "Matching task queue is full (too many pending tasks)"
+                task.completed_at = datetime.now(UTC)
+            return task
+
+        # Submit to the bounded executor. If the executor has been shut down,
+        # mark the task as failed immediately and release the semaphore.
+        try:
+            self._executor.submit(self._run_match_task, task_id, requirements, task.cancel_event)
+        except RuntimeError:
+            self._task_semaphore.release()
+            with self._lock:
+                task.status = "failed"
+                task.error = "Matching engine has been shut down"
+                task.completed_at = datetime.now(UTC)
 
         return task
 
-    def _run_match_task(self, task_id: str, requirements: Requirements) -> None:
+    def _run_match_task(
+        self,
+        task_id: str,
+        requirements: Requirements,
+        cancel_event: threading.Event,
+    ) -> None:
         """在后台线程中执行匹配任务."""
         task = self._tasks.get(task_id)
         if not task:
+            self._task_semaphore.release()
             return
 
         diagnostics: list[FilterDiagnostic] = []
 
         def _update(**kwargs) -> bool:
             """更新任务状态，返回 False 表示已取消应中止."""
+            if cancel_event.is_set():
+                with self._lock:
+                    if task.status in ("pending", "running"):
+                        task.status = "cancelled"
+                return False
             with self._lock:
                 if task.status == "cancelled":
                     return False
@@ -957,7 +1118,8 @@ class MatchingEngine:
                     setattr(task, k, v)
             return True
 
-        if not _update(status="running", stage="index_filter"):
+        if not _update(status="running", stage="index_filter", progress=0.05):
+            self._task_semaphore.release()
             return
 
         try:
@@ -968,15 +1130,40 @@ class MatchingEngine:
                 domain = self.get_domain(requirements.domain)
                 catalog = CatalogQuery(session)
 
+                total_candidates = 0
+                filtered_candidates = 0
+
+                def _on_stage(stage: str, before: int, after: int, progress: float) -> None:
+                    nonlocal total_candidates, filtered_candidates
+                    if stage == "index_pre_filter":
+                        total_candidates = after
+                    if stage == "domain_constraints":
+                        filtered_candidates = after
+                    _update(
+                        stage=stage,
+                        total_candidates=total_candidates,
+                        filtered_candidates=filtered_candidates,
+                        progress=progress,
+                    )
+
                 # Stage 1-5 (strict)
                 ranked = self._match_one_pass(
-                    requirements, catalog, domain, 20, None, diagnostics, strict=True
+                    requirements,
+                    catalog,
+                    domain,
+                    20,
+                    None,
+                    diagnostics,
+                    strict=True,
+                    on_stage=_on_stage,
+                    progress_offset=0.05,
+                    progress_scale=0.45,
+                    cancel_event=cancel_event,
                 )
                 if not _update(
-                    total_candidates=sum(
-                        1 for d in diagnostics if d.stage == "index_pre_filter"
-                    ),
-                    progress=0.1 if ranked else 0.05,
+                    total_candidates=total_candidates,
+                    filtered_candidates=filtered_candidates,
+                    progress=0.5,
                     stage="quick_filter" if ranked else "fallback",
                 ):
                     return
@@ -984,7 +1171,17 @@ class MatchingEngine:
                 # Fallback to relaxed matching if strict mode yields nothing
                 if not ranked:
                     ranked = self._match_one_pass(
-                        requirements, catalog, domain, 20, None, diagnostics, strict=False
+                        requirements,
+                        catalog,
+                        domain,
+                        20,
+                        None,
+                        diagnostics,
+                        strict=False,
+                        on_stage=_on_stage,
+                        progress_offset=0.55,
+                        progress_scale=0.4,
+                        cancel_event=cancel_event,
                     )
                     if ranked and diagnostics:
                         diagnostics.append(FilterDiagnostic(
@@ -995,10 +1192,9 @@ class MatchingEngine:
                             suggestion="已自动放宽工作距离/接口/覆盖要求，展示最接近的备选方案",
                         ))
                     if not _update(
-                        total_candidates=sum(
-                            1 for d in diagnostics if "pre_filter" in d.stage
-                        ),
-                        progress=0.1,
+                        total_candidates=total_candidates,
+                        filtered_candidates=filtered_candidates,
+                        progress=0.95,
                         stage="quick_filter",
                     ):
                         return
@@ -1011,12 +1207,19 @@ class MatchingEngine:
                     diagnostics=diagnostics,
                 )
 
+        except TaskCancelledError:
+            _update(
+                status="cancelled",
+                completed_at=datetime.now(UTC),
+            )
         except Exception as e:
             _update(
                 status="failed",
                 error=f"{e}\n{traceback.format_exc()}",
                 completed_at=datetime.now(UTC),
             )
+        finally:
+            self._task_semaphore.release()
 
     def get_task(self, task_id: str) -> MatchingTask | None:
         """获取任务状态."""
@@ -1029,8 +1232,13 @@ class MatchingEngine:
             task = self._tasks.get(task_id)
             if task and task.status in ("pending", "running"):
                 task.status = "cancelled"
+                task.cancel_event.set()
                 return True
             return False
+
+    def shutdown(self) -> None:
+        """关闭匹配引擎，停止接收新任务并等待现有任务完成."""
+        self._executor.shutdown(wait=True, cancel_futures=False)
 
     def _evict_old_tasks(self) -> None:
         """淘汰过期任务 — 优先清理 completed/failed 的过时任务，保留 running 任务."""

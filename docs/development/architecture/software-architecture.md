@@ -7,6 +7,9 @@
 - **数据库驱动**：所有光学公式、约束、器件参数均来自数据库，而非硬编码
 - **可扩展性**：新厂商、新镜头类型、新探测器类型可通过配置文件/数据导入加入，无需改代码
 
+> **文档一致性说明**：本架构图描绘的是目标状态。当前实现已具备核心流水线，但应用层模块尚未按图拆分，
+> 部分数据层表/模块（如 adapter_catalog、formula_registry）尚未实现。详见下文标注。
+
 ---
 
 ## 2. 总体架构图
@@ -25,10 +28,12 @@
 │  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────────┐   │
 │  │ ProjectMgr │ │ ConfigMgr  │ │ TaskQueue  │ │ AuditLogger    │   │
 │  │ 项目管理   │ │ 配置管理   │ │ 异步任务   │ │ 审计日志       │   │
+│  │ （已落地） │ │ （未实现） │ │ （引擎内） │ │ （未实现）     │   │
 │  └────────────┘ └────────────┘ └────────────┘ └────────────────┘   │
 │  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────────┐   │
 │  │ ReportGen  │ │ ImportPipe │ │ ExportSvc  │ │ Cache Layer    │   │
 │  │ 报告生成   │ │ 导入管道   │ │ 导出服务   │ │ 缓存层         │   │
+│  │ （部分）   │ │ （已落地） │ │ （已落地） │ │ （未启用）     │   │
 │  └────────────┘ └────────────┘ └────────────┘ └────────────────┘   │
 └───────────────────────────────┬─────────────────────────────────────┘
                                 │
@@ -90,9 +95,12 @@ MatchingEngine (通用骨架，无领域知识)
 │   └── 领域路由（根据 domain 字段分发到对应 DomainModule）
 │
 ├── Stage 1: IndexPreFilter（索引预筛选）
-│   └── 在数据库查询阶段用复合索引过滤：
+│   └── **当前实现**：加载镜头/探测器全表后在 Python 中过滤。
+│       `CatalogQuery.query_lenses/query_detectors` 已支持参数化数据库查询，
+│       但尚未接入 Stage 1。
+│   └── **目标**：在数据库查询阶段用复合索引过滤：
 │       category, mount_type, focal_range, image_circle_min, wd_range
-│   └── 输出：候选集从 10M → <100K（O(1) 数据库索引操作）
+│   └── **目标输出**：候选集从 10M → <100K（O(1) 数据库索引操作）
 │
 ├── Stage 2: QuickHardFilter（快速硬约束剪枝）
 │   └── 仅执行 O(1) 检查，无复杂物理计算：
@@ -124,10 +132,11 @@ MatchingEngine (通用骨架，无领域知识)
 ```
 
 **关键技术决策**：
-- 索引预筛选依赖数据库复合索引（见 `04-database-design.md` 索引设计）
+- 索引预筛选依赖数据库复合索引（见 [数据库设计](database-design.md)）
 - 领域硬约束和评分维度由 `DomainModule` 接口提供，MatchingEngine 零领域知识
 - 多目标排序使用加权 TOPSIS（默认）+ NSGA-II（Pareto 模式可选）
-- 缓存层缓存 `Stage 4` 的计算结果（按 lens_id + detector_id + algorithm_version 键值）
+- 缓存层：`compatibility_cache` 表已创建，但**尚未接入匹配流程**（当前无读写）。
+  目标设计是按 lens_id + detector_id + algorithm_version 缓存 Stage 4 结果。
 
 ---
 
@@ -145,7 +154,13 @@ class DomainModule(ABC):
     @property
     @abstractmethod
     def domain_id(self) -> str:
-        """唯一标识：industrial / microscope / infrared"""
+        """唯一标识：industrial / microscope / infrared / photography"""
+        pass
+    
+    @property
+    @abstractmethod
+    def domain_name(self) -> str:
+        """显示名称"""
         pass
     
     @abstractmethod
@@ -168,10 +183,15 @@ class DomainModule(ABC):
         """计算领域相关的派生参数"""
         pass
     
-    @abstractmethod
-    def get_visual_data_generators(self) -> List[VisualDataGenerator]:
-        """该领域支持的可视化数据生成器"""
+    def default_weights(self) -> Dict[str, float]:
+        """默认评分权重，子类可覆盖"""
         pass
+    
+    def get_benefit_flags(self) -> Dict[str, bool]:
+        """获取各评分维度的收益标志"""
+        pass
+    
+    # 注意：当前代码中没有 get_visual_data_generators；可视化由 engine/lensfit/visualization/ 统一处理。
 ```
 
 #### 注册与使用
@@ -341,26 +361,23 @@ function renderCoveragePlot(canvas, data) {
 
 ### 3.4 Database Layer（数据层）
 
-采用**主数据库 + 用户项目数据库**双库架构：
+当前采用**单文件 SQLite** 架构，主库数据和用户项目数据共存于同一数据库：
 
 ```
-DataLayer
-├── MasterDB（主数据库，预置/同步更新）
-│   ├── lens_catalog（镜头目录）
-│   ├── detector_catalog（探测器目录）
-│   ├── adapter_catalog（适配器目录）
-│   ├── objective_catalog（显微镜物镜目录）
-│   ├── material_catalog（光学材料库：折射率、透过率）
-│   ├── coating_catalog（镀膜库）
-│   └── formula_registry（公式注册表）
-├── UserProjectDB（用户项目数据库，本地SQLite）
-│   ├── projects（项目列表）
-│   ├── setups（配置方案）
-│   ├── custom_devices（用户自定义器件）
-│   └── calculation_history（计算历史）
-└── SyncManager（同步管理器）
-    ├── 主数据库版本检查与更新
-    └── 用户数据备份/恢复
+DataLayer (当前实现)
+├── lens_catalog（镜头目录）
+├── detector_catalog（探测器目录）
+├── manufacturers（厂商表）
+├── compatibility_cache（兼容性缓存表 — 已创建但未启用）
+├── user_projects（项目列表）
+└── project_setups（项目方案，支持引用 + 快照双模式）
+
+DataLayer (目标规划中)
+├── adapter_catalog（适配器目录）          # 未实现
+├── spectral_responses（光谱响应曲线）      # 未实现
+├── formula_registry（公式注册表）          # 未实现
+├── lens_catalog_history（参数历史版本）    # 未实现
+└── SyncManager（主库/用户数据同步）        # 未实现
 ```
 
 ---
@@ -423,15 +440,25 @@ def cancel_matching(task_id: str) -> bool:
 def generate_coverage_data(req: CoverageRequest) -> CoverageData:
     return visual_data_gen.sensor_coverage(req.lens_id, req.detector_id)
 
-# 报告导出（异步，PDF生成耗时）
-@app.post("/api/v1/export/pdf/async")
-def start_pdf_export(req: ExportRequest) -> ExportTask:
-    return export_queue.submit(req)
-
-@app.get("/api/v1/export/pdf/async/{task_id}")
-def get_export_status(task_id: str) -> ExportTask:
-    return export_queue.get_status(task_id)
+# 报告导出（当前为同步接口；异步 PDF 导出尚未实现）
+# @app.post("/api/v1/export/pdf/async") ...
+# @app.get("/api/v1/export/pdf/async/{task_id}") ...
+# 现有接口：
+#   POST /api/v1/export              同步导出 CSV/Excel/PDF
+#   POST /api/v1/projects/{id}/report 项目报告导出
 ```
+
+**路由组织**：`lensfit/api/server.py` 仅负责应用组装与生命周期，各业务域已拆分为 `lensfit/api/routers/` 下的独立 FastAPI 路由模块：
+
+| 路由模块 | 前缀 | 说明 |
+|---|---|---|
+| `catalog.py` | `/api/v1/catalog` | 镜头/探测器/厂商目录 + 批量导入 |
+| `domains.py` | `/api/v1/domains` | 领域发现与参数定义 |
+| `matching.py` | `/api/v1` | 光学计算、异步匹配、SSE 流式匹配 |
+| `knowledge.py` | `/api/v1/knowledge` | 公式、约束、推理、预设 |
+| `visualization.py` | `/api/v1/visualize` | 覆盖、MTF、景深/CoC 数据 |
+| `projects.py` | `/api/v1` | 项目/方案 CRUD、项目报告 |
+| `export.py` | `/api/v1` | 结果导出 CSV/Excel/PDF |
 
 ### 4.3 同步调用示例（SDK层包装）
 
@@ -504,6 +531,7 @@ impl EngineSupervisor {
 }
 ```
 
+**当前状态**：Sidecar Supervisor 已实现启动、健康检查、API key 捕获和关闭 kill，但没有崩溃自动重启。
 **风险备案**：如果 sidecar 在 Windows/macOS 上不稳定，MVP 降级方案为**前端通过 child_process 直接调用 Python CLI**（无持久HTTP服务）。
 
 ### 5.2 客户端-服务器版（企业版）

@@ -33,6 +33,14 @@ env/
 *.swo
 *~
 
+# Obsidian personal workspace state
+knowledge/.obsidian/workspace.json
+knowledge/.obsidian/workspace-mobile.json
+knowledge/.obsidian/cache/
+OpticKnowledgeSpace/.obsidian/workspace.json
+OpticKnowledgeSpace/.obsidian/workspace-mobile.json
+OpticKnowledgeSpace/.obsidian/cache/
+
 # Database
 *.db
 *.sqlite
