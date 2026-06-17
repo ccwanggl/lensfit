@@ -1,14 +1,14 @@
 ---
+
 id: device.telecentric-illumination
 title: 远心照明
 type: device
 domains: []
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 远心照明
 

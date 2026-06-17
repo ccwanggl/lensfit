@@ -54,6 +54,11 @@ EMBEDS: dict[str, list[str]] = {
     "10-concepts/读出噪声.md": ["sensor-parameter-map.svg"],
     "10-concepts/过采样.md": ["nyquist-aliasing.svg"],
     "10-concepts/近轴近似.md": ["thin-lens-geometry.svg"],
+    # Additional Chinese stubs
+    "10-concepts/发射率.md": ["color-temperature.svg"],
+    "10-concepts/微测辐射热计.md": ["sensor-parameter-map.svg"],
+    "10-concepts/NETD.md": ["sensor-parameter-map.svg"],
+    "20-formulas/瑞利分辨率.md": ["spectral-resolution.svg"],
     # Devices
     "40-devices/telecentric-lens.md": ["telecentricity.svg"],
     # Formulas

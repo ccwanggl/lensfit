@@ -1,11 +1,11 @@
 ---
+
 id: learning.10-physical-optics-advanced
 title: 物理光学深入
 type: learning
 domains: [general]
-status: draft
-aliases: []
----
+status: reviewed
+aliases: []---
 
 # 第10章 物理光学深入
 

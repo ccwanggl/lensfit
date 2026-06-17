@@ -1,14 +1,14 @@
 ---
+
 id: device.hyperspectral-camera
 title: 高光谱相机
 type: device
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [hyperspectral-camera, 高光谱相机, 成像光谱仪, imaging-spectrometer]
----
+aliases: [hyperspectral-camera, 高光谱相机, 成像光谱仪, imaging-spectrometer]---
 # 高光谱相机
 
 ## 定义/概述

@@ -1,14 +1,14 @@
 ---
+
 id: concept.chromaticity-diagram
 title: 色度图
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [chromaticity-diagram, CIE-1931, 色品图, chromaticity-chart]
----
+aliases: [chromaticity-diagram, CIE-1931, 色品图, chromaticity-chart]---
 # 色度图
 
 ## 定义

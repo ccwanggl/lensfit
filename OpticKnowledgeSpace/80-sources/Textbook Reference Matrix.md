@@ -1,13 +1,13 @@
 ---
+
 id: sources.textbook-reference-matrix
 title: 教材页码索引矩阵
 type: source-index
-status: draft
+status: reviewed
 source_type: textbook-reference-matrix
 aliases:
   - Textbook Reference Matrix
-  - 教材页码矩阵
----
+  - 教材页码矩阵---
 
 # 教材页码索引矩阵
 

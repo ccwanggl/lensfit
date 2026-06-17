@@ -1,14 +1,14 @@
 ---
+
 id: device.ir-thermal-detector
 title: 红外热像仪探测器
 type: device
 domains: []
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 红外热像仪探测器
 

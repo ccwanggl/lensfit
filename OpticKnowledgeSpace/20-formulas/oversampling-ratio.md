@@ -1,14 +1,14 @@
 ---
+
 id: formula.oversampling-ratio
 title: 过采样率
 type: formula
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 过采样率
 

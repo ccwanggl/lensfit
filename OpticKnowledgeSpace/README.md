@@ -111,10 +111,10 @@ Frontmatter 的 `status` 使用以下值：
 | `numerical-aperture.svg` | 数值孔径示意图 | [[10-concepts/数值孔径\|数值孔径]] |
 | `vignetting.svg` | 渐晕亮度分布 | [[10-concepts/渐晕\|渐晕]] |
 | `chromaticity-diagram.svg` | CIE 1931 色度图 | [[10-concepts/chromaticity-diagram\|色度图]] |
-| `spectral-resolution.svg` | 光谱分辨率对比 | [[10-concepts/spectral-resolution\|光谱分辨率]] |
+| `spectral-resolution.svg` | 光谱分辨率对比 | [[10-concepts/spectral-resolution\|光谱分辨率]]、[[20-formulas/瑞利分辨率\|瑞利分辨率]] |
 | `domain-selection-map.svg` | 如何选择应用领域 | [[30-domains/README\|应用领域]]、[[90-maps/Visual Index\|可视化索引]] |
 | `matching-workflow.svg` | LensFit 匹配工作流程 | [[50-learning/05-matching-basics\|匹配基础]] |
-| `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/04-sensors\|传感器]]、[[40-devices/README\|设备类型]] |
+| `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/04-sensors\|传感器]]、[[40-devices/README\|设备类型]]、[[10-concepts/读出噪声\|读出噪声]]、[[10-concepts/NETD\|NETD]] |
 | `lens-selection-checklist.svg` | 镜头选型七步清单 | [[50-learning/03-lens-parameters\|镜头参数]]、[[50-learning/05-matching-basics\|匹配基础]] |
 
 完整索引见 [[90-maps/Visual Index\|可视化索引]]。

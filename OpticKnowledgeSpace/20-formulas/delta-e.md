@@ -1,14 +1,14 @@
 ---
+
 id: formula.delta-e
 title: Delta E 色差
 type: formula
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [delta-e, CIE76, ΔE, 色差公式, color-difference]
----
+aliases: [delta-e, CIE76, ΔE, 色差公式, color-difference]---
 # Delta E 色差
 
 ## 公式

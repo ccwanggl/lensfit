@@ -1,14 +1,14 @@
 ---
+
 id: concept.spectral-resolution
 title: 光谱分辨率
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [spectral-resolution, 分辨本领]
----
+aliases: [spectral-resolution, 分辨本领]---
 # 光谱分辨率
 
 ## 定义

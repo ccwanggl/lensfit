@@ -1,14 +1,14 @@
 ---
+
 id: device.spectrometer
 title: 光谱仪
 type: device
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [spectrometer, 光谱仪, 分光光度计, spectrophotometer]
----
+aliases: [spectrometer, 光谱仪, 分光光度计, spectrophotometer]---
 # 光谱仪
 
 ## 定义/概述

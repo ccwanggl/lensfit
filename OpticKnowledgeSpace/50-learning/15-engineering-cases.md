@@ -1,11 +1,11 @@
 ---
+
 id: learning.engineering-cases
 title: 工程案例与选型实战
 type: learning
 domains: [general]
-status: draft
-aliases: []
----
+status: reviewed
+aliases: []---
 
 # 第15章 工程案例与选型实战
 

@@ -1,14 +1,14 @@
 ---
+
 id: device.rolling-shutter-cmos
 title: 卷帘快门CMOS
 type: device
 domains: []
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 卷帘快门CMOS
 

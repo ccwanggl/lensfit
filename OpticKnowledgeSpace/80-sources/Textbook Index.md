@@ -1,13 +1,13 @@
 ---
+
 id: sources.textbook-index
 title: 教材索引
 type: source-index
-status: draft
+status: reviewed
 source_type: textbook-index
 aliases:
   - Textbook Index
-  - 光学教材索引
----
+  - 光学教材索引---
 
 # 教材索引
 

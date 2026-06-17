@@ -1,14 +1,14 @@
 ---
+
 id: concept.abbe-number
 title: 阿贝数
 type: concept
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [abbe-number, Vd, 阿贝值, Abbe-value, 色散系数]
----
+aliases: [abbe-number, Vd, 阿贝值, Abbe-value, 色散系数]---
 # 阿贝数
 
 ## 定义

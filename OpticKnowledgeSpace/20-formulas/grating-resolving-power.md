@@ -1,14 +1,14 @@
 ---
+
 id: formula.grating-resolving-power
 title: 光栅光谱分辨率
 type: formula
 domains: [spectroscopy]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: [grating-resolving-power, 光栅分辨本领, resolving-power]
----
+aliases: [grating-resolving-power, 光栅分辨本领, resolving-power]---
 # 光栅光谱分辨率
 
 ## 公式

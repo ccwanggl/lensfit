@@ -1,11 +1,11 @@
 ---
+
 id: learning.optical-design-basics
 title: 光学设计基础
 type: learning
 domains: [general]
-status: draft
-aliases: []
----
+status: reviewed
+aliases: []---
 
 # 第11章 光学设计基础
 

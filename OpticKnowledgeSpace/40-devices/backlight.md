@@ -1,14 +1,14 @@
 ---
+
 id: device.backlight
 title: 背光板
 type: device
 domains: []
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 背光板
 

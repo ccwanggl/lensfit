@@ -1,11 +1,11 @@
 ---
+
 id: domain.spectroscopy
 title: 光谱成像
 type: domain
 domains: [spectroscopy]
-status: draft
-aliases: []
----
+status: reviewed
+aliases: []---
 
 # 光谱成像领域参考
 

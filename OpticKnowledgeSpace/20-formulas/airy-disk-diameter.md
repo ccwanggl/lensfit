@@ -1,14 +1,14 @@
 ---
+
 id: formula.airy-disk-diameter
 title: 艾里斑直径
 type: formula
 domains: [general]
-status: draft
+status: reviewed
 source_ids: []
 reviewed_at:
 owners: []
-aliases: []
----
+aliases: []---
 
 # 艾里斑直径
 

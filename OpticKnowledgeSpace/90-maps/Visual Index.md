@@ -43,6 +43,7 @@ aliases:
 | ![[attachments/visuals/abbe-number.svg]] | [[10-concepts/abbe-number\|阿贝数]] |
 | ![[attachments/visuals/numerical-aperture.svg]] | [[10-concepts/数值孔径\|数值孔径]] |
 | ![[attachments/visuals/vignetting.svg]] | [[10-concepts/渐晕\|渐晕]] |
+| ![[attachments/visuals/sensor-parameter-map.svg]] | [[10-concepts/读出噪声\|读出噪声]]、[[10-concepts/NETD\|NETD]]、[[10-concepts/微测辐射热计\|微测辐射热计]] |
 
 ---
 
@@ -56,7 +57,7 @@ aliases:
 | ![[attachments/visuals/fluorescence.svg]] | [[10-concepts/fluorescence\|荧光]] |
 | ![[attachments/visuals/raman-scattering.svg]] | [[10-concepts/raman-scattering\|拉曼散射]] |
 | ![[attachments/visuals/chromaticity-diagram.svg]] | [[10-concepts/chromaticity-diagram\|色度图]] |
-| ![[attachments/visuals/spectral-resolution.svg]] | [[10-concepts/spectral-resolution\|光谱分辨率]] |
+| ![[attachments/visuals/spectral-resolution.svg]] | [[10-concepts/spectral-resolution\|光谱分辨率]]、[[20-formulas/瑞利分辨率\|瑞利分辨率]] |
 
 ---
 
