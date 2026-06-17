@@ -41,3 +41,8 @@ aliases:
 - 初学者先走 [[../90-maps/Learning Path|从零到深入学习路径]]。
 - 需要查领域取舍时，从本页进入具体领域。
 - 需要查完整结构时，看 [[../90-maps/Knowledge Architecture|知识库架构]]。
+
+## 可视化辅助
+
+![[attachments/visuals/domain-selection-map.svg]]
+*图：根据核心目标选择光学应用领域*

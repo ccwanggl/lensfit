@@ -96,8 +96,15 @@ Frontmatter 的 `status` 使用以下值：
 | `airy-disk.svg` | 艾里斑强度分布 | [[10-concepts/airy-disk\|艾里斑]] |
 | `depth-of-field.svg` | 景深与弥散圆 | [[10-concepts/depth-of-field\|景深]] |
 | `aperture-f-number.svg` | 光圈孔径与 F 值 | [[10-concepts/f-number\|F值]] |
+| `domain-selection-map.svg` | 如何选择应用领域 | [[30-domains/README\|应用领域]]、[[90-maps/Visual Index\|可视化索引]] |
+| `matching-workflow.svg` | LensFit 匹配工作流程 | [[50-learning/05-matching-basics\|匹配基础]] |
+| `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/04-sensors\|传感器]]、[[40-devices/README\|设备类型]] |
+| `lens-selection-checklist.svg` | 镜头选型七步清单 | [[50-learning/03-lens-parameters\|镜头参数]]、[[50-learning/05-matching-basics\|匹配基础]] |
+
+完整索引见 [[90-maps/Visual Index\|可视化索引]]。
 
 如需重新生成，运行仓库根目录下的 `scripts/generate_vault_visuals.py`（依赖 `scripts/.venv-viz` 中的 matplotlib、networkx、scipy）。
+
 
 ## 维护规则
 

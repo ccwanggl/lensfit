@@ -270,6 +270,13 @@ $D = f / F\# = 50 / 2.8 \approx 17.9$ mm。
 
 ---
 
+## 可视化辅助
+
+![[attachments/visuals/lens-selection-checklist.svg]]
+*图：镜头选型七步检查清单*
+
+---
+
 ## 延伸阅读
 
 - 第2章《几何光学》—— 焦距、视角的数学基础

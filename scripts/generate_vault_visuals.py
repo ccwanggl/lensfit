@@ -288,6 +288,139 @@ def draw_knowledge_graph() -> Path:
     return save(fig, "knowledge-graph.svg")
 
 
+def draw_domain_selection_map() -> Path:
+    """Decision-style diagram for choosing an optical domain."""
+    fig, ax = plt.subplots(figsize=(10, 7))
+    from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+
+    # Root question
+    ax.add_patch(FancyBboxPatch((0.35, 0.88), 0.3, 0.08, boxstyle="round,pad=0.02",
+                                facecolor="#f3f4f6", edgecolor="#374151", linewidth=2))
+    ax.text(0.5, 0.92, "你的核心目标是什么？", ha="center", va="center", fontsize=12, fontweight="bold")
+
+    branches = [
+        ("检测/测量尺寸、缺陷、位置", "工业视觉", "#60a5fa", 0.12),
+        ("拍出好看/准确的照片", "摄影", "#f472b6", 0.37),
+        ("观察微小结构", "显微镜", "#4ade80", 0.62),
+        ("夜间/热/不可见光成像", "红外成像", "#fbbf24", 0.87),
+    ]
+    for label, domain, color, x in branches:
+        # Question branch
+        ax.add_patch(FancyBboxPatch((x - 0.1, 0.68), 0.2, 0.12, boxstyle="round,pad=0.02",
+                                    facecolor="white", edgecolor="#9ca3af", linewidth=1.5))
+        ax.text(x, 0.74, label, ha="center", va="center", fontsize=8, wrap=True)
+        # Domain box
+        ax.add_patch(FancyBboxPatch((x - 0.07, 0.45), 0.14, 0.12, boxstyle="round,pad=0.02",
+                                    facecolor=color, edgecolor="#374151", linewidth=1.5, alpha=0.85))
+        ax.text(x, 0.51, domain, ha="center", va="center", fontsize=10, fontweight="bold", color="white")
+        # Arrows
+        ax.annotate("", xy=(x, 0.57), xytext=(x, 0.68),
+                    arrowprops=dict(arrowstyle="->", color="#6b7280", lw=1.5))
+
+    # Spectroscopy as cross-domain
+    ax.add_patch(FancyBboxPatch((0.35, 0.22), 0.3, 0.12, boxstyle="round,pad=0.02",
+                                facecolor="#f87171", edgecolor="#374151", linewidth=1.5, alpha=0.85))
+    ax.text(0.5, 0.28, "光谱成像 / 色彩科学\n（跨域分析工具）", ha="center", va="center",
+            fontsize=10, fontweight="bold", color="white")
+    for _, _, _, x in branches:
+        ax.plot([x, 0.5], [0.45, 0.34], color="#9ca3af", lw=1, alpha=0.6)
+
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.set_title("如何选择光学应用领域？", fontsize=15, fontweight="bold", pad=20)
+    return save(fig, "domain-selection-map.svg")
+
+
+def draw_matching_workflow() -> Path:
+    """LensFit matching pipeline flowchart."""
+    fig, ax = plt.subplots(figsize=(12, 4))
+    from matplotlib.patches import FancyBboxPatch
+
+    steps = [
+        ("输入需求", "#e5e7eb"),
+        ("领域路由", "#dbeafe"),
+        ("数据库预过滤", "#bfdbfe"),
+        ("物理约束评分", "#93c5fd"),
+        ("What-if 分析", "#60a5fa"),
+        ("Top-K 推荐", "#2563eb"),
+        ("导出报告", "#1e40af"),
+    ]
+    x_positions = [i * 1.35 for i in range(len(steps))]
+    for (label, color), x in zip(steps, x_positions):
+        ax.add_patch(FancyBboxPatch((x, 0.35), 1.1, 0.3, boxstyle="round,pad=0.02",
+                                    facecolor=color, edgecolor="#374151", linewidth=1.5))
+        ax.text(x + 0.55, 0.5, label, ha="center", va="center", fontsize=10, fontweight="bold",
+                color="white" if color in ("#2563eb", "#1e40af") else "#1f2937")
+        if x < x_positions[-1]:
+            ax.annotate("", xy=(x + 1.15, 0.5), xytext=(x + 1.1, 0.5),
+                        arrowprops=dict(arrowstyle="->", color="#4b5563", lw=2))
+
+    ax.set_xlim(-0.2, x_positions[-1] + 1.3)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.set_title("LensFit 自动匹配工作流程", fontsize=15, fontweight="bold", pad=20)
+    return save(fig, "matching-workflow.svg")
+
+
+def draw_sensor_parameter_map() -> Path:
+    """Spider-like parameter map for sensor selection."""
+    import numpy as np
+    fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True))
+    categories = ["分辨率", "像元尺寸", "动态范围", "读出噪声", "帧率", "快门方式"]
+    N = len(categories)
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1]
+
+    # Example: global-shutter industrial sensor
+    values = [0.7, 0.6, 0.7, 0.8, 0.8, 1.0]
+    values += values[:1]
+    ax.plot(angles, values, "o-", linewidth=2, label="工业传感器", color="#2563eb")
+    ax.fill(angles, values, alpha=0.25, color="#2563eb")
+
+    # Example: high-res photography sensor
+    values2 = [1.0, 0.4, 0.8, 0.5, 0.4, 0.0]
+    values2 += values2[:1]
+    ax.plot(angles, values2, "o-", linewidth=2, label="摄影传感器", color="#f59e0b")
+    ax.fill(angles, values2, alpha=0.15, color="#f59e0b")
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(categories, fontsize=10)
+    ax.set_ylim(0, 1)
+    ax.set_title("传感器选型雷达图（示意）", fontsize=14, fontweight="bold", pad=20)
+    ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1), frameon=False)
+    return save(fig, "sensor-parameter-map.svg")
+
+
+def draw_lens_selection_checklist() -> Path:
+    """A checklist-style visualization for lens selection."""
+    fig, ax = plt.subplots(figsize=(8, 7))
+    from matplotlib.patches import FancyBboxPatch
+
+    items = [
+        ("1. 确定工作距离 (WD)", "#2563eb"),
+        ("2. 计算所需焦距 / 视角", "#3b82f6"),
+        ("3. 确认像圈 ≥ 传感器对角线", "#60a5fa"),
+        ("4. 选择合适 F 值（进光/景深）", "#93c5fd"),
+        ("5. 检查接口与法兰距", "#bfdbfe"),
+        ("6. 评估畸变、色差等像质指标", "#dbeafe"),
+        ("7. 考虑照明与波长范围", "#e5e7eb"),
+    ]
+    y = 0.88
+    for text, color in items:
+        ax.add_patch(FancyBboxPatch((0.1, y - 0.04), 0.8, 0.07, boxstyle="round,pad=0.015",
+                                    facecolor=color, edgecolor="#1f2937", linewidth=1.2))
+        ax.text(0.5, y, text, ha="center", va="center", fontsize=11, fontweight="bold",
+                color="white" if color in ("#2563eb", "#3b82f6") else "#1f2937")
+        y -= 0.12
+
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.set_title("镜头选型七步检查清单", fontsize=15, fontweight="bold", pad=20)
+    return save(fig, "lens-selection-checklist.svg")
+
+
 def main():
     paths = []
     paths.append(draw_learning_path_roadmap())
@@ -299,6 +432,10 @@ def main():
     paths.append(draw_depth_of_field())
     paths.append(draw_aperture_f_number())
     paths.append(draw_knowledge_graph())
+    paths.append(draw_domain_selection_map())
+    paths.append(draw_matching_workflow())
+    paths.append(draw_sensor_parameter_map())
+    paths.append(draw_lens_selection_checklist())
     print(f"Generated {len(paths)} visuals in {OUTDIR}:")
     for p in paths:
         print(f"  - {p}")

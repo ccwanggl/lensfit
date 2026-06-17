@@ -380,4 +380,10 @@ $$
 ## 可视化辅助
 
 ![[attachments/visuals/image-circle-coverage.svg]]
-*图：Image Circle Coverage*
+*图：像圈必须完全覆盖传感器，否则边缘会发黑*
+
+![[attachments/visuals/matching-workflow.svg]]
+*图：LensFit 自动匹配工作流程*
+
+![[attachments/visuals/lens-selection-checklist.svg]]
+*图：镜头选型七步检查清单*

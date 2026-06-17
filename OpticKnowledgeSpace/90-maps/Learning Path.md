@@ -38,6 +38,11 @@ aliases:
 ![[attachments/visuals/knowledge-graph.svg]]
 *图：核心概念、公式、领域与设备的关系子集。节点颜色：绿色=概念，蓝色=公式，红色=领域，橙色=设备。*
 
+![[attachments/visuals/domain-selection-map.svg]]
+*图：不确定从哪个领域开始时，用这张图判断自己的核心目标对应哪个光学应用领域。*
+
+> 全部图解的索引见 [[90-maps/Visual Index|可视化索引]]。
+
 ## 0. 准备阶段：知道自己在学什么
 
 | 顺序 | 阅读 | 目标 |
