@@ -17,7 +17,7 @@ aliases:
 
 1. 在 Obsidian 中选择“打开本地仓库”。
 2. 选择仓库中的 `OpticKnowledgeSpace/` 目录作为 Vault。
-3. 从 [[90-maps/Learning Path|从零到深入学习路径]]、[[90-maps/Knowledge Architecture|知识库架构]] 或 [[90-maps/Knowledge Map|知识地图]] 开始。
+3. 从 [[90-maps/Learning Path|从零到深入学习路径]]、[[90-maps/Knowledge Architecture|知识库架构]] 或 [[90-maps/Knowledge Map|知识地图]] 开始；视觉学习者先看 [[90-maps/Visual Learning Toolkit|视觉学习工具箱]]。
 4. 新笔记先放入 `00-inbox/`，整理后再移动到正式目录。
 
 ## 目录
