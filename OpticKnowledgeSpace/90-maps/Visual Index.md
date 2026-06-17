@@ -37,6 +37,30 @@ aliases:
 | ![[attachments/visuals/depth-of-field.svg]] | [[10-concepts/depth-of-field\|景深]] |
 | ![[attachments/visuals/airy-disk.svg]] | [[10-concepts/airy-disk\|艾里斑]] |
 | ![[attachments/visuals/nyquist-aliasing.svg]] | [[10-concepts/nyquist-frequency\|奈奎斯特频率]] |
+| ![[attachments/visuals/refractive-index.svg]] | [[10-concepts/refractive-index\|折射率]] |
+| ![[attachments/visuals/dispersion.svg]] | [[10-concepts/dispersion\|色散]] |
+| ![[attachments/visuals/chromatic-aberration.svg]] | [[10-concepts/chromatic-aberration\|色差]] |
+
+---
+
+## 光谱与成像技术
+
+| 图 | 对应笔记 |
+|---|---|
+| ![[attachments/visuals/color-temperature.svg]] | [[10-concepts/color-temperature\|色温]] |
+| ![[attachments/visuals/spectral-power-distribution.svg]] | [[10-concepts/spectral-power-distribution\|光谱功率分布]] |
+| ![[attachments/visuals/multispectral-hyperspectral.svg]] | [[10-concepts/multispectral-imaging\|多光谱成像]]、[[10-concepts/hyperspectral-imaging\|高光谱成像]] |
+| ![[attachments/visuals/fluorescence.svg]] | [[10-concepts/fluorescence\|荧光]] |
+| ![[attachments/visuals/raman-scattering.svg]] | [[10-concepts/raman-scattering\|拉曼散射]] |
+
+---
+
+## 设备与器件
+
+| 图 | 对应笔记 |
+|---|---|
+| ![[attachments/visuals/telecentricity.svg]] | [[40-devices/telecentric-lens\|远心镜头]] |
+| ![[attachments/visuals/global-vs-rolling-shutter.svg]] | [[10-concepts/全局快门\|全局快门]]、[[10-concepts/卷帘快门\|卷帘快门]] |
 
 ---
 

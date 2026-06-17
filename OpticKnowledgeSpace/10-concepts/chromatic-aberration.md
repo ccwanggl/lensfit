@@ -60,6 +60,11 @@ aliases: [Chromatic Aberration, CA, 色散像差, 轴向色差, 倍率色差]
 - **错误**：认为非球面镜片能消除色差。
 - **事实**：非球面主要校正球差和彗差，对色差帮助有限。色差需要特殊材料（低色散玻璃）和组合结构来校正。
 
+## 可视化辅助
+
+![[attachments/visuals/chromatic-aberration.svg]]
+*图：Chromatic Aberration*
+
 ## 来源
 - [[../50-learning/06-aberrations|第6章 像差]] §6.2 色差
 - [[../50-learning/11-optical-design-basics|第11章 光学设计基础]] §11.4 消色差双合透镜

@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-06-17T14:38:42.453254</dc:date>
+    <dc:date>2026-06-17T16:07:30.780390</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -41,7 +41,7 @@ C 23.832 230.204753 39.604072 268.281903 67.6746 296.352431
 C 95.745128 324.422959 133.822278 340.195031 173.52 340.195031 
 L 173.52 340.195031 
 z
-" clip-path="url(#p55b79d37ff)" style="fill: none; stroke: #2563eb; stroke-width: 3; stroke-linejoin: miter"/>
+" clip-path="url(#pf7b65ac025)" style="fill: none; stroke: #2563eb; stroke-width: 3; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 90.36 257.035031 
@@ -49,7 +49,7 @@ L 256.68 257.035031
 L 256.68 123.979031 
 L 90.36 123.979031 
 z
-" clip-path="url(#p55b79d37ff)" style="fill: #f87171; opacity: 0.4; stroke: #dc2626; stroke-width: 2; stroke-linejoin: miter"/>
+" clip-path="url(#pf7b65ac025)" style="fill: #f87171; opacity: 0.4; stroke: #dc2626; stroke-width: 2; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
     <!-- 像圈必须完全覆盖传感器，否则边缘会发黑 -->
@@ -1516,7 +1516,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p55b79d37ff">
+  <clipPath id="pf7b65ac025">
    <rect x="7.2" y="24.187031" width="332.64" height="332.64"/>
   </clipPath>
  </defs>

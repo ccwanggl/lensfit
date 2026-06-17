@@ -39,4 +39,9 @@ aliases: []
 - **错误**：远心镜头可以像普通镜头一样随意调整WD
 - **事实**：远心镜头WD和倍率固定，必须按设计距离安装
 
+## 可视化辅助
+
+![[attachments/visuals/telecentricity.svg]]
+*图：Telecentricity*
+
 ## 来源

@@ -63,6 +63,11 @@ Z = k ∫ P(λ) z̄(λ) dλ
 3. **峰值波长 ≠ 主波长**：LED 的峰值波长是 SPD 最大值位置，但视觉颜色可能由多个峰共同决定。
 4. **SPD 平滑 ≠ 显色好**：白炽灯 SPD 平滑但缺失部分短波，显色指数中等；多芯片 LED SPD 有峰但显色指数可很高。
 
+## 可视化辅助
+
+![[attachments/visuals/spectral-power-distribution.svg]]
+*图：Spectral Power Distribution*
+
 ## 来源
 
 - CIE 15:2004, Colorimetry

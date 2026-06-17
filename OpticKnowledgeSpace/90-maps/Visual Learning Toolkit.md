@@ -23,7 +23,7 @@ aliases:
 1. **看大图**：先打开 [[90-maps/Learning Path|学习路径]]，了解 16 章的先后顺序与分组。
 2. **读概念**：进入具体概念页（如 [[10-concepts/focal-length|焦距]]），先浏览图解，再读文字。
 3. **看图解**：每个关键概念都配有 SVG 图解，见 [[90-maps/Visual Index|可视化索引]]。
-4. **动手画**：拿一张纸或 Obsidian Canvas，把薄透镜、像圈、景深等图自己画一遍。
+4. **动手画/拖拽**：拿一张纸或 Obsidian Canvas，把薄透镜、像圈、景深等图自己画一遍；也可以打开 [[90-maps/Interactive Explorer|交互式探索器]] 拖拽章节卡片。
 5. **做沙盒练习**：每章末尾的「LensFit 沙盒 🧪」提供可计算的实例。
 6. **回看图谱**：学完一章后，回到 [[90-maps/Knowledge Map|知识地图]] 或 [[90-maps/Knowledge Architecture|知识库架构]]，确认新知识与旧知识的连接。
 

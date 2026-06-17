@@ -57,6 +57,11 @@ aliases: [multispectral-imaging, 多光谱, MSI]
 3. **多光谱 = 彩色图像增强**：多光谱是物理测量不同波段反射率，不是图像处理算法增强。
 4. **所有波段同时曝光**：有些系统通过滤光轮切换，不是快照式，存在时间差。
 
+## 可视化辅助
+
+![[attachments/visuals/multispectral-hyperspectral.svg]]
+*图：Multispectral Hyperspectral*
+
 ## 来源
 
 - 光学工程教材，第 16 章 光谱学

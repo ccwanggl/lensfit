@@ -41,4 +41,9 @@ $$ d = \frac{0.61 \times 0.55}{0.9} = \frac{0.3355}{0.9} \approx 0.373\,\mu\text
 - 相关概念：[[10-concepts/瑞利判据|瑞利判据]]、[[10-concepts/数值孔径|数值孔径]]、[[../10-concepts/衍射极限|衍射极限]]
 - 相关教程：[[50-learning/08-domain-applications|第8章]]
 
+## 可视化辅助
+
+![[attachments/visuals/airy-disk.svg]]
+*图：Airy Disk*
+
 ## 来源

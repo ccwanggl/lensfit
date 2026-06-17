@@ -63,6 +63,11 @@ aliases: [color-temperature, CCT, 相关色温, correlated-color-temperature]
 3. **色温与显色性正相关**：高色温不一定显色性好，显色性取决于光谱连续性和完整性。
 4. **绿色/紫色光没有色温**：色温只适用于近似白光的源，单色光没有色温概念。
 
+## 可视化辅助
+
+![[attachments/visuals/color-temperature.svg]]
+*图：Color Temperature*
+
 ## 来源
 
 - CIE 15:2004, Colorimetry

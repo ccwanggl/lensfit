@@ -60,6 +60,7 @@ aliases:
 | [[90-maps/Learning Path|从零到深入学习路径]] | 初学者 | 按顺序学习，知道每阶段要掌握什么 |
 | [[90-maps/Knowledge Architecture|知识库架构]] | 维护者/系统学习者 | 理解教程、概念、公式、设备和领域如何连接 |
 | [[90-maps/Knowledge Map|知识地图]] | 查资料的人 | 快速跳转到概念、公式、设备和领域 |
+| [[90-maps/Interactive Explorer|交互式探索器]] | 视觉/探索型学习者 | 用 D3 图谱或 Obsidian Canvas 拖拽浏览 |
 | [[50-learning/README|学习教程目录]] | 顺序阅读者 | 查看 16 章主线目录 |
 
 ## 光谱学科专项
@@ -96,6 +97,16 @@ Frontmatter 的 `status` 使用以下值：
 | `airy-disk.svg` | 艾里斑强度分布 | [[10-concepts/airy-disk\|艾里斑]] |
 | `depth-of-field.svg` | 景深与弥散圆 | [[10-concepts/depth-of-field\|景深]] |
 | `aperture-f-number.svg` | 光圈孔径与 F 值 | [[10-concepts/f-number\|F值]] |
+| `refractive-index.svg` | 折射率与斯涅尔定律 | [[10-concepts/refractive-index\|折射率]] |
+| `dispersion.svg` | 棱镜色散 | [[10-concepts/dispersion\|色散]] |
+| `chromatic-aberration.svg` | 透镜色差 | [[10-concepts/chromatic-aberration\|色差]] |
+| `color-temperature.svg` | 色温与黑体辐射 | [[10-concepts/color-temperature\|色温]] |
+| `multispectral-hyperspectral.svg` | 多光谱 vs 高光谱 | [[10-concepts/multispectral-imaging\|多光谱]]、[[10-concepts/hyperspectral-imaging\|高光谱]] |
+| `spectral-power-distribution.svg` | 光谱功率分布 | [[10-concepts/spectral-power-distribution\|SPD]] |
+| `fluorescence.svg` | 荧光能级图 | [[10-concepts/fluorescence\|荧光]] |
+| `raman-scattering.svg` | 拉曼散射能级图 | [[10-concepts/raman-scattering\|拉曼散射]] |
+| `global-vs-rolling-shutter.svg` | 全局快门 vs 卷帘快门 | [[10-concepts/全局快门\|全局快门]]、[[10-concepts/卷帘快门\|卷帘快门]] |
+| `telecentricity.svg` | 远心镜头主光线 | [[40-devices/telecentric-lens\|远心镜头]] |
 | `domain-selection-map.svg` | 如何选择应用领域 | [[30-domains/README\|应用领域]]、[[90-maps/Visual Index\|可视化索引]] |
 | `matching-workflow.svg` | LensFit 匹配工作流程 | [[50-learning/05-matching-basics\|匹配基础]] |
 | `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/04-sensors\|传感器]]、[[40-devices/README\|设备类型]] |

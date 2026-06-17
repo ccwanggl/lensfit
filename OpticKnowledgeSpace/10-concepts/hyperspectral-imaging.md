@@ -65,6 +65,11 @@ aliases: [hyperspectral-imaging, 高光谱, HSI, 成像光谱]
 4. **高光谱不是“更彩色的照片”**：其信息维度远超人眼感知，需要光谱分析算法提取信息。
 5. **所有像素光谱可比较**：光照不均匀、大气散射等会降低像素间可比性，需预处理。
 
+## 可视化辅助
+
+![[attachments/visuals/multispectral-hyperspectral.svg]]
+*图：Multispectral Hyperspectral*
+
 ## 来源
 
 - 光学工程教材，第 16 章 光谱学

@@ -59,6 +59,11 @@ $$
 - **错误**：认为光速在所有介质中都一样。
 - **事实**：光在玻璃中的速度约为真空中的 2/3（$n \approx 1.5$）。正是因为速度不同，光才会在界面处折射。不同波长的光速度还略有不同——这就是**色散**，是造成[[../10-concepts/chromatic-aberration|色差]]的根本原因。
 
+## 可视化辅助
+
+![[attachments/visuals/refractive-index.svg]]
+*图：Refractive Index*
+
 ## 来源
 - [[../50-learning/01-light-and-waves|第1章 光与波]] §1.4 折射定律
 - [[../50-learning/06-aberrations|第6章 像差]]（色散与色差）

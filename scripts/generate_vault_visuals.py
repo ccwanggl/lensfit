@@ -421,6 +421,278 @@ def draw_lens_selection_checklist() -> Path:
     return save(fig, "lens-selection-checklist.svg")
 
 
+def draw_refractive_index() -> Path:
+    """Light bending at an interface due to refractive index change."""
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.axhline(0, color="#374151", linewidth=2)
+    ax.text(0.5, 0.08, "界面", ha="center", fontsize=11)
+
+    # Incident ray
+    ax.annotate("", xy=(0, 0), xytext=(-1.5, 1.2),
+                arrowprops=dict(arrowstyle="->", color="#2563eb", lw=2))
+    ax.text(-1.2, 1.0, "入射光", color="#2563eb", fontsize=10)
+
+    # Refracted ray
+    ax.annotate("", xy=(1.5, 0.6), xytext=(0, 0),
+                arrowprops=dict(arrowstyle="->", color="#dc2626", lw=2))
+    ax.text(1.2, 0.4, "折射光", color="#dc2626", fontsize=10)
+
+    # Normal line
+    ax.axvline(0, ymin=0.1, ymax=0.9, color="#9ca3af", linestyle="--", lw=1)
+    ax.text(0.1, 1.3, "法线", color="#6b7280", fontsize=9)
+
+    ax.text(-0.8, 0.35, r"$n_1$", fontsize=12, fontweight="bold")
+    ax.text(0.8, -0.35, r"$n_2$", fontsize=12, fontweight="bold")
+    ax.text(0.5, -0.7, "斯涅尔定律：$n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2$",
+            fontsize=11, ha="center")
+
+    ax.set_xlim(-2, 2)
+    ax.set_ylim(-1.2, 1.6)
+    ax.axis("off")
+    ax.set_title("折射率：光在两种介质界面上的弯折", fontsize=14, fontweight="bold")
+    return save(fig, "refractive-index.svg")
+
+
+def draw_dispersion() -> Path:
+    """Prism splitting white light into spectrum."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    from matplotlib.patches import Polygon
+
+    # White incident ray
+    ax.annotate("", xy=(1.5, 0.5), xytext=(-0.5, 0.5),
+                arrowprops=dict(arrowstyle="->", color="#374151", lw=3))
+    ax.text(-0.3, 0.6, "白光", fontsize=10)
+
+    # Prism
+    prism = Polygon([[1.5, 0.2], [2.5, 0.8], [2.5, 0.2]], closed=True,
+                    facecolor="#e5e7eb", edgecolor="#374151", linewidth=2)
+    ax.add_patch(prism)
+    ax.text(2.2, 0.35, "棱镜", fontsize=10)
+
+    # Dispersed rays
+    colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#a855f7"]
+    y_offsets = [0.45, 0.5, 0.55, 0.6, 0.65, 0.7]
+    for color, y in zip(colors, y_offsets):
+        ax.plot([2.5, 5], [0.5, y], color=color, lw=2.5)
+    ax.text(5.1, 0.55, "红", color="#ef4444", fontsize=9)
+    ax.text(5.1, 0.72, "紫", color="#a855f7", fontsize=9)
+
+    ax.set_xlim(-1, 6)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.set_title("色散：不同波长的光折射角度不同", fontsize=14, fontweight="bold")
+    return save(fig, "dispersion.svg")
+
+
+def draw_chromatic_aberration() -> Path:
+    """Lens focusing blue and red light at different focal points."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.axvline(0, ymin=0.3, ymax=0.7, color="#374151", linewidth=3)
+    ax.text(0, 0.22, "透镜", ha="center", fontsize=10)
+
+    # Optical axis
+    ax.axhline(0.5, color="#9ca3af", linestyle="--", lw=1)
+
+    # Blue ray (shorter focal length)
+    ax.plot([-2, 0, 1.8], [0.7, 0.7, 0.5], color="#3b82f6", lw=2)
+    ax.scatter([1.8], [0.5], color="#3b82f6", s=50, zorder=3)
+    ax.text(1.8, 0.43, "蓝光焦点", ha="center", color="#3b82f6", fontsize=9)
+
+    # Red ray (longer focal length)
+    ax.plot([-2, 0, 2.8], [0.7, 0.7, 0.5], color="#ef4444", lw=2)
+    ax.scatter([2.8], [0.5], color="#ef4444", s=50, zorder=3)
+    ax.text(2.8, 0.43, "红光焦点", ha="center", color="#ef4444", fontsize=9)
+
+    ax.set_xlim(-3, 4)
+    ax.set_ylim(0.2, 0.9)
+    ax.axis("off")
+    ax.set_title("色差：不同波长焦距不同，导致彩色边缘", fontsize=14, fontweight="bold")
+    return save(fig, "chromatic-aberration.svg")
+
+
+def draw_color_temperature() -> Path:
+    """Blackbody spectra at different temperatures."""
+    import numpy as np
+    fig, ax = plt.subplots(figsize=(7, 4))
+    wavelengths = np.linspace(300, 1200, 500)
+
+    def planck(w, T):
+        h, c, k = 6.626e-34, 3e8, 1.381e-23
+        return (2 * h * c**2 / w**5) / (np.exp(h * c / (w * k * T)) - 1)
+
+    temps = [3000, 4500, 6500]
+    colors = ["#f97316", "#facc15", "#3b82f6"]
+    labels = ["3000K 暖白", "4500K 中性", "6500K 冷白"]
+    for T, color, label in zip(temps, colors, labels):
+        y = planck(wavelengths * 1e-9, T)
+        ax.plot(wavelengths, y / y.max(), color=color, lw=2, label=label)
+
+    ax.set_xlabel("波长 (nm)")
+    ax.set_ylabel("归一化辐射强度")
+    ax.set_title("色温：黑体辐射谱随温度变化", fontsize=14, fontweight="bold")
+    ax.legend(frameon=False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    return save(fig, "color-temperature.svg")
+
+
+def draw_multispectral_hyperspectral() -> Path:
+    """Compare multispectral vs hyperspectral imaging band counts."""
+    fig, ax = plt.subplots(figsize=(8, 4))
+    import numpy as np
+    x = np.linspace(400, 1000, 1000)
+
+    # Hyperspectral: many narrow bands
+    for i, center in enumerate(range(420, 980, 20)):
+        y = np.exp(-((x - center) ** 2) / 50)
+        ax.fill_between(x, y + i * 0.05, i * 0.05, color="#3b82f6", alpha=0.4)
+
+    # Multispectral: few broad bands
+    bands = [(450, 80, "#ef4444"), (550, 80, "#22c55e"), (650, 80, "#eab308"), (850, 100, "#a855f7")]
+    offset = -0.25
+    for center, width, color in bands:
+        y = np.exp(-((x - center) ** 2) / (width**2 / 4))
+        ax.fill_between(x, y + offset, offset, color=color, alpha=0.6)
+
+    ax.text(1050, 2.2, "高光谱\n窄带、连续", fontsize=10, color="#3b82f6", fontweight="bold")
+    ax.text(1050, -0.15, "多光谱\n宽带、离散", fontsize=10, color="#374151", fontweight="bold")
+    ax.set_xlabel("波长 (nm)")
+    ax.set_title("多光谱 vs 高光谱：波段数量与宽度", fontsize=14, fontweight="bold")
+    ax.set_ylim(-0.4, 2.8)
+    ax.axis("off")
+    return save(fig, "multispectral-hyperspectral.svg")
+
+
+def draw_spectral_power_distribution() -> Path:
+    """Example SPD curve with peak wavelength."""
+    import numpy as np
+    fig, ax = plt.subplots(figsize=(7, 4))
+    x = np.linspace(380, 780, 500)
+    y = np.exp(-((x - 550) ** 2) / 2000)
+    ax.fill_between(x, y, alpha=0.3, color="#2563eb")
+    ax.plot(x, y, color="#2563eb", lw=2)
+    ax.axvline(550, color="#dc2626", linestyle="--", lw=1.5)
+    ax.text(560, 0.85, "峰值波长", color="#dc2626", fontsize=10)
+    ax.set_xlabel("波长 (nm)")
+    ax.set_ylabel("相对功率")
+    ax.set_title("光谱功率分布 (SPD) 示例", fontsize=14, fontweight="bold")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    return save(fig, "spectral-power-distribution.svg")
+
+
+def draw_fluorescence() -> Path:
+    """Simplified Jablonski diagram for fluorescence."""
+    fig, ax = plt.subplots(figsize=(7, 5))
+    # Ground and excited states
+    ax.hlines(0.2, 0.1, 0.9, color="#374151", linewidth=3)
+    ax.hlines(0.8, 0.1, 0.9, color="#374151", linewidth=3)
+    ax.text(0.5, 0.1, "基态 S0", ha="center", fontsize=11)
+    ax.text(0.5, 0.88, "激发态 S1", ha="center", fontsize=11)
+
+    # Absorption
+    ax.annotate("", xy=(0.35, 0.8), xytext=(0.35, 0.2),
+                arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+    ax.text(0.15, 0.55, "吸收", color="#ef4444", fontsize=10)
+
+    # Non-radiative relaxation
+    ax.plot([0.5, 0.5], [0.8, 0.65], color="#9ca3af", lw=2)
+    ax.text(0.55, 0.72, "无辐射弛豫", color="#6b7280", fontsize=9)
+
+    # Emission
+    ax.annotate("", xy=(0.65, 0.2), xytext=(0.65, 0.65),
+                arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+    ax.text(0.7, 0.4, "荧光发射", color="#22c55e", fontsize=10)
+
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.set_title("荧光：吸收高能光后发射低能光", fontsize=14, fontweight="bold")
+    return save(fig, "fluorescence.svg")
+
+
+def draw_raman_scattering() -> Path:
+    """Energy diagram for Raman scattering."""
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.hlines(0.2, 0.1, 0.9, color="#374151", linewidth=3)
+    ax.hlines(0.8, 0.1, 0.9, color="#374151", linewidth=3)
+    ax.text(0.5, 0.1, "虚能级 / 基态", ha="center", fontsize=11)
+    ax.text(0.5, 0.88, "实能级", ha="center", fontsize=11)
+
+    # Rayleigh
+    ax.annotate("", xy=(0.35, 0.2), xytext=(0.35, 0.8),
+                arrowprops=dict(arrowstyle="->", color="#9ca3af", lw=2))
+    ax.text(0.15, 0.55, "瑞利散射", color="#6b7280", fontsize=10)
+
+    # Stokes
+    ax.annotate("", xy=(0.6, 0.2), xytext=(0.6, 0.8),
+                arrowprops=dict(arrowstyle="->", color="#2563eb", lw=2))
+    ax.plot([0.6, 0.6], [0.2, 0.12], color="#2563eb", lw=2)
+    ax.hlines(0.12, 0.55, 0.65, color="#2563eb", linewidth=3)
+    ax.text(0.7, 0.5, "斯托克斯拉曼", color="#2563eb", fontsize=10)
+
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.set_title("拉曼散射：光子与分子交换能量，波长发生偏移", fontsize=14, fontweight="bold")
+    return save(fig, "raman-scattering.svg")
+
+
+def draw_global_vs_rolling_shutter() -> Path:
+    """Compare global and rolling shutter readout."""
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+    import numpy as np
+
+    def draw_sensor(ax, title, rolling=False):
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_aspect("equal")
+        ax.axis("off")
+        ax.set_title(title, fontsize=12, fontweight="bold")
+        # Draw rows
+        for i in range(5):
+            color = "#bfdbfe" if (not rolling or i == 2) else "#e5e7eb"
+            ax.add_patch(plt.Rectangle((0.1, 0.1 + i * 0.15), 0.8, 0.12,
+                                         facecolor=color, edgecolor="#374151"))
+            ax.text(0.5, 0.16 + i * 0.15, f"行 {i+1}", ha="center", va="center", fontsize=8)
+        if rolling:
+            ax.annotate("", xy=(0.95, 0.55), xytext=(0.95, 0.85),
+                        arrowprops=dict(arrowstyle="->", color="#dc2626", lw=2))
+            ax.text(1.0, 0.7, "逐行\n扫描", color="#dc2626", fontsize=9)
+        else:
+            ax.text(0.5, 0.05, "同时曝光/读出", ha="center", fontsize=9, color="#2563eb")
+
+    draw_sensor(ax1, "全局快门 (Global Shutter)", rolling=False)
+    draw_sensor(ax2, "卷帘快门 (Rolling Shutter)", rolling=True)
+    fig.suptitle("全局快门 vs 卷帘快门：运动物体的形变差异", fontsize=14, fontweight="bold")
+    return save(fig, "global-vs-rolling-shutter.svg")
+
+
+def draw_telecentricity() -> Path:
+    """Telecentric lens: chief rays parallel to optical axis."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    # Lens
+    ax.axvline(0, ymin=0.2, ymax=0.8, color="#374151", linewidth=4)
+    ax.text(0, 0.12, "远心镜头", ha="center", fontsize=10)
+
+    # Parallel rays from object points
+    y_positions = [0.35, 0.5, 0.65]
+    for y in y_positions:
+        ax.plot([-2, 2], [y, y], color="#2563eb", lw=1.5, alpha=0.7)
+        ax.scatter([-1.5], [y], color="#f59e0b", s=40, zorder=3)
+        ax.text(-1.6, y, "物点", ha="right", va="center", fontsize=8)
+        ax.scatter([1.5], [y], color="#dc2626", s=40, zorder=3)
+        ax.text(1.6, y, "像点", ha="left", va="center", fontsize=8)
+
+    ax.axhline(0.5, color="#9ca3af", linestyle="--", lw=1)
+    ax.text(0.5, 0.52, "光轴", fontsize=9, color="#6b7280")
+    ax.set_xlim(-2.5, 2.5)
+    ax.set_ylim(0.1, 0.9)
+    ax.axis("off")
+    ax.set_title("远心镜头：主光线与光轴平行，消除透视畸变", fontsize=14, fontweight="bold")
+    return save(fig, "telecentricity.svg")
+
+
 def main():
     paths = []
     paths.append(draw_learning_path_roadmap())
@@ -436,6 +708,16 @@ def main():
     paths.append(draw_matching_workflow())
     paths.append(draw_sensor_parameter_map())
     paths.append(draw_lens_selection_checklist())
+    paths.append(draw_refractive_index())
+    paths.append(draw_dispersion())
+    paths.append(draw_chromatic_aberration())
+    paths.append(draw_color_temperature())
+    paths.append(draw_multispectral_hyperspectral())
+    paths.append(draw_spectral_power_distribution())
+    paths.append(draw_fluorescence())
+    paths.append(draw_raman_scattering())
+    paths.append(draw_global_vs_rolling_shutter())
+    paths.append(draw_telecentricity())
     print(f"Generated {len(paths)} visuals in {OUTDIR}:")
     for p in paths:
         print(f"  - {p}")

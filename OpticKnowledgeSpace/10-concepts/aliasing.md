@@ -66,6 +66,11 @@ $$
 - **错误**：认为「无混叠 = 最佳匹配」。
 - **事实**：无混叠只是基本要求。过采样率 > 1.2 时虽然无混叠，但镜头的高频能力被传感器浪费。理想匹配是 0.5–1.2 倍。
 
+## 可视化辅助
+
+![[attachments/visuals/nyquist-aliasing.svg]]
+*图：Nyquist Aliasing*
+
 ## 来源
 - [[../50-learning/04-sensors|第4章 传感器]] §4.5 混叠（Aliasing）
 - [[../50-learning/05-matching-basics|第5章 匹配基础]] §5.3 分辨率匹配

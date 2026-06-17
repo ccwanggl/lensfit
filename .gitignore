@@ -38,6 +38,8 @@ knowledge/.obsidian/
 OpticKnowledgeSpace/.obsidian/
 OpticKnowledgeSpace/copilot/
 *.canvas
+# Track curated canvas maps
+!OpticKnowledgeSpace/90-maps/*.canvas
 
 # Database
 *.db

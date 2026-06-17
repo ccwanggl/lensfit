@@ -65,6 +65,11 @@ aliases: [raman-scattering, Raman光谱, 拉曼效应]
 3. **拉曼位移与激发波长无关**：拉曼位移是分子的固有属性，不随激光波长变化。
 4. **拉曼信号强度与浓度线性**：实际受激光功率、聚焦、样品吸光等影响。
 
+## 可视化辅助
+
+![[attachments/visuals/raman-scattering.svg]]
+*图：Raman Scattering*
+
 ## 来源
 
 - Smith & Dent, Modern Raman Spectroscopy: A Practical Approach

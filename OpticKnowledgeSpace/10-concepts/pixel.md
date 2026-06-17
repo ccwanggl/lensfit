@@ -59,6 +59,11 @@ aliases: [Pixel, 像素, 光敏单元, photosite, 感光像素]
 - **错误**：认为卷帘快门「不能用」。
 - **事实**：对于静止物体或低速运动，卷帘快门更便宜、噪声更低。只有高速运动（如 1000+ fps 或快速移动物体）才必须用全局快门。
 
+## 可视化辅助
+
+![[attachments/visuals/nyquist-aliasing.svg]]
+*图：Nyquist Aliasing*
+
 ## 来源
 - [[../50-learning/04-sensors|第4章 传感器]] §4.3 像元尺寸
 - [[../50-learning/04-sensors|第4章 传感器]] §4.5 分辨率与奈奎斯特极限

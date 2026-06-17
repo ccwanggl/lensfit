@@ -58,6 +58,11 @@ aliases: [fluorescence, 荧光现象, 光致发光]
 3. **荧光强度与浓度线性关系**：高浓度时自猝灭、内滤效应导致偏离线性。
 4. **荧光只来自有机分子**：无机量子点、半导体纳米材料也强烈荧光。
 
+## 可视化辅助
+
+![[attachments/visuals/fluorescence.svg]]
+*图：Fluorescence*
+
 ## 来源
 
 - Lakowicz, Principles of Fluorescence Spectroscopy, 3rd ed.
