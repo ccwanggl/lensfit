@@ -38,16 +38,34 @@ aliases:
 | **Excalidraw** | 手绘风格白板 | 把 SVG 图解复制到白板上，自己标注、推导、画变体 |
 | **Canvas** | Obsidian 原生画布 | 将章节、概念、公式、设备卡片拖拽成自己的知识地图 |
 | **Dataview** | 查询笔记元数据 | 按 `status`、`domain`、`type` 动态生成学习进度看板 |
-| **Graph Analysis** | 增强图谱分析 | 在 Obsidian 图谱中查看中心概念、孤岛笔记、连接强度 |
-| **Tag Wrangler** | 管理标签 | 给每个概念打上 `#visual` `#formula` `#device` 等标签，便于过滤 |
+| **Templater** | 笔记模板增强 | 一键创建带标准 frontmatter 的概念/公式/设备笔记 |
+| **Tasks** | 任务管理 | 把学习计划、待补充 stub、复习任务可视化 |
+| **Kanban** | 看板 | 把学习阶段排成看板，直观跟踪进度 |
+| **Advanced Tables** | 表格增强 | 整理参数对比、教材索引等表格 |
+| **Meta Bind** | 交互式 frontmatter | 用按钮/输入框快速修改笔记元数据 |
+| **Buttons** | 按钮组件 | 在笔记中插入「生成闪卡」「打开 Canvas」等快捷按钮 |
+| **Charts** | 数据图表 | 把 frontmatter 数据渲染成柱状图/折线图 |
 | **Spaced Repetition** | 闪卡复习 | 把公式、定义做成卡片，按遗忘曲线复习 |
-| **Breadcrumbs** | 层级导航 | 在笔记顶部显示「上级 → 同级 → 下级」路径，强化结构感 |
+| **Style Settings** | 主题微调 | 调整字体、行宽、颜色，优化阅读体验 |
+| **Copilot** | AI 辅助（可选） | 需要自行配置 API key，可用于概念解释和润色 |
 
 ### 安装建议
 
 1. 打开 Obsidian → 设置 → 社区插件 → 关闭安全模式。
 2. 浏览社区插件，安装上表中的插件。
-3. 在 `.obsidian/plugins/` 下安装后，**不要提交这些插件目录**（已在 `.gitignore` 中排除）。
+3. 在 `.obsidian/plugins/` 下安装后，**不要提交这些插件目录**（已在 `.gitignore` 中排除），尤其不要把 `copilot/data.json` 中的 API key 提交到仓库。
+
+### 已复刻的 Obsidian 配置
+
+本库 `.obsidian/` 已同步以下配置（来自另一个 EE 知识库）：
+
+- `app.json`：关闭删除确认、关闭 Readable line length，启用 `wide-reading-view` 片段。
+- `appearance.json`：启用 `wide-reading-view` CSS 片段。
+- `core-plugins.json`：开启/关闭的核心插件集合。
+- `community-plugins.json`：社区插件清单。
+- `snippets/wide-reading-view.css`：宽阅读视图样式，让编辑/预览区域更宽。
+
+> 如需完全一致的插件行为，还需在 Obsidian 中手动安装社区插件；配置文件中只包含插件清单和开关，不包含插件代码或个人 API key。
 
 ---
 
