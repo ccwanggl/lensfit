@@ -666,10 +666,20 @@ export async function runLabExperiment(id: string, params: Record<string, unknow
   });
 }
 
-export async function runWorkbench(scene: WorkbenchScene) {
+export async function runWorkbench(
+  scene: WorkbenchScene,
+  includeRayImage: boolean = false
+) {
   return apiFetch<LabRunResult>("/api/v1/lab/workbench/run", {
     method: "POST",
-    body: JSON.stringify({ scene }),
+    body: JSON.stringify({ scene, include_ray_image: includeRayImage }),
+  });
+}
+
+export async function renderWorkbenchRayImage(scene: WorkbenchScene) {
+  return apiFetch<{ image: string }>("/api/v1/lab/workbench/ray-image", {
+    method: "POST",
+    body: JSON.stringify(scene),
   });
 }
 

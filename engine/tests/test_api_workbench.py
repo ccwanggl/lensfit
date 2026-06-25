@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import pytest
+import shutil
+from pathlib import Path
 from fastapi.testclient import TestClient
 
 from lensfit.api import server as server_module
@@ -95,6 +97,15 @@ def test_workbench_run_default_scene(client: TestClient):
     assert result["data"]["central_max_width_mm"] == pytest.approx(
         baseline.data["central_max_width_mm"]
     )
+
+
+def test_workbench_run_does_not_include_ray_image_by_default(client: TestClient):
+    res = client.post("/api/v1/lab/workbench/run", json={"scene": _scene()})
+    assert res.status_code == 200
+    result = res.json()
+    ray = result["data"].get("ray_optics", {})
+    assert ray.get("available") is True
+    assert ray.get("image") is None
 
 
 def test_workbench_slit_width_decreases_central_max(client: TestClient):
@@ -244,3 +255,25 @@ def test_workbench_double_slit_invalid_returns_422(client: TestClient):
     ]
     res = client.post("/api/v1/lab/workbench/run", json={"scene": payload})
     assert res.status_code == 422
+
+
+NODE_AVAILABLE = shutil.which("node") is not None
+CANVAS_AVAILABLE = NODE_AVAILABLE and (
+    Path(__file__).resolve().parents[1]
+    / "third_party"
+    / "ray-optics"
+    / "node_modules"
+    / "canvas"
+    / "package.json"
+).exists()
+
+
+@pytest.mark.skipif(
+    not NODE_AVAILABLE or not CANVAS_AVAILABLE,
+    reason="Node.js / node-canvas not available",
+)
+def test_workbench_ray_image_endpoint(client: TestClient):
+    res = client.post("/api/v1/lab/workbench/ray-image", json=_scene())
+    assert res.status_code == 200
+    result = res.json()
+    assert result["image"].startswith("data:image/png;base64,")

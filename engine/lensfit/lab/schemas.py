@@ -38,3 +38,4 @@ class ExperimentRunResponse(BaseModel):
 
 class WorkbenchRunRequest(BaseModel):
     scene: SceneGraph
+    include_ray_image: bool = False

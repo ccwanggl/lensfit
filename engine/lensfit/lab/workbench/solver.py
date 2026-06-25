@@ -21,7 +21,9 @@ class WorkbenchSolver:
     dispatch here without changing the SceneGraph model.
     """
 
-    def solve(self, scene: SceneGraph) -> ExperimentResult:
+    def solve(
+        self, scene: SceneGraph, *, include_ray_image: bool = False
+    ) -> ExperimentResult:
         if not scene.observables:
             raise ValueError("SceneGraph must contain at least one observable")
 
@@ -50,7 +52,9 @@ class WorkbenchSolver:
 
         if observable.type == "fraunhofer_intensity":
             try:
-                ray_data = run_ray_optics(scene)
+                ray_data = run_ray_optics(
+                    scene, include_image=include_ray_image
+                )
                 result.data["ray_optics"] = ray_data
             except RayOpticsError as exc:
                 result.warnings.append(

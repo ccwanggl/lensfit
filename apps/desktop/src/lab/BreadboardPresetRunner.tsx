@@ -1,6 +1,8 @@
 import { lazy, Suspense, useState } from "react";
-import { BarChart3, Box, Loader2 } from "lucide-react";
-import type { LabRunResult } from "../utils/api";
+import { BarChart3, Box, Loader2, ScanLine } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { renderWorkbenchRayImage, type LabRunResult } from "../utils/api";
+import type { RayOpticsData, WorkbenchScene } from "./workbenchTypes";
 
 const Breadboard3DCanvas = lazy(() =>
   import("./Breadboard3DCanvas").then((m) => ({ default: m.Breadboard3DCanvas }))
@@ -10,15 +12,32 @@ interface BreadboardPresetRunnerProps {
   result?: LabRunResult;
   isFetching: boolean;
   presetId?: string;
+  scene?: WorkbenchScene;
 }
 
 export function BreadboardPresetRunner({
   result,
   isFetching,
   presetId,
+  scene,
 }: BreadboardPresetRunnerProps) {
-  const [view, setView] = useState<"3d" | "2d">("3d");
+  const [view, setView] = useState<"3d" | "2d" | "ray">("3d");
   const isDoubleSlit = presetId === "double-slit-breadboard";
+  const resultRayImage = (result?.data?.ray_optics as RayOpticsData | undefined)
+    ?.image;
+
+  const {
+    data: rayImageData,
+    isFetching: isRayImageFetching,
+    error: rayImageError,
+  } = useQuery({
+    queryKey: ["workbench-ray-image", scene],
+    queryFn: () => renderWorkbenchRayImage(scene!),
+    enabled: view === "ray" && !!scene,
+    staleTime: 0,
+  });
+
+  const rayImage = rayImageData?.image ?? resultRayImage;
 
   return (
     <div className="space-y-4">
@@ -50,6 +69,17 @@ export function BreadboardPresetRunner({
               <BarChart3 size={13} />
               2D 曲线
             </button>
+            <button
+              onClick={() => setView("ray")}
+              className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+                view === "ray"
+                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
+                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+              }`}
+            >
+              <ScanLine size={13} />
+              光路图
+            </button>
           </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
@@ -69,7 +99,9 @@ export function BreadboardPresetRunner({
         <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
           {view === "3d"
             ? "3D 场景中可拖拽旋转、滚轮缩放；屏幕颜色表示相对光强分布。"
-            : "下方曲线为波动光学计算得到的相对强度分布。"}
+            : view === "2d"
+            ? "下方曲线为波动光学计算得到的相对强度分布。"
+            : "下方为 ray-optics 生成的几何光学光路图（需 node-canvas）。"}
         </p>
       </div>
 
@@ -87,7 +119,7 @@ export function BreadboardPresetRunner({
             isFetching={isFetching}
           />
         </Suspense>
-      ) : (
+      ) : view === "2d" ? (
         <div
           className={`transition-opacity duration-200 ${
             isFetching ? "opacity-60" : "opacity-100"
@@ -95,6 +127,41 @@ export function BreadboardPresetRunner({
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: result?.svg ?? "" }}
         />
+      ) : (
+        <div
+          className={`flex h-96 items-center justify-center rounded-lg border border-slate-200 bg-slate-950 transition-opacity duration-200 dark:border-slate-700 ${
+            isFetching || isRayImageFetching ? "opacity-60" : "opacity-100"
+          }`}
+        >
+          {isRayImageFetching ? (
+            <div className="text-center text-sm text-slate-400">
+              <Loader2 className="mx-auto mb-2 animate-spin text-indigo-500" size={24} />
+              <p>正在生成几何光路图…</p>
+            </div>
+          ) : rayImageError ? (
+            <div className="text-center text-sm text-red-400">
+              <p>光路图生成失败</p>
+              <p className="mt-1 text-xs">
+                {rayImageError instanceof Error
+                  ? rayImageError.message
+                  : String(rayImageError)}
+              </p>
+            </div>
+          ) : rayImage ? (
+            <img
+              src={rayImage}
+              alt="ray-optics 几何光路图"
+              className="max-h-full max-w-full object-contain"
+            />
+          ) : (
+            <div className="text-center text-sm text-slate-400">
+              <p>暂无 ray-optics 光路图</p>
+              <p className="mt-1 text-xs">
+                需要在 engine/third_party/ray-optics 目录安装 node-canvas
+              </p>
+            </div>
+          )}
+        </div>
       )}
 
       {isFetching && (

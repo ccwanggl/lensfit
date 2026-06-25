@@ -34,6 +34,7 @@ export interface RayOpticsSample {
 export interface RayOpticsData {
   available: boolean;
   samples?: RayOpticsSample[];
+  image?: string;
   power?: number;
   normal?: number;
   warning?: string | null;

@@ -8,6 +8,7 @@ gracefully integrates with the workbench solver.
 from __future__ import annotations
 
 import shutil
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -24,6 +25,14 @@ from lensfit.lab.workbench.ray_optics_sidecar import (
 from lensfit.lab.workbench.solver import WorkbenchSolver
 
 NODE_AVAILABLE = shutil.which("node") is not None
+CANVAS_AVAILABLE = NODE_AVAILABLE and (
+    Path(__file__).resolve().parents[1]
+    / "third_party"
+    / "ray-optics"
+    / "node_modules"
+    / "canvas"
+    / "package.json"
+).exists()
 
 
 def _single_slit_scene(
@@ -164,6 +173,23 @@ def test_adapter_generates_valid_double_slit_scene():
     assert types == {"PointSource", "Blocker", "Detector"}
 
 
+def test_adapter_omits_cropbox_by_default_even_when_canvas_available():
+    scene = _single_slit_scene()
+    ro_scene = to_ray_optics_scene(scene)
+    has_cropbox = any(obj.get("type") == "CropBox" for obj in ro_scene["objs"])
+    assert not has_cropbox, "CropBox should be opt-in"
+
+
+def test_adapter_includes_cropbox_when_explicitly_requested():
+    scene = _single_slit_scene()
+    ro_scene = to_ray_optics_scene(scene, include_image=True)
+    has_cropbox = any(obj.get("type") == "CropBox" for obj in ro_scene["objs"])
+    if CANVAS_AVAILABLE:
+        assert has_cropbox, "CropBox should be added when include_image=True and node-canvas is installed"
+    else:
+        assert not has_cropbox, "CropBox should be omitted when node-canvas is absent"
+
+
 def test_scenegraph_fixture_remains_neutral():
     """SceneGraph v1 must not contain any ray-optics type names."""
     scene = _single_slit_scene()
@@ -180,7 +206,7 @@ def test_scenegraph_fixture_remains_neutral():
 
 
 @pytest.mark.skipif(not NODE_AVAILABLE, reason="Node.js not available")
-def test_single_slit_runs_and_normalizes():
+def test_single_slit_runs_and_normalizes_without_image_by_default():
     scene = _single_slit_scene()
     data = run_ray_optics(scene)
 
@@ -189,10 +215,11 @@ def test_single_slit_runs_and_normalizes():
     assert len(samples) > 0
     assert all(0.0 <= s["intensity"] <= 1.0 for s in samples)
     assert data["power"] > 0
+    assert data["image"] is None
 
 
 @pytest.mark.skipif(not NODE_AVAILABLE, reason="Node.js not available")
-def test_double_slit_runs_and_normalizes():
+def test_double_slit_runs_and_normalizes_without_image_by_default():
     scene = _double_slit_scene()
     data = run_ray_optics(scene)
 
@@ -201,16 +228,58 @@ def test_double_slit_runs_and_normalizes():
     assert len(samples) > 0
     assert all(0.0 <= s["intensity"] <= 1.0 for s in samples)
     assert data["power"] > 0
+    assert data["image"] is None
+
+
+@pytest.mark.skipif(
+    not NODE_AVAILABLE or not CANVAS_AVAILABLE,
+    reason="Node.js / node-canvas not available",
+)
+def test_single_slit_image_is_generated_when_requested():
+    scene = _single_slit_scene()
+    data = run_ray_optics(scene, include_image=True)
+
+    assert data["available"] is True
+    assert data["image"] is not None
+    assert data["image"].startswith("data:image/png;base64,")
+
+
+@pytest.mark.skipif(
+    not NODE_AVAILABLE or not CANVAS_AVAILABLE,
+    reason="Node.js / node-canvas not available",
+)
+def test_double_slit_image_is_generated_when_requested():
+    scene = _double_slit_scene()
+    data = run_ray_optics(scene, include_image=True)
+
+    assert data["available"] is True
+    assert data["image"] is not None
+    assert data["image"].startswith("data:image/png;base64,")
 
 
 @pytest.mark.skipif(not NODE_AVAILABLE, reason="Node.js not available")
-def test_solver_includes_ray_optics_result():
+def test_solver_includes_ray_optics_result_without_image_by_default():
     solver = WorkbenchSolver()
     result = solver.solve(_single_slit_scene())
 
     assert "ray_optics" in result.data
     assert result.data["ray_optics"]["available"] is True
     assert len(result.data["ray_optics"]["samples"]) > 0
+    assert result.data["ray_optics"].get("image") is None
+
+
+@pytest.mark.skipif(
+    not NODE_AVAILABLE or not CANVAS_AVAILABLE,
+    reason="Node.js / node-canvas not available",
+)
+def test_solver_includes_ray_image_when_requested():
+    solver = WorkbenchSolver()
+    result = solver.solve(_single_slit_scene(), include_ray_image=True)
+
+    assert "ray_optics" in result.data
+    assert result.data["ray_optics"]["available"] is True
+    assert result.data["ray_optics"]["image"] is not None
+    assert result.data["ray_optics"]["image"].startswith("data:image/png;base64,")
 
 
 def test_solver_gracefully_handles_missing_ray_optics(monkeypatch):

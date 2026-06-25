@@ -7,6 +7,7 @@ only place where third-party ray-optics type names such as ``PointSource``,
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from lensfit.lab.workbench import SceneGraph
@@ -38,22 +39,38 @@ _BIN_SIZE_MM = 0.05
 # Scene-level ray density. Higher values sample tiny apertures better but
 # increase runtime roughly linearly. The chosen value is a compromise that
 # still produces a usable curve for 1 μm slits after the y-scale trick.
-_RAY_MODE_DENSITY = 10
+_RAY_MODE_DENSITY = 5
 
 
 def _um_to_mm(value_um: float) -> float:
     return float(value_um) / 1000.0
 
 
+def _runner_dir() -> Path:
+    return Path(__file__).resolve().parents[3] / "third_party" / "ray-optics"
+
+
+def _has_node_canvas() -> bool:
+    """Return True if the runner directory has node-canvas installed."""
+    return (_runner_dir() / "node_modules" / "canvas" / "package.json").exists()
+
+
 def _blocker(x: float, y1: float, y2: float) -> dict[str, Any]:
     return {"type": "Blocker", "p1": {"x": x, "y": y1}, "p2": {"x": x, "y": y2}}
 
 
-def to_ray_optics_scene(scene: SceneGraph) -> dict[str, Any]:
+def to_ray_optics_scene(
+    scene: SceneGraph, *, include_image: bool = False
+) -> dict[str, Any]:
     """Convert a SceneGraph v1 into a ray-optics JSON scene.
 
     The returned dict is safe to pass to :class:`RayOpticsSidecar` (it contains
     no file paths or URLs).
+
+    Args:
+        scene: The SceneGraph v1 to convert.
+        include_image: If True (and node-canvas is installed), append a
+            ``CropBox`` object so the runner also emits a rendered PNG.
     """
     source = scene._component_by_category("source")
     aperture = scene._component_by_category("aperture")
@@ -87,6 +104,7 @@ def to_ray_optics_scene(scene: SceneGraph) -> dict[str, Any]:
     if aperture.spec_id == "single-slit":
         half_width_mm = _um_to_mm(float(params.get("slit_width_um", 50.0)))
         half_scaled = half_width_mm * _Y_SCALE
+        aperture_extent_y = half_scaled
         objs.append(
             _blocker(
                 aperture_x_mm,
@@ -106,6 +124,7 @@ def to_ray_optics_scene(scene: SceneGraph) -> dict[str, Any]:
         half_sep_mm = _um_to_mm(float(params.get("slit_separation_um", 100.0))) / 2.0
         half_width_scaled = half_width_mm * _Y_SCALE
         half_sep_scaled = half_sep_mm * _Y_SCALE
+        aperture_extent_y = half_sep_scaled + half_width_scaled
 
         lower_center = aperture_y_scaled - half_sep_scaled
         upper_center = aperture_y_scaled + half_sep_scaled
@@ -154,6 +173,20 @@ def to_ray_optics_scene(scene: SceneGraph) -> dict[str, Any]:
         }
     )
 
+    # If explicitly requested and node-canvas is available, ask the runner to
+    # render a 2D ray diagram. The crop region covers the source-to-screen
+    # optical axis with enough vertical margin to show the geometric light cone.
+    if include_image and _has_node_canvas():
+        crop_half_y_scaled = max(500.0, aperture_extent_y + 200.0)
+        objs.append(
+            {
+                "type": "CropBox",
+                "p1": {"x": -50.0, "y": -crop_half_y_scaled},
+                "p4": {"x": screen_x_mm + 50.0, "y": crop_half_y_scaled},
+                "width": 640,
+            }
+        )
+
     return {
         "version": 5,
         "rayModeDensity": _RAY_MODE_DENSITY,
@@ -190,7 +223,10 @@ def _normalize_detector(
 
 
 def run_ray_optics(
-    scene: SceneGraph, sidecar: RayOpticsSidecar | None = None
+    scene: SceneGraph,
+    sidecar: RayOpticsSidecar | None = None,
+    *,
+    include_image: bool = False,
 ) -> dict[str, Any]:
     """Run a SceneGraph through the ray-optics sidecar and normalize the result.
 
@@ -199,13 +235,15 @@ def run_ray_optics(
     - ``available``: True
     - ``samples``: list of ``{y_mm, intensity}`` normalized to [0, 1]
     - ``power``, ``normal``: raw detector integrals
+    - ``image``: base64 PNG data URL of the 2D ray diagram (only when
+      ``include_image`` is True and node-canvas is installed), otherwise ``None``
     - ``warning``: runner-level warning, if any
 
     Raises the same exceptions as :class:`RayOpticsSidecar` when the sidecar
     cannot produce a usable result.
     """
     sidecar = sidecar or RayOpticsSidecar()
-    ray_scene = to_ray_optics_scene(scene)
+    ray_scene = to_ray_optics_scene(scene, include_image=include_image)
     result = sidecar.run(ray_scene)
 
     if not result.detectors:
@@ -217,4 +255,5 @@ def run_ray_optics(
     )
     data["available"] = True
     data["warning"] = result.warning
+    data["image"] = result.images[0]["dataUrl"] if result.images else None
     return data

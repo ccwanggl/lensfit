@@ -29,6 +29,7 @@ import { BreadboardPresetRunner } from "./BreadboardPresetRunner";
 import {
   getBreadboardPreset,
   isBreadboardPreset,
+  type WorkbenchScene,
   validatePresetParams,
   WAVELENGTH_PRESETS,
 } from "./workbenchTypes";
@@ -90,6 +91,11 @@ export default function LearningHub() {
   const [activeTab, setActiveTab] = useState<TabId>("visual");
   const debounceRef = useRef<number | null>(null);
 
+  const workbenchScene: WorkbenchScene | null = useMemo(() => {
+    if (!isPreset || !preset) return null;
+    return preset.buildScene(liveParams);
+  }, [isPreset, preset, liveParams]);
+
   useEffect(() => {
     setParams(initialParams);
     const error =
@@ -109,12 +115,16 @@ export default function LearningHub() {
   } = useQuery({
     queryKey: ["lab-run", activeExperimentId, liveParams],
     queryFn: () => {
-      if (isPreset && preset) {
-        return runWorkbench(preset.buildScene(liveParams));
+      if (isPreset && workbenchScene) {
+        return runWorkbench(workbenchScene, false);
       }
       return runLabExperiment(activeExperimentId!, liveParams);
     },
-    enabled: !!activeExperimentId && !!experiment && sceneError === null,
+    enabled:
+      !!activeExperimentId &&
+      !!experiment &&
+      sceneError === null &&
+      (!isPreset || !!workbenchScene),
   });
 
   const handleSelectExperiment = (id: string) => {
@@ -369,6 +379,7 @@ export default function LearningHub() {
                         result={result}
                         isFetching={isFetching}
                         presetId={activeExperimentId ?? undefined}
+                        scene={workbenchScene ?? undefined}
                       />
                     ) : (
                       <div className="space-y-4">
