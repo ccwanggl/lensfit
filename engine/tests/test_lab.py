@@ -12,6 +12,7 @@ from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
 from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
 from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
+from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
 from lensfit.lab.experiments.thin_lens import ThinLensExperiment
@@ -151,6 +152,29 @@ class TestNyquistSamplingExperiment:
         assert result.data["status"] == "过度采样"
 
 
+class TestSnellRefractionExperiment:
+    def test_default_air_to_glass(self):
+        exp = SnellRefractionExperiment()
+        result = exp.run({})
+        assert result.data["refracted_angle_deg"] == pytest.approx(19.47, rel=1e-3)
+        assert result.data["reflectance"] == pytest.approx(0.0415, rel=1e-3)
+        _assert_svg(result.svg)
+
+    def test_total_internal_reflection(self):
+        exp = SnellRefractionExperiment()
+        result = exp.run({"incident_angle_deg": 60, "n1": 1.5, "n2": 1.0})
+        assert result.data["total_internal_reflection"] is True
+        assert result.data["refracted_angle_deg"] is None
+        assert result.data["reflectance"] == pytest.approx(1.0, rel=1e-6)
+        assert result.warnings
+
+    def test_normal_incidence_reflectance(self):
+        exp = SnellRefractionExperiment()
+        result = exp.run({"incident_angle_deg": 0, "n1": 1.0, "n2": 1.5})
+        expected = ((1.0 - 1.5) / (1.0 + 1.5)) ** 2
+        assert result.data["reflectance"] == pytest.approx(expected, rel=1e-6)
+
+
 class TestDepthOfFieldExperiment:
     def test_default_run(self):
         exp = DepthOfFieldExperiment()
@@ -191,6 +215,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        SnellRefractionExperiment,
         NyquistSamplingExperiment,
         DepthOfFieldExperiment,
         MagnificationScaleExperiment,

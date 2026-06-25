@@ -73,3 +73,7 @@ aliases: [dispersion, 色散现象, 光谱色散]---
 
 - 光学工程教材，第 1 章（折射）与第 16 章（分光技术）
 - Hecht, Optics, 5th ed., Chapter 5
+
+## 关联实验
+
+- [[90-maps/Optics Lab#snell-refraction|斯涅尔定律与全反射实验]] — 改变入射角和两种介质的折射率，观察折射、反射和全反射现象。

@@ -39,6 +39,13 @@ aliases:
 - **学习目标**: 理解放大倍率 β = f / (WD - f) 的物理意义。, 认识像素精度 = 像元尺寸 / |β|。, 估算物体特征在成像平面上占据的像素数。
 - **关联笔记**: [[10-concepts/像素精度|像素精度]], [[10-concepts/工作距离|工作距离]], [[10-concepts/focal-length|focal-length]], [[20-formulas/lateral-magnification|lateral-magnification]], [[20-formulas/pixel-precision|pixel-precision]], [[20-formulas/focal-length-from-wd|focal-length-from-wd]]
 
+### 斯涅尔定律与全反射实验
+
+- **难度**: 基础
+- **说明**: 改变入射角和两种介质的折射率，观察折射、反射和全反射现象。
+- **学习目标**: 掌握 n₁ sin θ₁ = n₂ sin θ₂ 的折射定律。, 认识光从光密介质到光疏介质时的全反射临界角。, 了解反射率随入射角的变化趋势。
+- **关联笔记**: [[10-concepts/refractive-index|refractive-index]], [[10-concepts/dispersion|dispersion]], [[10-concepts/色散|色散]]
+
 ### 景深实验
 
 - **难度**: 基础

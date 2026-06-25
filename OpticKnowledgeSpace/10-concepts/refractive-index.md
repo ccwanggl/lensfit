@@ -67,3 +67,7 @@ $$
 ## 来源
 - [[../50-learning/01-light-and-waves|第1章 光与波]] §1.4 折射定律
 - [[../50-learning/06-aberrations|第6章 像差]]（色散与色差）
+
+## 关联实验
+
+- [[90-maps/Optics Lab#snell-refraction|斯涅尔定律与全反射实验]] — 改变入射角和两种介质的折射率，观察折射、反射和全反射现象。
