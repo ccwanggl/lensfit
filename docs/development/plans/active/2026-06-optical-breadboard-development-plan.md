@@ -221,6 +221,25 @@ python build_sidecar.py
 - screen 与 slit 的 x 距离可推导为 `screen_distance_m`。
 - `rotation_deg` 第一阶段只允许 `0`；其他值给 warning 或校验失败。
 
+**完成状态：已完成**。
+
+实际完成内容：
+
+- 新增 `engine/lensfit/lab/workbench/` 包：
+  - `scene.py`：`SceneGraph`、`Component`、`Transform`、`Observable`、`Units` 等 Pydantic 模型。
+  - `equipment.py`：最小内存设备目录（`laser-monochrome`、`single-slit`、`screen`）。
+  - `__init__.py`：公共导出。
+- 校验规则全部落地：
+  - `version` 必须为 `1`。
+  - `components[].id` 唯一。
+  - `spec_id` 为 LensFit 语义字面量，拒绝 `SingleRay` 等第三方类型名。
+  - 必须且只能有一个 `source`、一个 `aperture`、一个 `screen`。
+  - `rotation_deg` 必须为 `0`。
+  - observable 引用的组件 id 必须存在。
+  - `screen_distance_m()` 从 `screen.x_mm - aperture.x_mm` 推导，要求 `screen` 在 `aperture` 右侧。
+- 新增 `engine/tests/test_workbench_scene.py`（11 个测试全部通过）。
+- 全量测试：`131 passed, 4 warnings`。
+
 验证命令：
 
 ```powershell
