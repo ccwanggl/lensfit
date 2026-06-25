@@ -140,14 +140,16 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     const drawWidth = cssWidth - padding.left - padding.right;
     const drawHeight = cssHeight - padding.top - padding.bottom;
 
-    const sceneXMin = -20;
-    const sceneXMax = info.screenX + 20;
-    const xScale = drawWidth / (sceneXMax - sceneXMin);
+    // Fixed horizontal range so that moving the screen only moves the screen
+    // line and changes ray lengths; the aperture/source sizes stay constant.
+    const SCENE_X_MIN = -50;
+    const SCENE_X_MAX = 3050;
+    const xScale = drawWidth / (SCENE_X_MAX - SCENE_X_MIN);
 
     // Vertical exaggeration: the real optical layout is very flat (slits are
     // microns, distances are millimeters). We exaggerate Y so the rays and
     // slit openings are visually distinguishable.
-    const toCanvasX = (x: number) => padding.left + (x - sceneXMin) * xScale;
+    const toCanvasX = (x: number) => padding.left + (x - SCENE_X_MIN) * xScale;
     const toCanvasY = (y: number) =>
       padding.top + drawHeight / 2 - (y - info.screenY * 0) * xScale * yExaggeration;
     // Note: we center on the aperture/source axis; screenY offset is handled
@@ -158,8 +160,8 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     // Background grid
     ctx.strokeStyle = "rgba(148, 163, 184, 0.15)";
     ctx.lineWidth = 1;
-    const xGridStep = 100;
-    for (let gx = Math.ceil(sceneXMin / xGridStep) * xGridStep; gx <= sceneXMax; gx += xGridStep) {
+    const xGridStep = 500;
+    for (let gx = Math.ceil(SCENE_X_MIN / xGridStep) * xGridStep; gx <= SCENE_X_MAX; gx += xGridStep) {
       ctx.beginPath();
       ctx.moveTo(toCanvasX(gx), padding.top);
       ctx.lineTo(toCanvasX(gx), cssHeight - padding.bottom);
@@ -170,8 +172,8 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     ctx.strokeStyle = "rgba(148, 163, 184, 0.4)";
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
-    ctx.moveTo(toCanvasX(sceneXMin), toCanvasY(0));
-    ctx.lineTo(toCanvasX(sceneXMax), toCanvasY(0));
+    ctx.moveTo(toCanvasX(SCENE_X_MIN), toCanvasY(0));
+    ctx.lineTo(toCanvasX(SCENE_X_MAX), toCanvasY(0));
     ctx.stroke();
     ctx.setLineDash([]);
 
