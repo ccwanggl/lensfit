@@ -14,6 +14,7 @@ from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperi
 from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.double_slit import DoubleSlitExperiment
+from lensfit.lab.experiments.grating import GratingExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -172,6 +173,31 @@ class TestChromaticAberrationExperiment:
         assert low_v > high_v
 
 
+class TestGratingExperiment:
+    def test_default_run(self):
+        exp = GratingExperiment()
+        result = exp.run({})
+        assert any(o["order"] == 0 for o in result.data["orders"])
+        assert any(o["order"] == 1 for o in result.data["orders"])
+        _assert_svg(result.svg)
+
+    def test_zero_order_unchanged_by_wavelength(self):
+        exp = GratingExperiment()
+        a = exp.run({"wavelength_nm": 450}).data["orders"]
+        b = exp.run({"wavelength_nm": 650}).data["orders"]
+        a_zero = next(o for o in a if o["order"] == 0)
+        b_zero = next(o for o in b if o["order"] == 0)
+        assert a_zero["angle_deg"] == b_zero["angle_deg"]
+
+    def test_higher_density_increases_angles(self):
+        exp = GratingExperiment()
+        low_g = exp.run({"groove_density_l_mm": 300}).data["orders"]
+        high_g = exp.run({"groove_density_l_mm": 1200}).data["orders"]
+        low_first = next(o for o in low_g if o["order"] == 1)
+        high_first = next(o for o in high_g if o["order"] == 1)
+        assert abs(high_first["angle_deg"]) > abs(low_first["angle_deg"])
+
+
 class TestDoubleSlitExperiment:
     def test_default_run(self):
         exp = DoubleSlitExperiment()
@@ -296,6 +322,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        GratingExperiment,
         DoubleSlitExperiment,
         SingleSlitDiffractionExperiment,
         PolarizationMalusExperiment,

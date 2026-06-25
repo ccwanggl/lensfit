@@ -65,3 +65,7 @@ aliases: [spectral-resolution, 分辨本领]---
 
 - 光学工程教材，第 16 章 光谱学
 - 光谱仪厂商技术手册（Ocean Insight、Avantes）
+
+## 关联实验
+
+- [[90-maps/Optics Lab#grating|光栅方程与光谱级次实验]] — 改变光栅刻线密度、波长和入射角，观察哪些衍射级次可以被接收到。

@@ -74,6 +74,13 @@ aliases:
 - **学习目标**: 理解视角同时取决于焦距和传感器尺寸。, 比较同一焦距在不同传感器上的视野差异。
 - **关联笔记**: [[10-concepts/focal-length|focal-length]], [[10-concepts/焦距|焦距]], [[20-formulas/angle-of-view|angle-of-view]]
 
+### 光栅方程与光谱级次实验
+
+- **难度**: 进阶
+- **说明**: 改变光栅刻线密度、波长和入射角，观察哪些衍射级次可以被接收到。
+- **学习目标**: 掌握光栅方程 d(sin θ_i + sin θ_m) = m λ。, 理解刻线密度越高，同级衍射角越大。, 观察不同级次如何把同一波长导向不同方向。
+- **关联笔记**: [[10-concepts/diffraction-grating|diffraction-grating]], [[10-concepts/spectral-resolution|spectral-resolution]]
+
 ### 单缝衍射实验
 
 - **难度**: 进阶
