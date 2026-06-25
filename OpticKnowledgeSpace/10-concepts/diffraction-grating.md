@@ -32,14 +32,10 @@ where \(\lambda\) is the wavelength and \(m\) is an integer (the diffraction ord
 - **Angular dispersion** \(d\theta/d\lambda = m / (d \cos\theta_m)\) increases with order and groove density.
 - **Resolving power** is approximately \(R = mN\), where \(N\) is the total number of illuminated grooves.
 
-## Related experiments
-
-- [[90-maps/Optics Lab#grating|光栅方程与光谱级次实验]] — change groove density, wavelength, and incident angle to observe accessible diffraction orders.
-
 ## See also
 
 - [[10-concepts/衍射光栅|衍射光栅 (中文)]]
 
 ## 关联实验
 
-- [[90-maps/Optics Lab#grating|光栅方程与光谱级次实验]] — 改变光栅刻线密度、波长和入射角，观察哪些衍射级次可以被接收到。
+- [[90-maps/Optics Lab#光栅方程与光谱级次实验|光栅方程与光谱级次实验]] — 改变光栅刻线密度、波长和入射角，观察哪些衍射级次可以被接收到。

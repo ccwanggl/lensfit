@@ -75,4 +75,5 @@ aliases: [color-temperature, CCT, 相关色温, correlated-color-temperature]---
 
 ## 关联实验
 
-- [[90-maps/Optics Lab#color-mixing|光谱混色实验]] — 混合两种单色光，观察合成光谱和感知颜色。
+- [[90-maps/Optics Lab#黑体辐射与色温实验|黑体辐射与色温实验]] — 改变黑体温度，观察光谱辐射分布、峰值波长和感知颜色如何变化。
+- [[90-maps/Optics Lab#光谱混色实验|光谱混色实验]] — 混合两种单色光，观察合成光谱和感知颜色。

@@ -9,12 +9,17 @@ status: maintained
 
 存放稳定、可复用的领域概念。每个概念应尽量说明定义、适用范围、边界条件和关联概念。
 
+## 命名与入口
+
+概念文件优先使用英文 slug 作为稳定链接目标，例如 `focal-length.md`、`diffraction-limit.md`。中文检索需要保留时，可以维护同名中文镜像页，但镜像页应指向稳定 slug，避免两份内容长期分叉。
+
 ## 已收录概念
 
 | 概念 | 文件 | 核心定义 |
 |------|------|---------|
 | **折射率** | [[refractive-index|refractive-index.md]] | 光在介质中速度的比值 |
 | **艾里斑** | [[airy-disk|airy-disk.md]] | 圆孔衍射的极限光斑 |
+| **衍射极限** | [[diffraction-limit|diffraction-limit.md]] | 理想系统仍受波动衍射限制的分辨率上限 |
 | **焦距** | [[focal-length|focal-length.md]] | 平行光汇聚点到透镜中心的距离 |
 | **F值** | [[f-number|f-number.md]] | F# = f/D，无量纲光圈值 |
 | **景深** | [[depth-of-field|depth-of-field.md]] | 图像保持可接受清晰的范围 |
@@ -23,6 +28,9 @@ status: maintained
 | **像元** | [[pixel|pixel.md]] | 传感器的最小光敏单元 |
 | **混叠** | [[aliasing|aliasing.md]] | 采样频率不足导致的虚假信号 |
 | **色差** | [[chromatic-aberration|chromatic-aberration.md]] | 不同波长光聚焦位置不同 |
+| **偏振** | [[polarization|polarization.md]] | 光波电场矢量振动方向的状态 |
+| **干涉** | [[interference|interference.md]] | 多束相干光叠加形成强弱分布 |
+| **衍射光栅** | [[diffraction-grating|diffraction-grating.md]] | 利用周期结构让不同波长按角度分离 |
 
 ### 光谱与色彩概念
 
@@ -49,7 +57,6 @@ status: maintained
 
 以下概念在设备或公式笔记中已经被反复提到，但尚未拆成独立原子笔记。后续应按使用频率逐步补齐：
 
-- 工作距离、视场、视角、放大倍率
-- 数值孔径、衍射极限、瑞利判据
-- 法兰距、渐晕、均匀性、动态范围
-- NETD、发射率、微测辐射热计
+- 将已有中文 stub 中的内容补到稳定 slug 页：工作距离、视场、视角、放大倍率、数值孔径、瑞利判据。
+- 为照明相关概念建立稳定 slug：照明方式、同轴照明、低角度照明、镜面反射、漫射。
+- 为传感器与红外概念补充来源和边界：动态范围、NETD、发射率、微测辐射热计。

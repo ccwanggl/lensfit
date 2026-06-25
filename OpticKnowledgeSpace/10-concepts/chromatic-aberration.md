@@ -71,4 +71,4 @@ aliases: [Chromatic Aberration, CA, 色散像差, 轴向色差, 倍率色差]---
 
 ## 关联实验
 
-- [[90-maps/Optics Lab#chromatic-aberration|轴向色差实验]] — 给定镜头焦距和阿贝数，观察不同波长（红/绿/蓝）焦点沿光轴的分离。
+- [[90-maps/Optics Lab#轴向色差实验|轴向色差实验]] — 给定镜头焦距和阿贝数，观察不同波长（红/绿/蓝）焦点沿光轴的分离。

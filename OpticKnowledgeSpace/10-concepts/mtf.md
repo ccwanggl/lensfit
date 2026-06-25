@@ -45,4 +45,4 @@ where modulation is \(M = (I_{\max} - I_{\min}) / (I_{\max} + I_{\min})\).
 
 ## 关联实验
 
-- [[90-maps/Optics Lab#mtf-explorer|MTF/OTF 探索实验]] — 合成衍射极限 MTF、离焦模糊 MTF 与总 MTF，并观察对应的 PSF。
+- [[90-maps/Optics Lab#MTF/OTF 探索实验|MTF/OTF 探索实验]] — 合成衍射极限 MTF、离焦模糊 MTF 与总 MTF，并观察对应的 PSF。

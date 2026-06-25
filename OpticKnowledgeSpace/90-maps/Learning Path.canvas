@@ -1,343 +1,47 @@
 {
-  "nodes": [
-    {
-      "id": "title",
-      "type": "text",
-      "text": "# LensFit 学习路径\n\n按阶段拖动浏览，点击卡片进入对应章节。",
-      "x": -600,
-      "y": -200,
-      "width": 500,
-      "height": 150
-    },
-    {
-      "id": "ch0",
-      "type": "file",
-      "file": "50-learning/00-introduction.md",
-      "x": -400,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch1",
-      "type": "file",
-      "file": "50-learning/01-light-and-waves.md",
-      "x": -180,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch2",
-      "type": "file",
-      "file": "50-learning/02-geometric-optics.md",
-      "x": 40,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch3",
-      "type": "file",
-      "file": "50-learning/03-lens-parameters.md",
-      "x": 260,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch4",
-      "type": "file",
-      "file": "50-learning/04-sensors.md",
-      "x": 480,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch5",
-      "type": "file",
-      "file": "50-learning/05-matching-basics.md",
-      "x": 700,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch6",
-      "type": "file",
-      "file": "50-learning/06-aberrations.md",
-      "x": 920,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch7",
-      "type": "file",
-      "file": "50-learning/07-interfaces-and-mounts.md",
-      "x": 1140,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch8",
-      "type": "file",
-      "file": "50-learning/08-domain-applications.md",
-      "x": 1360,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch9",
-      "type": "file",
-      "file": "50-learning/09-exercises.md",
-      "x": 1580,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch10",
-      "type": "file",
-      "file": "50-learning/10-physical-optics-advanced.md",
-      "x": 600,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch11",
-      "type": "file",
-      "file": "50-learning/11-optical-design-basics.md",
-      "x": 820,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch12",
-      "type": "file",
-      "file": "50-learning/12-otf-and-image-quality.md",
-      "x": 1840,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch13",
-      "type": "file",
-      "file": "50-learning/13-illumination-design.md",
-      "x": 2060,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch14",
-      "type": "file",
-      "file": "50-learning/14-computational-optics.md",
-      "x": 2780,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch15",
-      "type": "file",
-      "file": "50-learning/15-engineering-cases.md",
-      "x": 3600,
-      "y": 280,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "ch16",
-      "type": "file",
-      "file": "50-learning/16-spectroscopy.md",
-      "x": 4720,
-      "y": 80,
-      "width": 180,
-      "height": 120
-    },
-    {
-      "id": "phase-入门",
-      "type": "text",
-      "text": "<h2 style='color:#dcfce7;border-left:6px solid #dcfce7;padding-left:8px'>入门阶段</h2>",
-      "x": -400,
-      "y": -120,
-      "width": 200,
-      "height": 60
-    },
-    {
-      "id": "phase-匹配",
-      "type": "text",
-      "text": "<h2 style='color:#dbeafe;border-left:6px solid #dbeafe;padding-left:8px'>匹配阶段</h2>",
-      "x": 600,
-      "y": -120,
-      "width": 200,
-      "height": 60
-    },
-    {
-      "id": "phase-像质",
-      "type": "text",
-      "text": "<h2 style='color:#fce7f3;border-left:6px solid #fce7f3;padding-left:8px'>像质阶段</h2>",
-      "x": 1400,
-      "y": -120,
-      "width": 200,
-      "height": 60
-    },
-    {
-      "id": "phase-工程",
-      "type": "text",
-      "text": "<h2 style='color:#fef9c3;border-left:6px solid #fef9c3;padding-left:8px'>工程阶段</h2>",
-      "x": 1900,
-      "y": -120,
-      "width": 200,
-      "height": 60
-    },
-    {
-      "id": "phase-进阶",
-      "type": "text",
-      "text": "<h2 style='color:#f3e8ff;border-left:6px solid #f3e8ff;padding-left:8px'>进阶阶段</h2>",
-      "x": 2500,
-      "y": -120,
-      "width": 200,
-      "height": 60
-    },
-    {
-      "id": "phase-光谱",
-      "type": "text",
-      "text": "<h2 style='color:#fee2e2;border-left:6px solid #fee2e2;padding-left:8px'>光谱阶段</h2>",
-      "x": 3400,
-      "y": -120,
-      "width": 200,
-      "height": 60
-    },
-    {
-      "id": "visuals",
-      "type": "file",
-      "file": "90-maps/Visual Index.md",
-      "x": 3500,
-      "y": -200,
-      "width": 220,
-      "height": 100
-    }
-  ],
-  "edges": [
-    {
-      "id": "e0",
-      "fromNode": "ch0",
-      "fromSide": "right",
-      "toNode": "ch1",
-      "toSide": "left"
-    },
-    {
-      "id": "e1",
-      "fromNode": "ch1",
-      "fromSide": "right",
-      "toNode": "ch2",
-      "toSide": "left"
-    },
-    {
-      "id": "e2",
-      "fromNode": "ch2",
-      "fromSide": "right",
-      "toNode": "ch3",
-      "toSide": "left"
-    },
-    {
-      "id": "e3",
-      "fromNode": "ch3",
-      "fromSide": "right",
-      "toNode": "ch4",
-      "toSide": "left"
-    },
-    {
-      "id": "e4",
-      "fromNode": "ch4",
-      "fromSide": "right",
-      "toNode": "ch5",
-      "toSide": "left"
-    },
-    {
-      "id": "e5",
-      "fromNode": "ch5",
-      "fromSide": "right",
-      "toNode": "ch6",
-      "toSide": "left"
-    },
-    {
-      "id": "e6",
-      "fromNode": "ch6",
-      "fromSide": "right",
-      "toNode": "ch7",
-      "toSide": "left"
-    },
-    {
-      "id": "e7",
-      "fromNode": "ch7",
-      "fromSide": "right",
-      "toNode": "ch8",
-      "toSide": "left"
-    },
-    {
-      "id": "e8",
-      "fromNode": "ch8",
-      "fromSide": "right",
-      "toNode": "ch9",
-      "toSide": "left"
-    },
-    {
-      "id": "e9",
-      "fromNode": "ch9",
-      "fromSide": "right",
-      "toNode": "ch10",
-      "toSide": "left"
-    },
-    {
-      "id": "e10",
-      "fromNode": "ch10",
-      "fromSide": "right",
-      "toNode": "ch11",
-      "toSide": "left"
-    },
-    {
-      "id": "e11",
-      "fromNode": "ch11",
-      "fromSide": "right",
-      "toNode": "ch12",
-      "toSide": "left"
-    },
-    {
-      "id": "e12",
-      "fromNode": "ch12",
-      "fromSide": "right",
-      "toNode": "ch13",
-      "toSide": "left"
-    },
-    {
-      "id": "e13",
-      "fromNode": "ch13",
-      "fromSide": "right",
-      "toNode": "ch14",
-      "toSide": "left"
-    },
-    {
-      "id": "e14",
-      "fromNode": "ch14",
-      "fromSide": "right",
-      "toNode": "ch15",
-      "toSide": "left"
-    },
-    {
-      "id": "e15",
-      "fromNode": "ch15",
-      "fromSide": "right",
-      "toNode": "ch16",
-      "toSide": "left"
-    }
-  ]
+	"nodes":[
+		{"id":"title","type":"text","text":"# LensFit 学习路径\n\n按阶段拖动浏览，点击卡片进入对应章节。","x":-600,"y":-200,"width":500,"height":150},
+		{"id":"ch0","type":"file","file":"50-learning/00-introduction.md","x":-400,"y":80,"width":180,"height":120},
+		{"id":"ch1","type":"file","file":"50-learning/01-light-and-waves.md","x":-180,"y":280,"width":180,"height":120},
+		{"id":"ch2","type":"file","file":"50-learning/02-geometric-optics.md","x":40,"y":80,"width":180,"height":120},
+		{"id":"ch3","type":"file","file":"50-learning/03-lens-parameters.md","x":260,"y":280,"width":180,"height":120},
+		{"id":"ch4","type":"file","file":"50-learning/04-sensors.md","x":480,"y":80,"width":180,"height":120},
+		{"id":"ch5","type":"file","file":"50-learning/05-matching-basics.md","x":700,"y":280,"width":180,"height":120},
+		{"id":"ch6","type":"file","file":"50-learning/06-aberrations.md","x":920,"y":80,"width":180,"height":120},
+		{"id":"ch7","type":"file","file":"50-learning/07-interfaces-and-mounts.md","x":1140,"y":280,"width":180,"height":120},
+		{"id":"ch8","type":"file","file":"50-learning/08-domain-applications.md","x":1360,"y":80,"width":180,"height":120},
+		{"id":"ch9","type":"file","file":"50-learning/09-exercises.md","x":1580,"y":280,"width":180,"height":120},
+		{"id":"ch10","type":"file","file":"50-learning/10-physical-optics-advanced.md","x":600,"y":80,"width":180,"height":120},
+		{"id":"ch11","type":"file","file":"50-learning/11-optical-design-basics.md","x":820,"y":280,"width":180,"height":120},
+		{"id":"ch12","type":"file","file":"50-learning/12-otf-and-image-quality.md","x":1840,"y":80,"width":180,"height":120},
+		{"id":"ch13","type":"file","file":"50-learning/13-illumination-design.md","x":2060,"y":280,"width":180,"height":120},
+		{"id":"ch14","type":"file","file":"50-learning/14-computational-optics.md","x":2780,"y":80,"width":180,"height":120},
+		{"id":"ch15","type":"file","file":"50-learning/15-engineering-cases.md","x":3600,"y":280,"width":180,"height":120},
+		{"id":"ch16","type":"file","file":"50-learning/16-spectroscopy.md","x":4720,"y":80,"width":180,"height":120},
+		{"id":"phase-入门","type":"text","text":"<h2 style='color:#dcfce7;border-left:6px solid #dcfce7;padding-left:8px'>入门阶段</h2>","x":-400,"y":-120,"width":200,"height":60},
+		{"id":"phase-匹配","type":"text","text":"<h2 style='color:#dbeafe;border-left:6px solid #dbeafe;padding-left:8px'>匹配阶段</h2>","x":600,"y":-120,"width":200,"height":60},
+		{"id":"phase-像质","type":"text","text":"<h2 style='color:#fce7f3;border-left:6px solid #fce7f3;padding-left:8px'>像质阶段</h2>","x":1400,"y":-120,"width":200,"height":60},
+		{"id":"phase-工程","type":"text","text":"<h2 style='color:#fef9c3;border-left:6px solid #fef9c3;padding-left:8px'>工程阶段</h2>","x":1900,"y":-120,"width":200,"height":60},
+		{"id":"phase-进阶","type":"text","text":"<h2 style='color:#f3e8ff;border-left:6px solid #f3e8ff;padding-left:8px'>进阶阶段</h2>","x":2500,"y":-120,"width":200,"height":60},
+		{"id":"phase-光谱","type":"text","text":"<h2 style='color:#fee2e2;border-left:6px solid #fee2e2;padding-left:8px'>光谱阶段</h2>","x":3400,"y":-120,"width":200,"height":60},
+		{"id":"visuals","type":"file","file":"90-maps/Visual Index.md","x":3500,"y":-200,"width":220,"height":100}
+	],
+	"edges":[
+		{"id":"e0","fromNode":"ch0","fromSide":"right","toNode":"ch1","toSide":"left"},
+		{"id":"e1","fromNode":"ch1","fromSide":"right","toNode":"ch2","toSide":"left"},
+		{"id":"e2","fromNode":"ch2","fromSide":"right","toNode":"ch3","toSide":"left"},
+		{"id":"e3","fromNode":"ch3","fromSide":"right","toNode":"ch4","toSide":"left"},
+		{"id":"e4","fromNode":"ch4","fromSide":"right","toNode":"ch5","toSide":"left"},
+		{"id":"e5","fromNode":"ch5","fromSide":"right","toNode":"ch6","toSide":"left"},
+		{"id":"e6","fromNode":"ch6","fromSide":"right","toNode":"ch7","toSide":"left"},
+		{"id":"e7","fromNode":"ch7","fromSide":"right","toNode":"ch8","toSide":"left"},
+		{"id":"e8","fromNode":"ch8","fromSide":"right","toNode":"ch9","toSide":"left"},
+		{"id":"e9","fromNode":"ch9","fromSide":"right","toNode":"ch10","toSide":"left"},
+		{"id":"e10","fromNode":"ch10","fromSide":"right","toNode":"ch11","toSide":"left"},
+		{"id":"e11","fromNode":"ch11","fromSide":"right","toNode":"ch12","toSide":"left"},
+		{"id":"e12","fromNode":"ch12","fromSide":"right","toNode":"ch13","toSide":"left"},
+		{"id":"e13","fromNode":"ch13","fromSide":"right","toNode":"ch14","toSide":"left"},
+		{"id":"e14","fromNode":"ch14","fromSide":"right","toNode":"ch15","toSide":"left"},
+		{"id":"e15","fromNode":"ch15","fromSide":"right","toNode":"ch16","toSide":"left"}
+	]
 }

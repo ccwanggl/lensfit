@@ -1,33 +1,63 @@
 ---
 id: concept.polarization
-title: Polarization
+title: 偏振
 type: concept
 status: reviewed
 domains:
   - foundational
 aliases:
-  - 偏振
+  - Polarization
+  - 线偏振
+  - 圆偏振
+  - 椭圆偏振
 ---
 
-# Polarization
+# 偏振
 
-Polarization describes the orientation of the electric field vector of a light wave. In **unpolarized** light the field orientation changes randomly; in **linearly polarized** light it oscillates along a single direction.
+偏振描述光波电场矢量的振动方向。自然光通常可以近似看成非偏振光，电场方向在垂直于传播方向的平面内随机变化；线偏振光的电场主要沿一个固定方向振动。
 
-## Key concepts
+偏振只描述电场方向，不直接描述光线传播方向、波长或颜色。同一束光可以同时有确定的波长、传播方向和偏振态。
 
-- **Linear polarization**: electric field oscillates along one axis.
-- **Circular / elliptical polarization**: field vector rotates, producing a helical pattern.
-- **Polarizer**: a filter that transmits only the field component parallel to its transmission axis.
-- **Malus's law**: after an ideal polarizer, transmitted intensity is `I = I₀ cos²θ`.
+## 关键概念
 
-## Related experiments
+- **非偏振光**：电场方向随时间随机变化，普通热光源和多数漫反射光接近这种状态。
+- **线偏振**：电场沿单一方向振动，是马吕斯定律最常用的讨论对象。
+- **圆偏振/椭圆偏振**：两个互相垂直的电场分量存在相位差，合成后的电场端点随时间旋转。
+- **偏振片**：只允许平行于透光轴的电场分量通过，理想偏振片会吸收或阻断垂直分量。
+- **起偏器与检偏器**：第一个偏振片常作为起偏器，后一个用于分析偏振方向，二者夹角决定透射光强。
 
-- [[90-maps/Optics Lab#polarization-malus|偏振与马吕斯定律实验]]
+## 马吕斯定律
 
-## See also
+理想线偏振光通过偏振片时，透射光强满足：
 
-- [[10-concepts/偏振|偏振 (中文)]]
+$$
+I = I_0 \cos^2 \theta
+$$
+
+其中 $I_0$ 是入射到第二个偏振片前的线偏振光强，$\theta$ 是入射偏振方向与偏振片透光轴的夹角。若入射光是非偏振光，先经过第一个理想偏振片后平均只剩一半光强，再对第二个偏振片使用马吕斯定律。
+
+## 工程意义
+
+- **抑制反光**：金属以外的光滑表面反射光常带有偏振特征，偏振片可以降低眩光。
+- **材料应力观察**：透明材料受力后可能产生双折射，交叉偏振下能看到应力分布。
+- **显示与成像**：LCD、偏振相机、偏振显微镜都依赖偏振态控制或测量。
+- **光路调试**：激光器、分束器、波片和偏振片组合使用时，偏振态会影响实际功率和干涉效果。
+
+## 常见误区
+
+- **把偏振等同于滤色**：偏振片筛选的是电场方向，不是波长。偏振片可能有颜色偏差，但那不是偏振的定义。
+- **认为两个偏振片垂直时永远无光**：理想线偏振模型下透射为零；真实器件有消光比限制，仍会漏出少量光。
+- **把非偏振光直接代入马吕斯定律**：非偏振光先经过第一个理想偏振片后光强约为原来的一半，之后才按夹角继续变化。
+
+## 关联公式
+
+- 马吕斯定律：$I = I_0 \cos^2 \theta$
+
+## 参见
+
+- [[10-concepts/偏振|偏振中文镜像]]
+- [[50-learning/01-light-and-waves|第1章：光与波]]
 
 ## 关联实验
 
-- [[90-maps/Optics Lab#polarization-malus|偏振与马吕斯定律实验]] — 改变两个理想偏振片的透光轴夹角，观察透射光强如何按马吕斯定律变化。
+- [[90-maps/Optics Lab#偏振与马吕斯定律实验|偏振与马吕斯定律实验]] — 改变两个理想偏振片的透光轴夹角，观察透射光强如何按马吕斯定律变化。

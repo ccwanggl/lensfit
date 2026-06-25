@@ -9,6 +9,10 @@ status: maintained
 
 存放光学、验光和尺寸换算公式。公式笔记应包含变量定义、单位、适用条件、示例和来源。
 
+## 使用约定
+
+公式页必须先写清符号约定，再给计算形式。涉及物距、像距、焦距、孔径和波长时，默认使用同一长度单位；工程规格中的工作距离、机械后焦、传感器尺寸不能在未换算时直接代入。
+
 ## 已收录公式
 
 | 公式 | 文件 | 核心表达式 | 用途 |
@@ -33,6 +37,7 @@ status: maintained
 | **棱镜色散率** | [[prism-dispersion|prism-dispersion.md]] | $R = t \cdot |dn/d\lambda|$ | 棱镜分光能力 |
 | **Delta E色差** | [[delta-e|delta-e.md]] | $\Delta E = \sqrt{(\Delta L)^2 + (\Delta a)^2 + (\Delta b)^2}$ | 颜色差异量化 |
 | **普朗克黑体辐射** | [[planck-blackbody|planck-blackbody.md]] | $\lambda_{max} = b/T$ | 色温与峰值波长关系 |
+| **双缝条纹间距** | [[double-slit-fringe-spacing|double-slit-fringe-spacing.md]] | $\Delta y = \lambda L / d$ | 双缝干涉条纹间距估算 |
 
 ## 与学习路径的关系
 
