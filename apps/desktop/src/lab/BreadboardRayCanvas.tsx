@@ -114,8 +114,8 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [raysPerSlit, setRaysPerSlit] = useState(60);
-  const [yExaggeration, setYExaggeration] = useState(30);
-  const [showBlocked, setShowBlocked] = useState(false);
+  const [yExaggeration, setYExaggeration] = useState(8);
+  const [showBlocked, setShowBlocked] = useState(true);
   const [showIntensity, setShowIntensity] = useState(true);
   const [hover, setHover] = useState<{ x: number; y: number } | null>(null);
 
@@ -191,32 +191,42 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     ctx.font = "11px sans-serif";
     ctx.fillText("光源", toCanvasX(sourceX) - 12, toCanvasY(sourceY) + 20);
 
-    // Draw blocker / aperture
-    const apertureTop = -Math.max(0.5, openings.length * 0.5 + 0.2);
-    const apertureBottom = Math.max(0.5, openings.length * 0.5 + 0.2);
-    ctx.fillStyle = "rgba(30, 41, 59, 0.85)";
-    const ax = toCanvasX(info.x);
-    const ayTop = toCanvasY(apertureTop);
-    const ayBottom = toCanvasY(apertureBottom);
-    ctx.fillRect(ax - 3, ayTop, 6, ayBottom - ayTop);
+    // Schematic visual scale: real slits are microns and geometric rays are
+    // nearly parallel. We exaggerate the slit angular width so the fan of
+    // rays and the blocking effect are visible in the diagram.
+    const VISUAL_SLIT_SCALE = 200;
+    const MIN_VISUAL_HALF_MM = 0.5;
+    const visualOpenings = openings.map((op) => {
+      const center = (op.y0 + op.y1) / 2;
+      const half = Math.max(
+        MIN_VISUAL_HALF_MM,
+        ((op.y1 - op.y0) / 2) * VISUAL_SLIT_SCALE
+      );
+      return { y0: center - half, y1: center + half };
+    });
 
-    // Slit openings (draw as transparent gaps with subtle highlight).
-    // Enforce a minimum visual height so micron-scale slits remain visible.
-    openings.forEach((op) => {
-      let oy0 = toCanvasY(op.y1);
-      let oy1 = toCanvasY(op.y0);
-      if (Math.abs(oy1 - oy0) < 2) {
-        const center = (oy0 + oy1) / 2;
-        oy0 = center - 1;
-        oy1 = center + 1;
-      }
-      ctx.clearRect(ax - 4, oy0, 8, oy1 - oy0);
-      ctx.strokeStyle = "rgba(226, 232, 240, 0.5)";
+    // Draw blocker / aperture tall enough to intercept the whole fan.
+    const FAN_ANGLE = Math.PI / 6; // ±30°
+    const fanHalfY = info.x * Math.tan(FAN_ANGLE) * 1.05;
+    const blockerTop = info.y - fanHalfY;
+    const blockerBottom = info.y + fanHalfY;
+    ctx.fillStyle = "rgba(30, 41, 59, 0.9)";
+    const ax = toCanvasX(info.x);
+    const ayTop = toCanvasY(blockerTop);
+    const ayBottom = toCanvasY(blockerBottom);
+    ctx.fillRect(ax - 4, ayTop, 8, ayBottom - ayTop);
+
+    // Slit openings (clear the blocker and add a bright edge).
+    visualOpenings.forEach((op) => {
+      const oy0 = toCanvasY(op.y1);
+      const oy1 = toCanvasY(op.y0);
+      ctx.clearRect(ax - 5, oy0, 10, oy1 - oy0);
+      ctx.strokeStyle = "rgba(226, 232, 240, 0.6)";
       ctx.beginPath();
-      ctx.moveTo(ax - 3, oy0);
-      ctx.lineTo(ax + 3, oy0);
-      ctx.moveTo(ax - 3, oy1);
-      ctx.lineTo(ax + 3, oy1);
+      ctx.moveTo(ax - 4, oy0);
+      ctx.lineTo(ax + 4, oy0);
+      ctx.moveTo(ax - 4, oy1);
+      ctx.lineTo(ax + 4, oy1);
       ctx.stroke();
     });
     ctx.fillStyle = "rgba(226, 232, 240, 0.8)";
@@ -234,43 +244,37 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     ctx.fillText("屏幕", sx - 12, cssHeight - padding.bottom + 16);
 
     // Draw rays as an angular fan from the source. Rays that hit the blocker
-    // are truncated at the aperture plane; rays that pass through a slit
-    // continue to the screen.
-    // Emit rays over a wide fan (120°) so the source looks like it radiates
-    // in all directions and the blocker clearly truncates most of them.
-    const maxAngle = Math.PI / 3;
-    const angleStep = (maxAngle * 2) / Math.max(1, raysPerSlit);
+    // are truncated at the aperture plane; rays that pass through a visual
+    // slit continue to the screen.
+    const angleStep = (FAN_ANGLE * 2) / Math.max(1, raysPerSlit);
 
     ctx.lineWidth = 1;
 
     for (let i = 0; i <= raysPerSlit; i++) {
-      const angle = -maxAngle + i * angleStep;
-      const cosA = Math.cos(angle);
-      const sinA = Math.sin(angle);
+      const angle = -FAN_ANGLE + i * angleStep;
+      const tanA = Math.tan(angle);
 
       // Intersection with the aperture plane.
-      const tAperture = (info.x - sourceX) / cosA;
-      const apertureY = sourceY + sinA * tAperture;
+      const apertureY = sourceY + tanA * (info.x - sourceX);
 
-      const isTransmitted = openings.some(
+      const isTransmitted = visualOpenings.some(
         (op) => apertureY >= op.y0 && apertureY <= op.y1
       );
 
       if (isTransmitted) {
         ctx.strokeStyle = rayColor;
-        ctx.globalAlpha = 0.35;
-        const tScreen = (info.screenX - sourceX) / cosA;
-        const screenY = sourceY + sinA * tScreen;
+        ctx.globalAlpha = 0.45;
+        const screenY = sourceY + tanA * (info.screenX - sourceX);
         ctx.beginPath();
         ctx.moveTo(toCanvasX(sourceX), toCanvasY(sourceY));
         ctx.lineTo(toCanvasX(info.screenX), toCanvasY(screenY));
         ctx.stroke();
       } else if (showBlocked) {
         ctx.strokeStyle = blockedColor;
-        ctx.globalAlpha = 0.45;
+        ctx.globalAlpha = 0.55;
         ctx.beginPath();
         ctx.moveTo(toCanvasX(sourceX), toCanvasY(sourceY));
-        ctx.lineTo(toCanvasX(sourceX + cosA * tAperture), toCanvasY(apertureY));
+        ctx.lineTo(toCanvasX(info.x), toCanvasY(apertureY));
         ctx.stroke();
       }
     }
