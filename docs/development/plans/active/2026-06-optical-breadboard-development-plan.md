@@ -295,6 +295,24 @@ POST /api/v1/lab/workbench/run
 - Fraunhofer 条件不足时返回 warning，不伪装成精确结果。
 - 现有 `/api/v1/lab/experiments/{id}/run` 无回归。
 
+**完成状态：已完成**。
+
+实际完成内容：
+
+- 新增 `engine/lensfit/lab/workbench/native_interpreter.py`：
+  - 将 `SceneGraph` 映射到 `SingleSlitDiffractionExperiment` 参数。
+  - 推导 `screen_distance_m`。
+  - 当屏距不满足夫琅禾费远场条件时返回 warning。
+- 新增 `engine/lensfit/lab/workbench/solver.py`：
+  - `WorkbenchSolver.solve(scene)` 分发 observable。
+  - 阶段 2 只支持 `fraunhofer_intensity` → `single-slit-diffraction`。
+- 修改 `engine/lensfit/lab/schemas.py`：
+  - 新增 `WorkbenchRunRequest`，`scene` 字段直接使用 `SceneGraph` 模型。
+- 修改 `engine/lensfit/api/routers/lab.py`：
+  - 新增 `POST /api/v1/lab/workbench/run`，返回与现有实验相同的 `data`/`svg`/`warnings`/`learning_hints`。
+- 新增 `engine/tests/test_api_workbench.py`（6 个测试全部通过）。
+- 全量测试：`137 passed, 4 warnings`。
+
 验证命令：
 
 ```powershell

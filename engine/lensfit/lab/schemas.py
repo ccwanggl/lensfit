@@ -6,6 +6,8 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from lensfit.lab.workbench import SceneGraph
+
 
 class ExperimentListItem(BaseModel):
     id: str
@@ -32,3 +34,7 @@ class ExperimentRunResponse(BaseModel):
     svg: str
     warnings: list[str]
     learning_hints: list[str]
+
+
+class WorkbenchRunRequest(BaseModel):
+    scene: SceneGraph

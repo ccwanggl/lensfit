@@ -9,7 +9,9 @@ from lensfit.lab.schemas import (
     ExperimentListResponse,
     ExperimentRunRequest,
     ExperimentRunResponse,
+    WorkbenchRunRequest,
 )
+from lensfit.lab.workbench.solver import WorkbenchSolver
 
 router = APIRouter(prefix="/api/v1/lab", tags=["lab"])
 
@@ -44,6 +46,25 @@ def run_experiment(experiment_id: str, req: ExperimentRunRequest):
         raise HTTPException(status_code=422, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Experiment failed: {str(e)}") from e
+
+    return {
+        "data": result.data,
+        "svg": result.svg,
+        "warnings": result.warnings,
+        "learning_hints": result.learning_hints,
+    }
+
+
+@router.post("/workbench/run", response_model=ExperimentRunResponse)
+def run_workbench(req: WorkbenchRunRequest):
+    """Run a stateless SceneGraph v1 workbench scene."""
+    solver = WorkbenchSolver()
+    try:
+        result = solver.solve(req.scene)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Workbench solve failed: {str(e)}") from e
 
     return {
         "data": result.data,
