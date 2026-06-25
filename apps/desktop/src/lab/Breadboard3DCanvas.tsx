@@ -444,7 +444,10 @@ export function Breadboard3DCanvas({
       blending: THREE.AdditiveBlending,
     });
     const beam = new THREE.Mesh(beamGeo, beamMat);
-    beam.rotation.z = -Math.PI / 2;
+    // ConeGeometry's apex is at +height/2 and base at -height/2.
+    // Rotate +90° so the apex points toward the source/aperture and the
+    // base (wide end) points toward the screen, making the beam diverge.
+    beam.rotation.z = Math.PI / 2;
     scene.add(beam);
     beamRef.current = beam;
 
@@ -580,8 +583,9 @@ export function Breadboard3DCanvas({
       cameraRef.current &&
       controlsRef.current
     ) {
-      cameraRef.current.position.set(screenX + 1.5, 1.5, 2.0);
-      controlsRef.current.target.set(screenX / 2, 0, 0);
+      // Isometric-ish initial view that shows laser, aperture, screen, and monitor.
+      cameraRef.current.position.set(screenX * 0.5 + 1.2, 1.4, 2.6);
+      controlsRef.current.target.set(screenX * 0.45, 0, 0);
       controlsRef.current.update();
       cameraInitializedRef.current = true;
     }

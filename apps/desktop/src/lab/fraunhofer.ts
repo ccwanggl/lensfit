@@ -70,7 +70,7 @@ export function computeFraunhoferIntensity(
   } = params;
 
   const { yMin, yMax } = sampleRange(params);
-  const sampleCount = 801;
+  const sampleCount = 1201;
   const samples: IntensitySample[] = [];
   let maxIntensity = 0;
 

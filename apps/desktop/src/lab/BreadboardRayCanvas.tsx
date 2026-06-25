@@ -274,16 +274,25 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     if (showIntensity && intensity.samples.length > 0) {
       const samples = intensity.samples;
       const [rr, gg, bb] = wavelengthToRgb(info.wavelengthNm);
+      const yMinSample = samples[0].y_mm;
+      const yMaxSample = samples[samples.length - 1].y_mm;
+      const ySampleRange = yMaxSample - yMinSample || 1;
+
+      // Map a sample y (mm) to the full vertical drawing area so that the
+      // entire pattern -- including dark fringes -- is always visible,
+      // independent of the Y exaggeration used for the rays.
+      const intensityToCanvasY = (y_mm: number) =>
+        padding.top + ((yMaxSample - y_mm) / ySampleRange) * drawHeight;
 
       // 1) Color the screen itself according to the intensity distribution.
       const screenStripW = 6;
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const cy0 = toCanvasY(s0.y_mm);
-        const cy1 = toCanvasY(s1.y_mm);
-        const intensity = (s0.intensity + s1.intensity) / 2;
-        ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.08 + intensity * 0.92})`;
+        const cy0 = intensityToCanvasY(s0.y_mm);
+        const cy1 = intensityToCanvasY(s1.y_mm);
+        const avg = (s0.intensity + s1.intensity) / 2;
+        ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${avg * 0.95})`;
         ctx.fillRect(
           sx - screenStripW / 2,
           Math.min(cy0, cy1),
@@ -296,23 +305,19 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
       const gap = 10;
       const barW = 50;
       const barX = sx + gap;
-      const maxIntensity = Math.max(
-        1e-6,
-        Math.max(...samples.map((s) => s.intensity))
-      );
 
-      // Background of the profile bar
-      ctx.fillStyle = "rgba(15, 23, 42, 0.7)";
+      // Dark background so zero-intensity (dark fringes) reads as black.
+      ctx.fillStyle = "rgba(2, 6, 23, 0.85)";
       ctx.fillRect(barX, padding.top, barW, drawHeight);
 
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const cy0 = toCanvasY(s0.y_mm);
-        const cy1 = toCanvasY(s1.y_mm);
-        const intensity = (s0.intensity + s1.intensity) / 2;
-        const w = (intensity / maxIntensity) * barW;
-        ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.15 + intensity * 0.85})`;
+        const cy0 = intensityToCanvasY(s0.y_mm);
+        const cy1 = intensityToCanvasY(s1.y_mm);
+        const avg = (s0.intensity + s1.intensity) / 2;
+        const w = avg * barW;
+        ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.2 + avg * 0.8})`;
         ctx.fillRect(barX, Math.min(cy0, cy1), Math.max(1, w), Math.max(1, Math.abs(cy1 - cy0)));
       }
 
