@@ -88,22 +88,6 @@ function parseScene(scene?: WorkbenchScene): ComponentInfo | null {
   };
 }
 
-function generateSlitOpenings(
-  info: ComponentInfo
-): Array<{ y0: number; y1: number }> {
-  const umToMm = (v?: number) => (v ?? 0) / 1000;
-  if (info.slitSeparationUm == null || info.slitSeparationUm <= 0) {
-    const half = umToMm(info.slitWidthUm) / 2;
-    return [{ y0: info.y - half, y1: info.y + half }];
-  }
-  const halfWidth = umToMm(info.slitWidthUm) / 2;
-  const halfSep = umToMm(info.slitSeparationUm) / 2;
-  return [
-    { y0: info.y - halfSep - halfWidth, y1: info.y - halfSep + halfWidth },
-    { y0: info.y + halfSep - halfWidth, y1: info.y + halfSep + halfWidth },
-  ];
-}
-
 export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
   const info = useMemo(() => parseScene(scene), [scene]);
   const intensity = useMemo(
@@ -182,7 +166,6 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
 
     const sourceX = 0;
     const sourceY = 0;
-    const openings = generateSlitOpenings(info);
 
     // Draw source
     ctx.fillStyle = rayColor;
@@ -194,22 +177,39 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     ctx.fillText("光源", toCanvasX(sourceX) - 12, toCanvasY(sourceY) + 20);
 
     // Schematic visual scale: real slits are microns and geometric rays are
-    // nearly parallel. We exaggerate the slit angular width so the fan of
-    // rays and the blocking effect are visible in the diagram.
-    const VISUAL_SLIT_SCALE = 200;
-    const MIN_VISUAL_HALF_MM = 0.5;
-    const visualOpenings = openings.map((op) => {
-      const center = (op.y0 + op.y1) / 2;
-      const half = Math.max(
-        MIN_VISUAL_HALF_MM,
-        ((op.y1 - op.y0) / 2) * VISUAL_SLIT_SCALE
-      );
-      return { y0: center - half, y1: center + half };
-    });
-
-    // Draw blocker / aperture tall enough to intercept the whole fan.
+    // nearly parallel. We exaggerate the whole aperture geometry (slit width
+    // and separation) proportionally so the blocking effect remains visible.
     const FAN_ANGLE = Math.PI / 6; // ±30°
     const fanHalfY = info.x * Math.tan(FAN_ANGLE) * 1.05;
+
+    let visualScale = 80;
+    const actualHalfWidth = ((info.slitWidthUm ?? 50) / 1000) / 2;
+    const actualHalfSep = ((info.slitSeparationUm ?? 0) / 1000) / 2;
+    const requiredExtent =
+      actualHalfSep > 0
+        ? actualHalfSep * visualScale + actualHalfWidth * visualScale
+        : actualHalfWidth * visualScale;
+    if (requiredExtent > fanHalfY * 0.6) {
+      visualScale = (fanHalfY * 0.6) / (actualHalfSep + actualHalfWidth || actualHalfWidth);
+    }
+    const minVisualHalf = 0.3;
+
+    // Build visually-scaled openings. Both slit width and slit separation are
+    // scaled by the same factor so the proportions look consistent.
+    const visualOpenings: Array<{ y0: number; y1: number }> = [];
+    if (actualHalfSep > 0) {
+      const half = Math.max(minVisualHalf, actualHalfWidth * visualScale);
+      const sep = actualHalfSep * visualScale;
+      visualOpenings.push(
+        { y0: info.y - sep - half, y1: info.y - sep + half },
+        { y0: info.y + sep - half, y1: info.y + sep + half }
+      );
+    } else {
+      const half = Math.max(minVisualHalf, actualHalfWidth * visualScale);
+      visualOpenings.push({ y0: info.y - half, y1: info.y + half });
+    }
+
+    // Draw blocker / aperture tall enough to intercept the whole fan.
     const blockerTop = info.y - fanHalfY;
     const blockerBottom = info.y + fanHalfY;
     ctx.fillStyle = "rgba(30, 41, 59, 0.9)";
