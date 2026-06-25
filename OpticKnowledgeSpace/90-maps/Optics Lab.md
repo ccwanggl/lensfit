@@ -81,6 +81,13 @@ aliases:
 - **学习目标**: 理解单缝衍射中央亮纹宽度与缝宽成反比。, 观察波长越长、缝越窄，衍射展宽越明显。
 - **关联笔记**: [[10-concepts/diffraction-limit|diffraction-limit]], [[10-concepts/衍射极限|衍射极限]]
 
+### 双缝干涉实验
+
+- **难度**: 进阶
+- **说明**: 改变缝宽、缝间距和波长，观察双缝干涉条纹及其被单缝包络调制的现象。
+- **学习目标**: 理解条纹间距 Δy = λL / d。, 观察缝间距越小，条纹越稀疏；缝间距越大，条纹越密集。, 认识单缝包络如何限制可见干涉条纹的数目。
+- **关联笔记**: [[10-concepts/interference|interference]], [[10-concepts/diffraction-limit|diffraction-limit]], [[10-concepts/衍射极限|衍射极限]]
+
 ### 圆孔衍射与艾里斑
 
 - **难度**: 进阶

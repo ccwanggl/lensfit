@@ -13,6 +13,7 @@ from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
 from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
+from lensfit.lab.experiments.double_slit import DoubleSlitExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -171,6 +172,27 @@ class TestChromaticAberrationExperiment:
         assert low_v > high_v
 
 
+class TestDoubleSlitExperiment:
+    def test_default_run(self):
+        exp = DoubleSlitExperiment()
+        result = exp.run({})
+        assert result.data["fringe_spacing_mm"] == pytest.approx(5.5, rel=1e-3)
+        assert result.data["visible_maxima_in_envelope"] > 1
+        _assert_svg(result.svg)
+
+    def test_larger_separation_tighter_fringes(self):
+        exp = DoubleSlitExperiment()
+        wide = exp.run({"slit_separation_um": 50}).data["fringe_spacing_mm"]
+        tight = exp.run({"slit_separation_um": 200}).data["fringe_spacing_mm"]
+        assert wide > tight
+
+    def test_longer_wavelength_wider_fringes(self):
+        exp = DoubleSlitExperiment()
+        blue = exp.run({"wavelength_nm": 450}).data["fringe_spacing_mm"]
+        red = exp.run({"wavelength_nm": 650}).data["fringe_spacing_mm"]
+        assert red > blue
+
+
 class TestSingleSlitDiffractionExperiment:
     def test_default_run(self):
         exp = SingleSlitDiffractionExperiment()
@@ -274,6 +296,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        DoubleSlitExperiment,
         SingleSlitDiffractionExperiment,
         PolarizationMalusExperiment,
         ChromaticAberrationExperiment,
