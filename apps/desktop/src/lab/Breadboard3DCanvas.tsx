@@ -385,7 +385,7 @@ export function Breadboard3DCanvas({
     const height = container.clientHeight;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf8fafc);
+    scene.background = new THREE.Color(0x020617);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
@@ -410,7 +410,7 @@ export function Breadboard3DCanvas({
     scene.add(dirLight);
 
     // Optical table grid
-    const grid = new THREE.GridHelper(10, 20, 0x94a3b8, 0xe2e8f0);
+    const grid = new THREE.GridHelper(10, 20, 0x334155, 0x1e293b);
     scene.add(grid);
 
     // Laser source
@@ -637,7 +637,7 @@ export function Breadboard3DCanvas({
   return (
     <div
       ref={containerRef}
-      className={`relative h-96 w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900 ${
+      className={`relative h-96 w-full overflow-hidden rounded-lg border border-slate-700 bg-slate-950 ${
         isFetching ? "opacity-70" : "opacity-100"
       } transition-opacity duration-200`}
     >
