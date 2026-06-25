@@ -118,31 +118,30 @@ function createApertureTexture(
   // Clear slit regions (transparent)
   ctx.globalCompositeOperation = "destination-out";
 
-  // Visual mapping: keep slits within the middle 60% of the plate
-  const visualHeight = height * 0.6;
+  // Visual mapping: slits are vertical (tall rectangles) and, for double-slit,
+  // separated horizontally.
+  const visualWidth = width * 0.6;
+  const centerX = width / 2;
   const centerY = height / 2;
-  const topY = centerY - visualHeight / 2;
+  const slitH = height * 0.6;
 
-  // Scale: map up to 200 μm slit width / 1000 μm separation to the visual height
+  // Scale: map up to 200 μm slit width / 1000 μm separation to the visual width
   const maxWidthUm = 200;
   const maxSepUm = 1000;
   const widthScale = Math.min(1, slitWidthUm / maxWidthUm);
   const sepScale = Math.min(1, slitSeparationUm / maxSepUm);
 
-  const slitH = Math.max(4, visualHeight * 0.15 * widthScale);
-  const gap = Math.max(slitH + 4, visualHeight * 0.4 * sepScale);
-
-  const slitW = width * 0.6;
-  const slitX = (width - slitW) / 2;
+  const slitW = Math.max(4, visualWidth * 0.12 * widthScale);
+  const gap = Math.max(slitW + 8, visualWidth * 0.45 * sepScale);
 
   if (isDoubleSlit) {
-    const topSlitY = topY + visualHeight * 0.35 - gap / 2 - slitH / 2;
-    const bottomSlitY = topY + visualHeight * 0.35 + gap / 2 + slitH / 2;
-    ctx.fillRect(slitX, topSlitY, slitW, slitH);
-    ctx.fillRect(slitX, bottomSlitY, slitW, slitH);
+    const leftSlitX = centerX - gap / 2 - slitW / 2;
+    const rightSlitX = centerX + gap / 2 - slitW / 2;
+    ctx.fillRect(leftSlitX, centerY - slitH / 2, slitW, slitH);
+    ctx.fillRect(rightSlitX, centerY - slitH / 2, slitW, slitH);
   } else {
-    const slitY = topY + visualHeight * 0.35 - slitH / 2;
-    ctx.fillRect(slitX, slitY, slitW, slitH);
+    const slitX = centerX - slitW / 2;
+    ctx.fillRect(slitX, centerY - slitH / 2, slitW, slitH);
   }
 
   ctx.globalCompositeOperation = "source-over";
