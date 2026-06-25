@@ -33,7 +33,7 @@ _APERTURE_X_MM = 100.0
 # Detector covers +/- this many millimeters on the screen. This is large
 # enough to capture the typical Fraunhofer pattern around the central maximum.
 _DETECTOR_HALF_HEIGHT_MM = 100.0
-_BIN_SIZE_MM = 0.5
+_BIN_SIZE_MM = 0.05
 
 # Scene-level ray density. Higher values sample tiny apertures better but
 # increase runtime roughly linearly. The chosen value is a compromise that

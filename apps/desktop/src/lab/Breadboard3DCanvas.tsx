@@ -309,16 +309,21 @@ function updateGeometryRays(
   const halfWidthMm = slit_width_um / 2000;
   const halfWidthWorld = halfWidthMm * worldScale;
 
+  // Physical slit openings are microscopic, so the computed rays would be
+  // invisible. Use a small minimum visual width so the overlay remains
+  // readable while still being schematic.
+  const visualHalfWidth = Math.max(halfWidthWorld, 0.02);
+
   const positions: number[] = [];
 
-  const addRay = (edgeY: number) => {
-    // Parametric line from source through aperture edge to the screen plane.
+  const addRay = (apertureY: number) => {
+    // Parametric line from source through aperture point to the screen plane.
     const t = (screenX - sourceX) / (apertureX - sourceX);
-    const screenY = edgeY * t;
+    const screenY = apertureY * t;
     positions.push(
       sourceX, 0, 0,
-      apertureX, edgeY, 0,
-      apertureX, edgeY, 0,
+      apertureX, apertureY, 0,
+      apertureX, apertureY, 0,
       screenX, screenY, 0
     );
   };
@@ -326,15 +331,16 @@ function updateGeometryRays(
   if (isDoubleSlit) {
     const halfSepMm = slit_separation_um / 2000;
     const halfSepWorld = halfSepMm * worldScale;
-    const centers = [-halfSepWorld, halfSepWorld];
+    const visualHalfSep = Math.max(halfSepWorld, 0.05);
+    const centers = [-visualHalfSep, visualHalfSep];
     for (const cy of centers) {
-      addRay(cy - halfWidthWorld);
-      addRay(cy + halfWidthWorld);
+      addRay(cy - visualHalfWidth);
+      addRay(cy + visualHalfWidth);
       addRay(cy);
     }
   } else {
-    addRay(-halfWidthWorld);
-    addRay(halfWidthWorld);
+    addRay(-visualHalfWidth);
+    addRay(visualHalfWidth);
     addRay(0);
   }
 
@@ -471,9 +477,9 @@ export function Breadboard3DCanvas({
     // Geometric ray overlay (source -> slit edges -> screen)
     const rayGeo = new THREE.BufferGeometry();
     const rayMat = new THREE.LineBasicMaterial({
-      color: 0xff0000,
+      color: 0xffffff,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.8,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
@@ -607,8 +613,6 @@ export function Breadboard3DCanvas({
 
     // Update geometric ray overlay
     if (raysRef.current) {
-      const rayMat = raysRef.current.material as THREE.LineBasicMaterial;
-      rayMat.color = color;
       updateGeometryRays(raysRef.current.geometry, data, isDoubleSlit);
       raysRef.current.visible = showRays;
     }
@@ -619,9 +623,10 @@ export function Breadboard3DCanvas({
       rayData?.available && rayData.samples && rayData.samples.length > 0
         ? rayData.samples
         : undefined;
+    const rayRgb: Rgb = { r: 255, g: 255, b: 255 };
 
     if (monitorRef.current && samples && samples.length > 0) {
-      drawIntensityMonitor(monitorRef.current, samples, rgb, raySamples, rgb);
+      drawIntensityMonitor(monitorRef.current, samples, rgb, raySamples, rayRgb);
     }
   }, [result, isDoubleSlit, showRays]);
 
