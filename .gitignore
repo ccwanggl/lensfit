@@ -47,6 +47,7 @@ OpticKnowledgeSpace/.hinote/
 *.sqlite
 *.sqlite3
 lensfit.db
+lensfit.db-*
 
 # Node
 node_modules/

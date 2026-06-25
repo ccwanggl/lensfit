@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, BookOpen, ChevronDown, ChevronUp, FlaskConical, Loader2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, BookOpen, ChevronDown, ChevronUp, FlaskConical, Loader2, X } from "lucide-react";
 import { getLabExperiment, LabExperiment, runLabExperiment } from "../utils/api";
 import { useLabStore } from "../stores/labStore";
 import { ParameterControl } from "./ParameterControl";
@@ -39,6 +39,7 @@ export function ExperimentRunner({ experimentId }: ExperimentRunnerProps) {
 function Runner({ experiment }: { experiment: LabExperiment }) {
   const paramDrafts = useLabStore((s) => s.paramDrafts[experiment.id] ?? {});
   const setParams = useLabStore((s) => s.setParams);
+  const setActiveExperimentId = useLabStore((s) => s.setActiveExperimentId);
   const showDataPanel = useLabStore((s) => s.showDataPanel);
   const toggleDataPanel = useLabStore((s) => s.toggleDataPanel);
 
@@ -87,7 +88,7 @@ function Runner({ experiment }: { experiment: LabExperiment }) {
   }[experiment.difficulty] ?? "bg-slate-100 text-slate-700";
 
   return (
-    <div className="flex h-[calc(100vh-140px)] flex-col gap-5 lg:flex-row">
+    <div className="flex h-full flex-col gap-5 lg:flex-row">
       {/* Controls */}
       <aside className="w-full shrink-0 rounded-[14px] border border-slate-200/60 bg-white/80 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80 lg:w-80">
         <div className="mb-4 flex items-center gap-2">
@@ -152,14 +153,32 @@ function Runner({ experiment }: { experiment: LabExperiment }) {
       {/* Visualization */}
       <main className="flex flex-1 flex-col rounded-[14px] border border-slate-200/60 bg-white/80 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
         <div className="flex items-center justify-between border-b border-slate-200/60 px-5 py-3 dark:border-slate-700/60">
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">实验结果</h3>
-          <button
-            onClick={toggleDataPanel}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
-          >
-            {showDataPanel ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            {showDataPanel ? "收起数据" : "展开数据"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveExperimentId(null)}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden dark:hover:bg-slate-700 dark:hover:text-slate-300"
+              title="返回列表"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">实验结果</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleDataPanel}
+              className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
+            >
+              {showDataPanel ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {showDataPanel ? "收起数据" : "展开数据"}
+            </button>
+            <button
+              onClick={() => setActiveExperimentId(null)}
+              className="hidden rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:block dark:hover:bg-slate-700 dark:hover:text-slate-300"
+              title="关闭实验"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
 
         <div className="relative flex flex-1 items-center justify-center overflow-auto p-6">
