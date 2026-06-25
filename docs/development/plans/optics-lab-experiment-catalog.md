@@ -330,11 +330,11 @@ Phase 5
   13. double-slit
   14. grating
 
-Phase 6
+Phase 6 (done)
   15. mtf-explorer
   16. blackbody
 
-Phase 7
+Phase 7 (done)
   17. illumination-geometry
   18. thermal-ifov-netd
   19. aberration-spot
