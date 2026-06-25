@@ -61,8 +61,8 @@ function createScreenTexture(
   color: Rgb
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
-  const width = 64;
-  const height = samples?.length ?? 256;
+  const width = samples?.length ?? 256;
+  const height = 64;
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d")!;
@@ -72,15 +72,17 @@ function createScreenTexture(
   ctx.fillRect(0, 0, width, height);
 
   if (samples && samples.length > 0) {
-    for (let row = 0; row < samples.length; row++) {
-      const intensity = samples[row].intensity;
-      const alpha = intensity;
+    // Intensity varies horizontally so it maps to the screen's width axis
+    // (perpendicular to the vertical slit), producing vertical bright/dark fringes.
+    for (let col = 0; col < samples.length; col++) {
+      const intensity = samples[col].intensity;
+      const alpha = Math.max(0, Math.min(1, intensity));
       ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
-      ctx.fillRect(0, height - 1 - row, width, 1);
+      ctx.fillRect(col, 0, 1, height);
     }
   } else {
     // Fallback central spot
-    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    const gradient = ctx.createLinearGradient(0, 0, width, 0);
     gradient.addColorStop(0, "rgba(0,0,0,0)");
     gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, 1)`);
     gradient.addColorStop(1, "rgba(0,0,0,0)");
@@ -106,7 +108,10 @@ function createApertureTexture(
   canvas.height = height;
   const ctx = canvas.getContext("2d")!;
 
-  // Opaque plate
+  // Clear transparent background first
+  ctx.clearRect(0, 0, width, height);
+
+  // Opaque plate with transparent slits
   ctx.fillStyle = "#1e293b";
   ctx.fillRect(0, 0, width, height);
 
@@ -182,7 +187,7 @@ export function Breadboard3DCanvas({
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 1.4, 4.5);
+    camera.position.set(2.5, 1.5, 2.5);
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -193,7 +198,7 @@ export function Breadboard3DCanvas({
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.target.set(0.8, 0, 0);
+    controls.target.set(0.6, 0, 0);
     controlsRef.current = controls;
 
     // Lights
@@ -231,7 +236,7 @@ export function Breadboard3DCanvas({
     const beamMat = new THREE.MeshBasicMaterial({
       color: 0xff0000,
       transparent: true,
-      opacity: 0.12,
+      opacity: 0.22,
       side: THREE.DoubleSide,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
@@ -244,9 +249,8 @@ export function Breadboard3DCanvas({
     // Aperture plate
     const apertureGeo = new THREE.PlaneGeometry(APERTURE_WORLD_HEIGHT * 0.75, APERTURE_WORLD_HEIGHT);
     const apertureMat = new THREE.MeshBasicMaterial({
-      color: 0x1e293b,
       transparent: true,
-      alphaTest: 0.1,
+      side: THREE.DoubleSide,
     });
     const aperture = new THREE.Mesh(apertureGeo, apertureMat);
     aperture.position.set(0, 0, 0);
@@ -336,8 +340,9 @@ export function Breadboard3DCanvas({
     beamRef.current.geometry = new THREE.ConeGeometry(beamRadius, beamLength, 32, 1, true);
     beamRef.current.position.set(screenX / 2, 0, 0);
 
-    // Update controls target to keep scene centered
-    if (controlsRef.current) {
+    // Update camera and controls target to keep both aperture and screen in view
+    if (cameraRef.current && controlsRef.current) {
+      cameraRef.current.position.set(screenX + 1.5, 1.5, 2.0);
       controlsRef.current.target.set(screenX / 2, 0, 0);
       controlsRef.current.update();
     }
@@ -348,7 +353,6 @@ export function Breadboard3DCanvas({
     if (apertureTextureRef.current) apertureTextureRef.current.dispose();
     apertureTextureRef.current = newApertureTex;
     apertureMat.map = newApertureTex;
-    apertureMat.alphaMap = newApertureTex;
     apertureMat.transparent = true;
     apertureMat.alphaTest = 0.1;
     apertureMat.needsUpdate = true;
