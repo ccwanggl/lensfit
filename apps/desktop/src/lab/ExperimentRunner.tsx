@@ -37,11 +37,16 @@ export function ExperimentRunner({ experimentId }: ExperimentRunnerProps) {
 }
 
 function Runner({ experiment }: { experiment: LabExperiment }) {
-  const paramDrafts = useLabStore((s) => s.paramDrafts[experiment.id] ?? {});
+  const allDrafts = useLabStore((s) => s.paramDrafts);
   const setParams = useLabStore((s) => s.setParams);
   const setActiveExperimentId = useLabStore((s) => s.setActiveExperimentId);
   const showDataPanel = useLabStore((s) => s.showDataPanel);
   const toggleDataPanel = useLabStore((s) => s.toggleDataPanel);
+
+  const paramDrafts = useMemo(
+    () => allDrafts[experiment.id] ?? {},
+    [allDrafts, experiment.id]
+  );
 
   const initialParams = useMemo(() => {
     const defaults: Record<string, unknown> = {};
