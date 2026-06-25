@@ -252,6 +252,7 @@ export function Breadboard3DCanvas({
   const screenTextureRef = useRef<THREE.CanvasTexture | null>(null);
   const apertureTextureRef = useRef<THREE.CanvasTexture | null>(null);
   const monitorRef = useRef<HTMLCanvasElement>(null);
+  const cameraInitializedRef = useRef(false);
 
   const isDoubleSlit = presetId === "double-slit-breadboard";
 
@@ -420,11 +421,17 @@ export function Breadboard3DCanvas({
     beamRef.current.geometry = new THREE.ConeGeometry(beamRadius, beamLength, 32, 1, true);
     beamRef.current.position.set(screenX / 2, 0, 0);
 
-    // Update camera and controls target to keep both aperture and screen in view
-    if (cameraRef.current && controlsRef.current) {
+    // Set camera once on first result so subsequent parameter changes do not
+    // reset the user's view.
+    if (
+      !cameraInitializedRef.current &&
+      cameraRef.current &&
+      controlsRef.current
+    ) {
       cameraRef.current.position.set(screenX + 1.5, 1.5, 2.0);
       controlsRef.current.target.set(screenX / 2, 0, 0);
       controlsRef.current.update();
+      cameraInitializedRef.current = true;
     }
 
     // Update aperture texture
