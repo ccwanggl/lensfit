@@ -16,3 +16,7 @@ aliases:
 
 ![[attachments/visuals/sensor-parameter-map.svg]]
 *图：Sensor Parameter Map*
+
+## 关联实验
+
+- [[90-maps/Optics Lab#thermal-ifov-netd|热成像 IFOV 与 NETD 实验]] — 给定焦距、像元尺寸、目标距离与 NETD，计算瞬时视场角、投影像元尺寸、目标覆盖像素数及温度分辨能力。

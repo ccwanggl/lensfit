@@ -18,6 +18,7 @@ from lensfit.lab.experiments.grating import GratingExperiment
 from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
 from lensfit.lab.experiments.blackbody import BlackbodyExperiment
 from lensfit.lab.experiments.illumination_geometry import IlluminationGeometryExperiment
+from lensfit.lab.experiments.thermal_ifov_netd import ThermalIfovNetdExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -267,6 +268,33 @@ class TestIlluminationGeometryExperiment:
         assert result.data["visibility"] == "bright"
 
 
+class TestThermalIfovNetdExperiment:
+    def test_default_run(self):
+        exp = ThermalIfovNetdExperiment()
+        result = exp.run({})
+        assert result.data["ifov_mrad"] > 0
+        assert result.data["projected_pixel_size_mm"] > 0
+        assert result.data["pixels_across_target"] > 0
+        _assert_svg(result.svg)
+
+    def test_longer_focal_length_decreases_ifov(self):
+        exp = ThermalIfovNetdExperiment()
+        short_f = exp.run({"focal_length_mm": 10.0}).data["ifov_mrad"]
+        long_f = exp.run({"focal_length_mm": 50.0}).data["ifov_mrad"]
+        assert long_f < short_f
+
+    def test_larger_distance_increases_projected_pixel(self):
+        exp = ThermalIfovNetdExperiment()
+        near = exp.run({"target_distance_m": 1.0}).data["projected_pixel_size_mm"]
+        far = exp.run({"target_distance_m": 10.0}).data["projected_pixel_size_mm"]
+        assert far > near
+
+    def test_low_snr_is_not_detectable(self):
+        exp = ThermalIfovNetdExperiment()
+        result = exp.run({"target_delta_t_k": 0.05, "netd_mk": 50.0})
+        assert result.data["detectable"] is False
+
+
 class TestDoubleSlitExperiment:
     def test_default_run(self):
         exp = DoubleSlitExperiment()
@@ -391,6 +419,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        ThermalIfovNetdExperiment,
         IlluminationGeometryExperiment,
         BlackbodyExperiment,
         MtfExplorerExperiment,
