@@ -14,6 +14,7 @@ from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperi
 from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
+from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
@@ -170,6 +171,27 @@ class TestChromaticAberrationExperiment:
         assert low_v > high_v
 
 
+class TestSingleSlitDiffractionExperiment:
+    def test_default_run(self):
+        exp = SingleSlitDiffractionExperiment()
+        result = exp.run({})
+        assert result.data["first_min_angle_deg"] > 0
+        assert result.data["central_max_width_mm"] > 0
+        _assert_svg(result.svg)
+
+    def test_narrower_slit_widens_pattern(self):
+        exp = SingleSlitDiffractionExperiment()
+        narrow = exp.run({"slit_width_um": 20}).data["central_max_width_mm"]
+        wide = exp.run({"slit_width_um": 100}).data["central_max_width_mm"]
+        assert narrow > wide
+
+    def test_longer_wavelength_widens_pattern(self):
+        exp = SingleSlitDiffractionExperiment()
+        blue = exp.run({"wavelength_nm": 450}).data["central_max_width_mm"]
+        red = exp.run({"wavelength_nm": 650}).data["central_max_width_mm"]
+        assert red > blue
+
+
 class TestPolarizationMalusExperiment:
     def test_default_run(self):
         exp = PolarizationMalusExperiment()
@@ -252,6 +274,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        SingleSlitDiffractionExperiment,
         PolarizationMalusExperiment,
         ChromaticAberrationExperiment,
         SnellRefractionExperiment,
