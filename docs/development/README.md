@@ -33,6 +33,7 @@
 
 ## 审查记录
 
+- [2026-06-25 光学面包板阶段 0 评审报告](reviews/2026-06-25-phase-0-optical-breadboard-baseline.md)
 - [2026-06-15 仓库审查报告](reviews/2026-06-15-repository-review.md)
 - [2026-06-15 架构文档与代码一致性检查](reviews/2026-06-15-architecture-code-consistency.md)
 

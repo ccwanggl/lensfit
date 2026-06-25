@@ -118,6 +118,19 @@ docs/development/specifications/lab/experiment-catalog.md
 - 真实 sidecar `/health`、`/api/v1/lab/experiments`、`/api/v1/lab/experiments/single-slit-diffraction/run` 冒烟通过。
 - 连续启动/退出不残留 sidecar 进程。
 
+**完成状态：已完成**（评审报告：`docs/development/reviews/2026-06-25-phase-0-optical-breadboard-baseline.md`）。
+
+实际完成内容：
+
+- 源码测试 120 passed，Lab 专项测试 63 passed，Ruff 通过。
+- 修复 `engine/build_sidecar.py`：从硬编码 4 个实验改为自动发现 `lensfit/lab/experiments/` 下全部模块。
+- 重新构建 sidecar，验证 19 个实验全部可用。
+- 空库启动 sidecar 后自动迁移到 Alembic head `0ac6c641b5d7`。
+- 真实 sidecar `/health`、`/api/v1/lab/experiments`、`/api/v1/lab/experiments/single-slit-diffraction/run` 冒烟通过。
+- 残留 sidecar 进程可通过 `taskkill` 清理；onefile 子进程残留问题已在评审报告中记录。
+
+遗留改进：补充可重复的 sidecar 冒烟测试脚本/用例；在 CI 中加入 sidecar 构建与冒烟步骤。
+
 验证命令：
 
 ```powershell

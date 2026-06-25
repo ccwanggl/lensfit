@@ -63,10 +63,6 @@ def build() -> None:
         "lensfit.lab.registry",
         "lensfit.lab.schemas",
         "lensfit.lab.renderer",
-        "lensfit.lab.experiments.thin_lens",
-        "lensfit.lab.experiments.diffraction",
-        "lensfit.lab.experiments.color_mixing",
-        "lensfit.lab.experiments.sensor_coverage",
         "lensfit.api.routers.lab",
         "lensfit.knowledge.formulas",
         "lensfit.knowledge.constraints",
@@ -78,6 +74,14 @@ def build() -> None:
         "fastapi",
         "sqlalchemy.ext.baked",
     ]
+
+    # Auto-discover all lab experiments so the binary registry matches the source tree.
+    experiments_dir = engine_dir / "lensfit" / "lab" / "experiments"
+    for exp_file in sorted(experiments_dir.glob("*.py")):
+        if exp_file.name == "__init__.py":
+            continue
+        module_name = f"lensfit.lab.experiments.{exp_file.stem}"
+        hidden_imports.append(module_name)
 
     # PyInstaller data separator is ``;`` on Windows and ``:`` elsewhere.
     data_sep = ";" if system == "Windows" else ":"
