@@ -68,3 +68,7 @@ aliases: [Chromatic Aberration, CA, 色散像差, 轴向色差, 倍率色差]---
 ## 来源
 - [[../50-learning/06-aberrations|第6章 像差]] §6.2 色差
 - [[../50-learning/11-optical-design-basics|第11章 光学设计基础]] §11.4 消色差双合透镜
+
+## 关联实验
+
+- [[90-maps/Optics Lab#chromatic-aberration|轴向色差实验]] — 给定镜头焦距和阿贝数，观察不同波长（红/绿/蓝）焦点沿光轴的分离。

@@ -81,6 +81,13 @@ aliases:
 - **学习目标**: 理解传感器奈奎斯特频率是它能无歧义记录的最高空间频率。, 认识镜头 MTF50 超过奈奎斯特频率时会出现混叠。, 了解过度采样与欠采样的权衡。
 - **关联笔记**: [[10-concepts/nyquist-frequency|nyquist-frequency]], [[10-concepts/奈奎斯特频率|奈奎斯特频率]], [[10-concepts/aliasing|aliasing]], [[10-concepts/混叠|混叠]]
 
+### 轴向色差实验
+
+- **难度**: 进阶
+- **说明**: 给定镜头焦距和阿贝数，观察不同波长（红/绿/蓝）焦点沿光轴的分离。
+- **学习目标**: 理解阿贝数越小（色散越大），轴向色差越严重。, 观察蓝光焦点更近、红光焦点更远的正常色散规律。
+- **关联笔记**: [[10-concepts/chromatic-aberration|chromatic-aberration]], [[10-concepts/abbe-number|abbe-number]], [[10-concepts/dispersion|dispersion]], [[10-concepts/色散|色散]]
+
 ---
 
 ## 如何新增实验

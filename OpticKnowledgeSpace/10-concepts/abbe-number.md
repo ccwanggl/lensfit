@@ -79,3 +79,7 @@ Vd = (nd - 1) / (nF - nC)
 - Schott Glass Technical Data Sheets
 - 光学工程教材，第 6 章（色差）与第 16 章（色散）
 - Zemax / Code V 光学设计软件玻璃库
+
+## 关联实验
+
+- [[90-maps/Optics Lab#chromatic-aberration|轴向色差实验]] — 给定镜头焦距和阿贝数，观察不同波长（红/绿/蓝）焦点沿光轴的分离。

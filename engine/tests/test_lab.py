@@ -11,6 +11,7 @@ from lensfit.lab.experiments.angle_of_view import AngleOfViewExperiment
 from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
 from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
 from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
+from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
@@ -152,6 +153,22 @@ class TestNyquistSamplingExperiment:
         assert result.data["status"] == "过度采样"
 
 
+class TestChromaticAberrationExperiment:
+    def test_default_run(self):
+        exp = ChromaticAberrationExperiment()
+        result = exp.run({})
+        assert result.data["total_chromatic_shift_mm"] == pytest.approx(0.8333, rel=1e-3)
+        assert result.data["blue_focus_mm"] < result.data["green_focus_mm"]
+        assert result.data["red_focus_mm"] > result.data["green_focus_mm"]
+        _assert_svg(result.svg)
+
+    def test_lower_abbe_increases_chromatic_shift(self):
+        exp = ChromaticAberrationExperiment()
+        low_v = exp.run({"abbe_number": 30}).data["total_chromatic_shift_mm"]
+        high_v = exp.run({"abbe_number": 80}).data["total_chromatic_shift_mm"]
+        assert low_v > high_v
+
+
 class TestSnellRefractionExperiment:
     def test_default_air_to_glass(self):
         exp = SnellRefractionExperiment()
@@ -215,6 +232,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        ChromaticAberrationExperiment,
         SnellRefractionExperiment,
         NyquistSamplingExperiment,
         DepthOfFieldExperiment,
