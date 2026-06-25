@@ -32,6 +32,13 @@ aliases:
 - **学习目标**: 理解颜色是光谱分布在人眼中的综合感知。, 观察两种单色光混合后如何产生新的色相。
 - **关联笔记**: [[10-concepts/spectral-power-distribution|spectral-power-distribution]], [[10-concepts/color-temperature|color-temperature]], [[10-concepts/chromaticity-diagram|chromaticity-diagram]], [[10-concepts/色温|色温]]
 
+### 放大倍率与像素精度实验
+
+- **难度**: 基础
+- **说明**: 给定焦距、工作距离和像元尺寸，计算横向放大倍率、像素精度及物体特征在传感器上占据的像素数。
+- **学习目标**: 理解放大倍率 β = f / (WD - f) 的物理意义。, 认识像素精度 = 像元尺寸 / |β|。, 估算物体特征在成像平面上占据的像素数。
+- **关联笔记**: [[10-concepts/像素精度|像素精度]], [[10-concepts/工作距离|工作距离]], [[10-concepts/focal-length|focal-length]], [[20-formulas/lateral-magnification|lateral-magnification]], [[20-formulas/pixel-precision|pixel-precision]], [[20-formulas/focal-length-from-wd|focal-length-from-wd]]
+
 ### 薄透镜成像实验
 
 - **难度**: 基础

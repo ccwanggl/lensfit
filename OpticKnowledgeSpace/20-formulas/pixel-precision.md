@@ -42,3 +42,7 @@ $$ \text{Precision} = \frac{3.45}{1000 \times 0.2} = \frac{3.45}{200} = 0.01725\
 - 相关教程：[[50-learning/05-matching-basics|第5章]]
 
 ## 来源
+
+## 关联实验
+
+- [[90-maps/Optics Lab#magnification-scale|放大倍率与像素精度实验]] — 给定焦距、工作距离和像元尺寸，计算横向放大倍率、像素精度及物体特征在传感器上占据的像素数。

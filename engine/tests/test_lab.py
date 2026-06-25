@@ -9,6 +9,7 @@ import pytest
 from lensfit.lab import OpticsExperiment, get_registry
 from lensfit.lab.experiments.angle_of_view import AngleOfViewExperiment
 from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
+from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
 from lensfit.lab.experiments.thin_lens import ThinLensExperiment
@@ -105,6 +106,27 @@ class TestAngleOfViewExperiment:
             exp.run({"sensor_format": "Unknown"})
 
 
+class TestMagnificationScaleExperiment:
+    def test_default_run(self):
+        exp = MagnificationScaleExperiment()
+        result = exp.run({})
+        assert result.data["magnification"] == pytest.approx(0.1429, rel=1e-3)
+        assert result.data["pixel_precision_um"] == pytest.approx(24.15, rel=1e-3)
+        _assert_svg(result.svg)
+
+    def test_longer_working_distance_reduces_magnification(self):
+        exp = MagnificationScaleExperiment()
+        near = exp.run({"working_distance": 100}).data["magnification"]
+        far = exp.run({"working_distance": 500}).data["magnification"]
+        assert abs(near) > abs(far)
+
+    def test_too_short_working_distance_warns(self):
+        exp = MagnificationScaleExperiment()
+        result = exp.run({"focal_length": 50, "working_distance": 30})
+        assert result.warnings
+        assert result.data["working_distance_mm"] > 50
+
+
 class TestSensorCoverageExperiment:
     def test_fully_covered(self):
         exp = SensorCoverageExperiment()
@@ -122,6 +144,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        MagnificationScaleExperiment,
         AngleOfViewExperiment,
         ThinLensExperiment,
         DiffractionExperiment,

@@ -44,3 +44,7 @@ $$ \beta = \frac{12.8}{64} = 0.2\times $$
 - 相关教程：[[50-learning/02-geometric-optics|第2章]]
 
 ## 来源
+
+## 关联实验
+
+- [[90-maps/Optics Lab#magnification-scale|放大倍率与像素精度实验]] — 给定焦距、工作距离和像元尺寸，计算横向放大倍率、像素精度及物体特征在传感器上占据的像素数。
