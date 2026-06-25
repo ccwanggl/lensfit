@@ -36,7 +36,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
     id: "single-slit-breadboard",
     title: "单缝衍射面包板",
     description:
-      "在锁定布局的单缝衍射场景中调整波长、缝宽和屏距，观察夫琅禾费衍射强度分布。",
+      "在锁定布局的单缝衍射场景中调整波长、缝宽和屏幕位置，观察夫琅禾费衍射强度分布。",
     difficulty: "intermediate",
     linked_concepts: [
       "10-concepts/diffraction-limit",
@@ -70,19 +70,19 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
         unit: "μm",
       } as LabParameter,
       {
-        name: "screen_distance_m",
-        label: "屏距",
+        name: "screen_x_mm",
+        label: "屏幕位置",
         type: "float",
-        default: 1.0,
-        min: 0.05,
-        max: 5.0,
-        step: 0.05,
-        unit: "m",
+        default: 1100,
+        min: 200,
+        max: 3000,
+        step: 10,
+        unit: "mm",
       } as LabParameter,
     ],
     kind: "preset",
     buildScene: (params) => {
-      const distance_mm = Number(params.screen_distance_m ?? 1.0) * 1000;
+      const screen_x_mm = Number(params.screen_x_mm ?? 1100);
       return {
         version: 1,
         units: { length: "mm", angle: "deg", wavelength: "nm" },
@@ -106,7 +106,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
             spec_id: "screen",
             category: "screen",
             transform: {
-              x_mm: 100 + distance_mm,
+              x_mm: screen_x_mm,
               y_mm: 0,
               rotation_deg: 0,
             },
@@ -126,6 +126,13 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
   },
 ];
 
+
+export const WAVELENGTH_PRESETS = [
+  { label: "红", value: 650, color: "bg-red-500" },
+  { label: "绿", value: 550, color: "bg-emerald-500" },
+  { label: "蓝", value: 450, color: "bg-blue-500" },
+];
+
 export function getBreadboardPreset(id: string): BreadboardPreset | undefined {
   return BREADBOARD_PRESETS.find((p) => p.id === id);
 }
@@ -133,4 +140,17 @@ export function getBreadboardPreset(id: string): BreadboardPreset | undefined {
 export function isBreadboardPreset(id: string | null): boolean {
   if (!id) return false;
   return BREADBOARD_PRESETS.some((p) => p.id === id);
+}
+
+export function validatePresetParams(
+  presetId: string,
+  params: Record<string, unknown>
+): string | null {
+  if (presetId === "single-slit-breadboard") {
+    const screen_x_mm = Number(params.screen_x_mm ?? 1100);
+    if (screen_x_mm <= 100) {
+      return "屏幕必须位于单缝之后";
+    }
+  }
+  return null;
 }

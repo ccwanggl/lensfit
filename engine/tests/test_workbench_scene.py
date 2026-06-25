@@ -127,3 +127,22 @@ def test_catalog_has_v1_specs():
     assert CATALOG["laser-monochrome"].category == "source"
     assert CATALOG["single-slit"].category == "aperture"
     assert CATALOG["screen"].category == "screen"
+
+
+def test_serialized_scenegraph_has_no_ray_optics_types():
+    """SceneGraph v1 serialization must not contain third-party type names."""
+    scene = SceneGraph.model_validate(_minimal_scene())
+    json_text = scene.model_dump_json()
+    ray_optics_types = {
+        "SingleRay",
+        "Detector",
+        "CropBox",
+        "SphericalLens",
+        "IdealLens",
+        "Mirror",
+        "Beam",
+        "ParallelBeam",
+        "PointSource",
+    }
+    for token in ray_optics_types:
+        assert token not in json_text, f"SceneGraph contains ray-optics type: {token}"

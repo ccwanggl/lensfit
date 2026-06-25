@@ -507,6 +507,45 @@ python -m pytest tests/test_ray_optics_contract.py -q
 - 序列化 SceneGraph 不包含第三方类型。
 - 不引入数据库 migration。
 
+**完成状态：已完成**。
+
+实际完成内容（采用参数驱动的有限编辑方案）：
+
+- 新增 `labStore.sceneDrafts[presetId]` 本地草稿：
+  - `sceneDrafts` 通过 Zustand `persist` 保存到 `localStorage`，刷新后可恢复。
+  - `resetSceneDraft(presetId)` 一键清除草稿。
+  - 普通实验仍使用原有 `paramDrafts`。
+- 修改 `apps/desktop/src/lab/workbenchTypes.ts`：
+  - 将 `single-slit-breadboard` 的 `screen_distance_m` 参数改为更直观的 `screen_x_mm`（屏幕位置）。
+  - 新增 `WAVELENGTH_PRESETS`（红/绿/蓝）。
+  - 新增 `validatePresetParams(presetId, params)` 校验函数，防止屏幕位于单缝之前。
+- 修改 `apps/desktop/src/lab/LearningHub.tsx`：
+  - preset 读取/写入 `sceneDrafts`，普通实验保持 `paramDrafts`。
+  - 参数变化时调用 `validatePresetParams`，非法状态时禁用运行并显示提示。
+  - 新增 `BreadboardPresetHeader`：波长 preset 按钮 + 面包板 SVG 示意图（屏幕位置实时反映）。
+  - “重置默认参数”按钮对 preset 显示为“重置默认布局”。
+- 修改 `apps/desktop/src/stores/labStore.ts`：
+  - 新增 `sceneDrafts`、`setSceneDraft`、`resetSceneDraft`。
+  - persist 中保存 `sceneDrafts`。
+- 后端测试：
+  - 新增 `test_serialized_scenegraph_has_no_ray_optics_types`，确保 `SceneGraph v1` 序列化不含第三方类型名。
+
+验证命令：
+
+```powershell
+cd "E:/DevSpace/lensfit/engine"
+python -m pytest tests/test_workbench_scene.py tests/test_api_workbench.py tests/test_ray_optics_contract.py -q
+
+cd "E:/DevSpace/lensfit/apps/desktop"
+npm run build
+```
+
+验证结果：
+
+- 后端指定测试：**31 passed, 1 warning**
+- 后端全量回归：**151 passed, 4 warnings**
+- 前端生产构建：**通过**
+
 回滚条件：
 
 - 拖动导致参数、场景和结果不同步。

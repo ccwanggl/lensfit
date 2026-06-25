@@ -29,6 +29,8 @@ import { BreadboardPresetRunner } from "./BreadboardPresetRunner";
 import {
   getBreadboardPreset,
   isBreadboardPreset,
+  validatePresetParams,
+  WAVELENGTH_PRESETS,
 } from "./workbenchTypes";
 
 type TabId = "visual" | "data" | "hints";
@@ -39,11 +41,15 @@ export default function LearningHub() {
   const setActiveExperimentId = useLabStore((s) => s.setActiveExperimentId);
   const toggleSidebar = useLabStore((s) => s.toggleSidebar);
   const storeSetParams = useLabStore((s) => s.setParams);
+  const sceneDrafts = useLabStore((s) => s.sceneDrafts);
+  const setSceneDraft = useLabStore((s) => s.setSceneDraft);
+  const resetSceneDraft = useLabStore((s) => s.resetSceneDraft);
   const allDrafts = useLabStore((s) => s.paramDrafts);
 
   const [showKnowledge, setShowKnowledge] = useState(true);
   const [centerExpanded, setCenterExpanded] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<"left" | "right" | null>(null);
+  const [sceneError, setSceneError] = useState<string | null>(null);
 
   const isPreset = useMemo(
     () => isBreadboardPreset(activeExperimentId),
@@ -62,19 +68,22 @@ export default function LearningHub() {
 
   const experiment = preset ?? data?.items[0] ?? null;
 
-  const paramDrafts = useMemo(
-    () => (activeExperimentId ? allDrafts[activeExperimentId] ?? {} : {}),
-    [allDrafts, activeExperimentId]
+  const drafts = useMemo(
+    () =>
+      activeExperimentId
+        ? (isPreset ? sceneDrafts[activeExperimentId] : allDrafts[activeExperimentId]) ?? {}
+        : {},
+    [isPreset, sceneDrafts, allDrafts, activeExperimentId]
   );
 
   const initialParams = useMemo(() => {
     if (!experiment) return {};
     const defaults: Record<string, unknown> = {};
     for (const p of experiment.parameters) {
-      defaults[p.name] = paramDrafts[p.name] ?? p.default;
+      defaults[p.name] = drafts[p.name] ?? p.default;
     }
     return defaults;
-  }, [experiment, paramDrafts]);
+  }, [experiment, drafts]);
 
   const [params, setParams] = useState(initialParams);
   const [liveParams, setLiveParams] = useState(initialParams);
@@ -83,8 +92,15 @@ export default function LearningHub() {
 
   useEffect(() => {
     setParams(initialParams);
-    setLiveParams(initialParams);
-  }, [initialParams]);
+    const error =
+      isPreset && activeExperimentId
+        ? validatePresetParams(activeExperimentId, initialParams)
+        : null;
+    setSceneError(error);
+    if (!error) {
+      setLiveParams(initialParams);
+    }
+  }, [initialParams, isPreset, activeExperimentId]);
 
   const {
     data: result,
@@ -98,7 +114,7 @@ export default function LearningHub() {
       }
       return runLabExperiment(activeExperimentId!, liveParams);
     },
-    enabled: !!activeExperimentId && !!experiment,
+    enabled: !!activeExperimentId && !!experiment && sceneError === null,
   });
 
   const handleSelectExperiment = (id: string) => {
@@ -117,13 +133,24 @@ export default function LearningHub() {
     const next = { ...params, [name]: value };
     setParams(next);
     if (activeExperimentId) {
-      storeSetParams(activeExperimentId, { [name]: value });
+      if (isPreset) {
+        setSceneDraft(activeExperimentId, { [name]: value });
+      } else {
+        storeSetParams(activeExperimentId, { [name]: value });
+      }
     }
     if (debounceRef.current) {
       window.clearTimeout(debounceRef.current);
     }
     debounceRef.current = window.setTimeout(() => {
-      setLiveParams(next);
+      const error =
+        isPreset && activeExperimentId
+          ? validatePresetParams(activeExperimentId, next)
+          : null;
+      setSceneError(error);
+      if (!error) {
+        setLiveParams(next);
+      }
     }, 60);
   };
 
@@ -134,8 +161,13 @@ export default function LearningHub() {
       defaults[p.name] = p.default;
     }
     setParams(defaults);
+    setSceneError(null);
     if (activeExperimentId) {
-      storeSetParams(activeExperimentId, defaults);
+      if (isPreset) {
+        resetSceneDraft(activeExperimentId);
+      } else {
+        storeSetParams(activeExperimentId, defaults);
+      }
     }
     setLiveParams(defaults);
   };
@@ -154,12 +186,20 @@ export default function LearningHub() {
           </div>
           {experiment && (
             <div className="min-h-0 flex-1 overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+              {isPreset && (
+                <BreadboardPresetHeader
+                  params={params}
+                  onChange={handleParamChange}
+                />
+              )}
               <ParameterPanel
                 experiment={experiment}
                 params={params}
                 onChange={handleParamChange}
                 onReset={handleReset}
                 isFetching={isFetching}
+                isPreset={isPreset}
+                sceneError={sceneError}
               />
             </div>
           )}
@@ -181,12 +221,20 @@ export default function LearningHub() {
             </div>
             {experiment && (
               <div className="min-h-0 flex-1 overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+                {isPreset && (
+                  <BreadboardPresetHeader
+                    params={params}
+                    onChange={handleParamChange}
+                  />
+                )}
                 <ParameterPanel
                   experiment={experiment}
                   params={params}
                   onChange={handleParamChange}
                   onReset={handleReset}
                   isFetching={isFetching}
+                  isPreset={isPreset}
+                  sceneError={sceneError}
                 />
               </div>
             )}
@@ -395,12 +443,16 @@ function ParameterPanel({
   onChange,
   onReset,
   isFetching,
+  isPreset,
+  sceneError,
 }: {
   experiment: LabExperiment;
   params: Record<string, unknown>;
   onChange: (name: string, value: unknown) => void;
   onReset: () => void;
   isFetching: boolean;
+  isPreset: boolean;
+  sceneError: string | null;
 }) {
   return (
     <div className="flex h-full flex-col">
@@ -422,12 +474,120 @@ function ParameterPanel({
           />
         ))}
       </div>
+      {sceneError && (
+        <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
+          {sceneError}
+        </div>
+      )}
       <button
         onClick={onReset}
         className="mt-3 w-full rounded-lg border border-slate-200 bg-white py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
       >
-        重置默认参数
+        {isPreset ? "重置默认布局" : "重置默认参数"}
       </button>
+    </div>
+  );
+}
+
+function BreadboardPresetHeader({
+  params,
+  onChange,
+}: {
+  params: Record<string, unknown>;
+  onChange: (name: string, value: unknown) => void;
+}) {
+  const screen_x_mm = Number(params.screen_x_mm ?? 1100);
+  const wavelength_nm = Number(params.wavelength_nm ?? 550);
+  const clamped = Math.min(Math.max(screen_x_mm, 200), 3000);
+  const screenSvgX = 40 + ((clamped - 100) / (3000 - 100)) * 220;
+
+  return (
+    <div className="mb-4 space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
+          波长
+        </span>
+        {WAVELENGTH_PRESETS.map((preset) => {
+          const active = wavelength_nm === preset.value;
+          return (
+            <button
+              key={preset.value}
+              onClick={() => onChange("wavelength_nm", preset.value)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                active
+                  ? "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-800/40 dark:bg-indigo-900/30 dark:text-indigo-400"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${preset.color}`} />
+              {preset.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="rounded-lg border border-slate-200/60 bg-slate-50/60 p-2 dark:border-slate-700/60 dark:bg-slate-800/60">
+        <div className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-400">
+          面包板示意
+        </div>
+        <svg viewBox="0 0 300 70" className="h-16 w-full">
+          <line
+            x1="20"
+            y1="50"
+            x2="280"
+            y2="50"
+            className="text-slate-300 dark:text-slate-600"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <circle cx="20" cy="50" r="5" className="text-red-500" fill="currentColor" />
+          <text
+            x="20"
+            y="65"
+            textAnchor="middle"
+            className="text-[8px] text-slate-500 dark:text-slate-400"
+            fill="currentColor"
+          >
+            激光
+          </text>
+          <line
+            x1="40"
+            y1="35"
+            x2="40"
+            y2="50"
+            className="text-slate-800 dark:text-slate-200"
+            stroke="currentColor"
+            strokeWidth="3"
+          />
+          <text
+            x="40"
+            y="65"
+            textAnchor="middle"
+            className="text-[8px] text-slate-500 dark:text-slate-400"
+            fill="currentColor"
+          >
+            单缝
+          </text>
+          <line
+            x1={screenSvgX}
+            y1="30"
+            x2={screenSvgX}
+            y2="50"
+            className="text-indigo-500"
+            stroke="currentColor"
+            strokeWidth="3"
+          />
+          <text
+            x={screenSvgX}
+            y="22"
+            textAnchor="middle"
+            className="text-[8px] text-indigo-500"
+            fill="currentColor"
+          >
+            屏幕
+          </text>
+        </svg>
+      </div>
     </div>
   );
 }
