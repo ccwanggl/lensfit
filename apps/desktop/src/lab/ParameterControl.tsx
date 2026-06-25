@@ -32,7 +32,7 @@ export function ParameterControl({ param, value, onChange }: ParameterControlPro
     );
   }
 
-  if (param.type === "choice") {
+  if (param.type === "choice" || param.type === "enum") {
     const options = param.options ?? [];
     const selected = value ?? param.default;
     return (
