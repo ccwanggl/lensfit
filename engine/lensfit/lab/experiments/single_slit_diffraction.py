@@ -74,7 +74,8 @@ class SingleSlitDiffractionExperiment(OpticsExperiment):
         y1_mm = l_m * 1000.0 * math.tan(theta1_rad)  # first min position on screen
         central_width_mm = 2 * y1_mm
 
-        svg = self._draw_svg(a_um, lambda_nm, l_m, y1_mm)
+        intensity_samples = self._intensity_samples(a_um, lambda_nm, l_m, y1_mm)
+        svg = self._draw_svg(a_um, lambda_nm, l_m, y1_mm, intensity_samples)
 
         return ExperimentResult(
             data={
@@ -84,6 +85,7 @@ class SingleSlitDiffractionExperiment(OpticsExperiment):
                 "first_min_angle_deg": round(theta1_deg, 4),
                 "first_min_position_mm": round(y1_mm, 4),
                 "central_max_width_mm": round(central_width_mm, 4),
+                "intensity_samples": intensity_samples,
             },
             svg=svg,
             warnings=[],
@@ -94,26 +96,20 @@ class SingleSlitDiffractionExperiment(OpticsExperiment):
             ],
         )
 
-    def _draw_svg(
+    def _intensity_samples(
         self,
         a_um: float,
         lambda_nm: float,
         l_m: float,
         y1_mm: float,
-    ) -> str:
-        width, height = 640, 320
-        plot_x, plot_y = 60, 50
-        plot_w, plot_h = 400, 180
-
-        # Plot intensity vs screen position y (mm)
-        # Use range covering a few central maxima
+        num_points: int = 200,
+    ) -> list[dict[str, float]]:
+        """Return sampled relative intensity vs screen position for 3D texture."""
         y_max_mm = max(3 * y1_mm, 0.5)
         a_mm = a_um / 1000.0
         lambda_mm = lambda_nm * 1e-6
 
         def intensity(y_mm: float) -> float:
-            # beta = (pi a sin theta) / lambda
-            # For small angles: sin theta ≈ y / L
             sin_theta = (y_mm / 1000.0) / l_m
             if abs(sin_theta) >= 1.0:
                 return 0.0
@@ -122,9 +118,27 @@ class SingleSlitDiffractionExperiment(OpticsExperiment):
                 return 1.0
             return (math.sin(beta) / beta) ** 2
 
-        num_points = 200
-        ys = [-y_max_mm + 2 * y_max_mm * i / (num_points - 1) for i in range(num_points)]
-        intensities = [intensity(y) for y in ys]
+        ys = [
+            -y_max_mm + 2 * y_max_mm * i / (num_points - 1)
+            for i in range(num_points)
+        ]
+        return [{"y_mm": y, "intensity": intensity(y)} for y in ys]
+
+    def _draw_svg(
+        self,
+        a_um: float,
+        lambda_nm: float,
+        l_m: float,
+        y1_mm: float,
+        intensity_samples: list[dict[str, float]],
+    ) -> str:
+        width, height = 640, 320
+        plot_x, plot_y = 60, 50
+        plot_w, plot_h = 400, 180
+
+        ys = [s["y_mm"] for s in intensity_samples]
+        intensities = [s["intensity"] for s in intensity_samples]
+        y_max_mm = max(abs(ys[0]), abs(ys[-1]))
 
         def x_to_px(y):
             return plot_x + (y + y_max_mm) / (2 * y_max_mm) * plot_w

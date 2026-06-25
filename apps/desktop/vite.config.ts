@@ -5,6 +5,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig(async () => ({
   plugins: [react(), tailwindcss()],
   clearScreen: false,
+  build: {
+    chunkSizeWarningLimit: 700,
+  },
   server: {
     host: "127.0.0.1",
     port: 5173,

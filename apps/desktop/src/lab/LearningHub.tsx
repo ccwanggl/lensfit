@@ -365,7 +365,11 @@ export default function LearningHub() {
                     </div>
                   ) : activeTab === "visual" ? (
                     isPreset ? (
-                      <BreadboardPresetRunner result={result} isFetching={isFetching} />
+                      <BreadboardPresetRunner
+                        result={result}
+                        isFetching={isFetching}
+                        presetId={activeExperimentId ?? undefined}
+                      />
                     ) : (
                       <div className="space-y-4">
                         <MediaPanel experimentId={experiment.id} />

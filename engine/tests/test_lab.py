@@ -323,6 +323,11 @@ class TestDoubleSlitExperiment:
         result = exp.run({})
         assert result.data["fringe_spacing_mm"] == pytest.approx(5.5, rel=1e-3)
         assert result.data["visible_maxima_in_envelope"] > 1
+        samples = result.data["intensity_samples"]
+        assert len(samples) > 0
+        assert samples[0]["y_mm"] < 0
+        assert samples[-1]["y_mm"] > 0
+        assert any(s["intensity"] > 0.9 for s in samples)
         _assert_svg(result.svg)
 
     def test_larger_separation_tighter_fringes(self):
@@ -344,6 +349,11 @@ class TestSingleSlitDiffractionExperiment:
         result = exp.run({})
         assert result.data["first_min_angle_deg"] > 0
         assert result.data["central_max_width_mm"] > 0
+        samples = result.data["intensity_samples"]
+        assert len(samples) > 0
+        assert samples[0]["y_mm"] < 0
+        assert samples[-1]["y_mm"] > 0
+        assert max(s["intensity"] for s in samples) == pytest.approx(1.0, abs=1e-2)
         _assert_svg(result.svg)
 
     def test_narrower_slit_widens_pattern(self):

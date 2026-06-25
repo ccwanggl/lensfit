@@ -92,7 +92,8 @@ class DoubleSlitExperiment(OpticsExperiment):
         else:
             visible_maxima = 2 * int(math.floor(ratio)) + 1
 
-        svg = self._draw_svg(a_um, d_um, lambda_nm, l_m, fringe_spacing_mm)
+        intensity_samples = self._intensity_samples(a_um, d_um, lambda_nm, l_m, fringe_spacing_mm)
+        svg = self._draw_svg(a_um, d_um, lambda_nm, l_m, fringe_spacing_mm, intensity_samples)
 
         return ExperimentResult(
             data={
@@ -102,6 +103,7 @@ class DoubleSlitExperiment(OpticsExperiment):
                 "screen_distance_m": l_m,
                 "fringe_spacing_mm": round(fringe_spacing_mm, 4),
                 "visible_maxima_in_envelope": visible_maxima,
+                "intensity_samples": intensity_samples,
             },
             svg=svg,
             warnings=[],
@@ -112,30 +114,29 @@ class DoubleSlitExperiment(OpticsExperiment):
             ],
         )
 
-    def _draw_svg(
+    def _intensity_samples(
         self,
         a_um: float,
         d_um: float,
         lambda_nm: float,
         l_m: float,
         fringe_spacing_mm: float,
-    ) -> str:
-        width, height = 640, 320
-        plot_x, plot_y = 60, 50
-        plot_w, plot_h = 420, 180
-
+        num_points: int = 400,
+    ) -> list[dict[str, float]]:
+        """Return sampled relative intensity vs screen position for 3D texture."""
         a_mm = a_um / 1000.0
         d_mm = d_um / 1000.0
         lambda_mm = lambda_nm * 1e-6
-
-        # Plot range: a few central fringes, but at least the central envelope
-        y_max_mm = max(5 * fringe_spacing_mm, 3 * (lambda_mm * l_m * 1000.0) / a_mm, 0.5)
+        y_max_mm = max(
+            5 * fringe_spacing_mm,
+            3 * (lambda_mm * l_m * 1000.0) / a_mm,
+            0.5,
+        )
 
         def envelope(y_mm: float) -> float:
             sin_theta = (y_mm / 1000.0) / l_m
             if abs(sin_theta) >= 1.0:
                 return 0.0
-            a_mm = a_um / 1000.0
             alpha = math.pi * a_mm * sin_theta / lambda_mm
             if abs(alpha) < 1e-9:
                 return 1.0
@@ -149,10 +150,28 @@ class DoubleSlitExperiment(OpticsExperiment):
         def intensity(y_mm: float) -> float:
             return envelope(y_mm) * interference(y_mm)
 
-        num_points = 400
-        ys = [-y_max_mm + 2 * y_max_mm * i / (num_points - 1) for i in range(num_points)]
-        intensities = [intensity(y) for y in ys]
-        envelope_values = [envelope(y) for y in ys]
+        ys = [
+            -y_max_mm + 2 * y_max_mm * i / (num_points - 1)
+            for i in range(num_points)
+        ]
+        return [{"y_mm": y, "intensity": intensity(y)} for y in ys]
+
+    def _draw_svg(
+        self,
+        a_um: float,
+        d_um: float,
+        lambda_nm: float,
+        l_m: float,
+        fringe_spacing_mm: float,
+        intensity_samples: list[dict[str, float]],
+    ) -> str:
+        width, height = 640, 320
+        plot_x, plot_y = 60, 50
+        plot_w, plot_h = 420, 180
+
+        ys = [s["y_mm"] for s in intensity_samples]
+        intensities = [s["intensity"] for s in intensity_samples]
+        y_max_mm = max(abs(ys[0]), abs(ys[-1]))
 
         def x_to_px(y):
             return plot_x + (y + y_max_mm) / (2 * y_max_mm) * plot_w
@@ -163,6 +182,20 @@ class DoubleSlitExperiment(OpticsExperiment):
         curve = "M " + " L ".join(
             f"{x_to_px(y):.1f} {y_to_px(i):.1f}" for y, i in zip(ys, intensities)
         )
+        # Envelope curve for SVG overlay
+        a_mm = a_um / 1000.0
+        lambda_mm = lambda_nm * 1e-6
+
+        def envelope(y_mm: float) -> float:
+            sin_theta = (y_mm / 1000.0) / l_m
+            if abs(sin_theta) >= 1.0:
+                return 0.0
+            alpha = math.pi * a_mm * sin_theta / lambda_mm
+            if abs(alpha) < 1e-9:
+                return 1.0
+            return (math.sin(alpha) / alpha) ** 2
+
+        envelope_values = [envelope(y) for y in ys]
         envelope_curve = "M " + " L ".join(
             f"{x_to_px(y):.1f} {y_to_px(e):.1f}" for y, e in zip(ys, envelope_values)
         )
