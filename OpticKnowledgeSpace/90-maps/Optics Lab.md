@@ -39,6 +39,13 @@ aliases:
 - **学习目标**: 理解放大倍率 β = f / (WD - f) 的物理意义。, 认识像素精度 = 像元尺寸 / |β|。, 估算物体特征在成像平面上占据的像素数。
 - **关联笔记**: [[10-concepts/像素精度|像素精度]], [[10-concepts/工作距离|工作距离]], [[10-concepts/focal-length|focal-length]], [[20-formulas/lateral-magnification|lateral-magnification]], [[20-formulas/pixel-precision|pixel-precision]], [[20-formulas/focal-length-from-wd|focal-length-from-wd]]
 
+### 景深实验
+
+- **难度**: 基础
+- **说明**: 给定焦距、光圈、对焦距离和传感器参数，计算景深的前后界限和超焦距。
+- **学习目标**: 理解光圈、焦距和对焦距离如何共同影响景深。, 认识超焦距的意义及其与景深远/近界的关系。
+- **关联笔记**: [[10-concepts/depth-of-field|depth-of-field]], [[10-concepts/f-number|f-number]]
+
 ### 薄透镜成像实验
 
 - **难度**: 基础

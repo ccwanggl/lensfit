@@ -9,6 +9,7 @@ import pytest
 from lensfit.lab import OpticsExperiment, get_registry
 from lensfit.lab.experiments.angle_of_view import AngleOfViewExperiment
 from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
+from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
 from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
@@ -127,6 +128,29 @@ class TestMagnificationScaleExperiment:
         assert result.data["working_distance_mm"] > 50
 
 
+class TestDepthOfFieldExperiment:
+    def test_default_run(self):
+        exp = DepthOfFieldExperiment()
+        result = exp.run({})
+        assert result.data["f_number"] == 2.8
+        assert result.data["near_limit_m"] < result.data["focus_distance_m"]
+        assert result.data["far_limit_m"] > result.data["focus_distance_m"]
+        _assert_svg(result.svg)
+
+    def test_hyperfocal_infinite_dof(self):
+        exp = DepthOfFieldExperiment()
+        # Focus at hyperfocal -> far limit should be None (infinity)
+        result = exp.run({"focus_distance_m": 130, "f_number": 2.8})
+        assert result.data["far_limit_m"] is None
+        assert result.data["dof_total_m"] is None
+
+    def test_smaller_aperture_increases_dof(self):
+        exp = DepthOfFieldExperiment()
+        wide = exp.run({"f_number": 2.0}).data["dof_total_m"]
+        stopped = exp.run({"f_number": 11.0}).data["dof_total_m"]
+        assert stopped > wide
+
+
 class TestSensorCoverageExperiment:
     def test_fully_covered(self):
         exp = SensorCoverageExperiment()
@@ -144,6 +168,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        DepthOfFieldExperiment,
         MagnificationScaleExperiment,
         AngleOfViewExperiment,
         ThinLensExperiment,

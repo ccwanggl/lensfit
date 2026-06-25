@@ -70,3 +70,7 @@ $$
 ## 来源
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.3 景深
 - [[../50-learning/05-matching-basics|第5章 匹配基础]]（镜头选型中的景深与像圈匹配）
+
+## 关联实验
+
+- [[90-maps/Optics Lab#depth-of-field|景深实验]] — 给定焦距、光圈、对焦距离和传感器参数，计算景深的前后界限和超焦距。

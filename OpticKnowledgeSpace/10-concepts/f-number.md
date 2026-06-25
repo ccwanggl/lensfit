@@ -68,3 +68,7 @@ $$
 ## 来源
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.2 光圈与F值
 - [[../50-learning/01-light-and-waves|第1章 光与波]] §1.6 衍射极限
+
+## 关联实验
+
+- [[90-maps/Optics Lab#depth-of-field|景深实验]] — 给定焦距、光圈、对焦距离和传感器参数，计算景深的前后界限和超焦距。
