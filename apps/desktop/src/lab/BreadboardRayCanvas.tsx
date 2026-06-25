@@ -17,7 +17,7 @@ interface ComponentInfo {
   screenY: number;
 }
 
-function wavelengthToColor(wavelengthNm: number): string {
+function wavelengthToRgb(wavelengthNm: number): [number, number, number] {
   const nm = Math.max(380, Math.min(700, wavelengthNm));
   let r = 0;
   let g = 0;
@@ -53,7 +53,12 @@ function wavelengthToColor(wavelengthNm: number): string {
     1;
   const toByte = (v: number) =>
     Math.round(Math.max(0, Math.min(255, v * 255 * f)));
-  return `rgb(${toByte(r)}, ${toByte(g)}, ${toByte(b)})`;
+  return [toByte(r), toByte(g), toByte(b)];
+}
+
+function wavelengthToColor(wavelengthNm: number): string {
+  const [r, g, b] = wavelengthToRgb(wavelengthNm);
+  return `rgb(${r}, ${g}, ${b})`;
 }
 
 function parseScene(scene?: WorkbenchScene): ComponentInfo | null {
@@ -264,33 +269,59 @@ export function BreadboardRayCanvas({ scene, result }: BreadboardRayCanvasProps)
 
     ctx.globalAlpha = 1;
 
-    // Draw screen intensity bar
+    // Draw the calculated intensity pattern on/around the screen.
     if (showIntensity && rayOptics?.samples && rayOptics.samples.length > 0) {
-      const barX = cssWidth - padding.right + 10;
-      const barW = 50;
-      const barTop = padding.top;
-      const barHeight = drawHeight;
       const samples = rayOptics.samples;
-      const yMin = samples[0].y_mm;
-      const yMax = samples[samples.length - 1].y_mm;
-      const yRange = yMax - yMin || 1;
+      const [rr, gg, bb] = wavelengthToRgb(info.wavelengthNm);
+
+      // 1) Color the screen itself according to the intensity distribution.
+      const screenStripW = 6;
+      for (let i = 0; i < samples.length - 1; i++) {
+        const s0 = samples[i];
+        const s1 = samples[i + 1];
+        const cy0 = toCanvasY(s0.y_mm);
+        const cy1 = toCanvasY(s1.y_mm);
+        const intensity = (s0.intensity + s1.intensity) / 2;
+        ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.08 + intensity * 0.92})`;
+        ctx.fillRect(
+          sx - screenStripW / 2,
+          Math.min(cy0, cy1),
+          screenStripW,
+          Math.max(1, Math.abs(cy1 - cy0))
+        );
+      }
+
+      // 2) Mini sideways profile bar to the right of the screen.
+      const gap = 10;
+      const barW = 50;
+      const barX = sx + gap;
+      const maxIntensity = Math.max(
+        1e-6,
+        Math.max(...samples.map((s) => s.intensity))
+      );
+
+      // Background of the profile bar
+      ctx.fillStyle = "rgba(15, 23, 42, 0.7)";
+      ctx.fillRect(barX, padding.top, barW, drawHeight);
 
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const y0 = barTop + ((yMax - s0.y_mm) / yRange) * barHeight;
-        const y1 = barTop + ((yMax - s1.y_mm) / yRange) * barHeight;
+        const cy0 = toCanvasY(s0.y_mm);
+        const cy1 = toCanvasY(s1.y_mm);
         const intensity = (s0.intensity + s1.intensity) / 2;
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.15 + intensity * 0.85})`;
-        ctx.fillRect(barX, Math.min(y0, y1), barW, Math.abs(y1 - y0) + 1);
+        const w = (intensity / maxIntensity) * barW;
+        ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.15 + intensity * 0.85})`;
+        ctx.fillRect(barX, Math.min(cy0, cy1), Math.max(1, w), Math.max(1, Math.abs(cy1 - cy0)));
       }
 
-      ctx.strokeStyle = "rgba(226, 232, 240, 0.5)";
+      // Border and label
+      ctx.strokeStyle = "rgba(226, 232, 240, 0.4)";
       ctx.lineWidth = 1;
-      ctx.strokeRect(barX, barTop, barW, barHeight);
+      ctx.strokeRect(barX, padding.top, barW, drawHeight);
       ctx.fillStyle = "rgba(226, 232, 240, 0.8)";
       ctx.font = "10px sans-serif";
-      ctx.fillText("相对强度", barX, barTop - 6);
+      ctx.fillText("相对强度", barX, padding.top - 6);
     }
 
     // Hover crosshair
