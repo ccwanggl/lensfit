@@ -33,6 +33,7 @@
 
 ## 审查记录
 
+- [2026-06-25 光学面包板阶段 5 深度审查报告](reviews/2026-06-25-phase-5-deep-review.md)
 - [2026-06-25 光学面包板阶段 5 实施评审报告](reviews/2026-06-25-phase-5-implementation-review.md)
 - [2026-06-25 光学面包板阶段 5 就绪评审](reviews/2026-06-25-phase-5-readiness-review.md)
 - [2026-06-25 光学面包板阶段 4 评审报告](reviews/2026-06-25-phase-4-ray-optics-readonly-probe.md)

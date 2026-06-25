@@ -148,6 +148,9 @@ export function validatePresetParams(
 ): string | null {
   if (presetId === "single-slit-breadboard") {
     const screen_x_mm = Number(params.screen_x_mm ?? 1100);
+    if (!Number.isFinite(screen_x_mm)) {
+      return "屏幕位置必须是有效数字";
+    }
     if (screen_x_mm <= 100) {
       return "屏幕必须位于单缝之后";
     }
