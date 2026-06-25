@@ -19,6 +19,7 @@ from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
 from lensfit.lab.experiments.blackbody import BlackbodyExperiment
 from lensfit.lab.experiments.illumination_geometry import IlluminationGeometryExperiment
 from lensfit.lab.experiments.thermal_ifov_netd import ThermalIfovNetdExperiment
+from lensfit.lab.experiments.aberration_spot import AberrationSpotExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -295,6 +296,27 @@ class TestThermalIfovNetdExperiment:
         assert result.data["detectable"] is False
 
 
+class TestAberrationSpotExperiment:
+    def test_default_run(self):
+        exp = AberrationSpotExperiment()
+        result = exp.run({})
+        assert result.data["rms_radius"] >= 0
+        assert result.data["geometric_radius"] >= 0
+        assert len(result.data["spot_rays"]) > 0
+        _assert_svg(result.svg)
+
+    def test_spherical_aberration_increases_spot_size(self):
+        exp = AberrationSpotExperiment()
+        no_ab = exp.run({"spherical": 0.0}).data["rms_radius"]
+        with_ab = exp.run({"spherical": 0.5}).data["rms_radius"]
+        assert with_ab > no_ab
+
+    def test_astigmatism_produces_non_zero_rms(self):
+        exp = AberrationSpotExperiment()
+        result = exp.run({"astigmatism": 0.5, "field_height": 0.7})
+        assert result.data["rms_radius"] > 0
+
+
 class TestDoubleSlitExperiment:
     def test_default_run(self):
         exp = DoubleSlitExperiment()
@@ -419,6 +441,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        AberrationSpotExperiment,
         ThermalIfovNetdExperiment,
         IlluminationGeometryExperiment,
         BlackbodyExperiment,

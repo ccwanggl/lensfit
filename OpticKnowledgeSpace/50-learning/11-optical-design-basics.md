@@ -366,3 +366,7 @@ $$D_{\text{入瞳}} \approx \frac{D_{\text{出瞳}}}{|M|} = \frac{4}{0.5} = 8 \t
 - [[50-learning/06-aberrations|第6章 像差]]—— 色差、球差、彗差等像差的物理成因
 - [[50-learning/12-otf-and-image-quality|第12章 光学传递函数]]—— MTF 的数学推导与系统级分析
 - [[50-learning/14-computational-optics|第14章 计算光学]]—— 用算法弥补光学设计的物理限制
+
+## 关联实验
+
+- [[90-maps/Optics Lab#aberration-spot|透镜像差点列图实验]] — 用低阶赛德尔像差生成瞳面网格光线，计算横向像差并绘制点列图。
