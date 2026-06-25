@@ -113,7 +113,7 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [raysPerSlit, setRaysPerSlit] = useState(40);
+  const [raysPerSlit, setRaysPerSlit] = useState(60);
   const [yExaggeration, setYExaggeration] = useState(30);
   const [showBlocked, setShowBlocked] = useState(false);
   const [showIntensity, setShowIntensity] = useState(true);
@@ -233,45 +233,46 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     ctx.fillStyle = "rgba(226, 232, 240, 0.8)";
     ctx.fillText("屏幕", sx - 12, cssHeight - padding.bottom + 16);
 
-    // Draw rays through openings
-    ctx.strokeStyle = rayColor;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = 0.35;
+    // Draw rays as an angular fan from the source. Rays that hit the blocker
+    // are truncated at the aperture plane; rays that pass through a slit
+    // continue to the screen.
+    // Emit rays over a wide fan (120°) so the source looks like it radiates
+    // in all directions and the blocker clearly truncates most of them.
+    const maxAngle = Math.PI / 3;
+    const angleStep = (maxAngle * 2) / Math.max(1, raysPerSlit);
 
-    openings.forEach((op) => {
-      for (let i = 0; i < raysPerSlit; i++) {
-        const t = (i + 0.5) / raysPerSlit;
-        const py = op.y0 + (op.y1 - op.y0) * t;
-        const dx = info.x - sourceX;
-        const dy = py - sourceY;
-        const dirX = dx;
-        const dirY = dy;
-        // extend to screen
-        const scaleToScreen = (info.screenX - sourceX) / dirX;
-        const screenY = sourceY + dirY * scaleToScreen;
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= raysPerSlit; i++) {
+      const angle = -maxAngle + i * angleStep;
+      const cosA = Math.cos(angle);
+      const sinA = Math.sin(angle);
+
+      // Intersection with the aperture plane.
+      const tAperture = (info.x - sourceX) / cosA;
+      const apertureY = sourceY + sinA * tAperture;
+
+      const isTransmitted = openings.some(
+        (op) => apertureY >= op.y0 && apertureY <= op.y1
+      );
+
+      if (isTransmitted) {
+        ctx.strokeStyle = rayColor;
+        ctx.globalAlpha = 0.35;
+        const tScreen = (info.screenX - sourceX) / cosA;
+        const screenY = sourceY + sinA * tScreen;
         ctx.beginPath();
         ctx.moveTo(toCanvasX(sourceX), toCanvasY(sourceY));
         ctx.lineTo(toCanvasX(info.screenX), toCanvasY(screenY));
         ctx.stroke();
-      }
-    });
-
-    // Optionally draw a few blocked rays to show the blocker geometry
-    if (showBlocked) {
-      ctx.strokeStyle = blockedColor;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = 0.4;
-      const blockedAngles = [-0.12, -0.06, 0.06, 0.12];
-      blockedAngles.forEach((angle) => {
-        const len = info.screenX / Math.cos(angle);
+      } else if (showBlocked) {
+        ctx.strokeStyle = blockedColor;
+        ctx.globalAlpha = 0.45;
         ctx.beginPath();
         ctx.moveTo(toCanvasX(sourceX), toCanvasY(sourceY));
-        ctx.lineTo(
-          toCanvasX(sourceX + len * Math.cos(angle)),
-          toCanvasY(sourceY + len * Math.sin(angle))
-        );
+        ctx.lineTo(toCanvasX(sourceX + cosA * tAperture), toCanvasY(apertureY));
         ctx.stroke();
-      });
+      }
     }
 
     ctx.globalAlpha = 1;
@@ -358,8 +359,8 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
           <span className="text-slate-600 dark:text-slate-400">光线密度</span>
           <input
             type="range"
-            min={5}
-            max={120}
+            min={10}
+            max={180}
             step={5}
             value={raysPerSlit}
             onChange={(e) => setRaysPerSlit(Number(e.target.value))}
