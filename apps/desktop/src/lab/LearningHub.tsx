@@ -185,7 +185,7 @@ export default function LearningHub() {
             <ExperimentCatalog onSelect={handleSelectExperiment} />
           </div>
           {experiment && (
-            <div className="min-h-0 flex-1 overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
               {isPreset && (
                 <BreadboardPresetHeader
                   params={params}
@@ -220,7 +220,7 @@ export default function LearningHub() {
               <ExperimentCatalog onSelect={handleSelectExperiment} />
             </div>
             {experiment && (
-              <div className="min-h-0 flex-1 overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
                 {isPreset && (
                   <BreadboardPresetHeader
                     params={params}
@@ -455,7 +455,7 @@ function ParameterPanel({
   sceneError: string | null;
 }) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
           参数控制
