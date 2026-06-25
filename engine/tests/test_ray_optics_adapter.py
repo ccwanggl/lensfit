@@ -257,15 +257,12 @@ def test_double_slit_image_is_generated_when_requested():
     assert data["image"].startswith("data:image/png;base64,")
 
 
-@pytest.mark.skipif(not NODE_AVAILABLE, reason="Node.js not available")
-def test_solver_includes_ray_optics_result_without_image_by_default():
+def test_solver_does_not_run_ray_optics_by_default():
     solver = WorkbenchSolver()
     result = solver.solve(_single_slit_scene())
 
-    assert "ray_optics" in result.data
-    assert result.data["ray_optics"]["available"] is True
-    assert len(result.data["ray_optics"]["samples"]) > 0
-    assert result.data["ray_optics"].get("image") is None
+    assert "ray_optics" not in result.data
+    assert not any("ray-optics" in w for w in result.warnings)
 
 
 @pytest.mark.skipif(
@@ -291,7 +288,7 @@ def test_solver_gracefully_handles_missing_ray_optics(monkeypatch):
     )
 
     solver = WorkbenchSolver()
-    result = solver.solve(_single_slit_scene())
+    result = solver.solve(_single_slit_scene(), include_ray_image=True)
 
     assert result.data["ray_optics"]["available"] is False
     assert "node missing for test" in result.data["ray_optics"]["error"]

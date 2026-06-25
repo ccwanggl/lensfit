@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { LabRunResult } from "../utils/api";
-import type { RayOpticsData, WorkbenchScene } from "./workbenchTypes";
+import { computeFraunhoferIntensity } from "./fraunhofer";
+import type { WorkbenchScene } from "./workbenchTypes";
 
 interface BreadboardRayCanvasProps {
   scene?: WorkbenchScene;
-  result?: LabRunResult;
 }
 
 interface ComponentInfo {
@@ -105,8 +104,12 @@ function generateSlitOpenings(
   ];
 }
 
-export function BreadboardRayCanvas({ scene, result }: BreadboardRayCanvasProps) {
+export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
   const info = useMemo(() => parseScene(scene), [scene]);
+  const intensity = useMemo(
+    () => computeFraunhoferIntensity(scene),
+    [scene]
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -115,8 +118,6 @@ export function BreadboardRayCanvas({ scene, result }: BreadboardRayCanvasProps)
   const [showBlocked, setShowBlocked] = useState(false);
   const [showIntensity, setShowIntensity] = useState(true);
   const [hover, setHover] = useState<{ x: number; y: number } | null>(null);
-
-  const rayOptics = result?.data?.ray_optics as RayOpticsData | undefined;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -270,8 +271,8 @@ export function BreadboardRayCanvas({ scene, result }: BreadboardRayCanvasProps)
     ctx.globalAlpha = 1;
 
     // Draw the calculated intensity pattern on/around the screen.
-    if (showIntensity && rayOptics?.samples && rayOptics.samples.length > 0) {
-      const samples = rayOptics.samples;
+    if (showIntensity && intensity.samples.length > 0) {
+      const samples = intensity.samples;
       const [rr, gg, bb] = wavelengthToRgb(info.wavelengthNm);
 
       // 1) Color the screen itself according to the intensity distribution.
@@ -337,7 +338,7 @@ export function BreadboardRayCanvas({ scene, result }: BreadboardRayCanvasProps)
       ctx.stroke();
       ctx.setLineDash([]);
     }
-  }, [info, raysPerSlit, yExaggeration, showBlocked, showIntensity, rayOptics, hover]);
+  }, [info, raysPerSlit, yExaggeration, showBlocked, showIntensity, intensity, hover]);
 
   if (!info) {
     return (

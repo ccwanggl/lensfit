@@ -97,13 +97,11 @@ def test_workbench_run_default_scene(client: TestClient):
     )
 
 
-def test_workbench_run_does_not_include_ray_image_by_default(client: TestClient):
+def test_workbench_run_does_not_include_ray_optics_by_default(client: TestClient):
     res = client.post("/api/v1/lab/workbench/run", json={"scene": _scene()})
     assert res.status_code == 200
     result = res.json()
-    ray = result["data"].get("ray_optics", {})
-    assert ray.get("available") is True
-    assert ray.get("image") is None
+    assert "ray_optics" not in result["data"]
 
 
 def test_workbench_slit_width_decreases_central_max(client: TestClient):

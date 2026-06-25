@@ -113,7 +113,7 @@ export function BreadboardPresetRunner({
           dangerouslySetInnerHTML={{ __html: result?.svg ?? "" }}
         />
       ) : (
-        <BreadboardRayCanvas scene={scene} result={result} />
+        <BreadboardRayCanvas scene={scene} />
       )}
 
       {isFetching && (

@@ -50,11 +50,12 @@ class WorkbenchSolver:
 
         result.warnings = warnings + result.warnings
 
-        if observable.type == "fraunhofer_intensity":
+        # Ray-optics geometric rendering is intentionally opt-in: it is slow
+        # (node-canvas based) and the breadboard UI now computes the intensity
+        # profile analytically on the client.
+        if include_ray_image:
             try:
-                ray_data = run_ray_optics(
-                    scene, include_image=include_ray_image
-                )
+                ray_data = run_ray_optics(scene, include_image=True)
                 result.data["ray_optics"] = ray_data
             except RayOpticsError as exc:
                 result.warnings.append(
