@@ -26,7 +26,7 @@ class Transform(BaseModel):
 
 class Component(BaseModel):
     id: str = Field(..., min_length=1)
-    spec_id: Literal["laser-monochrome", "single-slit", "screen"]
+    spec_id: Literal["laser-monochrome", "single-slit", "double-slit", "screen"]
     category: Literal["source", "aperture", "screen"]
     transform: Transform = Field(default_factory=Transform)
     params: dict[str, Any] = Field(default_factory=dict)

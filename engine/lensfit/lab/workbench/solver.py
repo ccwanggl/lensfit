@@ -5,16 +5,18 @@ from __future__ import annotations
 from lensfit.lab import get_registry
 from lensfit.lab.base import ExperimentResult
 from lensfit.lab.workbench import SceneGraph
-from lensfit.lab.workbench.native_interpreter import fraunhofer_single_slit_params
+from lensfit.lab.workbench.native_interpreter import (
+    fraunhofer_double_slit_params,
+    fraunhofer_single_slit_params,
+)
 
 
 class WorkbenchSolver:
     """Solver for SceneGraph v1.
 
-    This first version only supports the ``fraunhofer_intensity`` observable
-    mapped to the existing ``single-slit-diffraction`` experiment. Later
-    phases can add ray-optics adapter dispatch here without changing the
-    SceneGraph model.
+    Dispatches ``fraunhofer_intensity`` to the appropriate native experiment
+    based on the aperture component. Later phases can add ray-optics adapter
+    dispatch here without changing the SceneGraph model.
     """
 
     def solve(self, scene: SceneGraph) -> ExperimentResult:
@@ -28,8 +30,19 @@ class WorkbenchSolver:
                 f"SceneGraph v1 does not support observable type: {observable.type}"
             )
 
-        params, warnings = fraunhofer_single_slit_params(scene)
+        aperture = scene._component_by_category("aperture")
         registry = get_registry()
-        result = registry.run("single-slit-diffraction", params)
+
+        if aperture.spec_id == "single-slit":
+            params, warnings = fraunhofer_single_slit_params(scene)
+            result = registry.run("single-slit-diffraction", params)
+        elif aperture.spec_id == "double-slit":
+            params, warnings = fraunhofer_double_slit_params(scene)
+            result = registry.run("double-slit", params)
+        else:
+            raise ValueError(
+                f"SceneGraph v1 does not support aperture type: {aperture.spec_id}"
+            )
+
         result.warnings = warnings + result.warnings
         return result

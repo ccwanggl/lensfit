@@ -29,7 +29,7 @@ LensFit 的主线仍是面向光学工程师和系统集成商的镜头-传感�
 - long-lived Node JSON-RPC sidecar。
 - PNG / Canvas 输出链路。
 - 3D / VR / CAD / FreeCAD 集成。
-- 双缝、光栅、偏振、Fresnel 近场的面包板版。
+- 光栅、偏振、Fresnel 近场的面包板版（双缝已在阶段 6 作为扩展实现）。
 - NSGA-II、通用优化器、插件市场、云同步、多用户协作。
 
 ## 3. 文档落位
@@ -599,8 +599,57 @@ npm run build
 - 后端校验能拒绝不可求解拓扑。
 - 前端状态、选择、属性、运行结果同步机制稳定。
 
-## 13. 当前结论
+## 13. 阶段 6：双缝衍射 breadboard preset（扩展）
 
-本计划建议立即执行阶段 0。阶段 1-3 可以在阶段 0 通过后作为一个小版本完成。阶段 4 只能作为独立探针，不能阻塞 native 面包板。阶段 5 以后需要重新评审。
+### 目标
+
+在阶段 5 的有限编辑框架上，新增第二个 breadboard preset，验证该框架能否承载不同 aperture 类型。
+
+### 实现要点
+
+- 后端：
+  - `SceneGraph v1` 扩展 `double-slit` aperture 类型。
+  - `equipment.py` 新增 `double-slit` 规格与默认参数。
+  - `WorkbenchSolver` 按 aperture `spec_id` 分发到 `single-slit-diffraction` 或 `double-slit` 实验。
+  - 新增 `fraunhofer_double_slit_params` 参数映射函数。
+- 前端：
+  - `workbenchTypes.ts` 新增 `double-slit-breadboard` preset，参数为波长、缝宽、缝间距、屏幕位置。
+  - `validatePresetParams` 增加缝间距必须大于缝宽的校验。
+  - `BreadboardPresetHeader` 根据 preset 类型绘制单缝或双缝示意图。
+- 测试：
+  - 新增双缝 SceneGraph 解析、默认参数合并、设备目录测试。
+  - 新增 API 测试：默认运行、缝间距/屏距对条纹间距的影响、缺少屏幕返回 422。
+
+### Checkpoint 6
+
+退出条件：
+
+- `double-slit-breadboard` preset 可在 LearningHub 运行。
+- 调大双缝间距，条纹间距变小。
+- 调大屏距，条纹间距变大。
+- 新增测试全部通过。
+- 前端生产构建通过。
+- 不引入数据库 migration。
+
+**完成状态：已完成**（评审报告：`docs/development/reviews/2026-06-25-phase-6-double-slit-breadboard-preset.md`）。
+
+验证命令：
+
+```powershell
+cd "E:/DevSpace/lensfit/engine"
+python -m pytest -q
+
+cd "E:/DevSpace/lensfit/apps/desktop"
+npm run build
+```
+
+验证结果：
+
+- 后端全量回归：**158 passed, 4 warnings**
+- 前端生产构建：**通过**
+
+## 14. 当前结论
+
+本计划建议立即执行阶段 0。阶段 1-3 可以在阶段 0 通过后作为一个小版本完成。阶段 4 只能作为独立探针，不能阻塞 native 面包板。阶段 5 完成后，阶段 6 作为扩展新增了双缝 preset，验证了 preset 框架对不同 aperture 类型的可扩展性。
 
 核心原则：先让 LensFit 成为可信的选型工具，再让 Lab 成为可信的解释层，最后才让面包板成为可信的场景化实验环境。

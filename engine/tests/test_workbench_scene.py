@@ -123,9 +123,15 @@ def test_screen_distance_derived_from_x_positions():
 
 
 def test_catalog_has_v1_specs():
-    assert set(CATALOG.keys()) == {"laser-monochrome", "single-slit", "screen"}
+    assert set(CATALOG.keys()) == {
+        "laser-monochrome",
+        "single-slit",
+        "double-slit",
+        "screen",
+    }
     assert CATALOG["laser-monochrome"].category == "source"
     assert CATALOG["single-slit"].category == "aperture"
+    assert CATALOG["double-slit"].category == "aperture"
     assert CATALOG["screen"].category == "screen"
 
 
@@ -146,3 +152,97 @@ def test_serialized_scenegraph_has_no_ray_optics_types():
     }
     for token in ray_optics_types:
         assert token not in json_text, f"SceneGraph contains ray-optics type: {token}"
+
+
+def test_double_slit_scene_parses():
+    scene = SceneGraph.model_validate(
+        {
+            "version": 1,
+            "components": [
+                {
+                    "id": "laser-1",
+                    "spec_id": "laser-monochrome",
+                    "category": "source",
+                    "transform": {"x_mm": 0, "y_mm": 0, "rotation_deg": 0},
+                    "params": {"wavelength_nm": 550.0},
+                },
+                {
+                    "id": "slit-1",
+                    "spec_id": "double-slit",
+                    "category": "aperture",
+                    "transform": {"x_mm": 100, "y_mm": 0, "rotation_deg": 0},
+                    "params": {
+                        "slit_width_um": 20.0,
+                        "slit_separation_um": 100.0,
+                    },
+                },
+                {
+                    "id": "screen-1",
+                    "spec_id": "screen",
+                    "category": "screen",
+                    "transform": {"x_mm": 1100, "y_mm": 0, "rotation_deg": 0},
+                    "params": {},
+                },
+            ],
+            "observables": [
+                {
+                    "type": "fraunhofer_intensity",
+                    "source_id": "laser-1",
+                    "aperture_id": "slit-1",
+                    "screen_id": "screen-1",
+                }
+            ],
+        }
+    )
+    assert scene.version == 1
+    assert scene._component_by_category("aperture").spec_id == "double-slit"
+    assert scene.screen_distance_m() == pytest.approx(1.0)
+
+
+def test_double_slit_params_merged():
+    scene = SceneGraph.model_validate(
+        {
+            "version": 1,
+            "components": [
+                {
+                    "id": "laser-1",
+                    "spec_id": "laser-monochrome",
+                    "category": "source",
+                    "transform": {"x_mm": 0, "y_mm": 0, "rotation_deg": 0},
+                    "params": {"wavelength_nm": 600.0},
+                },
+                {
+                    "id": "slit-1",
+                    "spec_id": "double-slit",
+                    "category": "aperture",
+                    "transform": {"x_mm": 100, "y_mm": 0, "rotation_deg": 0},
+                    "params": {"slit_separation_um": 150.0},
+                },
+                {
+                    "id": "screen-1",
+                    "spec_id": "screen",
+                    "category": "screen",
+                    "transform": {"x_mm": 1100, "y_mm": 0, "rotation_deg": 0},
+                    "params": {},
+                },
+            ],
+            "observables": [
+                {
+                    "type": "fraunhofer_intensity",
+                    "source_id": "laser-1",
+                    "aperture_id": "slit-1",
+                    "screen_id": "screen-1",
+                }
+            ],
+        }
+    )
+    params = scene.params_for("slit-1")
+    assert params["slit_width_um"] == 20.0  # default
+    assert params["slit_separation_um"] == 150.0  # overridden
+
+
+def test_catalog_has_double_slit_spec():
+    assert "double-slit" in CATALOG
+    assert CATALOG["double-slit"].category == "aperture"
+    assert CATALOG["double-slit"].default_params["slit_width_um"] == 20.0
+    assert CATALOG["double-slit"].default_params["slit_separation_um"] == 100.0

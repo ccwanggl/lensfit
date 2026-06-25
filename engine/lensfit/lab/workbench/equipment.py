@@ -32,6 +32,12 @@ CATALOG: dict[str, EquipmentSpec] = {
         name="单缝光阑",
         default_params={"slit_width_um": 50.0},
     ),
+    "double-slit": EquipmentSpec(
+        spec_id="double-slit",
+        category="aperture",
+        name="双缝光阑",
+        default_params={"slit_width_um": 20.0, "slit_separation_um": 100.0},
+    ),
     "screen": EquipmentSpec(
         spec_id="screen",
         category="screen",

@@ -153,3 +153,94 @@ def test_workbench_fraunhofer_warning(client: TestClient):
     assert res.status_code == 200
     result = res.json()
     assert any("夫琅禾费" in w for w in result["warnings"])
+
+
+def _double_slit_scene(
+    *,
+    slit_width_um: float = 20.0,
+    slit_separation_um: float = 100.0,
+    wavelength_nm: float = 550.0,
+    screen_x_mm: float = 1100.0,
+):
+    return {
+        "version": 1,
+        "components": [
+            {
+                "id": "laser-1",
+                "spec_id": "laser-monochrome",
+                "category": "source",
+                "transform": {"x_mm": 0, "y_mm": 0, "rotation_deg": 0},
+                "params": {"wavelength_nm": wavelength_nm},
+            },
+            {
+                "id": "slit-1",
+                "spec_id": "double-slit",
+                "category": "aperture",
+                "transform": {"x_mm": 100, "y_mm": 0, "rotation_deg": 0},
+                "params": {
+                    "slit_width_um": slit_width_um,
+                    "slit_separation_um": slit_separation_um,
+                },
+            },
+            {
+                "id": "screen-1",
+                "spec_id": "screen",
+                "category": "screen",
+                "transform": {"x_mm": screen_x_mm, "y_mm": 0, "rotation_deg": 0},
+                "params": {},
+            },
+        ],
+        "observables": [
+            {
+                "type": "fraunhofer_intensity",
+                "source_id": "laser-1",
+                "aperture_id": "slit-1",
+                "screen_id": "screen-1",
+            }
+        ],
+    }
+
+
+def test_workbench_double_slit_runs(client: TestClient):
+    res = client.post(
+        "/api/v1/lab/workbench/run", json={"scene": _double_slit_scene()}
+    )
+    assert res.status_code == 200
+    result = res.json()
+    assert result["svg"]
+    assert result["data"]["fringe_spacing_mm"] > 0
+
+
+def test_workbench_double_slit_separation_decreases_fringe_spacing(client: TestClient):
+    close = client.post(
+        "/api/v1/lab/workbench/run",
+        json={"scene": _double_slit_scene(slit_separation_um=200.0)},
+    ).json()
+    far = client.post(
+        "/api/v1/lab/workbench/run",
+        json={"scene": _double_slit_scene(slit_separation_um=50.0)},
+    ).json()
+    assert close["data"]["fringe_spacing_mm"] < far["data"]["fringe_spacing_mm"]
+
+
+def test_workbench_double_slit_distance_increases_fringe_spacing(client: TestClient):
+    near = client.post(
+        "/api/v1/lab/workbench/run",
+        json={"scene": _double_slit_scene(screen_x_mm=1100.0)},
+    ).json()
+    far = client.post(
+        "/api/v1/lab/workbench/run",
+        json={"scene": _double_slit_scene(screen_x_mm=2100.0)},
+    ).json()
+    assert far["data"]["fringe_spacing_mm"] == pytest.approx(
+        2 * near["data"]["fringe_spacing_mm"], rel=1e-3
+    )
+
+
+def test_workbench_double_slit_invalid_returns_422(client: TestClient):
+    payload = _double_slit_scene()
+    payload["components"] = [
+        c for c in payload["components"] if c["category"] != "screen"
+    ]
+    res = client.post("/api/v1/lab/workbench/run", json={"scene": payload})
+    assert res.status_code == 422

@@ -186,8 +186,9 @@ export default function LearningHub() {
           </div>
           {experiment && (
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
-              {isPreset && (
+              {isPreset && activeExperimentId && (
                 <BreadboardPresetHeader
+                  presetId={activeExperimentId}
                   params={params}
                   onChange={handleParamChange}
                 />
@@ -221,8 +222,9 @@ export default function LearningHub() {
             </div>
             {experiment && (
               <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
-                {isPreset && (
+                {isPreset && activeExperimentId && (
                   <BreadboardPresetHeader
+                    presetId={activeExperimentId}
                     params={params}
                     onChange={handleParamChange}
                   />
@@ -490,9 +492,11 @@ function ParameterPanel({
 }
 
 function BreadboardPresetHeader({
+  presetId,
   params,
   onChange,
 }: {
+  presetId: string;
   params: Record<string, unknown>;
   onChange: (name: string, value: unknown) => void;
 }) {
@@ -500,6 +504,7 @@ function BreadboardPresetHeader({
   const wavelength_nm = Number(params.wavelength_nm ?? 550);
   const clamped = Math.min(Math.max(screen_x_mm, 200), 3000);
   const screenSvgX = 40 + ((clamped - 100) / (3000 - 100)) * 220;
+  const isDoubleSlit = presetId === "double-slit-breadboard";
 
   return (
     <div className="mb-4 space-y-3">
@@ -550,15 +555,38 @@ function BreadboardPresetHeader({
           >
             激光
           </text>
-          <line
-            x1="40"
-            y1="35"
-            x2="40"
-            y2="50"
-            className="text-slate-800 dark:text-slate-200"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
+          {isDoubleSlit ? (
+            <>
+              <line
+                x1="36"
+                y1="35"
+                x2="36"
+                y2="50"
+                className="text-slate-800 dark:text-slate-200"
+                stroke="currentColor"
+                strokeWidth="3"
+              />
+              <line
+                x1="44"
+                y1="35"
+                x2="44"
+                y2="50"
+                className="text-slate-800 dark:text-slate-200"
+                stroke="currentColor"
+                strokeWidth="3"
+              />
+            </>
+          ) : (
+            <line
+              x1="40"
+              y1="35"
+              x2="40"
+              y2="50"
+              className="text-slate-800 dark:text-slate-200"
+              stroke="currentColor"
+              strokeWidth="3"
+            />
+          )}
           <text
             x="40"
             y="65"
@@ -566,7 +594,7 @@ function BreadboardPresetHeader({
             className="text-[8px] text-slate-500 dark:text-slate-400"
             fill="currentColor"
           >
-            单缝
+            {isDoubleSlit ? "双缝" : "单缝"}
           </text>
           <line
             x1={screenSvgX}
