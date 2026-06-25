@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState } from "react";
 import { BarChart3, Box, Loader2, ScanLine } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { renderWorkbenchRayImage, type LabRunResult } from "../utils/api";
-import type { RayOpticsData, WorkbenchScene } from "./workbenchTypes";
+import type { LabRunResult } from "../utils/api";
+import { BreadboardRayCanvas } from "./BreadboardRayCanvas";
+import type { WorkbenchScene } from "./workbenchTypes";
 
 const Breadboard3DCanvas = lazy(() =>
   import("./Breadboard3DCanvas").then((m) => ({ default: m.Breadboard3DCanvas }))
@@ -23,21 +23,6 @@ export function BreadboardPresetRunner({
 }: BreadboardPresetRunnerProps) {
   const [view, setView] = useState<"3d" | "2d" | "ray">("3d");
   const isDoubleSlit = presetId === "double-slit-breadboard";
-  const resultRayImage = (result?.data?.ray_optics as RayOpticsData | undefined)
-    ?.image;
-
-  const {
-    data: rayImageData,
-    isFetching: isRayImageFetching,
-    error: rayImageError,
-  } = useQuery({
-    queryKey: ["workbench-ray-image", scene],
-    queryFn: () => renderWorkbenchRayImage(scene!),
-    enabled: view === "ray" && !!scene,
-    staleTime: 0,
-  });
-
-  const rayImage = rayImageData?.image ?? resultRayImage;
 
   return (
     <div className="space-y-4">
@@ -101,7 +86,7 @@ export function BreadboardPresetRunner({
             ? "3D 场景中可拖拽旋转、滚轮缩放；屏幕颜色表示相对光强分布。"
             : view === "2d"
             ? "下方曲线为波动光学计算得到的相对强度分布。"
-            : "下方为 ray-optics 生成的几何光学光路图（需 node-canvas）。"}
+            : "下方为基于几何光学实时绘制的交互式光路图，可调整光线密度与 Y 轴放大倍数。"}
         </p>
       </div>
 
@@ -128,40 +113,7 @@ export function BreadboardPresetRunner({
           dangerouslySetInnerHTML={{ __html: result?.svg ?? "" }}
         />
       ) : (
-        <div
-          className={`flex h-96 items-center justify-center rounded-lg border border-slate-200 bg-slate-950 transition-opacity duration-200 dark:border-slate-700 ${
-            isFetching || isRayImageFetching ? "opacity-60" : "opacity-100"
-          }`}
-        >
-          {isRayImageFetching ? (
-            <div className="text-center text-sm text-slate-400">
-              <Loader2 className="mx-auto mb-2 animate-spin text-indigo-500" size={24} />
-              <p>正在生成几何光路图…</p>
-            </div>
-          ) : rayImageError ? (
-            <div className="text-center text-sm text-red-400">
-              <p>光路图生成失败</p>
-              <p className="mt-1 text-xs">
-                {rayImageError instanceof Error
-                  ? rayImageError.message
-                  : String(rayImageError)}
-              </p>
-            </div>
-          ) : rayImage ? (
-            <img
-              src={rayImage}
-              alt="ray-optics 几何光路图"
-              className="max-h-full max-w-full object-contain"
-            />
-          ) : (
-            <div className="text-center text-sm text-slate-400">
-              <p>暂无 ray-optics 光路图</p>
-              <p className="mt-1 text-xs">
-                需要在 engine/third_party/ray-optics 目录安装 node-canvas
-              </p>
-            </div>
-          )}
-        </div>
+        <BreadboardRayCanvas scene={scene} result={result} />
       )}
 
       {isFetching && (

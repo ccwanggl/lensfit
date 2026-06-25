@@ -676,13 +676,6 @@ export async function runWorkbench(
   });
 }
 
-export async function renderWorkbenchRayImage(scene: WorkbenchScene) {
-  return apiFetch<{ image: string }>("/api/v1/lab/workbench/ray-image", {
-    method: "POST",
-    body: JSON.stringify(scene),
-  });
-}
-
 /* ─── Preset Configs ─── */
 export interface PresetConfigItem {
   id: string;

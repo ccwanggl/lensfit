@@ -11,9 +11,6 @@ from lensfit.lab.schemas import (
     ExperimentRunResponse,
     WorkbenchRunRequest,
 )
-from lensfit.lab.workbench import SceneGraph
-from lensfit.lab.workbench.ray_optics_adapter import run_ray_optics
-from lensfit.lab.workbench.ray_optics_sidecar import RayOpticsError
 from lensfit.lab.workbench.solver import WorkbenchSolver
 
 router = APIRouter(prefix="/api/v1/lab", tags=["lab"])
@@ -77,27 +74,3 @@ def run_workbench(req: WorkbenchRunRequest):
     }
 
 
-@router.post("/workbench/ray-image")
-def render_workbench_ray_image(scene: SceneGraph):
-    """Render a 2D geometric ray diagram for a SceneGraph v1 scene.
-
-    This is an on-demand, slower operation that is intentionally separate from
-    :func:`run_workbench` so the default solve path stays fast.
-    """
-    try:
-        data = run_ray_optics(scene, include_image=True)
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e)) from e
-    except RayOpticsError as e:
-        raise HTTPException(status_code=503, detail=str(e)) from e
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Ray diagram render failed: {str(e)}"
-        ) from e
-
-    if not data.get("image"):
-        raise HTTPException(
-            status_code=404, detail="Ray diagram image is not available"
-        )
-
-    return {"image": data["image"]}

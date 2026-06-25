@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import pytest
-import shutil
-from pathlib import Path
 from fastapi.testclient import TestClient
 
 from lensfit.api import server as server_module
@@ -257,23 +255,3 @@ def test_workbench_double_slit_invalid_returns_422(client: TestClient):
     assert res.status_code == 422
 
 
-NODE_AVAILABLE = shutil.which("node") is not None
-CANVAS_AVAILABLE = NODE_AVAILABLE and (
-    Path(__file__).resolve().parents[1]
-    / "third_party"
-    / "ray-optics"
-    / "node_modules"
-    / "canvas"
-    / "package.json"
-).exists()
-
-
-@pytest.mark.skipif(
-    not NODE_AVAILABLE or not CANVAS_AVAILABLE,
-    reason="Node.js / node-canvas not available",
-)
-def test_workbench_ray_image_endpoint(client: TestClient):
-    res = client.post("/api/v1/lab/workbench/ray-image", json=_scene())
-    assert res.status_code == 200
-    result = res.json()
-    assert result["image"].startswith("data:image/png;base64,")
