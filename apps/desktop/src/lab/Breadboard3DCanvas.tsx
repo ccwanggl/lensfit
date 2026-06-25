@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { LabRunResult } from "../utils/api";
+import type { RayOpticsData, RayOpticsSample } from "./workbenchTypes";
 
 interface Breadboard3DCanvasProps {
   result?: LabRunResult;
@@ -100,7 +101,9 @@ function createScreenTexture(
 function drawIntensityMonitor(
   canvas: HTMLCanvasElement,
   samples: Array<{ y_mm: number; intensity: number }>,
-  color: Rgb
+  color: Rgb,
+  raySamples?: RayOpticsSample[],
+  rayColor?: Rgb
 ) {
   const cssWidth = 200;
   const cssHeight = 100;
@@ -166,12 +169,55 @@ function drawIntensityMonitor(
   }
   ctx.strokeStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
   ctx.lineWidth = 1.5;
+  ctx.setLineDash([]);
   ctx.stroke();
 
-  // Labels
+  // Geometric-optics overlay from ray-optics detector
+  if (raySamples && raySamples.length > 0 && rayColor) {
+    ctx.beginPath();
+    let hasStart = false;
+    for (const s of raySamples) {
+      if (s.y_mm < yMin || s.y_mm > yMax) continue;
+      if (!hasStart) {
+        ctx.moveTo(xFor(s.y_mm), yFor(s.intensity));
+        hasStart = true;
+      } else {
+        ctx.lineTo(xFor(s.y_mm), yFor(s.intensity));
+      }
+    }
+    if (hasStart) {
+      ctx.strokeStyle = `rgb(${rayColor.r}, ${rayColor.g}, ${rayColor.b})`;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 2]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // Legend
+  const legendY = pad + 8;
+  ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+  ctx.fillRect(pad, legendY - 3, 10, 2);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "9px sans-serif";
+  ctx.fillText("波动光学", pad + 14, legendY + 1);
+
+  if (raySamples && rayColor) {
+    const legendX2 = pad + 58;
+    ctx.beginPath();
+    ctx.moveTo(legendX2, legendY - 2);
+    ctx.lineTo(legendX2 + 12, legendY - 2);
+    ctx.strokeStyle = `rgb(${rayColor.r}, ${rayColor.g}, ${rayColor.b})`;
+    ctx.setLineDash([2, 2]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText("几何光学", legendX2 + 16, legendY + 1);
+  }
+
+  // Axis labels
   ctx.fillStyle = "#94a3b8";
   ctx.font = "10px sans-serif";
-  ctx.fillText("相对强度", pad + 2, pad + 10);
   ctx.fillText(`${yMin.toFixed(2)} mm`, pad, cssHeight - 4);
   ctx.fillText(`${yMax.toFixed(2)} mm`, cssWidth - pad - 45, cssHeight - 4);
 }
@@ -232,6 +278,73 @@ function createApertureTexture(
   return texture;
 }
 
+function updateGeometryRays(
+  geometry: THREE.BufferGeometry,
+  data: Record<string, unknown>,
+  isDoubleSlit: boolean
+) {
+  const screen_distance_m = Number(data.screen_distance_m ?? 1);
+  const slit_width_um = Number(data.slit_width_um ?? 50);
+  const slit_separation_um = isDoubleSlit
+    ? Number(data.slit_separation_um ?? 100)
+    : 0;
+
+  const samples = data.intensity_samples as
+    | Array<{ y_mm: number; intensity: number }>
+    | undefined;
+  const screenX = 0.2 + screen_distance_m * DISTANCE_SCALE;
+  const sourceX = -0.5;
+  const apertureX = 0.0;
+
+  const yMaxMm =
+    samples && samples.length > 0
+      ? Math.max(
+          Math.abs(samples[0].y_mm),
+          Math.abs(samples[samples.length - 1].y_mm)
+        )
+      : 10;
+  const worldScale = (SCREEN_WORLD_HEIGHT / 2) / Math.max(yMaxMm, 1e-6);
+
+  // slit_width_um -> mm, then half-width
+  const halfWidthMm = slit_width_um / 2000;
+  const halfWidthWorld = halfWidthMm * worldScale;
+
+  const positions: number[] = [];
+
+  const addRay = (edgeY: number) => {
+    // Parametric line from source through aperture edge to the screen plane.
+    const t = (screenX - sourceX) / (apertureX - sourceX);
+    const screenY = edgeY * t;
+    positions.push(
+      sourceX, 0, 0,
+      apertureX, edgeY, 0,
+      apertureX, edgeY, 0,
+      screenX, screenY, 0
+    );
+  };
+
+  if (isDoubleSlit) {
+    const halfSepMm = slit_separation_um / 2000;
+    const halfSepWorld = halfSepMm * worldScale;
+    const centers = [-halfSepWorld, halfSepWorld];
+    for (const cy of centers) {
+      addRay(cy - halfWidthWorld);
+      addRay(cy + halfWidthWorld);
+      addRay(cy);
+    }
+  } else {
+    addRay(-halfWidthWorld);
+    addRay(halfWidthWorld);
+    addRay(0);
+  }
+
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3)
+  );
+  geometry.attributes.position.needsUpdate = true;
+}
+
 export function Breadboard3DCanvas({
   result,
   presetId,
@@ -248,12 +361,14 @@ export function Breadboard3DCanvas({
   const screenRef = useRef<THREE.Mesh | null>(null);
   const apertureRef = useRef<THREE.Mesh | null>(null);
   const laserMatRef = useRef<THREE.MeshStandardMaterial | null>(null);
+  const raysRef = useRef<THREE.LineSegments | null>(null);
 
   const screenTextureRef = useRef<THREE.CanvasTexture | null>(null);
   const apertureTextureRef = useRef<THREE.CanvasTexture | null>(null);
   const monitorRef = useRef<HTMLCanvasElement>(null);
   const cameraInitializedRef = useRef(false);
 
+  const [showRays, setShowRays] = useState(false);
   const isDoubleSlit = presetId === "double-slit-breadboard";
 
   // Initialize scene once
@@ -328,7 +443,10 @@ export function Breadboard3DCanvas({
     beamRef.current = beam;
 
     // Aperture plate
-    const apertureGeo = new THREE.PlaneGeometry(APERTURE_WORLD_HEIGHT * 0.75, APERTURE_WORLD_HEIGHT);
+    const apertureGeo = new THREE.PlaneGeometry(
+      APERTURE_WORLD_HEIGHT * 0.75,
+      APERTURE_WORLD_HEIGHT
+    );
     const apertureMat = new THREE.MeshBasicMaterial({
       transparent: true,
       side: THREE.DoubleSide,
@@ -340,12 +458,29 @@ export function Breadboard3DCanvas({
     apertureRef.current = aperture;
 
     // Screen
-    const screenGeo = new THREE.PlaneGeometry(SCREEN_WORLD_HEIGHT * 0.5, SCREEN_WORLD_HEIGHT);
+    const screenGeo = new THREE.PlaneGeometry(
+      SCREEN_WORLD_HEIGHT * 0.5,
+      SCREEN_WORLD_HEIGHT
+    );
     const screenMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const screen = new THREE.Mesh(screenGeo, screenMat);
     screen.rotation.y = -Math.PI / 2;
     scene.add(screen);
     screenRef.current = screen;
+
+    // Geometric ray overlay (source -> slit edges -> screen)
+    const rayGeo = new THREE.BufferGeometry();
+    const rayMat = new THREE.LineBasicMaterial({
+      color: 0xff0000,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const rays = new THREE.LineSegments(rayGeo, rayMat);
+    rays.visible = false;
+    scene.add(rays);
+    raysRef.current = rays;
 
     const animate = () => {
       rafRef.current = requestAnimationFrame(animate);
@@ -355,7 +490,8 @@ export function Breadboard3DCanvas({
     animate();
 
     const handleResize = () => {
-      if (!containerRef.current || !cameraRef.current || !rendererRef.current) return;
+      if (!containerRef.current || !cameraRef.current || !rendererRef.current)
+        return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
       cameraRef.current.aspect = w / h;
@@ -383,6 +519,9 @@ export function Breadboard3DCanvas({
           }
         }
       });
+      raysRef.current?.geometry.dispose();
+      const rayMat = raysRef.current?.material;
+      if (rayMat && !Array.isArray(rayMat)) rayMat.dispose();
       screenTextureRef.current?.dispose();
       apertureTextureRef.current?.dispose();
     };
@@ -390,7 +529,8 @@ export function Breadboard3DCanvas({
 
   // Update scene when result changes
   useEffect(() => {
-    if (!result?.data || !screenRef.current || !beamRef.current || !apertureRef.current) return;
+    if (!result?.data || !screenRef.current || !beamRef.current || !apertureRef.current)
+      return;
 
     const data = result.data;
     const wavelength_nm = Number(data.wavelength_nm ?? 550);
@@ -418,7 +558,13 @@ export function Breadboard3DCanvas({
     const beamLength = Math.max(0.2, screenX);
     const beamRadius = (SCREEN_WORLD_HEIGHT / 2) * 0.85;
     beamRef.current.geometry.dispose();
-    beamRef.current.geometry = new THREE.ConeGeometry(beamRadius, beamLength, 32, 1, true);
+    beamRef.current.geometry = new THREE.ConeGeometry(
+      beamRadius,
+      beamLength,
+      32,
+      1,
+      true
+    );
     beamRef.current.position.set(screenX / 2, 0, 0);
 
     // Set camera once on first result so subsequent parameter changes do not
@@ -435,7 +581,11 @@ export function Breadboard3DCanvas({
     }
 
     // Update aperture texture
-    const newApertureTex = createApertureTexture(isDoubleSlit, slit_width_um, slit_separation_um);
+    const newApertureTex = createApertureTexture(
+      isDoubleSlit,
+      slit_width_um,
+      slit_separation_um
+    );
     const apertureMat = apertureRef.current.material as THREE.MeshBasicMaterial;
     if (apertureTextureRef.current) apertureTextureRef.current.dispose();
     apertureTextureRef.current = newApertureTex;
@@ -455,11 +605,25 @@ export function Breadboard3DCanvas({
     screenMat.map = newScreenTex;
     screenMat.needsUpdate = true;
 
-    // Update oscilloscope-style monitor overlay
-    if (monitorRef.current && samples && samples.length > 0) {
-      drawIntensityMonitor(monitorRef.current, samples, rgb);
+    // Update geometric ray overlay
+    if (raysRef.current) {
+      const rayMat = raysRef.current.material as THREE.LineBasicMaterial;
+      rayMat.color = color;
+      updateGeometryRays(raysRef.current.geometry, data, isDoubleSlit);
+      raysRef.current.visible = showRays;
     }
-  }, [result, isDoubleSlit]);
+
+    // Update oscilloscope-style monitor overlay
+    const rayData = data.ray_optics as RayOpticsData | undefined;
+    const raySamples =
+      rayData?.available && rayData.samples && rayData.samples.length > 0
+        ? rayData.samples
+        : undefined;
+
+    if (monitorRef.current && samples && samples.length > 0) {
+      drawIntensityMonitor(monitorRef.current, samples, rgb, raySamples, rgb);
+    }
+  }, [result, isDoubleSlit, showRays]);
 
   return (
     <div
@@ -468,6 +632,13 @@ export function Breadboard3DCanvas({
         isFetching ? "opacity-70" : "opacity-100"
       } transition-opacity duration-200`}
     >
+      <button
+        type="button"
+        onClick={() => setShowRays((v) => !v)}
+        className="absolute left-2 top-2 z-10 rounded border border-slate-200 bg-white/90 px-2 py-1 text-xs font-medium text-slate-700 shadow-sm hover:bg-white dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-200 dark:hover:bg-slate-900"
+      >
+        {showRays ? "隐藏几何光线" : "显示几何光线"}
+      </button>
       <canvas
         ref={monitorRef}
         className="absolute right-2 top-2 z-10 rounded border border-slate-700/50 bg-slate-950 shadow-lg"

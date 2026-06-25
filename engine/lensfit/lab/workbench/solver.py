@@ -9,6 +9,8 @@ from lensfit.lab.workbench.native_interpreter import (
     fraunhofer_double_slit_params,
     fraunhofer_single_slit_params,
 )
+from lensfit.lab.workbench.ray_optics_adapter import run_ray_optics
+from lensfit.lab.workbench.ray_optics_sidecar import RayOpticsError
 
 
 class WorkbenchSolver:
@@ -45,4 +47,18 @@ class WorkbenchSolver:
             )
 
         result.warnings = warnings + result.warnings
+
+        if observable.type == "fraunhofer_intensity":
+            try:
+                ray_data = run_ray_optics(scene)
+                result.data["ray_optics"] = ray_data
+            except RayOpticsError as exc:
+                result.warnings.append(
+                    f"几何光学叠加层（ray-optics）不可用：{exc}"
+                )
+                result.data["ray_optics"] = {
+                    "available": False,
+                    "error": str(exc),
+                }
+
         return result

@@ -26,6 +26,20 @@ export interface WorkbenchScene {
   }>;
 }
 
+export interface RayOpticsSample {
+  y_mm: number;
+  intensity: number;
+}
+
+export interface RayOpticsData {
+  available: boolean;
+  samples?: RayOpticsSample[];
+  power?: number;
+  normal?: number;
+  warning?: string | null;
+  error?: string;
+}
+
 export interface BreadboardPreset extends LabExperiment {
   kind: "preset";
   buildScene(params: Record<string, unknown>): WorkbenchScene;
