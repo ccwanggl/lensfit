@@ -17,6 +17,7 @@ from lensfit.lab.experiments.double_slit import DoubleSlitExperiment
 from lensfit.lab.experiments.grating import GratingExperiment
 from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
 from lensfit.lab.experiments.blackbody import BlackbodyExperiment
+from lensfit.lab.experiments.illumination_geometry import IlluminationGeometryExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -245,6 +246,27 @@ class TestBlackbodyExperiment:
             assert peak == pytest.approx(expected, rel=0.01)
 
 
+class TestIlluminationGeometryExperiment:
+    def test_default_run(self):
+        exp = IlluminationGeometryExperiment()
+        result = exp.run({})
+        assert result.data["mode"] == "bright-field"
+        assert result.data["visibility"] in {"dim", "bright", "glare", "shadow", "uniform", "silhouette", "edge"}
+        _assert_svg(result.svg)
+
+    def test_each_mode_has_valid_visibility(self):
+        exp = IlluminationGeometryExperiment()
+        for mode in ("bright-field", "dark-field", "coaxial", "diffuse-back", "low-angle"):
+            result = exp.run({"mode": mode})
+            assert result.data["mode"] == mode
+            assert result.data["visibility"]
+
+    def test_scratch_bright_in_dark_field(self):
+        exp = IlluminationGeometryExperiment()
+        result = exp.run({"mode": "dark-field", "feature_type": "scratch"})
+        assert result.data["visibility"] == "bright"
+
+
 class TestDoubleSlitExperiment:
     def test_default_run(self):
         exp = DoubleSlitExperiment()
@@ -369,6 +391,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        IlluminationGeometryExperiment,
         BlackbodyExperiment,
         MtfExplorerExperiment,
         GratingExperiment,
