@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FlaskConical, Loader2, Search } from "lucide-react";
 import { listLabExperiments } from "../utils/api";
 import { useLabStore } from "../stores/labStore";
+import { BREADBOARD_PRESETS } from "./workbenchTypes";
 
 interface ExperimentCatalogProps {
   onSelect: (id: string) => void;
@@ -15,6 +16,11 @@ export function ExperimentCatalog({ onSelect }: ExperimentCatalogProps) {
     queryFn: listLabExperiments,
   });
   const recent = useLabStore((s) => s.recentExperiments);
+
+  const items = useMemo(() => {
+    const experiments = data?.items ?? [];
+    return [...BREADBOARD_PRESETS, ...experiments];
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -32,7 +38,6 @@ export function ExperimentCatalog({ onSelect }: ExperimentCatalogProps) {
     );
   }
 
-  const items = data?.items ?? [];
   const filtered = items.filter(
     (e) =>
       e.title.toLowerCase().includes(filter.toLowerCase()) ||

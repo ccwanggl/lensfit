@@ -33,6 +33,7 @@
 
 ## 审查记录
 
+- [2026-06-25 光学面包板阶段 3 评审报告](reviews/2026-06-25-phase-3-frontend-breadboard-preset.md)
 - [2026-06-25 光学面包板阶段 2 评审报告](reviews/2026-06-25-phase-2-workbench-native-run-api.md)
 - [2026-06-25 光学面包板阶段 1 评审报告](reviews/2026-06-25-phase-1-scenegraph-v1.md)
 - [2026-06-25 光学面包板阶段 0 评审报告](reviews/2026-06-25-phase-0-optical-breadboard-baseline.md)

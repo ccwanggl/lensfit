@@ -14,12 +14,22 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getLabExperiment, runLabExperiment, type LabExperiment } from "../utils/api";
+import {
+  getLabExperiment,
+  runLabExperiment,
+  runWorkbench,
+  type LabExperiment,
+} from "../utils/api";
 import { useLabStore } from "../stores/labStore";
 import { ExperimentCatalog } from "./ExperimentCatalog";
 import { ParameterControl } from "./ParameterControl";
 import { KnowledgeSidebar } from "./KnowledgeSidebar";
 import { getExperimentMedia } from "./experimentMedia";
+import { BreadboardPresetRunner } from "./BreadboardPresetRunner";
+import {
+  getBreadboardPreset,
+  isBreadboardPreset,
+} from "./workbenchTypes";
 
 type TabId = "visual" | "data" | "hints";
 
@@ -35,13 +45,22 @@ export default function LearningHub() {
   const [centerExpanded, setCenterExpanded] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<"left" | "right" | null>(null);
 
+  const isPreset = useMemo(
+    () => isBreadboardPreset(activeExperimentId),
+    [activeExperimentId]
+  );
+  const preset = useMemo(
+    () => getBreadboardPreset(activeExperimentId ?? ""),
+    [activeExperimentId]
+  );
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["lab-experiment", activeExperimentId],
     queryFn: () => getLabExperiment(activeExperimentId!),
-    enabled: !!activeExperimentId,
+    enabled: !!activeExperimentId && !isPreset,
   });
 
-  const experiment = data?.items[0] ?? null;
+  const experiment = preset ?? data?.items[0] ?? null;
 
   const paramDrafts = useMemo(
     () => (activeExperimentId ? allDrafts[activeExperimentId] ?? {} : {}),
@@ -73,7 +92,12 @@ export default function LearningHub() {
     error: runError,
   } = useQuery({
     queryKey: ["lab-run", activeExperimentId, liveParams],
-    queryFn: () => runLabExperiment(activeExperimentId!, liveParams),
+    queryFn: () => {
+      if (isPreset && preset) {
+        return runWorkbench(preset.buildScene(liveParams));
+      }
+      return runLabExperiment(activeExperimentId!, liveParams);
+    },
     enabled: !!activeExperimentId && !!experiment,
   });
 
@@ -290,16 +314,20 @@ export default function LearningHub() {
                       实验运行失败：{runError.message}
                     </div>
                   ) : activeTab === "visual" ? (
-                    <div className="space-y-4">
-                      <MediaPanel experimentId={experiment.id} />
-                      <div
-                        className={`transition-opacity duration-200 ${
-                          isFetching ? "opacity-60" : "opacity-100"
-                        }`}
-                        // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: result?.svg ?? "" }}
-                      />
-                    </div>
+                    isPreset ? (
+                      <BreadboardPresetRunner result={result} isFetching={isFetching} />
+                    ) : (
+                      <div className="space-y-4">
+                        <MediaPanel experimentId={experiment.id} />
+                        <div
+                          className={`transition-opacity duration-200 ${
+                            isFetching ? "opacity-60" : "opacity-100"
+                          }`}
+                          // eslint-disable-next-line react/no-danger
+                          dangerouslySetInnerHTML={{ __html: result?.svg ?? "" }}
+                        />
+                      </div>
+                    )
                   ) : activeTab === "data" ? (
                     <DataPanel result={result} />
                   ) : (

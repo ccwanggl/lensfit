@@ -371,6 +371,28 @@ python -m pytest tests/test_lab.py tests/test_api_lab.py tests/test_api_workbenc
 - 错误信息不暴露 ray-optics 或内部 adapter 字段。
 - 移动端不出现主要内容遮挡。
 
+**完成状态：已完成**。
+
+实际完成内容：
+
+- 新增 `apps/desktop/src/lab/workbenchTypes.ts`：
+  - 定义 `WorkbenchScene`、`BreadboardPreset`。
+  - 提供 `single-slit-breadboard` preset 的元数据、参数、场景构造器。
+- 新增 `apps/desktop/src/lab/BreadboardPresetRunner.tsx`：
+  - 显示锁定布局说明（激光 → 单缝 → 屏幕）。
+  - 明确标注“几何层为示意图；下方曲线为波动光学计算的相对强度分布”。
+- 修改 `apps/desktop/src/utils/api.ts`：
+  - 新增 `runWorkbench(scene)`，类型安全地调用 `POST /api/v1/lab/workbench/run`。
+- 修改 `apps/desktop/src/lab/ExperimentCatalog.tsx`：
+  - 将面包板 preset 与后端实验列表合并显示。
+- 修改 `apps/desktop/src/lab/LearningHub.tsx`：
+  - 检测 active id 是否为 preset。
+  - preset 跳过 `getLabExperiment` 查询，直接通过 `runWorkbench` 获取结果。
+  - 普通实验保持原有 `runLabExperiment` 路径。
+  - visual tab 对 preset 渲染 `BreadboardPresetRunner`。
+- 前端构建通过：`npm run build`。
+- 后端测试无回归：`137 passed, 4 warnings`。
+
 验证命令：
 
 ```powershell

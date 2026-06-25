@@ -616,6 +616,8 @@ export async function knowledgeInfer(params: Record<string, unknown>, domain: st
   );
 }
 
+import type { WorkbenchScene } from "../lab/workbenchTypes";
+
 /* ─── Optics Lab ─── */
 export interface LabParameter {
   name: string;
@@ -661,6 +663,13 @@ export async function runLabExperiment(id: string, params: Record<string, unknow
   return apiFetch<LabRunResult>(`/api/v1/lab/experiments/${id}/run`, {
     method: "POST",
     body: JSON.stringify({ params }),
+  });
+}
+
+export async function runWorkbench(scene: WorkbenchScene) {
+  return apiFetch<LabRunResult>("/api/v1/lab/workbench/run", {
+    method: "POST",
+    body: JSON.stringify({ scene }),
   });
 }
 
