@@ -17,6 +17,7 @@ from lensfit.api.routers import (
     domains,
     export,
     knowledge,
+    lab,
     matching,
     projects,
     visualization,
@@ -151,6 +152,7 @@ app.include_router(matching.router)
 app.include_router(knowledge.router)
 app.include_router(visualization.router)
 app.include_router(projects.router)
+app.include_router(lab.router)
 app.include_router(export.router)
 
 

@@ -72,3 +72,7 @@ $$
 ## 来源
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.6 像圈
 - [[../50-learning/05-matching-basics|第5章 匹配基础]] §5.2 像圈覆盖检查
+
+## 关联实验
+
+- [[90-maps/Optics Lab#sensor-coverage|像圈与传感器覆盖实验]] — 调整传感器尺寸和镜头像圈，观察覆盖率与渐晕区域。

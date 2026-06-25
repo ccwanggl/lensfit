@@ -72,3 +72,7 @@ Z = k ∫ P(λ) z̄(λ) dλ
 
 - CIE 15:2004, Colorimetry
 - 光学工程教材，第 16 章 光谱学
+
+## 关联实验
+
+- [[90-maps/Optics Lab#color-mixing|光谱混色实验]] — 混合两种单色光，观察合成光谱和感知颜色。

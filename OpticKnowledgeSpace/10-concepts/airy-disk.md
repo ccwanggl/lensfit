@@ -61,3 +61,7 @@ $$
 ## 来源
 - [[../50-learning/01-light-and-waves|第1章 光与波]] §1.6 衍射与分辨极限
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.4 MTF（镜头的「视力表」）
+
+## 关联实验
+
+- [[90-maps/Optics Lab#diffraction|圆孔衍射与艾里斑]] — 改变波长和光圈孔径，观察艾里斑大小和衍射图样的变化。

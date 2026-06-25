@@ -71,3 +71,7 @@ z = 1 - x - y
 
 - CIE 15:2004, Colorimetry, 4th edition
 - 光学工程教材，第 12 章（色彩科学）与第 16 章（色度学）
+
+## 关联实验
+
+- [[90-maps/Optics Lab#color-mixing|光谱混色实验]] — 混合两种单色光，观察合成光谱和感知颜色。

@@ -1,0 +1,57 @@
+---
+id: map.optics-lab
+title: 光学实验室
+type: map
+status: reviewed
+aliases:
+  - Optics Lab
+  - 实验室
+---
+
+# 光学实验室
+
+本页汇总 LensFit 中所有可交互的光学实验。每个实验都与知识库中的概念/公式笔记双向链接，你可以在阅读笔记后打开实验，通过调整参数来建立直觉。
+
+> 在 LensFit 桌面应用中，点击顶部导航栏的「光学实验室」即可运行这些实验。
+
+---
+
+## 实验目录
+
+### 像圈与传感器覆盖实验
+
+- **难度**: 基础
+- **说明**: 调整传感器尺寸和镜头像圈，观察覆盖率与渐晕区域。
+- **学习目标**: 理解像圈直径必须大于传感器对角线才能无渐晕。, 观察四角超出像圈时出现的渐晕区域。
+- **关联笔记**: [[10-concepts/image-circle|image-circle]], [[20-formulas/coverage-ratio|coverage-ratio]], [[10-concepts/渐晕|渐晕]]
+
+### 光谱混色实验
+
+- **难度**: 基础
+- **说明**: 混合两种单色光，观察合成光谱和感知颜色。
+- **学习目标**: 理解颜色是光谱分布在人眼中的综合感知。, 观察两种单色光混合后如何产生新的色相。
+- **关联笔记**: [[10-concepts/spectral-power-distribution|spectral-power-distribution]], [[10-concepts/color-temperature|color-temperature]], [[10-concepts/chromaticity-diagram|chromaticity-diagram]], [[10-concepts/色温|色温]]
+
+### 薄透镜成像实验
+
+- **难度**: 基础
+- **说明**: 改变焦距和物距，观察像距、放大倍率和光路图的变化。
+- **学习目标**: 理解 1/f = 1/u + 1/v 的物像关系。, 观察物距接近焦距时像距趋向无穷远。, 认识放大率与物距、焦距的关系。
+- **关联笔记**: [[10-concepts/focal-length|focal-length]], [[20-formulas/thin-lens-gauss|thin-lens-gauss]], [[10-concepts/焦距|焦距]]
+
+### 圆孔衍射与艾里斑
+
+- **难度**: 进阶
+- **说明**: 改变波长和光圈孔径，观察艾里斑大小和衍射图样的变化。
+- **学习目标**: 理解艾里斑是理想光学系统的极限点扩散函数。, 观察光圈越小、波长越长，艾里斑越大。
+- **关联笔记**: [[10-concepts/airy-disk|airy-disk]], [[10-concepts/衍射极限|衍射极限]], [[20-formulas/rayleigh-criterion|rayleigh-criterion]], [[10-concepts/艾里斑|艾里斑]]
+
+---
+
+## 如何新增实验
+
+1. 在后端创建 `engine/lensfit/lab/experiments/<your-experiment>.py` 并继承 `OpticsExperiment`。
+2. 声明 `linked_concepts` 指向本知识库的笔记路径。
+3. 运行 `python scripts/sync_experiment_links.py` 更新本页和关联笔记。
+
+详见架构文档：`docs/development/plans/optics-lab-architecture.md`。

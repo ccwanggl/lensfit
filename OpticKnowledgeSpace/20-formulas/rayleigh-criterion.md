@@ -47,3 +47,7 @@ $$ d = \frac{0.61 \times 0.55}{0.9} = \frac{0.3355}{0.9} \approx 0.373\,\mu\text
 *图：Airy Disk*
 
 ## 来源
+
+## 关联实验
+
+- [[90-maps/Optics Lab#diffraction|圆孔衍射与艾里斑]] — 改变波长和光圈孔径，观察艾里斑大小和衍射图样的变化。

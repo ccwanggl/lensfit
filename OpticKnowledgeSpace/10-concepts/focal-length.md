@@ -77,3 +77,7 @@ $$
 ## 来源
 - [[../50-learning/02-geometric-optics|第2章 几何光学]] §2.2 薄透镜成像模型
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.1 焦距
+
+## 关联实验
+
+- [[90-maps/Optics Lab#thin-lens|薄透镜成像实验]] — 改变焦距和物距，观察像距、放大倍率和光路图的变化。

@@ -54,3 +54,7 @@ $$ \text{Coverage} = \left(\frac{11}{8}\right)^2 = (1.375)^2 \approx 1.89 $$
 *图：Image Circle Coverage*
 
 ## 来源
+
+## 关联实验
+
+- [[90-maps/Optics Lab#sensor-coverage|像圈与传感器覆盖实验]] — 调整传感器尺寸和镜头像圈，观察覆盖率与渐晕区域。

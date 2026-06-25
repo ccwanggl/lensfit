@@ -49,3 +49,7 @@ $$ v = \frac{1}{0.0195} \approx 51.28\,\text{mm} $$
 *图：Thin Lens Geometry*
 
 ## 来源
+
+## 关联实验
+
+- [[90-maps/Optics Lab#thin-lens|薄透镜成像实验]] — 改变焦距和物距，观察像距、放大倍率和光路图的变化。
