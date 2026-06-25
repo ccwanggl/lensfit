@@ -16,6 +16,7 @@ from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.double_slit import DoubleSlitExperiment
 from lensfit.lab.experiments.grating import GratingExperiment
 from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
+from lensfit.lab.experiments.blackbody import BlackbodyExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -221,6 +222,29 @@ class TestMtfExplorerExperiment:
         assert defocused < focused
 
 
+class TestBlackbodyExperiment:
+    def test_default_run(self):
+        exp = BlackbodyExperiment()
+        result = exp.run({})
+        assert result.data["peak_wavelength_nm"] > 0
+        assert len(result.data["wavelengths_nm"]) == len(result.data["radiance"])
+        assert len(result.data["perceived_rgb"]) == 3
+        _assert_svg(result.svg)
+
+    def test_higher_temperature_shifts_peak_to_shorter_wavelength(self):
+        exp = BlackbodyExperiment()
+        cool = exp.run({"temperature_k": 3000.0}).data["peak_wavelength_nm"]
+        hot = exp.run({"temperature_k": 6500.0}).data["peak_wavelength_nm"]
+        assert hot < cool
+
+    def test_peak_matches_wiens_law(self):
+        exp = BlackbodyExperiment()
+        for t in (2700, 5500, 6500):
+            peak = exp.run({"temperature_k": float(t)}).data["peak_wavelength_nm"]
+            expected = 2.898e6 / t
+            assert peak == pytest.approx(expected, rel=0.01)
+
+
 class TestDoubleSlitExperiment:
     def test_default_run(self):
         exp = DoubleSlitExperiment()
@@ -345,6 +369,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        BlackbodyExperiment,
         MtfExplorerExperiment,
         GratingExperiment,
         DoubleSlitExperiment,

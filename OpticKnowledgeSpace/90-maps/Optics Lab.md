@@ -123,6 +123,13 @@ aliases:
 - **学习目标**: 理解阿贝数越小（色散越大），轴向色差越严重。, 观察蓝光焦点更近、红光焦点更远的正常色散规律。
 - **关联笔记**: [[10-concepts/chromatic-aberration|chromatic-aberration]], [[10-concepts/abbe-number|abbe-number]], [[10-concepts/dispersion|dispersion]], [[10-concepts/色散|色散]]
 
+### 黑体辐射与色温实验
+
+- **难度**: 进阶
+- **说明**: 改变黑体温度，观察光谱辐射分布、峰值波长和感知颜色如何变化。
+- **学习目标**: 掌握普朗克黑体辐射定律 B(λ, T)。, 理解维恩位移定律 λ_max = b / T。, 观察色温从低到高时颜色由红橙向蓝白变化。
+- **关联笔记**: [[10-concepts/color-temperature|color-temperature]], [[10-concepts/色温|色温]], [[10-concepts/spectral-power-distribution|spectral-power-distribution]]
+
 ---
 
 ## 如何新增实验
