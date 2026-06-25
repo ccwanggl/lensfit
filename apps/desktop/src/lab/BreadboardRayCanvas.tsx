@@ -114,7 +114,7 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [raysPerSlit, setRaysPerSlit] = useState(40);
-  const [yExaggeration, setYExaggeration] = useState(200);
+  const [yExaggeration, setYExaggeration] = useState(30);
   const [showBlocked, setShowBlocked] = useState(false);
   const [showIntensity, setShowIntensity] = useState(true);
   const [hover, setHover] = useState<{ x: number; y: number } | null>(null);
@@ -200,10 +200,16 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     const ayBottom = toCanvasY(apertureBottom);
     ctx.fillRect(ax - 3, ayTop, 6, ayBottom - ayTop);
 
-    // Slit openings (draw as transparent gaps with subtle highlight)
+    // Slit openings (draw as transparent gaps with subtle highlight).
+    // Enforce a minimum visual height so micron-scale slits remain visible.
     openings.forEach((op) => {
-      const oy0 = toCanvasY(op.y1);
-      const oy1 = toCanvasY(op.y0);
+      let oy0 = toCanvasY(op.y1);
+      let oy1 = toCanvasY(op.y0);
+      if (Math.abs(oy1 - oy0) < 2) {
+        const center = (oy0 + oy1) / 2;
+        oy0 = center - 1;
+        oy1 = center + 1;
+      }
       ctx.clearRect(ax - 4, oy0, 8, oy1 - oy0);
       ctx.strokeStyle = "rgba(226, 232, 240, 0.5)";
       ctx.beginPath();
@@ -274,23 +280,15 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     if (showIntensity && intensity.samples.length > 0) {
       const samples = intensity.samples;
       const [rr, gg, bb] = wavelengthToRgb(info.wavelengthNm);
-      const yMinSample = samples[0].y_mm;
-      const yMaxSample = samples[samples.length - 1].y_mm;
-      const ySampleRange = yMaxSample - yMinSample || 1;
-
-      // Map a sample y (mm) to the full vertical drawing area so that the
-      // entire pattern -- including dark fringes -- is always visible,
-      // independent of the Y exaggeration used for the rays.
-      const intensityToCanvasY = (y_mm: number) =>
-        padding.top + ((yMaxSample - y_mm) / ySampleRange) * drawHeight;
 
       // 1) Color the screen itself according to the intensity distribution.
+      //    Uses the same toCanvasY as the rays so it follows the Y-axis zoom.
       const screenStripW = 6;
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const cy0 = intensityToCanvasY(s0.y_mm);
-        const cy1 = intensityToCanvasY(s1.y_mm);
+        const cy0 = toCanvasY(s0.y_mm);
+        const cy1 = toCanvasY(s1.y_mm);
         const avg = (s0.intensity + s1.intensity) / 2;
         ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${avg * 0.95})`;
         ctx.fillRect(
@@ -313,8 +311,8 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const cy0 = intensityToCanvasY(s0.y_mm);
-        const cy1 = intensityToCanvasY(s1.y_mm);
+        const cy0 = toCanvasY(s0.y_mm);
+        const cy1 = toCanvasY(s1.y_mm);
         const avg = (s0.intensity + s1.intensity) / 2;
         const w = avg * barW;
         ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.2 + avg * 0.8})`;
