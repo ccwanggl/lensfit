@@ -558,13 +558,14 @@ export function Breadboard3DCanvas({
     }
 
     // Update screen position
+    const sourceX = -0.5;
     const screenX = 0.2 + screen_distance_m * DISTANCE_SCALE;
     screenRef.current.position.set(screenX, 0, 0);
 
-    // Update beam geometry
+    // Update beam geometry: cone apex at the laser source, base at the screen.
     const beamMat = beamRef.current.material as THREE.MeshBasicMaterial;
     beamMat.color = color;
-    const beamLength = Math.max(0.2, screenX);
+    const beamLength = Math.max(0.2, screenX - sourceX);
     const beamRadius = (SCREEN_WORLD_HEIGHT / 2) * 0.85;
     beamRef.current.geometry.dispose();
     beamRef.current.geometry = new THREE.ConeGeometry(
@@ -574,7 +575,7 @@ export function Breadboard3DCanvas({
       1,
       true
     );
-    beamRef.current.position.set(screenX / 2, 0, 0);
+    beamRef.current.position.set(sourceX + beamLength / 2, 0, 0);
 
     // Set camera once on first result so subsequent parameter changes do not
     // reset the user's view.
