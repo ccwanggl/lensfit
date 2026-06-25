@@ -1,3 +1,7 @@
 # 已归档计划
 
 存放已经完成、取消或被替代的开发计划，保留决策背景和实施结果。
+
+## 归档计划
+
+- [Self-Study Optics Lab 原始计划](./2026-06-self-study-optics-lab-original-plan.md)
