@@ -15,6 +15,7 @@ from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExpe
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.double_slit import DoubleSlitExperiment
 from lensfit.lab.experiments.grating import GratingExperiment
+from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
@@ -198,6 +199,28 @@ class TestGratingExperiment:
         assert abs(high_first["angle_deg"]) > abs(low_first["angle_deg"])
 
 
+class TestMtfExplorerExperiment:
+    def test_default_run(self):
+        exp = MtfExplorerExperiment()
+        result = exp.run({})
+        assert result.data["diffraction_cutoff_lp_mm"] > 0
+        assert result.data["mtf50_lp_mm"] is not None
+        assert len(result.data["frequencies_lp_mm"]) == len(result.data["mtf_total"])
+        _assert_svg(result.svg)
+
+    def test_smaller_aperture_increases_cutoff(self):
+        exp = MtfExplorerExperiment()
+        low_f = float(exp.run({"f_number": 8.0}).data["diffraction_cutoff_lp_mm"])
+        high_f = float(exp.run({"f_number": 2.8}).data["diffraction_cutoff_lp_mm"])
+        assert high_f > low_f
+
+    def test_defocus_reduces_mtf50(self):
+        exp = MtfExplorerExperiment()
+        focused = float(exp.run({"defocus_distance_mm": 1000.0}).data["mtf50_lp_mm"])
+        defocused = float(exp.run({"defocus_distance_mm": 900.0}).data["mtf50_lp_mm"])
+        assert defocused < focused
+
+
 class TestDoubleSlitExperiment:
     def test_default_run(self):
         exp = DoubleSlitExperiment()
@@ -322,6 +345,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        MtfExplorerExperiment,
         GratingExperiment,
         DoubleSlitExperiment,
         SingleSlitDiffractionExperiment,

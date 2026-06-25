@@ -74,6 +74,13 @@ aliases:
 - **学习目标**: 理解视角同时取决于焦距和传感器尺寸。, 比较同一焦距在不同传感器上的视野差异。
 - **关联笔记**: [[10-concepts/focal-length|focal-length]], [[10-concepts/焦距|焦距]], [[20-formulas/angle-of-view|angle-of-view]]
 
+### MTF/OTF 探索实验
+
+- **难度**: 进阶
+- **说明**: 合成衍射极限 MTF、离焦模糊 MTF 与总 MTF，并观察对应的 PSF。
+- **学习目标**: 理解衍射极限给出了光学系统的最高空间频率截止。, 观察离焦如何在中低频先衰减 MTF。, 认识 MTF 与 PSF 是同一系统在不同域的描述。
+- **关联笔记**: [[10-concepts/mtf|mtf]], [[10-concepts/otf|otf]], [[10-concepts/psf|psf]], [[10-concepts/调制传递函数|调制传递函数]], [[10-concepts/光学传递函数|光学传递函数]], [[10-concepts/点扩散函数|点扩散函数]]
+
 ### 光栅方程与光谱级次实验
 
 - **难度**: 进阶
