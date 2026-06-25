@@ -39,6 +39,13 @@ aliases:
 - **学习目标**: 理解 1/f = 1/u + 1/v 的物像关系。, 观察物距接近焦距时像距趋向无穷远。, 认识放大率与物距、焦距的关系。
 - **关联笔记**: [[10-concepts/focal-length|focal-length]], [[20-formulas/thin-lens-gauss|thin-lens-gauss]], [[10-concepts/焦距|焦距]]
 
+### 视角与传感器尺寸实验
+
+- **难度**: 基础
+- **说明**: 给定焦距和传感器尺寸，观察水平、垂直、对角线视角的变化。
+- **学习目标**: 理解视角同时取决于焦距和传感器尺寸。, 比较同一焦距在不同传感器上的视野差异。
+- **关联笔记**: [[10-concepts/focal-length|focal-length]], [[10-concepts/焦距|焦距]], [[20-formulas/angle-of-view|angle-of-view]]
+
 ### 圆孔衍射与艾里斑
 
 - **难度**: 进阶

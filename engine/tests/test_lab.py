@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from lensfit.lab import OpticsExperiment, get_registry
+from lensfit.lab.experiments.angle_of_view import AngleOfViewExperiment
 from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
@@ -84,6 +85,26 @@ class TestColorMixingExperiment:
         _assert_svg(result.svg)
 
 
+class TestAngleOfViewExperiment:
+    def test_default_run(self):
+        exp = AngleOfViewExperiment()
+        result = exp.run({})
+        assert result.data["sensor_format"] == "Full Frame"
+        assert result.data["afov_diagonal_deg"] == pytest.approx(46.79, rel=1e-2)
+        _assert_svg(result.svg)
+
+    def test_wider_focal_length_reduces_afov(self):
+        exp = AngleOfViewExperiment()
+        wide = exp.run({"focal_length": 25}).data["afov_horizontal_deg"]
+        tele = exp.run({"focal_length": 100}).data["afov_horizontal_deg"]
+        assert wide > tele
+
+    def test_unknown_sensor_format_raises(self):
+        exp = AngleOfViewExperiment()
+        with pytest.raises(ValueError):
+            exp.run({"sensor_format": "Unknown"})
+
+
 class TestSensorCoverageExperiment:
     def test_fully_covered(self):
         exp = SensorCoverageExperiment()
@@ -101,6 +122,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        AngleOfViewExperiment,
         ThinLensExperiment,
         DiffractionExperiment,
         ColorMixingExperiment,

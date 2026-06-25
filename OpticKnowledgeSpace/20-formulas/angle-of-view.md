@@ -47,3 +47,7 @@ $$ \text{AFOV} = \frac{360}{\pi} \cdot \arctan\left(\frac{36}{2 \times 50}\right
 *图：Angle Of View*
 
 ## 来源
+
+## 关联实验
+
+- [[90-maps/Optics Lab#angle-of-view|视角与传感器尺寸实验]] — 给定焦距和传感器尺寸，观察水平、垂直、对角线视角的变化。
