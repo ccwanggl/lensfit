@@ -1,0 +1,8 @@
+# The downloaded archive is not needed once extracted.
+integrations-build.zip
+
+# Local node-canvas installation if someone runs image examples here.
+node_modules/
+package.json
+package-lock.json
+*.png

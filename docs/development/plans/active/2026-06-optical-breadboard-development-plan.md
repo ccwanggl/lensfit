@@ -445,6 +445,25 @@ npm run build
 - scene payload 不允许任意文件路径或外部资源。
 - `SceneGraph v1` fixture 不出现 ray-optics 类型名。
 
+**完成状态：已完成**。
+
+实际完成内容：
+
+- 下载并固定 `ray-optics` 集成包 `5.3.2` 到 `engine/third_party/ray-optics/`。
+- 新增 `engine/lensfit/lab/workbench/ray_optics_sidecar.py`：
+  - `RayOpticsSidecar` 封装 `node runner.js` 调用。
+  - 默认 runner 路径指向 vendored 副本。
+  - 超时、stdout/stderr 大小上限、进程清理、非零退出、坏 JSON 全部归一化为异常。
+  - 输入 payload 递归扫描，拒绝文件路径 / URL 引用。
+- 新增 `engine/tests/test_ray_optics_contract.py`：
+  - 版本锁定测试（README.md 中 `Version: 5.3.2`）。
+  - 最小几何场景（SingleRay + Detector）稳定输出测试。
+  - 缺 Node、缺 runner、超时、非零退出、坏 JSON、stdout 超限、URL/文件路径拒绝等错误路径测试。
+  - `SceneGraph v1` fixture 不含 ray-optics 类型名测试。
+  - `SceneGraph v1` 拒绝 `SingleRay` 等 ray-optics spec_id 测试。
+- 新增 `docs/development/research/optics-engine-landscape.md`：
+  - 记录 ray-optics 能力、许可证、集成方式、风险与备选方案。
+
 验证命令：
 
 ```powershell
