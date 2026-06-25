@@ -13,6 +13,7 @@ from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
 from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
+from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
@@ -169,6 +170,25 @@ class TestChromaticAberrationExperiment:
         assert low_v > high_v
 
 
+class TestPolarizationMalusExperiment:
+    def test_default_run(self):
+        exp = PolarizationMalusExperiment()
+        result = exp.run({})
+        assert result.data["after_polarizer1"] == pytest.approx(0.5, rel=1e-6)
+        assert result.data["after_polarizer2"] == pytest.approx(0.25, rel=1e-6)
+        _assert_svg(result.svg)
+
+    def test_crossed_polarizers_extinction(self):
+        exp = PolarizationMalusExperiment()
+        result = exp.run({"polarizer1_angle_deg": 0, "polarizer2_angle_deg": 90})
+        assert result.data["after_polarizer2"] == pytest.approx(0.0, abs=1e-9)
+
+    def test_parallel_polarizers_maximum(self):
+        exp = PolarizationMalusExperiment()
+        result = exp.run({"polarizer1_angle_deg": 30, "polarizer2_angle_deg": 30})
+        assert result.data["after_polarizer2"] == pytest.approx(0.5, rel=1e-6)
+
+
 class TestSnellRefractionExperiment:
     def test_default_air_to_glass(self):
         exp = SnellRefractionExperiment()
@@ -232,6 +252,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        PolarizationMalusExperiment,
         ChromaticAberrationExperiment,
         SnellRefractionExperiment,
         NyquistSamplingExperiment,
