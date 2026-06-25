@@ -76,7 +76,8 @@ function createScreenTexture(
     // (perpendicular to the vertical slit), producing vertical bright/dark fringes.
     for (let col = 0; col < samples.length; col++) {
       const intensity = samples[col].intensity;
-      const alpha = Math.max(0, Math.min(1, intensity));
+      // Gamma boost so faint side lobes remain visible on the 3D screen.
+      const alpha = Math.max(0, Math.min(1, intensity ** 0.45));
       ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
       ctx.fillRect(col, 0, 1, height);
     }
@@ -94,6 +95,85 @@ function createScreenTexture(
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.needsUpdate = true;
   return texture;
+}
+
+function drawIntensityMonitor(
+  canvas: HTMLCanvasElement,
+  samples: Array<{ y_mm: number; intensity: number }>,
+  color: Rgb
+) {
+  const cssWidth = 200;
+  const cssHeight = 100;
+  const dpr = Math.min(window.devicePixelRatio, 2);
+  canvas.width = cssWidth * dpr;
+  canvas.height = cssHeight * dpr;
+  canvas.style.width = `${cssWidth}px`;
+  canvas.style.height = `${cssHeight}px`;
+
+  const ctx = canvas.getContext("2d")!;
+  ctx.scale(dpr, dpr);
+
+  // Oscilloscope-style dark background
+  ctx.fillStyle = "#020617";
+  ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+  // Grid
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.2)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = 0; x <= cssWidth; x += 40) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, cssHeight);
+  }
+  for (let y = 0; y <= cssHeight; y += 25) {
+    ctx.moveTo(0, y);
+    ctx.lineTo(cssWidth, y);
+  }
+  ctx.stroke();
+
+  if (samples.length === 0) return;
+
+  const yMin = samples[0].y_mm;
+  const yMax = samples[samples.length - 1].y_mm;
+  const pad = 6;
+  const plotW = cssWidth - 2 * pad;
+  const plotH = cssHeight - 2 * pad;
+
+  const xFor = (y_mm: number) =>
+    pad + ((y_mm - yMin) / (yMax - yMin)) * plotW;
+  const yFor = (intensity: number) =>
+    pad + plotH - Math.min(1, intensity ** 0.45) * plotH;
+
+  // Glow fill under curve
+  const gradient = ctx.createLinearGradient(0, pad, 0, cssHeight - pad);
+  gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0.55)`);
+  gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0.05)`);
+
+  ctx.beginPath();
+  ctx.moveTo(xFor(samples[0].y_mm), cssHeight - pad);
+  for (const s of samples) {
+    ctx.lineTo(xFor(s.y_mm), yFor(s.intensity));
+  }
+  ctx.lineTo(xFor(samples[samples.length - 1].y_mm), cssHeight - pad);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  // Curve outline
+  ctx.beginPath();
+  for (const s of samples) {
+    ctx.lineTo(xFor(s.y_mm), yFor(s.intensity));
+  }
+  ctx.strokeStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "10px sans-serif";
+  ctx.fillText("相对强度", pad + 2, pad + 10);
+  ctx.fillText(`${yMin.toFixed(2)} mm`, pad, cssHeight - 4);
+  ctx.fillText(`${yMax.toFixed(2)} mm`, cssWidth - pad - 45, cssHeight - 4);
 }
 
 function createApertureTexture(
@@ -171,6 +251,7 @@ export function Breadboard3DCanvas({
 
   const screenTextureRef = useRef<THREE.CanvasTexture | null>(null);
   const apertureTextureRef = useRef<THREE.CanvasTexture | null>(null);
+  const monitorRef = useRef<HTMLCanvasElement>(null);
 
   const isDoubleSlit = presetId === "double-slit-breadboard";
 
@@ -366,6 +447,11 @@ export function Breadboard3DCanvas({
     screenTextureRef.current = newScreenTex;
     screenMat.map = newScreenTex;
     screenMat.needsUpdate = true;
+
+    // Update oscilloscope-style monitor overlay
+    if (monitorRef.current && samples && samples.length > 0) {
+      drawIntensityMonitor(monitorRef.current, samples, rgb);
+    }
   }, [result, isDoubleSlit]);
 
   return (
@@ -375,6 +461,12 @@ export function Breadboard3DCanvas({
         isFetching ? "opacity-70" : "opacity-100"
       } transition-opacity duration-200`}
     >
+      <canvas
+        ref={monitorRef}
+        className="absolute right-2 top-2 z-10 rounded border border-slate-700/50 bg-slate-950 shadow-lg"
+        width={200}
+        height={100}
+      />
       {isFetching && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-500" />
