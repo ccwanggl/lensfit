@@ -5,12 +5,14 @@ interface LabState {
   activeExperimentId: string | null;
   paramDrafts: Record<string, Record<string, unknown>>;
   showDataPanel: boolean;
+  showSidebar: boolean;
   recentExperiments: string[];
 
   setActiveExperimentId: (id: string | null) => void;
   setParam: (experimentId: string, name: string, value: unknown) => void;
   setParams: (experimentId: string, params: Record<string, unknown>) => void;
   toggleDataPanel: () => void;
+  toggleSidebar: () => void;
   addRecentExperiment: (id: string) => void;
 }
 
@@ -20,6 +22,7 @@ export const useLabStore = create<LabState>()(
       activeExperimentId: null,
       paramDrafts: {},
       showDataPanel: true,
+      showSidebar: true,
       recentExperiments: [],
 
       setActiveExperimentId: (id) =>
@@ -55,6 +58,9 @@ export const useLabStore = create<LabState>()(
       toggleDataPanel: () =>
         set((state) => ({ showDataPanel: !state.showDataPanel })),
 
+      toggleSidebar: () =>
+        set((state) => ({ showSidebar: !state.showSidebar })),
+
       addRecentExperiment: (id) =>
         set((state) => ({
           recentExperiments: [id, ...state.recentExperiments.filter((x) => x !== id)].slice(0, 8),
@@ -66,6 +72,7 @@ export const useLabStore = create<LabState>()(
         paramDrafts: state.paramDrafts,
         recentExperiments: state.recentExperiments,
         showDataPanel: state.showDataPanel,
+        showSidebar: state.showSidebar,
       }),
     }
   )
