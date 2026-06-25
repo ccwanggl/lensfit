@@ -13,6 +13,7 @@ class ExperimentListItem(BaseModel):
     description: str
     difficulty: str
     linked_concepts: list[str]
+    linked_formulas: list[str]
     prerequisites: list[str]
     learning_objectives: list[str]
     parameters: list[dict[str, Any]]

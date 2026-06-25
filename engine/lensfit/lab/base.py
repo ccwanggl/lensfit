@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
-ParameterType = Literal["float", "int", "bool", "choice"]
+ParameterType = Literal["float", "int", "bool", "choice", "enum"]
 Difficulty = Literal["foundation", "intermediate", "advanced"]
 
 
@@ -59,6 +59,7 @@ class ExperimentInfo:
     description: str
     difficulty: Difficulty
     linked_concepts: list[str]
+    linked_formulas: list[str]
     prerequisites: list[str]
     learning_objectives: list[str]
     parameters: list[dict[str, Any]]
@@ -73,6 +74,7 @@ class OpticsExperiment(ABC):
     difficulty: Difficulty = "foundation"
     # Paths relative to OpticKnowledgeSpace, without .md extension
     linked_concepts: list[str] = []
+    linked_formulas: list[str] = []
     prerequisites: list[str] = []
     learning_objectives: list[str] = []
     parameters: list[Parameter] = []
@@ -84,6 +86,7 @@ class OpticsExperiment(ABC):
             description=self.description,
             difficulty=self.difficulty,
             linked_concepts=list(self.linked_concepts),
+            linked_formulas=list(self.linked_formulas),
             prerequisites=list(self.prerequisites),
             learning_objectives=list(self.learning_objectives),
             parameters=[p.as_dict() for p in self.parameters],
@@ -110,7 +113,7 @@ class OpticsExperiment(ABC):
                     value = min(p.max, value)
             elif p.type == "bool":
                 value = bool(value)
-            elif p.type == "choice":
+            elif p.type in ("choice", "enum"):
                 valid = {opt.get("value") for opt in p.options}
                 if value not in valid:
                     raise ValueError(

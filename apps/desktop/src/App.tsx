@@ -1,6 +1,6 @@
 import { useState, Suspense, lazy } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Monitor, Microscope, Sun, Camera, Moon, User, FolderOpen, Loader2, GraduationCap, TrendingUp, Eye, Settings, Database, FlaskConical } from "lucide-react";
+import { Monitor, Microscope, Sun, Camera, Moon, User, FolderOpen, Loader2, GraduationCap, TrendingUp, Settings, Database } from "lucide-react";
 import ToastContainer from "./components/ui/Toast";
 import { useTheme } from "./hooks/useTheme";
 import { LearningModeProvider, useLearningMode } from "./contexts/LearningModeContext";
@@ -13,23 +13,21 @@ const PhotographyPage = lazy(() => import("./pages/PhotographyPage"));
 const ProjectsPage = lazy(() => import("./pages/ProjectsPage"));
 const LibraryPage = lazy(() => import("./pages/LibraryPage"));
 const FormulaPlayground = lazy(() => import("./components/FormulaPlayground"));
-const ConceptExplorer = lazy(() => import("./components/ConceptExplorer"));
-const LabPage = lazy(() => import("./lab/LabPage"));
+const LearningHub = lazy(() => import("./lab/LearningHub"));
 
 const queryClient = new QueryClient();
 
-type TabId = "industrial" | "microscope" | "infrared" | "photography" | "projects" | "library" | "playground" | "explorer" | "lab";
+type TabId = "industrial" | "microscope" | "infrared" | "photography" | "projects" | "library" | "playground" | "learning";
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "industrial", label: "工业视觉", icon: <Monitor size={16} /> },
   { id: "photography", label: "摄影", icon: <Camera size={16} /> },
   { id: "microscope", label: "显微镜", icon: <Microscope size={16} /> },
   { id: "infrared", label: "红外成像", icon: <Sun size={16} /> },
-  { id: "lab", label: "光学实验室", icon: <FlaskConical size={16} /> },
+  { id: "learning", label: "学习中心", icon: <GraduationCap size={16} /> },
   { id: "projects", label: "项目", icon: <FolderOpen size={16} /> },
   { id: "library", label: "器件库", icon: <Database size={16} /> },
   { id: "playground", label: "游乐场", icon: <TrendingUp size={16} /> },
-  { id: "explorer", label: "概念图解", icon: <Eye size={16} /> },
 ];
 
 function AppContent() {
@@ -145,8 +143,7 @@ function AppContent() {
           {activeTab === "projects" && <ProjectsPage />}
           {activeTab === "library" && <LibraryPage />}
           {activeTab === "playground" && <FormulaPlayground />}
-          {activeTab === "explorer" && <ConceptExplorer />}
-          {activeTab === "lab" && <LabPage />}
+          {activeTab === "learning" && <LearningHub />}
         </Suspense>
       </main>
 

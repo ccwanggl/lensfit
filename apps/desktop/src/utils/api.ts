@@ -636,6 +636,7 @@ export interface LabExperiment {
   description: string;
   difficulty: string;
   linked_concepts: string[];
+  linked_formulas: string[];
   prerequisites: string[];
   learning_objectives: string[];
   parameters: LabParameter[];
