@@ -74,3 +74,7 @@ $$
 ## 来源
 - [[../50-learning/04-sensors|第4章 传感器]] §4.5 混叠（Aliasing）
 - [[../50-learning/05-matching-basics|第5章 匹配基础]] §5.3 分辨率匹配
+
+## 关联实验
+
+- [[90-maps/Optics Lab#nyquist-sampling|奈奎斯特采样与混叠实验]] — 比较镜头 MTF50 与传感器奈奎斯特频率，判断是否存在混叠风险或过度采样。

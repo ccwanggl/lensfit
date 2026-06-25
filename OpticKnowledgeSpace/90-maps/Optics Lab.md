@@ -67,6 +67,13 @@ aliases:
 - **学习目标**: 理解艾里斑是理想光学系统的极限点扩散函数。, 观察光圈越小、波长越长，艾里斑越大。
 - **关联笔记**: [[10-concepts/airy-disk|airy-disk]], [[10-concepts/衍射极限|衍射极限]], [[20-formulas/rayleigh-criterion|rayleigh-criterion]], [[10-concepts/艾里斑|艾里斑]]
 
+### 奈奎斯特采样与混叠实验
+
+- **难度**: 进阶
+- **说明**: 比较镜头 MTF50 与传感器奈奎斯特频率，判断是否存在混叠风险或过度采样。
+- **学习目标**: 理解传感器奈奎斯特频率是它能无歧义记录的最高空间频率。, 认识镜头 MTF50 超过奈奎斯特频率时会出现混叠。, 了解过度采样与欠采样的权衡。
+- **关联笔记**: [[10-concepts/nyquist-frequency|nyquist-frequency]], [[10-concepts/奈奎斯特频率|奈奎斯特频率]], [[10-concepts/aliasing|aliasing]], [[10-concepts/混叠|混叠]]
+
 ---
 
 ## 如何新增实验

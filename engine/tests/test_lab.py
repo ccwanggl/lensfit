@@ -11,6 +11,7 @@ from lensfit.lab.experiments.angle_of_view import AngleOfViewExperiment
 from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
 from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
 from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
+from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
 from lensfit.lab.experiments.thin_lens import ThinLensExperiment
@@ -128,6 +129,28 @@ class TestMagnificationScaleExperiment:
         assert result.data["working_distance_mm"] > 50
 
 
+class TestNyquistSamplingExperiment:
+    def test_default_run(self):
+        exp = NyquistSamplingExperiment()
+        result = exp.run({})
+        assert result.data["detector_nyquist_lpmm"] == pytest.approx(144.93, rel=1e-3)
+        assert "status" in result.data
+        _assert_svg(result.svg)
+
+    def test_aliasing_when_lens_outresolves_sensor(self):
+        exp = NyquistSamplingExperiment()
+        result = exp.run({"pixel_size_um": 5.0, "lens_mtf50_lpmm": 150})
+        assert result.data["oversampling_ratio"] > 1.0
+        assert result.data["status"] == "混叠风险"
+        assert result.warnings
+
+    def test_oversampling_when_sensor_outresolves_lens(self):
+        exp = NyquistSamplingExperiment()
+        result = exp.run({"pixel_size_um": 2.0, "lens_mtf50_lpmm": 40})
+        assert result.data["oversampling_ratio"] < 0.5
+        assert result.data["status"] == "过度采样"
+
+
 class TestDepthOfFieldExperiment:
     def test_default_run(self):
         exp = DepthOfFieldExperiment()
@@ -168,6 +191,7 @@ class TestSensorCoverageExperiment:
 
 def test_all_experiments_are_subclasses():
     for exp_cls in (
+        NyquistSamplingExperiment,
         DepthOfFieldExperiment,
         MagnificationScaleExperiment,
         AngleOfViewExperiment,
