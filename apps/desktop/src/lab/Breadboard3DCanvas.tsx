@@ -13,6 +13,8 @@ interface Breadboard3DCanvasProps {
 const DISTANCE_SCALE = 2; // 1 m of real distance -> 2 world units
 const SCREEN_WORLD_HEIGHT = 1.6;
 const APERTURE_WORLD_HEIGHT = 0.8;
+const SOURCE_X = -2.0; // Increase source-aperture distance for clearer visuals
+const APERTURE_X = 0.0;
 
 interface Rgb {
   r: number;
@@ -293,8 +295,8 @@ function updateGeometryRays(
     | Array<{ y_mm: number; intensity: number }>
     | undefined;
   const screenX = 0.2 + screen_distance_m * DISTANCE_SCALE;
-  const sourceX = -0.5;
-  const apertureX = 0.0;
+  const sourceX = SOURCE_X;
+  const apertureX = APERTURE_X;
 
   const yMaxMm =
     samples && samples.length > 0
@@ -421,7 +423,7 @@ export function Breadboard3DCanvas({
       metalness: 0.3,
     });
     const laser = new THREE.Mesh(laserGeo, laserMat);
-    laser.position.set(-0.5, 0, 0);
+    laser.position.set(SOURCE_X, 0, 0);
     scene.add(laser);
     laserMatRef.current = laserMat;
 
@@ -558,7 +560,7 @@ export function Breadboard3DCanvas({
     }
 
     // Update screen position
-    const sourceX = -0.5;
+    const sourceX = SOURCE_X;
     const screenX = 0.2 + screen_distance_m * DISTANCE_SCALE;
     screenRef.current.position.set(screenX, 0, 0);
 
@@ -586,7 +588,7 @@ export function Breadboard3DCanvas({
     ) {
       // Isometric-ish initial view that shows laser, aperture, screen, and monitor.
       cameraRef.current.position.set(screenX * 0.5 + 1.2, 1.4, 2.6);
-      controlsRef.current.target.set(screenX * 0.45, 0, 0);
+      controlsRef.current.target.set((sourceX + screenX) / 2, 0, 0);
       controlsRef.current.update();
       cameraInitializedRef.current = true;
     }

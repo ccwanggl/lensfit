@@ -88,8 +88,8 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
         name: "screen_x_mm",
         label: "屏幕位置",
         type: "float",
-        default: 1100,
-        min: 200,
+        default: 1600,
+        min: 700,
         max: 3000,
         step: 10,
         unit: "mm",
@@ -97,7 +97,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
     ],
     kind: "preset",
     buildScene: (params) => {
-      const screen_x_mm = Number(params.screen_x_mm ?? 1100);
+      const screen_x_mm = Number(params.screen_x_mm ?? 1600);
       return {
         version: 1,
         units: { length: "mm", angle: "deg", wavelength: "nm" },
@@ -113,7 +113,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
             id: "slit-1",
             spec_id: "single-slit",
             category: "aperture",
-            transform: { x_mm: 100, y_mm: 0, rotation_deg: 0 },
+            transform: { x_mm: 600, y_mm: 0, rotation_deg: 0 },
             params: { slit_width_um: params.slit_width_um },
           },
           {
@@ -191,8 +191,8 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
         name: "screen_x_mm",
         label: "屏幕位置",
         type: "float",
-        default: 1100,
-        min: 200,
+        default: 1600,
+        min: 700,
         max: 3000,
         step: 10,
         unit: "mm",
@@ -200,7 +200,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
     ],
     kind: "preset",
     buildScene: (params) => {
-      const screen_x_mm = Number(params.screen_x_mm ?? 1100);
+      const screen_x_mm = Number(params.screen_x_mm ?? 1600);
       return {
         version: 1,
         units: { length: "mm", angle: "deg", wavelength: "nm" },
@@ -216,7 +216,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
             id: "slit-1",
             spec_id: "double-slit",
             category: "aperture",
-            transform: { x_mm: 100, y_mm: 0, rotation_deg: 0 },
+            transform: { x_mm: 600, y_mm: 0, rotation_deg: 0 },
             params: {
               slit_width_um: params.slit_width_um,
               slit_separation_um: params.slit_separation_um,
@@ -275,7 +275,7 @@ export function validatePresetParams(
     if (!Number.isFinite(screen_x_mm)) {
       return "屏幕位置必须是有效数字";
     }
-    if (screen_x_mm <= 100) {
+    if (screen_x_mm <= 700) {
       return "屏幕必须位于光阑之后";
     }
   }

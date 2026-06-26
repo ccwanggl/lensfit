@@ -515,10 +515,10 @@ function BreadboardPresetHeader({
   params: Record<string, unknown>;
   onChange: (name: string, value: unknown) => void;
 }) {
-  const screen_x_mm = Number(params.screen_x_mm ?? 1100);
+  const screen_x_mm = Number(params.screen_x_mm ?? 1600);
   const wavelength_nm = Number(params.wavelength_nm ?? 550);
-  const clamped = Math.min(Math.max(screen_x_mm, 200), 3000);
-  const screenSvgX = 40 + ((clamped - 100) / (3000 - 100)) * 220;
+  const clamped = Math.min(Math.max(screen_x_mm, 700), 3000);
+  const screenSvgX = 40 + ((clamped - 700) / (3000 - 700)) * 220;
   const isDoubleSlit = presetId === "double-slit-breadboard";
 
   return (
