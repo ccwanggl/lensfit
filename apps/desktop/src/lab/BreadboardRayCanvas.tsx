@@ -98,7 +98,6 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [raysPerSlit, setRaysPerSlit] = useState(60);
-  const [yExaggeration, setYExaggeration] = useState(8);
   const [showBlocked, setShowBlocked] = useState(true);
   const [showIntensity, setShowIntensity] = useState(true);
   const [hover, setHover] = useState<{ x: number; y: number } | null>(null);
@@ -130,14 +129,61 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     const SCENE_X_MAX = 3050;
     const xScale = drawWidth / (SCENE_X_MAX - SCENE_X_MIN);
 
-    // Vertical exaggeration: the real optical layout is very flat (slits are
-    // microns, distances are millimeters). We exaggerate Y so the rays and
-    // slit openings are visually distinguishable.
+    // Schematic visual scale: real slits are microns and geometric rays are
+    // nearly parallel. We exaggerate the whole aperture geometry (slit width
+    // and separation) proportionally so the blocking effect remains visible.
+    const FAN_ANGLE = Math.PI / 6; // ±30°
+    const fanHalfY = info.x * Math.tan(FAN_ANGLE) * 1.05;
+
+    let visualScale = 80;
+    const actualHalfWidth = ((info.slitWidthUm ?? 50) / 1000) / 2;
+    const actualHalfSep = ((info.slitSeparationUm ?? 0) / 1000) / 2;
+    const requiredExtent =
+      actualHalfSep > 0
+        ? actualHalfSep * visualScale + actualHalfWidth * visualScale
+        : actualHalfWidth * visualScale;
+    if (requiredExtent > fanHalfY * 0.6) {
+      visualScale =
+        (fanHalfY * 0.6) /
+        (actualHalfSep + actualHalfWidth || actualHalfWidth);
+    }
+    const minVisualHalf = 0.3;
+
+    // Build visually-scaled openings. Both slit width and slit separation are
+    // scaled by the same factor so the proportions look consistent.
+    const visualOpenings: Array<{ y0: number; y1: number }> = [];
+    if (actualHalfSep > 0) {
+      const half = Math.max(minVisualHalf, actualHalfWidth * visualScale);
+      const sep = actualHalfSep * visualScale;
+      visualOpenings.push(
+        { y0: info.y - sep - half, y1: info.y - sep + half },
+        { y0: info.y + sep - half, y1: info.y + sep + half }
+      );
+    } else {
+      const half = Math.max(minVisualHalf, actualHalfWidth * visualScale);
+      visualOpenings.push({ y0: info.y - half, y1: info.y + half });
+    }
+
     const toCanvasX = (x: number) => padding.left + (x - SCENE_X_MIN) * xScale;
+
+    // Geometry Y scale: the real layout is extremely flat (micron slits vs
+    // millimeter distances). We auto-exaggerate Y just enough so the fan of
+    // rays and the aperture plate fit nicely in the canvas.
+    const geometryYScale = (drawHeight / 2) / (fanHalfY * 1.15);
     const toCanvasY = (y: number) =>
-      padding.top + drawHeight / 2 - (y - info.screenY * 0) * xScale * yExaggeration;
-    // Note: we center on the aperture/source axis; screenY offset is handled
-    // by keeping the same axis origin. In the locked presets screenY == sourceY.
+      padding.top + drawHeight / 2 - y * geometryYScale;
+
+    // Intensity is mapped independently so the entire Fraunhofer pattern
+    // (including dark fringes) always fits in the vertical drawing area.
+    const intensityToCanvasY = (() => {
+      if (intensity.samples.length === 0)
+        return () => padding.top + drawHeight / 2;
+      const yMin = intensity.samples[0].y_mm;
+      const yMax = intensity.samples[intensity.samples.length - 1].y_mm;
+      const range = yMax - yMin || 1;
+      return (y_mm: number) =>
+        padding.top + ((yMax - y_mm) / range) * drawHeight;
+    })();
 
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
@@ -175,39 +221,6 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     ctx.fillStyle = "rgba(226, 232, 240, 0.8)";
     ctx.font = "11px sans-serif";
     ctx.fillText("光源", toCanvasX(sourceX) - 12, toCanvasY(sourceY) + 20);
-
-    // Schematic visual scale: real slits are microns and geometric rays are
-    // nearly parallel. We exaggerate the whole aperture geometry (slit width
-    // and separation) proportionally so the blocking effect remains visible.
-    const FAN_ANGLE = Math.PI / 6; // ±30°
-    const fanHalfY = info.x * Math.tan(FAN_ANGLE) * 1.05;
-
-    let visualScale = 80;
-    const actualHalfWidth = ((info.slitWidthUm ?? 50) / 1000) / 2;
-    const actualHalfSep = ((info.slitSeparationUm ?? 0) / 1000) / 2;
-    const requiredExtent =
-      actualHalfSep > 0
-        ? actualHalfSep * visualScale + actualHalfWidth * visualScale
-        : actualHalfWidth * visualScale;
-    if (requiredExtent > fanHalfY * 0.6) {
-      visualScale = (fanHalfY * 0.6) / (actualHalfSep + actualHalfWidth || actualHalfWidth);
-    }
-    const minVisualHalf = 0.3;
-
-    // Build visually-scaled openings. Both slit width and slit separation are
-    // scaled by the same factor so the proportions look consistent.
-    const visualOpenings: Array<{ y0: number; y1: number }> = [];
-    if (actualHalfSep > 0) {
-      const half = Math.max(minVisualHalf, actualHalfWidth * visualScale);
-      const sep = actualHalfSep * visualScale;
-      visualOpenings.push(
-        { y0: info.y - sep - half, y1: info.y - sep + half },
-        { y0: info.y + sep - half, y1: info.y + sep + half }
-      );
-    } else {
-      const half = Math.max(minVisualHalf, actualHalfWidth * visualScale);
-      visualOpenings.push({ y0: info.y - half, y1: info.y + half });
-    }
 
     // Draw blocker / aperture tall enough to intercept the whole fan.
     const blockerTop = info.y - fanHalfY;
@@ -287,16 +300,18 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
     if (showIntensity && intensity.samples.length > 0) {
       const samples = intensity.samples;
       const [rr, gg, bb] = wavelengthToRgb(info.wavelengthNm);
+      const peak = intensity.peakIntensity;
 
       // 1) Color the screen itself according to the intensity distribution.
-      //    Uses the same toCanvasY as the rays so it follows the Y-axis zoom.
+      //    The peak brightness is scaled by slit width so narrowing the slit
+      //    visibly dims the central maximum.
       const screenStripW = 6;
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const cy0 = toCanvasY(s0.y_mm);
-        const cy1 = toCanvasY(s1.y_mm);
-        const avg = (s0.intensity + s1.intensity) / 2;
+        const cy0 = intensityToCanvasY(s0.y_mm);
+        const cy1 = intensityToCanvasY(s1.y_mm);
+        const avg = ((s0.intensity + s1.intensity) / 2) * peak;
         ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${avg * 0.95})`;
         ctx.fillRect(
           sx - screenStripW / 2,
@@ -318,9 +333,9 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
       for (let i = 0; i < samples.length - 1; i++) {
         const s0 = samples[i];
         const s1 = samples[i + 1];
-        const cy0 = toCanvasY(s0.y_mm);
-        const cy1 = toCanvasY(s1.y_mm);
-        const avg = (s0.intensity + s1.intensity) / 2;
+        const cy0 = intensityToCanvasY(s0.y_mm);
+        const cy1 = intensityToCanvasY(s1.y_mm);
+        const avg = ((s0.intensity + s1.intensity) / 2) * peak;
         const w = avg * barW;
         ctx.fillStyle = `rgba(${rr}, ${gg}, ${bb}, ${0.2 + avg * 0.8})`;
         ctx.fillRect(barX, Math.min(cy0, cy1), Math.max(1, w), Math.max(1, Math.abs(cy1 - cy0)));
@@ -348,7 +363,7 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
       ctx.stroke();
       ctx.setLineDash([]);
     }
-  }, [info, raysPerSlit, yExaggeration, showBlocked, showIntensity, intensity, hover]);
+  }, [info, raysPerSlit, showBlocked, showIntensity, intensity, hover]);
 
   if (!info) {
     return (
@@ -374,21 +389,6 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
           />
           <span className="w-6 text-right font-mono text-slate-700 dark:text-slate-300">
             {raysPerSlit}
-          </span>
-        </label>
-        <label className="flex items-center gap-2">
-          <span className="text-slate-600 dark:text-slate-400">Y 轴放大</span>
-          <input
-            type="range"
-            min={20}
-            max={800}
-            step={20}
-            value={yExaggeration}
-            onChange={(e) => setYExaggeration(Number(e.target.value))}
-            className="accent-indigo-500"
-          />
-          <span className="w-8 text-right font-mono text-slate-700 dark:text-slate-300">
-            {yExaggeration}
           </span>
         </label>
         <label className="flex cursor-pointer items-center gap-1.5 text-slate-600 dark:text-slate-400">
@@ -427,7 +427,7 @@ export function BreadboardRayCanvas({ scene }: BreadboardRayCanvasProps) {
       </div>
 
       <p className="text-xs text-slate-500 dark:text-slate-400">
-        提示：Y 轴被故意放大以便看清微米级狭缝；真实几何比例中光线几乎平行。
+        提示：光路图为示意性绘制，狭缝和光线均经过视觉放大；强度条按夫琅禾费公式计算，且中央亮纹亮度会随缝宽减小而降低。
       </p>
     </div>
   );

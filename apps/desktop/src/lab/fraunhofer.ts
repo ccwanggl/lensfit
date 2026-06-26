@@ -8,6 +8,7 @@ export interface IntensitySample {
 export interface FraunhoferResult {
   available: boolean;
   samples: IntensitySample[];
+  peakIntensity: number;
 }
 
 function parsePresetParams(scene: WorkbenchScene) {
@@ -57,7 +58,7 @@ export function computeFraunhoferIntensity(
 ): FraunhoferResult {
   const params = scene ? parsePresetParams(scene) : null;
   if (!params) {
-    return { available: false, samples: [] };
+    return { available: false, samples: [], peakIntensity: 0 };
   }
 
   const {
@@ -99,5 +100,15 @@ export function computeFraunhoferIntensity(
     }
   }
 
-  return { available: true, samples };
+  // Absolute central-brightness scaling: for a fixed incident intensity,
+  // the peak intensity of the Fraunhofer pattern is proportional to the
+  // slit width (roughly ~width^2). We expose this as a display multiplier
+  // so narrowing the slit visibly dims the pattern.
+  const referenceWidthMm = 0.05; // 50 μm reference
+  const peakIntensity = Math.min(
+    1,
+    Math.max(0.03, (slitWidthMm / referenceWidthMm) ** 0.5)
+  );
+
+  return { available: true, samples, peakIntensity };
 }
