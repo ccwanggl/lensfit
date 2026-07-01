@@ -92,4 +92,4 @@ python scripts/generate_vault_visuals.py
 
 1. 把图片保存到 `OpticKnowledgeSpace/attachments/visuals/`。
 2. 在本索引表中添加一行，方便视觉学习者查找。
-3. 在对应的概念/公式/学习章节中用 `![[attachments/visuals/xxx.svg]]` 嵌入。
+3. 在对应的概念/公式/学习章节中用图片嵌入语法嵌入，例如 `attachments/visuals/你的图.svg`（将 `你的图.svg` 替换为实际文件名）。

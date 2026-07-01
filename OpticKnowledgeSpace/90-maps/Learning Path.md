@@ -117,9 +117,10 @@ aliases:
 | 6.3 | [[50-learning/16-spectroscopy|光谱学与色彩科学]] | [[10-concepts/spectral-resolution|光谱分辨率]] | 系统学习光谱、色彩、荧光、拉曼 |
 | 6.4 | [[20-formulas/grating-equation|光栅方程]] | [[20-formulas/grating-resolving-power|光栅光谱分辨率]]、[[20-formulas/prism-dispersion|棱镜色散率]] | 会估算分光角度和分辨率 |
 | 6.5 | [[30-domains/spectroscopy|光谱成像]] | [[40-devices/spectrometer|光谱仪]]、[[40-devices/hyperspectral-camera|高光谱相机]] | 理解多光谱/高光谱设备选型 |
-| 6.6 | [[10-concepts/chromaticity-diagram|色度图]] | [[20-formulas/delta-e|Delta E 色差]]、[[10-concepts/color-temperature|色温]] | 连接光谱测量和颜色管理 |
+| 6.6 | [[30-domains/on-chip-multispectral|片上多光谱成像]] | [[10-concepts/snapshot-spectral-imaging|快照式光谱成像]]、[[10-concepts/multispectral-filter-array|多光谱滤光片阵列]]、[[10-concepts/fabry-perot-microcavity|Fabry–Pérot 微腔]]、[[10-concepts/metasurface|超表面]]、[[10-concepts/spectral-reconstruction|光谱重建]] | 理解芯片级光谱系统架构与技术路线 |
+| 6.7 | [[10-concepts/chromaticity-diagram|色度图]] | [[20-formulas/delta-e|Delta E 色差]]、[[10-concepts/color-temperature|色温]] | 连接光谱测量和颜色管理 |
 
-完成标志：能解释为什么 RGB 看起来相同的材料，光谱仪可能能区分。
+完成标志：能解释为什么 RGB 看起来相同的材料，光谱仪可能能区分；并能在“片上光谱传感器”与“传统光谱仪”之间做选型权衡。
 
 ## 7. 领域深入路线
 
@@ -130,6 +131,7 @@ aliases:
 | 显微成像 | [[30-domains/microscopy|显微镜]] → [[40-devices/microscope-objective|显微镜物镜]] → [[20-formulas/rayleigh-criterion|瑞利判据]] |
 | 红外成像 | [[30-domains/infrared-imaging|红外成像]] → [[40-devices/ir-thermal-detector|红外热像仪探测器]] → [[20-formulas/planck-blackbody|黑体辐射]] |
 | 光谱成像 | [[30-domains/spectroscopy|光谱成像]] → [[50-learning/16-spectroscopy|光谱学与色彩科学]] |
+| 片上多光谱 | [[30-domains/on-chip-multispectral|片上多光谱成像]] → [[10-concepts/snapshot-spectral-imaging|快照式光谱成像]] → [[40-devices/on-chip-spectral-sensor|片上光谱传感器]] → [[80-sources/on-chip-multispectral-literature|片上多光谱/高光谱文献与学习路线]] |
 
 ## 8. 学习检查表
 

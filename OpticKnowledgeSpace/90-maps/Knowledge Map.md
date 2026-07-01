@@ -52,6 +52,7 @@ aliases:
 - [[30-domains/microscopy|显微镜]]
 - [[30-domains/infrared-imaging|红外成像]]
 - [[30-domains/spectroscopy|光谱成像]]
+- [[30-domains/on-chip-multispectral|片上多光谱成像]]
 
 ## 概念索引
 
@@ -76,6 +77,11 @@ aliases:
 - [[10-concepts/raman-scattering|拉曼散射]]
 - [[10-concepts/multispectral-imaging|多光谱成像]]
 - [[10-concepts/hyperspectral-imaging|高光谱成像]]
+- [[10-concepts/snapshot-spectral-imaging|快照式光谱成像]]
+- [[10-concepts/multispectral-filter-array|多光谱滤光片阵列]]
+- [[10-concepts/fabry-perot-microcavity|Fabry–Pérot 微腔]]
+- [[10-concepts/metasurface|超表面]]
+- [[10-concepts/spectral-reconstruction|光谱重建]]
 - [[10-concepts/spectral-power-distribution|光谱分布函数]]
 - [[10-concepts/abbe-number|阿贝数]]
 
@@ -121,6 +127,10 @@ aliases:
 ### 光谱设备
 - [[40-devices/spectrometer|光谱仪]]
 - [[40-devices/hyperspectral-camera|高光谱相机]]
+- [[40-devices/on-chip-spectral-sensor|片上光谱传感器]]
+- [[40-devices/ingaas-focal-plane-array|InGaAs 焦平面阵列]]
+- [[40-devices/mct-detector|MCT 探测器]]
+- [[40-devices/ir-thermal-detector|红外热像仪探测器]]
 - [[40-devices/diffraction-grating|衍射光栅]]
 - [[40-devices/bandpass-filter|窄带滤光片]]
 - [[40-devices/integrating-sphere|积分球]]
@@ -135,7 +145,7 @@ aliases:
 | `10-concepts/` | 🟡 建设中 | 20+ 核心概念原子笔记 |
 | `20-formulas/` | 🟡 建设中 | 15+ 核心公式原子笔记 |
 | `40-devices/` | 🟡 建设中 | 15+ 设备类型原子笔记 |
-| `30-domains/` | ✅ 完成 | 5个领域深度参考 |
+| `30-domains/` | ✅ 完成 | 6个领域深度参考（含片上多光谱） |
 | `80-sources/` | 🔴 待建 | 标准、论文、厂商资料索引 |
 | `90-maps/` | ✅ 完成 | 知识地图、知识架构、学习路径 |
 

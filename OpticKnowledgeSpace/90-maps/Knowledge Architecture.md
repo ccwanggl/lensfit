@@ -70,6 +70,7 @@ flowchart TD
 ```mermaid
 flowchart LR
     chapter["第16章 光谱学与色彩科学"] --> domain["光谱成像领域"]
+    chapter --> onchip["片上多光谱成像"]
     chapter --> concepts["光谱概念"]
     chapter --> formulas["光谱公式"]
     chapter --> devices["光谱设备"]
@@ -79,6 +80,11 @@ flowchart LR
     concepts --> dispersion["色散/阿贝数"]
     concepts --> color["色度图/色温"]
     concepts --> imaging["多光谱/高光谱"]
+    concepts --> snapshot["快照式光谱成像"]
+    concepts --> msfa["多光谱滤光片阵列"]
+    concepts --> fp["Fabry–Pérot 微腔"]
+    concepts --> metasurface["超表面"]
+    concepts --> reconstruction["光谱重建"]
     concepts --> fluorescence["荧光/拉曼"]
 
     formulas --> grating["光栅方程"]
@@ -89,9 +95,19 @@ flowchart LR
 
     devices --> spectrometer["光谱仪"]
     devices --> hsi["高光谱相机"]
+    devices --> onchipSensor["片上光谱传感器"]
+    devices --> ingaas["InGaAs FPA"]
+    devices --> mct["MCT 探测器"]
+    devices --> thermal["红外热像仪探测器"]
     devices --> filter["窄带滤光片"]
     devices --> sphere["积分球"]
     devices --> gratingDevice["衍射光栅"]
+
+    onchip --> onchipSensor
+    onchip --> msfa
+    onchip --> fp
+    onchip --> metasurface
+    onchip --> reconstruction
 ```
 
 入口顺序建议：
@@ -102,6 +118,8 @@ flowchart LR
 4. [[50-learning/16-spectroscopy|第16章：光谱学与色彩科学]]
 5. [[30-domains/spectroscopy|光谱成像]]
 6. [[40-devices/spectrometer|光谱仪]] 和 [[40-devices/hyperspectral-camera|高光谱相机]]
+7. [[30-domains/on-chip-multispectral|片上多光谱成像]]（专项深入，可选）
+8. [[10-concepts/snapshot-spectral-imaging|快照式光谱成像]]、[[10-concepts/multispectral-filter-array|多光谱滤光片阵列]]、[[10-concepts/fabry-perot-microcavity|Fabry–Pérot 微腔]]、[[10-concepts/metasurface|超表面]]、[[10-concepts/spectral-reconstruction|光谱重建]]（按需深入）
 
 ## 当前缺口
 
@@ -110,7 +128,7 @@ flowchart LR
 | 来源层薄弱 | 部分公式和经验结论缺少可追溯来源 | 优先为第10-16章、光谱公式补标准/教材/厂商资料 |
 | 一些旧双链仍指向“第X章”占位名 | Obsidian 图谱中会出现未创建节点 | 逐步改成实际文件名，如 `16-spectroscopy` |
 | 基础工程术语尚未全部原子化 | 设备笔记里会引用未建概念 | 对高频术语建小笔记，低频术语保留在设备页解释 |
-| 光谱内容多为 draft | 适合学习，但不宜直接作为工程标准 | 对公式、单位、典型波段做一次来源校验后升为 reviewed |
+| 光谱内容多为 draft | 适合学习，但不宜直接作为工程标准 | 对公式、单位、典型波段做一次来源校验后升为 reviewed；片上多光谱专题已建骨架，待审阅 |
 
 ## 维护原则
 
