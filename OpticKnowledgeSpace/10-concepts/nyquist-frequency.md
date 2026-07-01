@@ -73,6 +73,9 @@ $$
 
 ## 可视化辅助
 
+![[attachments/visuals/nyquist_aliasing_demo.png]]
+*图：奈奎斯特采样与混叠示例。连续信号为 5 Hz 正弦波。上：过采样（fs = 20 Hz），采样点能很好跟踪原信号；中：临界采样（fs = 10 Hz = 2f），刚好满足奈奎斯特定理；下：欠采样（fs = 8 Hz），采样点呈现出一个更低频率的“假波形”，这就是混叠。*
+
 ![[attachments/visuals/nyquist-aliasing.svg]]
 *图：Nyquist Aliasing*
 

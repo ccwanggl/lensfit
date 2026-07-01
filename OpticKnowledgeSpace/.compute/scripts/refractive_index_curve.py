@@ -13,10 +13,11 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from opticalglass.glassfactory import create_glass
+from oks_mpl import setup_fonts
 
 
 def main():
-    # 命令行参数解析，支持 --no-display 用于无头环境（如 CI/自动化）
+    setup_fonts()
     parser = argparse.ArgumentParser(description='折射率-波长曲线可视化')
     parser.add_argument('--no-display', action='store_true',
                         help='不显示图像窗口，仅保存 PNG 文件')

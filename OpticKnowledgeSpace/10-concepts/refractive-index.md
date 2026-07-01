@@ -62,6 +62,9 @@ $$
 
 ## 可视化辅助
 
+![[attachments/visuals/refractive_index_curve.png]]
+*图：常见光学玻璃的折射率-波长曲线（N-BK7、SF10、F2）。短波长（蓝光）折射率更高，长波长（红光）折射率更低——这就是“正常色散”。SF10 等重火石玻璃色散更陡峭，常用于消色差胶合透镜的设计。*
+
 ![[attachments/visuals/refractive-index.svg]]
 *图：Refractive Index*
 

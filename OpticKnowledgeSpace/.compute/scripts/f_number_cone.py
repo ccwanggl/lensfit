@@ -17,10 +17,11 @@ F值可视化：不同光圈下的入瞳光锥角度对比 (f-number-cone)
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+from oks_mpl import setup_fonts
 
 
 def main():
-    # 命令行参数解析
+    setup_fonts()
     parser = argparse.ArgumentParser(description='F值入瞳光锥角度对比可视化')
     parser.add_argument('--no-display', action='store_true',
                         help='不显示图像窗口，仅保存 PNG 文件')

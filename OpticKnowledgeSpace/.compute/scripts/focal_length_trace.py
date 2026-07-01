@@ -18,6 +18,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from opticalglass.glassfactory import create_glass
+from oks_mpl import setup_fonts
 
 
 def trace_paraxial_ray(h, n, R1, R2, d, focal_x):
@@ -62,7 +63,7 @@ def trace_paraxial_ray(h, n, R1, R2, d, focal_x):
 
 
 def main():
-    # 命令行参数解析
+    setup_fonts()
     parser = argparse.ArgumentParser(description='双凸透镜焦距光线追迹可视化')
     parser.add_argument('--no-display', action='store_true',
                         help='不显示图像窗口，仅保存 PNG 文件')

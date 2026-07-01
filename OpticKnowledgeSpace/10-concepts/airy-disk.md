@@ -57,6 +57,9 @@ $$
 
 ## 可视化辅助
 
+![[attachments/visuals/airy_disk_pattern.png]]
+*图：左：不同波长/F# 组合下的艾里斑径向强度分布，虚线标记第一暗环位置；右：绿光 550nm、F/2.8 时的二维艾里斑图样，青色虚线圈出第一暗环。可以看到：波长越短、光圈越大，第一暗环直径越小，系统分辨率越高。*
+
 ![[attachments/visuals/airy-disk.svg]]
 *图：Airy Disk*
 

@@ -40,4 +40,9 @@ $$ d = 2.44 \times 0.55 \times 2.8 \approx 3.76\,\mu\text{m} $$
 - 相关概念：[[10-concepts/衍射极限|衍射极限]]、[[10-concepts/艾里斑|艾里斑]]
 - 相关教程：[[50-learning/01-light-and-waves|第1章]]、[[50-learning/03-lens-parameters|第3章]]
 
+## 可视化辅助
+
+![[attachments/visuals/airy_disk_pattern.png]]
+*图：艾里斑径向强度分布与二维图样。左图显示不同波长和 F# 下第一暗环位置：蓝光（短波）暗环更近，F/5.6 暗环比 F/2.8 明显外移。右图是绿光 550nm、F/2.8 的二维衍射斑，青色虚线圈出第一暗环。*
+
 ## 来源

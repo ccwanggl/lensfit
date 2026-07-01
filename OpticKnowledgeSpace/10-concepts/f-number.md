@@ -66,6 +66,9 @@ $$
 
 ## 可视化辅助
 
+![[attachments/visuals/f_number_cone.png]]
+*图：同一透镜（f = 50 mm）在 F/2.8、F/5.6、F/11 下的入瞳光锥对比。F# 越大，入瞳直径越小，光锥越窄。直观理解：光圈越小，到达像面的光线“方向越一致”，因此景深更大，但进光量也更少。*
+
 ![[attachments/visuals/aperture-f-number.svg]]
 *图：Aperture F Number*
 

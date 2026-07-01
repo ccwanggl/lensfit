@@ -70,8 +70,14 @@ $$
 
 ## 可视化辅助
 
+![[attachments/visuals/thin_lens_parameter_sweep.png]]
+*图：薄透镜成像参数关系（f = 50 mm）。左上：像距 v 随物距 u 的变化；右上：放大率 β 随物距 u 的变化；左下：固定焦距和传感器时的视场；右下：典型物距下的成像光路。可以看到：物距越接近焦距，像距和放大率变化越剧烈；物距很大时，像距约等于焦距，放大率很小。*
+
+![[attachments/visuals/focal_length_trace.png]]
+*图：双凸透镜平行光线追迹。不同入射高度的平行光线经透镜折射后汇聚到后焦点，焦距 EFL ≈ 49.2 mm。*
+
 ![[attachments/visuals/thin-lens-geometry.svg]]
-*图：Thin Lens Geometry*
+*图：薄透镜物距、像距和焦距的几何关系。*
 
 ![[attachments/visuals/angle-of-view.svg]]
 *图：Angle Of View*

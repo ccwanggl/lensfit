@@ -72,6 +72,9 @@ $$
 
 ## 可视化辅助
 
+![[attachments/visuals/nyquist_aliasing_demo.png]]
+*图：采样率不足如何导致混叠。最下图 5 Hz 正弦波仅用 8 Hz 采样，采样点连成的“假波形”看起来频率远低于真实信号——这正是混叠的核心机制。*
+
 ![[attachments/visuals/nyquist-aliasing.svg]]
 *图：Nyquist Aliasing*
 
