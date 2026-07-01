@@ -1,14 +1,16 @@
 ---
-
 id: concept.airy-disk
 title: 艾里斑
 type: concept
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [Airy Disk, 艾里斑直径, 衍射极限光斑]---
+aliases:
+- Airy Disk
+- 艾里斑直径
+- 衍射极限光斑
+---
+
 
 # 艾里斑
 
@@ -57,6 +59,12 @@ $$
 
 ![[attachments/visuals/airy-disk.svg]]
 *图：Airy Disk*
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/goodman-introduction-fourier-optics-4e|Goodman, *Introduction to Fourier Optics*, 4th ed.]]：适合核对傅里叶光学、空间频率、PSF/OTF/MTF、采样和衍射成像。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 - [[../50-learning/01-light-and-waves|第1章 光与波]] §1.6 衍射与分辨极限

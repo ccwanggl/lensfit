@@ -1,14 +1,12 @@
 ---
-id:
-title:
+id: "formula.example"
+title: "示例公式"
 type: formula
 domains: []
 status: draft
-source_ids: []
-reviewed_at:
-owners: []
 aliases: []
 ---
+
 
 # {{title}}
 

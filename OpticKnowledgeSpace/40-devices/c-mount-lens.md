@@ -1,14 +1,12 @@
 ---
-
 id: device.c-mount-lens
 title: C-mount镜头
 type: device
 domains: []
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # C-mount镜头
 

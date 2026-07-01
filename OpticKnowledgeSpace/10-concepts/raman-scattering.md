@@ -1,14 +1,16 @@
 ---
-
 id: concept.raman-scattering
 title: 拉曼散射
 type: concept
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [raman-scattering, Raman光谱, 拉曼效应]---
+aliases:
+- raman-scattering
+- Raman光谱
+- 拉曼效应
+---
+
 # 拉曼散射
 
 ## 定义
@@ -69,6 +71,12 @@ aliases: [raman-scattering, Raman光谱, 拉曼效应]---
 
 ![[attachments/visuals/raman-scattering.svg]]
 *图：Raman Scattering*
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 

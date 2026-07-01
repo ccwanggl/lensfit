@@ -1,13 +1,12 @@
 ---
-
-id: stub.NETD
+id: concept.NETD
 title: NETD
 type: concept
 domains: []
 status: reviewed
-source_ids: []
 aliases:
-  - NETD---
+- NETD
+---
 
 # NETD
 
@@ -16,6 +15,12 @@ aliases:
 
 ![[attachments/visuals/sensor-parameter-map.svg]]
 *图：Sensor Parameter Map*
+
+## 教材参考
+
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/driggers-infrared-electro-optical-systems-3e|Driggers et al., *Introduction to Infrared and Electro-Optical Systems*, 3rd ed.]]：适合核对红外探测器、NETD、发射率和 EO/IR 系统性能评价。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 关联实验
 

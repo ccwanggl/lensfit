@@ -1,14 +1,13 @@
 ---
-
 id: formula.rayleigh-criterion
 title: 瑞利判据
 type: formula
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 瑞利判据
 

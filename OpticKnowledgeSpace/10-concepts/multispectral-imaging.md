@@ -1,14 +1,16 @@
 ---
-
 id: concept.multispectral-imaging
 title: 多光谱成像
 type: concept
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [multispectral-imaging, 多光谱, MSI]---
+aliases:
+- multispectral-imaging
+- 多光谱
+- MSI
+---
+
 # 多光谱成像
 
 ## 定义
@@ -46,9 +48,11 @@ aliases: [multispectral-imaging, 多光谱, MSI]---
 
 - 相关概念：[[./hyperspectral-imaging|高光谱成像]]（波段更多、连续）
 - 相关概念：[[./spectral-resolution|光谱分辨率]]
+- 相关领域：[[../30-domains/on-chip-multispectral|片上多光谱成像]]（集成化实现方向）
 - 相关设备：[[../40-devices/hyperspectral-camera|高光谱相机]]（部分设备支持多光谱模式）
 - 相关设备：[[../40-devices/bandpass-filter|窄带滤光片]]（多光谱成像常用滤光片组合）
 - 相关教程：[[50-learning/16-spectroscopy|光谱学]]
+- 相关文献：[[../80-sources/on-chip-multispectral-literature|片上多光谱/高光谱文献与学习路线]]
 
 ## 常见误区
 
@@ -61,6 +65,12 @@ aliases: [multispectral-imaging, 多光谱, MSI]---
 
 ![[attachments/visuals/multispectral-hyperspectral.svg]]
 *图：Multispectral Hyperspectral*
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 

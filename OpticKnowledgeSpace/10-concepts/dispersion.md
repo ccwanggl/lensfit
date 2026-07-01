@@ -1,14 +1,16 @@
 ---
-
 id: concept.dispersion
 title: 色散
 type: concept
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [dispersion, 色散现象, 光谱色散]---
+aliases:
+- dispersion
+- 色散现象
+- 光谱色散
+---
+
 # 色散
 
 ## 定义
@@ -68,6 +70,29 @@ aliases: [dispersion, 色散现象, 光谱色散]---
 
 ![[attachments/visuals/dispersion.svg]]
 *图：Dispersion*
+
+### 棱镜折射与色散仿真
+
+下方仿真使用 `rayoptics` 生态中的 `opticalglass` 玻璃库获取 N-BK7 在各波长下的真实折射率，再通过斯涅尔定律逐面追迹，展示白光经三棱镜后不同波长分离的过程。短波（紫光）折射率更高，偏折更显著。
+
+![[attachments/visuals/prism_refraction_rayoptics.png]]
+*图：N-BK7 棱镜折射与色散（由 `.compute/scripts/prism_refraction.py` 生成）*
+
+对应折射率数据：
+
+| 波长 | 颜色 | N-BK7 折射率 |
+|------|------|-------------|
+| 656.3 nm | 红 | 1.51432 |
+| 589.3 nm | 黄 | 1.51673 |
+| 546.1 nm | 绿 | 1.51872 |
+| 486.1 nm | 蓝 | 1.52238 |
+| 434.0 nm | 紫 | 1.52687 |
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 

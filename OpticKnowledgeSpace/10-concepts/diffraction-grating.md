@@ -36,6 +36,12 @@ where \(\lambda\) is the wavelength and \(m\) is an integer (the diffraction ord
 
 - [[10-concepts/衍射光栅|衍射光栅 (中文)]]
 
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
+
 ## 关联实验
 
 - [[90-maps/Optics Lab#光栅方程与光谱级次实验|光栅方程与光谱级次实验]] — 改变光栅刻线密度、波长和入射角，观察哪些衍射级次可以被接收到。

@@ -1,15 +1,15 @@
 ---
-id:
-title:
+id: "source.example"
+title: "示例来源"
 type: source
 status: draft
-source_type:
-publisher:
-published_at:
-reviewed_at:
-url:
+source_type: ""
+publisher: ""
+published_at: ""
+url: ""
 aliases: []
 ---
+
 
 # {{title}}
 

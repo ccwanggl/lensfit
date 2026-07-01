@@ -1,14 +1,16 @@
 ---
-
 id: formula.prism-dispersion
 title: 棱镜色散率
 type: formula
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [prism-dispersion, 棱镜分辨本领, 棱镜角色散]---
+aliases:
+- prism-dispersion
+- 棱镜分辨本领
+- 棱镜角色散
+---
+
 # 棱镜色散率
 
 ## 公式

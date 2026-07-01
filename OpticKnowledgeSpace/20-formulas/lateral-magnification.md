@@ -1,14 +1,13 @@
 ---
-
 id: formula.lateral-magnification
 title: 横向放大倍率
 type: formula
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 横向放大倍率
 

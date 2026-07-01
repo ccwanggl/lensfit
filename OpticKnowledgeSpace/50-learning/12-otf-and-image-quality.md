@@ -1,11 +1,11 @@
 ---
-
 id: learning.otf-and-image-quality
 title: 光学传递函数与图像质量
 type: learning
 domains: [general]
 status: reviewed
-aliases: [OTF, MTF, PSF, 图像质量]---
+aliases: [OTF, MTF, PSF, 图像质量]
+---
 
 # 第12章 光学传递函数与图像质量
 

@@ -1,14 +1,12 @@
 ---
-id:
-title:
+id: "concept.example"
+title: "示例标题"
 type: concept
 domains: []
 status: draft
-source_ids: []
-reviewed_at:
-owners: []
 aliases: []
 ---
+
 
 # {{title}}
 

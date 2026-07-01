@@ -1,14 +1,12 @@
 ---
-
 id: device.led-ring-light
 title: LED环形光源
 type: device
 domains: []
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # LED环形光源
 

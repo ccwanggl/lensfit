@@ -1,11 +1,11 @@
 ---
-
 id: learning.illumination-design
 title: 照明系统设计
 type: learning
 domains: [general]
 status: reviewed
-aliases: []---
+aliases: []
+---
 
 # 第13章 照明系统设计
 

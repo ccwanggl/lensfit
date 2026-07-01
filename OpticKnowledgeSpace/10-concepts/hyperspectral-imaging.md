@@ -1,14 +1,17 @@
 ---
-
 id: concept.hyperspectral-imaging
 title: 高光谱成像
 type: concept
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [hyperspectral-imaging, 高光谱, HSI, 成像光谱]---
+aliases:
+- hyperspectral-imaging
+- 高光谱
+- HSI
+- 成像光谱
+---
+
 # 高光谱成像
 
 ## 定义
@@ -53,9 +56,11 @@ aliases: [hyperspectral-imaging, 高光谱, HSI, 成像光谱]---
 - 相关概念：[[./multispectral-imaging|多光谱成像]]（波段少、离散）
 - 相关概念：[[./spectral-resolution|光谱分辨率]]
 - 相关概念：[[./spectral-power-distribution|光谱分布函数]]（每个像素的光谱曲线）
+- 相关领域：[[../30-domains/on-chip-multispectral|片上多光谱成像]]（集成化实现方向）
 - 相关设备：[[../40-devices/hyperspectral-camera|高光谱相机]]（推扫式、快照式）
 - 相关领域：[[../30-domains/spectroscopy|光谱学领域]]
 - 相关教程：[[50-learning/16-spectroscopy|光谱学]]
+- 相关文献：[[../80-sources/on-chip-multispectral-literature|片上多光谱/高光谱文献与学习路线]]
 
 ## 常见误区
 
@@ -69,6 +74,12 @@ aliases: [hyperspectral-imaging, 高光谱, HSI, 成像光谱]---
 
 ![[attachments/visuals/multispectral-hyperspectral.svg]]
 *图：Multispectral Hyperspectral*
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 

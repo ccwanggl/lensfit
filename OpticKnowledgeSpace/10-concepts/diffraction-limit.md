@@ -54,6 +54,12 @@ $$
 - [[20-formulas/rayleigh-criterion|瑞利判据]]
 - [[20-formulas/airy-disk-diameter|艾里斑直径]]
 
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/goodman-introduction-fourier-optics-4e|Goodman, *Introduction to Fourier Optics*, 4th ed.]]：适合核对傅里叶光学、空间频率、PSF/OTF/MTF、采样和衍射成像。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
+
 ## 关联实验
 
 - [[90-maps/Optics Lab#双缝干涉实验|双缝干涉实验]] — 改变缝宽、缝间距和波长，观察双缝干涉条纹及其被单缝包络调制的现象。

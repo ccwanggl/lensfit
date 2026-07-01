@@ -1,14 +1,18 @@
 ---
-
 id: concept.f-number
 title: F值
 type: concept
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [f-number, F#, 光圈值, F数, 焦比]---
+aliases:
+- f-number
+- F#
+- 光圈值
+- F数
+- 焦比
+---
+
 
 # F值
 
@@ -64,6 +68,12 @@ $$
 
 ![[attachments/visuals/aperture-f-number.svg]]
 *图：Aperture F Number*
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/smith-modern-optical-engineering-4e|Smith, *Modern Optical Engineering*, 4th ed.]]：适合核对镜头系统、孔径光阑、像差、像质评价和工程约束。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.2 光圈与F值

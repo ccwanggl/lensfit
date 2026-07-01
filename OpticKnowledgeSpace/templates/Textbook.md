@@ -1,15 +1,15 @@
 ---
-id:
-title:
+id: "source.textbook-example"
+title: "示例教材"
 type: source
 status: draft
 source_type: textbook
 authors: []
-edition:
-publisher:
-published_at:
-isbn:
-url:
+edition: ""
+publisher: ""
+published_at: ""
+isbn: ""
+url: ""
 page_ref_status: unverified
 aliases: []
 ---

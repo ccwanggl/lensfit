@@ -1,14 +1,12 @@
 ---
-
 id: device.coaxial-illumination
 title: 同轴照明
 type: device
 domains: []
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 同轴照明
 

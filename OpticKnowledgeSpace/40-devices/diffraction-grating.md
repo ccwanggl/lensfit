@@ -1,14 +1,17 @@
 ---
-
 id: device.diffraction-grating
 title: 衍射光栅
 type: device
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [diffraction-grating, 光栅, grating, 衍射光栅]---
+aliases:
+- diffraction-grating
+- 光栅
+- grating
+- 衍射光栅
+---
+
 # 衍射光栅
 
 ## 定义/概述

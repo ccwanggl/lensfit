@@ -1,14 +1,17 @@
 ---
-
 id: device.integrating-sphere
 title: 积分球
 type: device
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [integrating-sphere, 积分球, Ulbricht-sphere, 光通量球]---
+aliases:
+- integrating-sphere
+- 积分球
+- Ulbricht-sphere
+- 光通量球
+---
+
 # 积分球
 
 ## 定义/概述

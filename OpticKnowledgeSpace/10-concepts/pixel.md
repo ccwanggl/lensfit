@@ -1,14 +1,18 @@
 ---
-
 id: concept.pixel
 title: 像元
 type: concept
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [Pixel, 像素, 光敏单元, photosite, 感光像素]---
+aliases:
+- Pixel
+- 像素
+- 光敏单元
+- photosite
+- 感光像素
+---
+
 
 # 像元
 
@@ -63,6 +67,11 @@ aliases: [Pixel, 像素, 光敏单元, photosite, 感光像素]---
 
 ![[attachments/visuals/nyquist-aliasing.svg]]
 *图：Nyquist Aliasing*
+
+## 教材参考
+
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 - [[../50-learning/04-sensors|第4章 传感器]] §4.3 像元尺寸

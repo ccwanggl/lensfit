@@ -1,14 +1,12 @@
 ---
-
 id: device.global-shutter-cmos
 title: 全局快门CMOS
 type: device
 domains: []
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 全局快门CMOS
 

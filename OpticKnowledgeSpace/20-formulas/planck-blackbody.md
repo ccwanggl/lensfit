@@ -1,14 +1,18 @@
 ---
-
 id: formula.planck-blackbody
 title: 普朗克黑体辐射公式
 type: formula
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [planck-blackbody, 黑体辐射, 维恩位移定律, Planck-law, blackbody-radiation]---
+aliases:
+- planck-blackbody
+- 黑体辐射
+- 维恩位移定律
+- Planck-law
+- blackbody-radiation
+---
+
 # 普朗克黑体辐射公式
 
 ## 公式

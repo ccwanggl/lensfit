@@ -1,14 +1,17 @@
 ---
-
 id: concept.nyquist-frequency
 title: 奈奎斯特频率
 type: concept
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [Nyquist Frequency, 奈奎斯特极限, 采样极限频率, 传感器分辨极限]---
+aliases:
+- Nyquist Frequency
+- 奈奎斯特极限
+- 采样极限频率
+- 传感器分辨极限
+---
+
 
 # 奈奎斯特频率
 
@@ -72,6 +75,11 @@ $$
 
 ![[attachments/visuals/nyquist-aliasing.svg]]
 *图：Nyquist Aliasing*
+
+## 教材参考
+
+- [[../80-sources/goodman-introduction-fourier-optics-4e|Goodman, *Introduction to Fourier Optics*, 4th ed.]]：适合核对傅里叶光学、空间频率、PSF/OTF/MTF、采样和衍射成像。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 - [[../50-learning/04-sensors|第4章 传感器]] §4.5 分辨率与奈奎斯特极限

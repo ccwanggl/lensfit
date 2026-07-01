@@ -1,14 +1,18 @@
 ---
-
 id: concept.aliasing
 title: 混叠
 type: concept
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [Aliasing, 走样, 采样混叠, 摩尔纹, 虚假频率]---
+aliases:
+- Aliasing
+- 走样
+- 采样混叠
+- 摩尔纹
+- 虚假频率
+---
+
 
 # 混叠
 
@@ -70,6 +74,12 @@ $$
 
 ![[attachments/visuals/nyquist-aliasing.svg]]
 *图：Nyquist Aliasing*
+
+## 教材参考
+
+- [[../80-sources/goodman-introduction-fourier-optics-4e|Goodman, *Introduction to Fourier Optics*, 4th ed.]]：适合核对傅里叶光学、空间频率、PSF/OTF/MTF、采样和衍射成像。
+- [[../80-sources/gonzalez-woods-digital-image-processing-4e|Gonzalez & Woods, *Digital Image Processing*, 4th ed.]]：适合核对采样、混叠、边缘检测和数字图像处理链路。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 - [[../50-learning/04-sensors|第4章 传感器]] §4.5 混叠（Aliasing）

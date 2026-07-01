@@ -1,14 +1,16 @@
 ---
-
 id: formula.grating-equation
 title: 光栅方程
 type: formula
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [grating-equation, 光栅衍射方程, diffraction-grating-equation]---
+aliases:
+- grating-equation
+- 光栅衍射方程
+- diffraction-grating-equation
+---
+
 # 光栅方程
 
 ## 公式

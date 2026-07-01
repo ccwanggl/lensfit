@@ -1,14 +1,12 @@
 ---
-
 id: device.microscope-objective
 title: 显微镜物镜
 type: device
 domains: []
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 显微镜物镜
 

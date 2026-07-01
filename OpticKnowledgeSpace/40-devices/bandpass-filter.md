@@ -1,14 +1,18 @@
 ---
-
 id: device.bandpass-filter
 title: 窄带滤光片
 type: device
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [bandpass-filter, 窄带滤光片, 带通滤光片, 滤光片, optical-filter]---
+aliases:
+- bandpass-filter
+- 窄带滤光片
+- 带通滤光片
+- 滤光片
+- optical-filter
+---
+
 # 窄带滤光片
 
 ## 定义/概述

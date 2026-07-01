@@ -1,14 +1,17 @@
 ---
-
 id: concept.chromaticity-diagram
 title: 色度图
 type: concept
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [chromaticity-diagram, CIE-1931, 色品图, chromaticity-chart]---
+aliases:
+- chromaticity-diagram
+- CIE-1931
+- 色品图
+- chromaticity-chart
+---
+
 # 色度图
 
 ## 定义
@@ -66,6 +69,13 @@ z = 1 - x - y
 
 ![[attachments/visuals/chromaticity-diagram.svg]]
 *图：Chromaticity Diagram*
+
+## 教材参考
+
+- [[../80-sources/wyszecki-stiles-color-science-2e|Wyszecki & Stiles, *Color Science*, 2nd ed.]]：适合核对色度图、色温、标准光源和颜色测量。
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]]：适合核对探测器、光与物质相互作用、光子学器件和现代光学系统。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 

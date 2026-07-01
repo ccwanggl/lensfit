@@ -1,14 +1,13 @@
 ---
-
 id: formula.pixel-precision
 title: 像素精度
 type: formula
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 像素精度
 

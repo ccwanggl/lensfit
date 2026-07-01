@@ -1,14 +1,13 @@
 ---
-
 id: formula.focal-length-from-wd
 title: 焦距反推公式
 type: formula
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: []---
+aliases: []
+---
+
 
 # 焦距反推公式
 

@@ -7,7 +7,8 @@ status: reviewed
 source_type: textbook-reference-matrix
 aliases:
   - Textbook Reference Matrix
-  - 教材页码矩阵---
+  - 教材页码矩阵
+---
 
 # 教材页码索引矩阵
 
@@ -50,8 +51,9 @@ aliases:
 |---|---|---|---|---|---|---|
 | 像元 | [[../10-concepts/pixel|像元]] | Saleh & Teich, *Fundamentals of Photonics*, 3rd ed. | Photodetectors | 待核验 | chapter-verified | 还需补传感器厂商应用手册 |
 | 奈奎斯特频率 | [[../10-concepts/nyquist-frequency|奈奎斯特频率]] | Goodman, *Introduction to Fourier Optics*, 4th ed. | Sampling / spatial frequency | 待核验 | unverified | 成像采样更适合 Goodman |
-| 混叠 | [[../10-concepts/aliasing|混叠]] | Goodman, *Introduction to Fourier Optics*, 4th ed. | Sampling / Fourier imaging | 待核验 | unverified | 可补数字图像处理教材 |
-| 过采样率 | [[../20-formulas/oversampling-ratio|过采样率]] | Goodman + 厂商手册 | Sampling / MTF matching | 待核验 | needs-source | 更偏工程派生指标 |
+| 混叠 | [[../10-concepts/aliasing|混叠]] | Goodman, *Introduction to Fourier Optics*, 4th ed. + Gonzalez & Woods | Sampling / Fourier imaging / Digital image sampling | 待核验 | unverified | Goodman 讲成像频域，Gonzalez & Woods 补数字图像处理 |
+| 过采样率 | [[../20-formulas/oversampling-ratio|过采样率]] | Goodman + Gonzalez & Woods | Sampling / MTF matching / Digital sampling | 待核验 | unverified | 更偏工程派生指标 |
+| 边缘检测 | [[../10-concepts/边缘检测|边缘检测]] | Gonzalez & Woods, *Digital Image Processing*, 4th ed. | Image segmentation / edge detection | 待核验 | unverified | 算法侧来源，仍需结合光学 MTF 和照明条件 |
 
 ## 傅里叶光学与计算成像
 
@@ -70,11 +72,19 @@ aliases:
 | 光栅方程 | [[../20-formulas/grating-equation|光栅方程]] | Hecht, *Optics*, 5th ed. | Diffraction grating | 待核验 | unverified | 后续补光栅厂商资料 |
 | 光栅分辨本领 | [[../20-formulas/grating-resolving-power|光栅光谱分辨率]] | Hecht + Goodman | Diffraction / resolving power | 待核验 | unverified | 需要核对具体符号定义 |
 | 黑体辐射 | [[../20-formulas/planck-blackbody|普朗克黑体辐射公式]] | Saleh & Teich, *Fundamentals of Photonics*, 3rd ed. | Light and matter / thermal radiation | 待核验 | unverified | 红外章节也依赖它 |
-| 色度图 | [[../10-concepts/chromaticity-diagram|色度图]] | CIE/色彩科学专门教材 | Colorimetry | 待核验 | needs-source | 需补 Wyszecki & Stiles 或 CIE |
-| 色温 | [[../10-concepts/color-temperature|色温]] | CIE/照明教材 | Color temperature / CCT | 待核验 | needs-source | 工程上要补照明标准 |
-| Delta E | [[../20-formulas/delta-e|Delta E 色差]] | CIE/色彩科学专门教材 | Color difference | 待核验 | needs-source | CIE76/CIEDE2000 需区分 |
+| 色度图 | [[../10-concepts/chromaticity-diagram|色度图]] | Wyszecki & Stiles, *Color Science*, 2nd ed. | Colorimetry / CIE chromaticity | 待核验 | unverified | 标准值仍应回查 CIE |
+| 色温 | [[../10-concepts/color-temperature|色温]] | Wyszecki & Stiles + CIE/照明教材 | Color temperature / CCT | 待核验 | unverified | 工程上还要补照明标准 |
+| Delta E | [[../20-formulas/delta-e|Delta E 色差]] | Wyszecki & Stiles + CIE/色彩科学专门来源 | Color difference | 待核验 | needs-source | CIE76/CIEDE2000 需区分 |
 | 荧光 | [[../10-concepts/fluorescence|荧光]] | Saleh & Teich | Light-matter interaction | 待核验 | unverified | 显微荧光需补专门来源 |
 | 拉曼散射 | [[../10-concepts/raman-scattering|拉曼散射]] | Saleh & Teich + 光谱教材 | Inelastic scattering / spectroscopy | 待核验 | needs-source | 需补拉曼光谱教材 |
+
+## 红外与电光系统
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| NETD | [[../10-concepts/NETD|NETD]] | Driggers et al., *Introduction to Infrared and Electro-Optical Systems*, 3rd ed. | Infrared system performance / detector noise | 待核验 | unverified | 红外系统级指标，后续需核验页码 |
+| 发射率 | [[../10-concepts/发射率|发射率]] | Driggers et al. + Saleh & Teich | Thermal radiation / IR target radiance | 待核验 | unverified | 材料参数仍需查专门表格或厂商资料 |
+| 微测辐射热计 | [[../10-concepts/微测辐射热计|微测辐射热计]] | Driggers et al. | Infrared detector / uncooled thermal imaging | 待核验 | unverified | 器件规格以厂商资料为准 |
 
 ## 设备与工程实践
 

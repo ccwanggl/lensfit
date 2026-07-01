@@ -1,11 +1,11 @@
 ---
-
 id: learning.16-spectroscopy
 title: 光谱学与色彩科学
 type: learning
 domains: [general]
 status: reviewed
-aliases: []---
+aliases: []
+---
 
 # 第16章 光谱学与色彩科学
 

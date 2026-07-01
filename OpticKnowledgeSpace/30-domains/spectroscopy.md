@@ -1,11 +1,11 @@
 ---
-
 id: domain.spectroscopy
 title: 光谱成像
 type: domain
 domains: [spectroscopy]
 status: reviewed
-aliases: []---
+aliases: []
+---
 
 # 光谱成像领域参考
 
@@ -157,3 +157,9 @@ aliases: []---
 - [[../50-learning/01-light-and-waves|第1章：光与波]]—— 波长、折射、色散的物理基础
 - [[../50-learning/12-otf-and-image-quality|第12章：光学传递函数与图像质量]]—— 色彩科学、Bayer 阵列与图像质量评估
 - [[../50-learning/10-physical-optics-advanced|第10章：物理光学深入]]—— 衍射光栅、干涉与相干成像的数学基础
+
+## 相关专项
+
+- [[./on-chip-multispectral|片上多光谱成像]]—— 片上/集成式多光谱系统架构、技术路线与选型
+- [[../80-sources/on-chip-multispectral-literature|片上多光谱/高光谱文献与学习路线]]—— 近五年代表论文与学习路线
+- [[../80-sources/papers/README|本地论文副本目录]]—— 已下载的开放获取 PDF

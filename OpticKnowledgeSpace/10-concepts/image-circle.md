@@ -1,14 +1,17 @@
 ---
-
 id: concept.image-circle
 title: 像圈
 type: concept
-domains: [general]
+domains:
+- general
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [Image Circle, 像场, 均匀成像区域, 覆盖范围]---
+aliases:
+- Image Circle
+- 像场
+- 均匀成像区域
+- 覆盖范围
+---
+
 
 # 像圈
 
@@ -68,6 +71,12 @@ $$
 
 ![[attachments/visuals/image-circle-coverage.svg]]
 *图：Image Circle Coverage*
+
+## 教材参考
+
+- [[../80-sources/hecht-optics-5e|Hecht, *Optics*, 5th ed.]]：适合核对光线模型、波动模型、干涉、衍射和偏振的基础定义。
+- [[../80-sources/smith-modern-optical-engineering-4e|Smith, *Modern Optical Engineering*, 4th ed.]]：适合核对镜头系统、孔径光阑、像差、像质评价和工程约束。
+- [[../80-sources/Textbook Reference Matrix|教材页码索引矩阵]]：本页引用先保持章节级定位，精确页码待后续核验后回填。
 
 ## 来源
 - [[../50-learning/03-lens-parameters|第3章 镜头参数]] §3.6 像圈

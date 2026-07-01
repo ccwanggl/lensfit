@@ -1,14 +1,17 @@
 ---
-
 id: device.hyperspectral-camera
 title: 高光谱相机
 type: device
-domains: [spectroscopy]
+domains:
+- spectroscopy
 status: reviewed
-source_ids: []
-reviewed_at:
-owners: []
-aliases: [hyperspectral-camera, 高光谱相机, 成像光谱仪, imaging-spectrometer]---
+aliases:
+- hyperspectral-camera
+- 高光谱相机
+- 成像光谱仪
+- imaging-spectrometer
+---
+
 # 高光谱相机
 
 ## 定义/概述
@@ -68,9 +71,14 @@ aliases: [hyperspectral-camera, 高光谱相机, 成像光谱仪, imaging-spectr
 
 - 相关概念：[[../10-concepts/hyperspectral-imaging|高光谱成像]]（技术概念）
 - 相关概念：[[../10-concepts/multispectral-imaging|多光谱成像]]（波段更少）
+- 相关概念：[[../10-concepts/snapshot-spectral-imaging|快照式光谱成像]]
 - 相关概念：[[../10-concepts/spectral-resolution|光谱分辨率]]
 - 相关设备：[[../40-devices/spectrometer|光谱仪]]（高光谱相机本质是成像光谱仪）
 - 相关设备：[[../40-devices/bandpass-filter|窄带滤光片]]（快照式相机的滤光片阵列）
+- 相关设备：[[../40-devices/on-chip-spectral-sensor|片上光谱传感器]]（芯片级高光谱实现）
+- 相关设备：[[../40-devices/ingaas-focal-plane-array|InGaAs 焦平面阵列]]（SWIR 高光谱核心）
+- 相关设备：[[../40-devices/mct-detector|MCT 探测器]]（MWIR/LWIR 高光谱核心）
+- 相关领域：[[../30-domains/on-chip-multispectral|片上多光谱成像]]
 - 相关教程：[[50-learning/16-spectroscopy|光谱学]]
 
 ## 常见误区

@@ -1,11 +1,11 @@
 ---
-
 id: learning.14-computational-optics
 title: 计算光学与计算成像
 type: learning
 domains: [general]
 status: reviewed
-aliases: []---
+aliases: []
+---
 
 # 第14章 计算光学与计算成像
 
