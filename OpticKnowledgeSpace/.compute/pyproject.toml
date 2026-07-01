@@ -1,0 +1,10 @@
+# OpticKnowledgeSpace 计算环境配置
+# 本文件仅用于配置 uv 行为，不作为可安装包。
+# 依赖请使用 uv pip install 管理，或写入 requirements.txt。
+
+[tool.uv]
+python-preference = "only-managed"
+
+[tool.uv.pip]
+# 默认使用当前目录的 .venv
+python = ".venv/Scripts/python.exe"
