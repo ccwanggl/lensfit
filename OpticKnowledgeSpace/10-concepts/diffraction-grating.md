@@ -19,9 +19,9 @@ A diffraction grating is an optical component with a periodic structure of close
 
 For a grating with groove spacing \(d\), incident angle \(\theta_i\), and diffracted angle \(\theta_m\) for order \(m\):
 
-\[
-d(\sin\theta_i + \sin\theta_m) = m\lambda
-\]
+$$
+d($$in\theta_i + $$in\theta_m) = m\lambda
+$$
 
 where \(\lambda\) is the wavelength and \(m\) is an integer (the diffraction order). The equation assumes the angles are measured from the grating normal and lie in the plane perpendicular to the grooves.
 

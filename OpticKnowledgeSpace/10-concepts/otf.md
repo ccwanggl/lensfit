@@ -18,9 +18,9 @@ The Optical Transfer Function (OTF) is the Fourier transform of the Point Spread
 
 ## Relationship to MTF and PTF
 
-\[
+$$
 \text{OTF}(f) = \text{MTF}(f) \cdot e^{i \cdot \text{PTF}(f)}
-\]
+$$
 
 - **MTF** (Modulation Transfer Function): magnitude of the OTF; describes contrast loss.
 - **PTF** (Phase Transfer Function): phase of the OTF; describes lateral shifts of periodic patterns.

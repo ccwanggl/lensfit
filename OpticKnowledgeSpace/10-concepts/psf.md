@@ -24,9 +24,9 @@ The Point Spread Function (PSF) describes the image of an ideal point source for
 
 ## Relationship to MTF
 
-\[
+$$
 \text{OTF} = \mathcal{F}\{\text{PSF}\}, \quad \text{MTF} = |\text{OTF}|
-\]
+$$
 
 ## Related concepts
 

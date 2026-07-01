@@ -20,9 +20,9 @@ The Modulation Transfer Function (MTF) measures how well an optical system prese
 
 For a sinusoidal object with spatial frequency \(f\) and modulation \(M_0\), the image modulation \(M_i\) is reduced by the MTF:
 
-\[
+$$
 \text{MTF}(f) = \frac{M_i(f)}{M_0(f)}
-\]
+$$
 
 where modulation is \(M = (I_{\max} - I_{\min}) / (I_{\max} + I_{\min})\).
 
