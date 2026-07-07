@@ -54,8 +54,10 @@ status: draft
 | 镜头参数 | [[../../50-learning/003-lens-parameters\|镜头参数]] | 焦距、F值、视场、工作距离、分辨率 |
 | 传感器 | [[../../50-learning/004-sensors\|传感器]] | CCD/CMOS 原理、像素尺寸、像元与奈奎斯特极限 |
 | 匹配基础 | [[../../50-learning/005-matching-basics\|匹配基础]] | 镜头与传感器分辨率匹配、放大率匹配 |
-| 像差（前半） | [[../../50-learning/006-aberrations\|像差]] | 球差、彗差、像散、场曲、畸变、色差 |
+| 像差（上） | [[./learning/06a-geometric-aberrations\|像差（上）｜几何像差入门]] | 色差、球差、彗差、像散——几何像差的直觉与入门 |
+| 像差（下） | [[../50-optical-design/learning/06b-wavefront-aberrations\|像差（下）｜高阶像差与设计关联]] | 场曲、畸变、校正等级、常见误区——设计视角的像差分析 |
 | 接口与安装 | [[../../50-learning/007-interfaces-and-mounts\|接口与安装]] | C-mount、F-mount、法兰距、背焦距离 |
+| 照明几何设计 | [[../../modules/20-geometric-optics/learning/13a-illumination-geometry\|照明几何设计与布局]] | 照明方式、均匀性、频闪同步、镜头配合 |
 | 领域应用 | [[../../50-learning/008-domain-applications\|领域应用]] | 机器视觉、显微成像、摄影光学 |
 
 ## 三本账指引

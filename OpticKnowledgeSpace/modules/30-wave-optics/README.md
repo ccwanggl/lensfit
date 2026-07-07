@@ -41,8 +41,9 @@ status: draft
 | 章节 | 链接 | 内容概要 |
 |------|------|----------|
 | 物理光学深入 | [[../../50-learning/010-physical-optics-advanced\|物理光学深入]] | 干涉、衍射、偏振、相干性理论与定量分析 |
-| OTF 与图像质量（前半） | [[../../50-learning/012-otf-and-image-quality\|OTF 与图像质量]] | PSF/OTF/MTF 定义、测量方法、与分辨率的关系 |
-| 计算光学（前半） | [[../../50-learning/014-computational-optics\|计算光学]] | 傅里叶光学基础、角谱传播、标量衍射理论 |
+| PSF、OTF 与 MTF 基础 | [[./learning/12a-psf-otf-mtf\|PSF、OTF 与 MTF 基础]] | PSF/OTF/MTF 定义、测量方法、SNR、色彩科学 |
+| 波前编码与计算成像基础 | [[./learning/14a-wavefront-coding\|波前编码与计算成像基础]] | 超分辨、光场成像、压缩感知与单像素相机 |
+| 计算光学（完整版） | [[../../50-learning/014-computational-optics\|计算光学]] | 原文件完整内容，供参考 |
 
 ## 三本账指引
 

@@ -42,7 +42,7 @@ status: draft
 | 章节 | 链接 | 内容概要 |
 |------|------|----------|
 | 光谱学与色彩科学 | [[../../50-learning/016-spectroscopy\|光谱学与色彩科学]] | 色散原理、光谱仪器、色度学基础、色彩测量 |
-| 照明系统设计（光谱部分） | [[../../50-learning/013-illumination-design\|照明系统设计]] | 光源光谱特性、色温选择、滤光片设计 |
+| 照明光谱特性 | [[../../modules/40-spectroscopy/learning/13b-illumination-spectrum\|光源光谱特性与色温]] | LED光谱指纹、色温选择、显色指数与颜色检测 |
 
 ## 三本账指引
 

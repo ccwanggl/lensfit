@@ -42,9 +42,11 @@ status: draft
 | 章节 | 链接 | 内容概要 |
 |------|------|----------|
 | 光学设计基础 | [[../../50-learning/011-optical-design-basics\|光学设计基础]] | 设计流程、初始结构选择、一阶布局、Seidel 像差理论 |
-| OTF 与图像质量（后半） | [[../../50-learning/012-otf-and-image-quality\|OTF 与图像质量]] | MTF 在像质评价中的工程应用、与几何像差的关联 |
+| 像差（下） | [[./learning/06b-wavefront-aberrations\|像差（下）｜高阶像差与设计关联]] | 场曲、畸变、校正等级、常见误区——设计视角的像差分析 |
+| 图像质量综合评价 | [[./learning/12b-image-quality-evaluation\|图像质量综合评价]] | MTF 在像质评价中的工程应用、DXOMARK/Imatest 框架、常见误区 |
 | 照明系统设计（设计部分） | [[../../50-learning/013-illumination-design\|照明系统设计]] | 照明均匀性、集光效率、光源-光学系统耦合设计 |
-| 计算光学（后半） | [[../../50-learning/014-computational-optics\|计算光学]] | 光线追迹算法、优化方法、现代计算光学设计工具 |
+| 计算光学设计与优化 | [[./learning/14b-design-optimization\|计算光学设计与优化]] | 深度学习成像、联合光学设计、全息计算成像、常见误区 |
+| 计算光学（完整版） | [[../../50-learning/014-computational-optics\|计算光学]] | 原文件完整内容，供参考 |
 | 工程案例 | [[../../50-learning/015-engineering-cases\|工程案例]] | 典型成像系统（镜头、显微镜、光谱仪）的完整设计实例 |
 
 ## 三本账指引
