@@ -11,6 +11,7 @@ aliases:
 
 ## 核心入口
 
+- **[[modules/README|LensFit 微专业入口]]**：五模块环形微专业，三种学习节奏，适合系统学习者。**（v4.0 新入口）**
 - [[001-Learning Path|从零到深入学习路径]]：面向初学者，按阶段串联教程、概念、公式、设备和领域。
 - [[002-Knowledge Architecture|知识库架构]]：解释 Vault 的分层模型、光谱知识子图和当前缺口。
 - [[../50-learning/README|学习教程目录]]：16 章主线教程总目录。
@@ -18,9 +19,20 @@ aliases:
 - [[../80-sources/001-Textbook Reference Matrix|教材页码索引矩阵]]：知识点到教材章节/页码的映射。
 - [[008-On-chip Multispectral Topic|片上多光谱专题地图]]：片上多光谱、片上高光谱、微型光谱仪和红外多谱段探测的专题入口。
 
-## 学习路线
+## 微专业五模块（v4.0）
 
-### 入门阶段（基础）
+| 模块 | 核心能力 | 预计时长 | 先修 |
+|------|---------|---------|------|
+| [[modules/10-foundations/README|模块甲｜桥接]] | 数学/物理/语言最小补齐 | 15-25h | 无 |
+| [[modules/20-geometric-optics/README|模块乙｜几何光学]] | 光线模型、典型系统、一阶成像 | 30-45h | 模块甲 |
+| [[modules/30-wave-optics/README|模块丙｜波动光学]] | 干涉、衍射、PSF/OTF/MTF、傅里叶 | 35-55h | 模块乙 |
+| [[modules/40-spectroscopy/README|模块丁｜光谱学]] | 光谱、色散、仪器、分辨率 | 25-40h | 模块乙 |
+| [[modules/50-optical-design/README|模块戊｜光学设计]] | 规格-结构-分析-优化-容差闭环 | 40-60h | 模块丙+丁 |
+
+模块甲 → 模块乙 → 模块丙 → 模块戊 → 综合项目
+模块乙 → 模块丁 → 模块戊
+
+## 16章主线教程（传统路径）
 - [[50-learning/000-introduction|绪论：走进成像光学]]
 - [[50-learning/001-light-and-waves|光与波]]
 - [[50-learning/002-geometric-optics|几何光学]]
