@@ -563,6 +563,68 @@ def draw_multispectral_hyperspectral() -> Path:
     return save(fig, "multispectral-hyperspectral.svg")
 
 
+def draw_multispectral_filter_array() -> Path:
+    """Compare a Bayer color filter array with a multispectral filter array."""
+    from matplotlib.patches import Rectangle, FancyArrowPatch
+
+    fig, ax = plt.subplots(figsize=(11, 6))
+    ax.set_xlim(0, 11)
+    ax.set_ylim(0, 6)
+    ax.axis("off")
+
+    def draw_grid(origin_x: float, origin_y: float, labels: list[list[str]], colors: dict[str, str], title: str) -> None:
+        cell = 0.55
+        rows = len(labels)
+        cols = len(labels[0])
+        for r, row in enumerate(labels):
+            for c, label in enumerate(row):
+                x = origin_x + c * cell
+                y = origin_y + (rows - 1 - r) * cell
+                ax.add_patch(Rectangle((x, y), cell, cell, facecolor=colors[label], edgecolor="white", linewidth=1.2))
+                ax.text(x + cell / 2, y + cell / 2, label, ha="center", va="center", fontsize=9, fontweight="bold")
+        ax.add_patch(Rectangle((origin_x, origin_y), cols * cell, rows * cell, fill=False, edgecolor="#374151", linewidth=1.5))
+        ax.text(origin_x + cols * cell / 2, origin_y + rows * cell + 0.35, title, ha="center", fontsize=12, fontweight="bold")
+
+    bayer = [
+        ["G", "R", "G", "R"],
+        ["B", "G", "B", "G"],
+        ["G", "R", "G", "R"],
+        ["B", "G", "B", "G"],
+    ]
+    bayer_colors = {"R": "#ef4444", "G": "#22c55e", "B": "#3b82f6"}
+    draw_grid(0.7, 2.2, bayer, bayer_colors, "Bayer CFA：3 个宽光谱通道")
+
+    msfa = [
+        ["λ1", "λ2", "λ3", "λ4"],
+        ["λ5", "λ6", "λ7", "λ8"],
+        ["λ3", "λ4", "λ1", "λ2"],
+        ["λ7", "λ8", "λ5", "λ6"],
+    ]
+    msfa_colors = {
+        "λ1": "#7dd3fc", "λ2": "#38bdf8", "λ3": "#818cf8", "λ4": "#a78bfa",
+        "λ5": "#f472b6", "λ6": "#fb7185", "λ7": "#fbbf24", "λ8": "#84cc16",
+    }
+    draw_grid(4.3, 2.2, msfa, msfa_colors, "MSFA：4-16+ 个窄光谱通道")
+
+    ax.add_patch(FancyArrowPatch((3.15, 3.3), (4.0, 3.3), arrowstyle="->", mutation_scale=18, linewidth=2, color="#6b7280"))
+    ax.text(3.55, 3.55, "扩展", ha="center", fontsize=10, color="#374151")
+
+    # Spectral cube sketch.
+    cube_x, cube_y = 8.2, 2.15
+    for offset, color in [(0.45, "#bae6fd"), (0.25, "#ddd6fe"), (0.05, "#fecdd3")]:
+        ax.add_patch(Rectangle((cube_x + offset, cube_y + offset), 1.75, 1.35, facecolor=color, edgecolor="#374151", alpha=0.85))
+    ax.text(cube_x + 1.15, cube_y + 2.15, "重建后的光谱立方体", ha="center", fontsize=12, fontweight="bold")
+    ax.text(cube_x + 1.15, cube_y + 1.05, "x, y, λ", ha="center", va="center", fontsize=13, fontweight="bold", color="#1f2937")
+    ax.add_patch(FancyArrowPatch((7.05, 3.3), (8.15, 3.3), arrowstyle="->", mutation_scale=18, linewidth=2, color="#6b7280"))
+    ax.text(7.6, 3.55, "去马赛克\n+ 光谱重建", ha="center", fontsize=10, color="#374151")
+
+    ax.text(1.8, 1.35, "每个像素只测 R/G/B 中的一种", ha="center", fontsize=10, color="#4b5563")
+    ax.text(5.4, 1.35, "每个像素只测一个窄波段", ha="center", fontsize=10, color="#4b5563")
+    ax.text(9.25, 1.35, "空间分辨率与光谱通道数需要折中", ha="center", fontsize=10, color="#4b5563")
+    ax.set_title("从 Bayer 到多光谱滤光片阵列：把颜色马赛克扩展为光谱马赛克", fontsize=15, fontweight="bold", pad=14)
+    return save(fig, "multispectral-filter-array.svg")
+
+
 def draw_spectral_power_distribution() -> Path:
     """Example SPD curve with peak wavelength."""
     import numpy as np
@@ -819,6 +881,7 @@ def main():
     paths.append(draw_chromatic_aberration())
     paths.append(draw_color_temperature())
     paths.append(draw_multispectral_hyperspectral())
+    paths.append(draw_multispectral_filter_array())
     paths.append(draw_spectral_power_distribution())
     paths.append(draw_fluorescence())
     paths.append(draw_raman_scattering())

@@ -15,18 +15,18 @@ status: maintained
 
 ## 核心入口
 
-- [[Textbook Index|教材索引]]：优秀教材对比、适用阶段和主题入口。
-- [[Textbook Reference Matrix|教材页码索引矩阵]]：知识点到教材章节/页码的映射。
+- [[000-Textbook Index|教材索引]]：优秀教材对比、适用阶段和主题入口。
+- [[001-Textbook Reference Matrix|教材页码索引矩阵]]：知识点到教材章节/页码的映射。
 
 ## 已建立来源笔记
 
-- [[hecht-optics-5e|Eugene Hecht, *Optics*, 5th ed.]] — 入门到进阶通用光学
-- [[saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]] — 工程光子学
-- [[goodman-introduction-fourier-optics-4e|Goodman, *Introduction to Fourier Optics*, 4th ed.]] — 傅里叶光学与像质
-- [[smith-modern-optical-engineering-4e|Smith, *Modern Optical Engineering*, 4th ed.]] — 光学系统工程
-- [[wyszecki-stiles-color-science-2e|Wyszecki & Stiles, *Color Science*, 2nd ed.]] — 色度学与颜色测量
-- [[gonzalez-woods-digital-image-processing-4e|Gonzalez & Woods, *Digital Image Processing*, 4th ed.]] — 采样、边缘检测与数字图像处理
-- [[driggers-infrared-electro-optical-systems-3e|Driggers et al., *Introduction to Infrared and Electro-Optical Systems*, 3rd ed.]] — 红外与电光系统
+- [[002-hecht-optics-5e|Eugene Hecht, *Optics*, 5th ed.]] — 入门到进阶通用光学
+- [[003-saleh-teich-fundamentals-photonics-3e|Saleh & Teich, *Fundamentals of Photonics*, 3rd ed.]] — 工程光子学
+- [[004-goodman-introduction-fourier-optics-4e|Goodman, *Introduction to Fourier Optics*, 4th ed.]] — 傅里叶光学与像质
+- [[005-smith-modern-optical-engineering-4e|Smith, *Modern Optical Engineering*, 4th ed.]] — 光学系统工程
+- [[006-wyszecki-stiles-color-science-2e|Wyszecki & Stiles, *Color Science*, 2nd ed.]] — 色度学与颜色测量
+- [[007-gonzalez-woods-digital-image-processing-4e|Gonzalez & Woods, *Digital Image Processing*, 4th ed.]] — 采样、边缘检测与数字图像处理
+- [[008-driggers-infrared-electro-optical-systems-3e|Driggers et al., *Introduction to Infrared and Electro-Optical Systems*, 3rd ed.]] — 红外与电光系统
 
 ## 优先补强清单
 

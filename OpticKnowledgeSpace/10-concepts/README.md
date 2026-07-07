@@ -17,41 +17,42 @@ status: maintained
 
 | 概念 | 文件 | 核心定义 |
 |------|------|---------|
-| **折射率** | [[refractive-index|refractive-index.md]] | 光在介质中速度的比值 |
-| **艾里斑** | [[airy-disk|airy-disk.md]] | 圆孔衍射的极限光斑 |
-| **衍射极限** | [[diffraction-limit|diffraction-limit.md]] | 理想系统仍受波动衍射限制的分辨率上限 |
-| **焦距** | [[focal-length|focal-length.md]] | 平行光汇聚点到透镜中心的距离 |
-| **F值** | [[f-number|f-number.md]] | F# = f/D，无量纲光圈值 |
-| **景深** | [[depth-of-field|depth-of-field.md]] | 图像保持可接受清晰的范围 |
-| **像圈** | [[image-circle|image-circle.md]] | 镜头能均匀成像的圆形区域 |
-| **奈奎斯特频率** | [[nyquist-frequency|nyquist-frequency.md]] | 传感器能分辨的最高空间频率 |
-| **像元** | [[pixel|pixel.md]] | 传感器的最小光敏单元 |
-| **混叠** | [[aliasing|aliasing.md]] | 采样频率不足导致的虚假信号 |
-| **色差** | [[chromatic-aberration|chromatic-aberration.md]] | 不同波长光聚焦位置不同 |
-| **偏振** | [[polarization|polarization.md]] | 光波电场矢量振动方向的状态 |
-| **干涉** | [[interference|interference.md]] | 多束相干光叠加形成强弱分布 |
-| **衍射光栅** | [[diffraction-grating|diffraction-grating.md]] | 利用周期结构让不同波长按角度分离 |
+| **折射率** | [[000-refractive-index|refractive-index.md]] | 光在介质中速度的比值 |
+| **艾里斑** | [[027-airy-disk|airy-disk.md]] | 圆孔衍射的极限光斑 |
+| **衍射极限** | [[025-diffraction-limit|diffraction-limit.md]] | 理想系统仍受波动衍射限制的分辨率上限 |
+| **焦距** | [[003-focal-length|focal-length.md]] | 平行光汇聚点到透镜中心的距离 |
+| **F值** | [[005-f-number|f-number.md]] | F# = f/D，无量纲光圈值 |
+| **景深** | [[007-depth-of-field|depth-of-field.md]] | 图像保持可接受清晰的范围 |
+| **像圈** | [[009-image-circle|image-circle.md]] | 镜头能均匀成像的圆形区域 |
+| **奈奎斯特频率** | [[006-nyquist-frequency|nyquist-frequency.md]] | 传感器能分辨的最高空间频率 |
+| **像元** | [[036-pixel|pixel.md]] | 传感器的最小光敏单元 |
+| **混叠** | [[040-aliasing|aliasing.md]] | 采样频率不足导致的虚假信号 |
+| **色差** | [[019-chromatic-aberration|chromatic-aberration.md]] | 不同波长光聚焦位置不同 |
+| **偏振** | [[050-polarization|polarization.md]] | 光波电场矢量振动方向的状态 |
+| **干涉** | [[021-interference|interference.md]] | 多束相干光叠加形成强弱分布 |
+| **衍射光栅** | [[010-diffraction-grating|diffraction-grating.md]] | 利用周期结构让不同波长按角度分离 |
 
 ### 光谱与色彩概念
 
 | 概念 | 文件 | 核心定义 |
 |------|------|---------|
-| **光谱分辨率** | [[spectral-resolution|spectral-resolution.md]] | 能区分两条相邻谱线的最小波长间隔 |
-| **色散** | [[dispersion|dispersion.md]] | 不同波长光折射/衍射角度不同的现象 |
-| **色度图** | [[chromaticity-diagram|chromaticity-diagram.md]] | 用二维坐标表示颜色的图表 |
-| **色温** | [[color-temperature|color-temperature.md]] | 黑体辐射光谱与光源最接近时的温度 |
-| **荧光** | [[fluorescence|fluorescence.md]] | 物质吸收光后发射较长波长光 |
-| **拉曼散射** | [[raman-scattering|raman-scattering.md]] | 非弹性散射，光子与分子交换能量 |
-| **多光谱成像** | [[multispectral-imaging|multispectral-imaging.md]] | 使用少数离散波段获取图像 |
-| **高光谱成像** | [[hyperspectral-imaging|hyperspectral-imaging.md]] | 连续窄波段成像，形成数据立方体 |
-| **光谱分布函数** | [[spectral-power-distribution|spectral-power-distribution.md]] | 光源在各波长上的功率分布 |
-| **阿贝数** | [[abbe-number|abbe-number.md]] | 衡量材料色散程度的无量纲数 |
+| **光谱分辨率** | [[074-spectral-resolution|spectral-resolution.md]] | 能区分两条相邻谱线的最小波长间隔 |
+| **色散** | [[017-dispersion|dispersion.md]] | 不同波长光折射/衍射角度不同的现象 |
+| **色度图** | [[069-chromaticity-diagram|chromaticity-diagram.md]] | 用二维坐标表示颜色的图表 |
+| **色温** | [[067-color-temperature|color-temperature.md]] | 黑体辐射光谱与光源最接近时的温度 |
+| **荧光** | [[070-fluorescence|fluorescence.md]] | 物质吸收光后发射较长波长光 |
+| **拉曼散射** | [[071-raman-scattering|raman-scattering.md]] | 非弹性散射，光子与分子交换能量 |
+| **多光谱成像** | [[072-multispectral-imaging|multispectral-imaging.md]] | 使用少数离散波段获取图像 |
+| **高光谱成像** | [[073-hyperspectral-imaging|hyperspectral-imaging.md]] | 连续窄波段成像，形成数据立方体 |
+| **光谱分布函数** | [[066-spectral-power-distribution|spectral-power-distribution.md]] | 光源在各波长上的功率分布 |
+| **阿贝数** | [[016-abbe-number|abbe-number.md]] | 衡量材料色散程度的无量纲数 |
 
 ## 与学习路径的关系
 
-- 初学者先按 [[../90-maps/Learning Path|从零到深入学习路径]] 阅读主线章节，再回到本目录查术语。
-- 光谱专项优先掌握：[[dispersion|色散]]、[[spectral-power-distribution|光谱分布函数]]、[[spectral-resolution|光谱分辨率]]、[[chromaticity-diagram|色度图]]、[[color-temperature|色温]]。
-- 需要系统结构时，参考 [[../90-maps/Knowledge Architecture|知识库架构]]。
+- 初学者先按 [[../90-maps/001-Learning Path|从零到深入学习路径]] 阅读主线章节，再回到本目录查术语。
+- 光谱专项优先掌握：[[017-dispersion|色散]]、[[066-spectral-power-distribution|光谱分布函数]]、[[074-spectral-resolution|光谱分辨率]]、[[069-chromaticity-diagram|色度图]]、[[067-color-temperature|色温]]。
+- 片上多光谱专题按 [[../90-maps/008-On-chip Multispectral Topic|片上多光谱专题地图]] 阅读，再进入 [[076-multispectral-filter-array|多光谱滤光片阵列]]、[[077-fabry-perot-microcavity|Fabry-Perot 微腔]]、[[078-metasurface|超表面]] 和 [[079-spectral-reconstruction|光谱重建]]。
+- 需要系统结构时，参考 [[../90-maps/002-Knowledge Architecture|知识库架构]]。
 
 ## 待补概念
 

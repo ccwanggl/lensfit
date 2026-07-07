@@ -1,0 +1,104 @@
+---
+
+id: sources.textbook-reference-matrix
+title: 教材页码索引矩阵
+type: source-index
+status: reviewed
+source_type: textbook-reference-matrix
+aliases:
+  - Textbook Reference Matrix
+  - 教材页码矩阵
+---
+
+# 教材页码索引矩阵
+
+本矩阵用于把知识库里的关键知识点索引到优秀教材。当前尚未接入本地教材文件，因此页码列默认 `待核验`。拿到实体书、合法电子书或出版社预览后，再把页码填实。
+
+## 页码状态
+
+| 状态 | 含义 |
+|---|---|
+| `verified` | 已核对指定版本的页码 |
+| `chapter-verified` | 已核对章节/目录，但未核对页码 |
+| `unverified` | 基于教材定位经验，尚未核对章节或页码 |
+| `needs-source` | 需要补充更合适的专门来源 |
+
+## 基础光学
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| 光的本质 | [[../50-learning/001-light-and-waves|光与波]] | Hecht, *Optics*, 5th ed. | The Nature of Light / Wave Motion / Electromagnetic Theory | 待核验 | chapter-verified | Hecht 更适合建立物理直觉 |
+| 折射率 | [[../10-concepts/000-refractive-index|折射率]] | Hecht, *Optics*, 5th ed. | Geometrical Optics / Propagation of Light | 待核验 | unverified | 后续可补材料色散表来源 |
+| 色散 | [[../10-concepts/017-dispersion|色散]] | Hecht, *Optics*, 5th ed. | Geometrical Optics / Dispersion | 待核验 | unverified | 与阿贝数、色差联动 |
+| 薄透镜公式 | [[../20-formulas/000-thin-lens-gauss|薄透镜高斯公式]] | Hecht, *Optics*, 5th ed. | Geometrical Optics | 待核验 | unverified | 工程侧可补 Smith |
+| 焦距 | [[../10-concepts/003-focal-length|焦距]] | Hecht, *Optics*, 5th ed. | Geometrical Optics | 待核验 | unverified | Smith 用于工程系统设计 |
+
+## 镜头、成像与像质
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| F 值 | [[../10-concepts/005-f-number|F值]] | Smith, *Modern Optical Engineering*, 4th ed. | Optical system layout / aperture / stops | 待核验 | unverified | 更偏工程参数 |
+| 景深 | [[../10-concepts/007-depth-of-field|景深]] | Smith, *Modern Optical Engineering*, 4th ed. | Image formation / depth of field | 待核验 | unverified | 可辅以摄影教材 |
+| 像圈 | [[../10-concepts/009-image-circle|像圈]] | Smith, *Modern Optical Engineering*, 4th ed. | Optical system design / image format | 待核验 | unverified | 厂商手册也很重要 |
+| 色差 | [[../10-concepts/019-chromatic-aberration|色差]] | Hecht, *Optics*, 5th ed. + Smith | Aberrations / chromatic aberration | 待核验 | unverified | Hecht 讲成因，Smith 讲工程校正 |
+| 艾里斑 | [[../10-concepts/027-airy-disk|艾里斑]] | Hecht, *Optics*, 5th ed. | Diffraction | 待核验 | unverified | 与瑞利判据、衍射极限联动 |
+| 瑞利判据 | [[../20-formulas/009-rayleigh-criterion|瑞利判据]] | Hecht, *Optics*, 5th ed. | Diffraction / resolution | 待核验 | unverified | 显微镜路线需补专门来源 |
+| MTF/OTF | [[../50-learning/012-otf-and-image-quality|光学传递函数与图像质量]] | Goodman, *Introduction to Fourier Optics*, 4th ed. | Fourier optics / imaging systems | 待核验 | chapter-verified | Goodman 是主线来源，Smith 做工程补充 |
+
+## 传感器、采样与探测
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| 像元 | [[../10-concepts/036-pixel|像元]] | Saleh & Teich, *Fundamentals of Photonics*, 3rd ed. | Photodetectors | 待核验 | chapter-verified | 还需补传感器厂商应用手册 |
+| 奈奎斯特频率 | [[../10-concepts/038-nyquist-frequency|奈奎斯特频率]] | Goodman, *Introduction to Fourier Optics*, 4th ed. | Sampling / spatial frequency | 待核验 | unverified | 成像采样更适合 Goodman |
+| 混叠 | [[../10-concepts/040-aliasing|混叠]] | Goodman, *Introduction to Fourier Optics*, 4th ed. + Gonzalez & Woods | Sampling / Fourier imaging / Digital image sampling | 待核验 | unverified | Goodman 讲成像频域，Gonzalez & Woods 补数字图像处理 |
+| 过采样率 | [[../20-formulas/007-oversampling-ratio|过采样率]] | Goodman + Gonzalez & Woods | Sampling / MTF matching / Digital sampling | 待核验 | unverified | 更偏工程派生指标 |
+| 边缘检测 | [[../10-concepts/043-边缘检测|边缘检测]] | Gonzalez & Woods, *Digital Image Processing*, 4th ed. | Image segmentation / edge detection | 待核验 | unverified | 算法侧来源，仍需结合光学 MTF 和照明条件 |
+
+## 傅里叶光学与计算成像
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| 衍射 | [[../50-learning/010-physical-optics-advanced|物理光学深入]] | Hecht, *Optics*, 5th ed. | Diffraction | 待核验 | chapter-verified | 入门先读 Hecht |
+| 傅里叶光学 | [[../50-learning/010-physical-optics-advanced|物理光学深入]] | Goodman, *Introduction to Fourier Optics*, 4th ed. | Fourier analysis in optics | 待核验 | chapter-verified | 进阶主教材 |
+| 计算光学 | [[../50-learning/014-computational-optics|计算光学与计算成像]] | Goodman + 专门论文/教材 | Optical information processing / computational imaging | 待核验 | needs-source | 需要补现代计算成像来源 |
+
+## 光谱与色彩
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| 光谱分布函数 | [[../10-concepts/066-spectral-power-distribution|光谱分布函数]] | Hecht + Saleh & Teich | Radiation / light sources | 待核验 | unverified | 光源 SPD 还需照明/色彩来源 |
+| 光谱分辨率 | [[../10-concepts/074-spectral-resolution|光谱分辨率]] | Hecht, *Optics*, 5th ed. | Diffraction grating / resolving power | 待核验 | unverified | 光谱仪厂商手册更适合工程指标 |
+| 光栅方程 | [[../20-formulas/012-grating-equation|光栅方程]] | Hecht, *Optics*, 5th ed. | Diffraction grating | 待核验 | unverified | 后续补光栅厂商资料 |
+| 光栅分辨本领 | [[../20-formulas/013-grating-resolving-power|光栅光谱分辨率]] | Hecht + Goodman | Diffraction / resolving power | 待核验 | unverified | 需要核对具体符号定义 |
+| 黑体辐射 | [[../20-formulas/015-planck-blackbody|普朗克黑体辐射公式]] | Saleh & Teich, *Fundamentals of Photonics*, 3rd ed. | Light and matter / thermal radiation | 待核验 | unverified | 红外章节也依赖它 |
+| 色度图 | [[../10-concepts/069-chromaticity-diagram|色度图]] | Wyszecki & Stiles, *Color Science*, 2nd ed. | Colorimetry / CIE chromaticity | 待核验 | unverified | 标准值仍应回查 CIE |
+| 色温 | [[../10-concepts/067-color-temperature|色温]] | Wyszecki & Stiles + CIE/照明教材 | Color temperature / CCT | 待核验 | unverified | 工程上还要补照明标准 |
+| Delta E | [[../20-formulas/016-delta-e|Delta E 色差]] | Wyszecki & Stiles + CIE/色彩科学专门来源 | Color difference | 待核验 | needs-source | CIE76/CIEDE2000 需区分 |
+| 荧光 | [[../10-concepts/070-fluorescence|荧光]] | Saleh & Teich | Light-matter interaction | 待核验 | unverified | 显微荧光需补专门来源 |
+| 拉曼散射 | [[../10-concepts/071-raman-scattering|拉曼散射]] | Saleh & Teich + 光谱教材 | Inelastic scattering / spectroscopy | 待核验 | needs-source | 需补拉曼光谱教材 |
+
+## 红外与电光系统
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| NETD | [[../10-concepts/062-NETD|NETD]] | Driggers et al., *Introduction to Infrared and Electro-Optical Systems*, 3rd ed. | Infrared system performance / detector noise | 待核验 | unverified | 红外系统级指标，后续需核验页码 |
+| 发射率 | [[../10-concepts/064-发射率|发射率]] | Driggers et al. + Saleh & Teich | Thermal radiation / IR target radiance | 待核验 | unverified | 材料参数仍需查专门表格或厂商资料 |
+| 微测辐射热计 | [[../10-concepts/063-微测辐射热计|微测辐射热计]] | Driggers et al. | Infrared detector / uncooled thermal imaging | 待核验 | unverified | 器件规格以厂商资料为准 |
+
+## 设备与工程实践
+
+| 知识点 | 知识库笔记 | 首选教材 | 对应章节/主题 | 页码 | 状态 | 备注 |
+|---|---|---|---|---|---|---|
+| C-mount 镜头 | [[../40-devices/000-c-mount-lens|C-mount镜头]] | Smith + 厂商手册 | Optical system layout | 待核验 | needs-source | 接口尺寸优先查标准/厂商 |
+| 远心镜头 | [[../40-devices/001-telecentric-lens|远心镜头]] | Smith + 厂商手册 | Optical system design | 待核验 | needs-source | 厂商应用手册更有用 |
+| 显微镜物镜 | [[../40-devices/002-microscope-objective|显微镜物镜]] | Hecht + 显微镜专门教材 | Microscopy / resolution | 待核验 | needs-source | NA、WD、盖玻片校正需专门来源 |
+| 光谱仪 | [[../40-devices/011-spectrometer|光谱仪]] | Hecht + 光谱仪器手册 | Diffraction grating / spectrometer | 待核验 | needs-source | 实际选型以厂商参数为主 |
+| 高光谱相机 | [[../40-devices/012-hyperspectral-camera|高光谱相机]] | 光谱成像专门资料 | Hyperspectral imaging | 待核验 | needs-source | 需补 Specim/Headwall/Resonon 等手册 |
+
+## 下一步核验计划
+
+1. 先核验第1-6章涉及的 Hecht 页码。
+2. 再核验 Goodman 中 Fourier optics、sampling、OTF/MTF 的页码。
+3. 然后核验 Smith 中镜头工程、像差、像质评价的页码。
+4. 最后补色彩科学、光谱仪器、红外成像的专门教材和厂商资料。

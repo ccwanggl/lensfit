@@ -17,7 +17,7 @@ aliases:
 
 1. 在 Obsidian 中选择“打开本地仓库”。
 2. 选择仓库中的 `OpticKnowledgeSpace/` 目录作为 Vault。
-3. 从 [[90-maps/Learning Path|从零到深入学习路径]]、[[90-maps/Knowledge Architecture|知识库架构]] 或 [[90-maps/Knowledge Map|知识地图]] 开始；视觉学习者先看 [[90-maps/Visual Learning Toolkit|视觉学习工具箱]]。
+3. 从 [[90-maps/001-Learning Path|从零到深入学习路径]]、[[90-maps/002-Knowledge Architecture|知识库架构]] 或 [[90-maps/000-Knowledge Map|知识地图]] 开始；视觉学习者先看 [[90-maps/003-Visual Learning Toolkit|视觉学习工具箱]]。
 4. 新笔记先放入 `00-inbox/`，整理后再移动到正式目录。
 
 ## 目录
@@ -37,7 +37,7 @@ aliases:
 
 ## 学习路径总览
 
-本知识库提供 **16章** 从入门到实践、再到专项深入的完整成像光学学习路径。完整路线见 [[90-maps/Learning Path|从零到深入学习路径]]，知识组织方式见 [[90-maps/Knowledge Architecture|知识库架构]]。
+本知识库提供 **16章** 从入门到实践、再到专项深入的完整成像光学学习路径。完整路线见 [[90-maps/001-Learning Path|从零到深入学习路径]]，知识组织方式见 [[90-maps/002-Knowledge Architecture|知识库架构]]。
 
 ```
 入门阶段（第0-9章）
@@ -57,17 +57,19 @@ aliases:
 
 | 入口 | 适合谁 | 用途 |
 |---|---|---|
-| [[90-maps/Learning Path|从零到深入学习路径]] | 初学者 | 按顺序学习，知道每阶段要掌握什么 |
-| [[90-maps/Knowledge Architecture|知识库架构]] | 维护者/系统学习者 | 理解教程、概念、公式、设备和领域如何连接 |
-| [[90-maps/Knowledge Map|知识地图]] | 查资料的人 | 快速跳转到概念、公式、设备和领域 |
-| [[90-maps/Interactive Explorer|交互式探索器]] | 视觉/探索型学习者 | 用 D3 图谱或 Obsidian Canvas 拖拽浏览 |
+| [[90-maps/001-Learning Path|从零到深入学习路径]] | 初学者 | 按顺序学习，知道每阶段要掌握什么 |
+| [[90-maps/002-Knowledge Architecture|知识库架构]] | 维护者/系统学习者 | 理解教程、概念、公式、设备和领域如何连接 |
+| [[90-maps/000-Knowledge Map|知识地图]] | 查资料的人 | 快速跳转到概念、公式、设备和领域 |
+| [[90-maps/005-Interactive Explorer|交互式探索器]] | 视觉/探索型学习者 | 用 D3 图谱或 Obsidian Canvas 拖拽浏览 |
 | [[50-learning/README|学习教程目录]] | 顺序阅读者 | 查看 16 章主线目录 |
 
 ## 光谱学科专项
 
 光谱学是光的"指纹"识别科学，涵盖：
-- [[50-learning/16-spectroscopy|第16章：光谱学与色彩科学]] — 系统的光谱学学习章节
-- [[30-domains/spectroscopy|光谱成像领域参考]] — 工业应用与选型
+- [[50-learning/016-spectroscopy|第16章：光谱学与色彩科学]] — 系统的光谱学学习章节
+- [[30-domains/004-spectroscopy|光谱成像领域参考]] — 工业应用与选型
+- [[90-maps/008-On-chip Multispectral Topic|片上多光谱专题地图]] — 片上多光谱、片上高光谱、微型光谱仪和红外多谱段探测的专题入口
+- [[80-sources/009-on-chip-multispectral-literature|片上多光谱/高光谱文献雷达]] — 前沿论文、综述和季度跟踪字段
 - 10 个光谱相关概念笔记（色散、色度图、色温、荧光、拉曼、多光谱、高光谱等）
 - 5 个光谱相关公式（光栅方程、光谱分辨率、Delta E 等）
 - 5 个光谱相关设备（光谱仪、高光谱相机、衍射光栅、滤光片、积分球）
@@ -88,36 +90,36 @@ Frontmatter 的 `status` 使用以下值：
 
 | 图 | 说明 | 所在笔记 |
 |---|---|---|
-| `learning-path-roadmap.svg` | 16 章学习路径总览 | [[90-maps/Learning Path|从零到深入学习路径]] |
-| `knowledge-graph.svg` | 核心知识关联图 | [[90-maps/Learning Path|从零到深入学习路径]] |
-| `thin-lens-geometry.svg` | 薄透镜物距/像距/焦距关系 | [[10-concepts/focal-length\|焦距]]、[[20-formulas/thin-lens-gauss\|薄透镜高斯公式]] |
-| `angle-of-view.svg` | 焦距与视角关系 | [[10-concepts/focal-length\|焦距]]、[[20-formulas/angle-of-view\|视角公式]] |
-| `image-circle-coverage.svg` | 像圈与传感器覆盖 | [[10-concepts/image-circle\|像圈]]、[[20-formulas/coverage-ratio\|像圈覆盖比]]、[[50-learning/05-matching-basics\|匹配基础]] |
-| `nyquist-aliasing.svg` | 采样不足导致的混叠 | [[10-concepts/nyquist-frequency\|奈奎斯特频率]]、[[20-formulas/nyquist-frequency\|奈奎斯特频率]] |
-| `airy-disk.svg` | 艾里斑强度分布 | [[10-concepts/airy-disk\|艾里斑]] |
-| `depth-of-field.svg` | 景深与弥散圆 | [[10-concepts/depth-of-field\|景深]] |
-| `aperture-f-number.svg` | 光圈孔径与 F 值 | [[10-concepts/f-number\|F值]] |
-| `refractive-index.svg` | 折射率与斯涅尔定律 | [[10-concepts/refractive-index\|折射率]] |
-| `dispersion.svg` | 棱镜色散 | [[10-concepts/dispersion\|色散]] |
-| `chromatic-aberration.svg` | 透镜色差 | [[10-concepts/chromatic-aberration\|色差]] |
-| `color-temperature.svg` | 色温与黑体辐射 | [[10-concepts/color-temperature\|色温]] |
-| `multispectral-hyperspectral.svg` | 多光谱 vs 高光谱 | [[10-concepts/multispectral-imaging\|多光谱]]、[[10-concepts/hyperspectral-imaging\|高光谱]] |
-| `spectral-power-distribution.svg` | 光谱功率分布 | [[10-concepts/spectral-power-distribution\|SPD]] |
-| `fluorescence.svg` | 荧光能级图 | [[10-concepts/fluorescence\|荧光]] |
-| `raman-scattering.svg` | 拉曼散射能级图 | [[10-concepts/raman-scattering\|拉曼散射]] |
-| `global-vs-rolling-shutter.svg` | 全局快门 vs 卷帘快门 | [[10-concepts/全局快门\|全局快门]]、[[10-concepts/卷帘快门\|卷帘快门]] |
-| `telecentricity.svg` | 远心镜头主光线 | [[40-devices/telecentric-lens\|远心镜头]] |
-| `abbe-number.svg` | 阿贝图 | [[10-concepts/abbe-number\|阿贝数]] |
-| `numerical-aperture.svg` | 数值孔径示意图 | [[10-concepts/数值孔径\|数值孔径]] |
-| `vignetting.svg` | 渐晕亮度分布 | [[10-concepts/渐晕\|渐晕]] |
-| `chromaticity-diagram.svg` | CIE 1931 色度图 | [[10-concepts/chromaticity-diagram\|色度图]] |
-| `spectral-resolution.svg` | 光谱分辨率对比 | [[10-concepts/spectral-resolution\|光谱分辨率]]、[[20-formulas/瑞利分辨率\|瑞利分辨率]] |
-| `domain-selection-map.svg` | 如何选择应用领域 | [[30-domains/README\|应用领域]]、[[90-maps/Visual Index\|可视化索引]] |
-| `matching-workflow.svg` | LensFit 匹配工作流程 | [[50-learning/05-matching-basics\|匹配基础]] |
-| `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/04-sensors\|传感器]]、[[40-devices/README\|设备类型]]、[[10-concepts/读出噪声\|读出噪声]]、[[10-concepts/NETD\|NETD]] |
-| `lens-selection-checklist.svg` | 镜头选型七步清单 | [[50-learning/03-lens-parameters\|镜头参数]]、[[50-learning/05-matching-basics\|匹配基础]] |
+| `learning-path-roadmap.svg` | 16 章学习路径总览 | [[90-maps/001-Learning Path|从零到深入学习路径]] |
+| `knowledge-graph.svg` | 核心知识关联图 | [[90-maps/001-Learning Path|从零到深入学习路径]] |
+| `thin-lens-geometry.svg` | 薄透镜物距/像距/焦距关系 | [[10-concepts/003-focal-length|焦距]]、[[20-formulas/000-thin-lens-gauss|薄透镜高斯公式]] |
+| `angle-of-view.svg` | 焦距与视角关系 | [[10-concepts/003-focal-length|焦距]]、[[20-formulas/003-angle-of-view|视角公式]] |
+| `image-circle-coverage.svg` | 像圈与传感器覆盖 | [[10-concepts/009-image-circle|像圈]]、[[20-formulas/004-coverage-ratio|像圈覆盖比]]、[[50-learning/005-matching-basics|匹配基础]] |
+| `nyquist-aliasing.svg` | 采样不足导致的混叠 | [[10-concepts/038-nyquist-frequency|奈奎斯特频率]]、[[20-formulas/006-nyquist-frequency|奈奎斯特频率]] |
+| `airy-disk.svg` | 艾里斑强度分布 | [[10-concepts/027-airy-disk|艾里斑]] |
+| `depth-of-field.svg` | 景深与弥散圆 | [[10-concepts/007-depth-of-field|景深]] |
+| `aperture-f-number.svg` | 光圈孔径与 F 值 | [[10-concepts/005-f-number|F值]] |
+| `refractive-index.svg` | 折射率与斯涅尔定律 | [[10-concepts/000-refractive-index|折射率]] |
+| `dispersion.svg` | 棱镜色散 | [[10-concepts/017-dispersion|色散]] |
+| `chromatic-aberration.svg` | 透镜色差 | [[10-concepts/019-chromatic-aberration|色差]] |
+| `color-temperature.svg` | 色温与黑体辐射 | [[10-concepts/067-color-temperature|色温]] |
+| `multispectral-hyperspectral.svg` | 多光谱 vs 高光谱 | [[10-concepts/072-multispectral-imaging|多光谱]]、[[10-concepts/073-hyperspectral-imaging|高光谱]] |
+| `spectral-power-distribution.svg` | 光谱功率分布 | [[10-concepts/066-spectral-power-distribution|SPD]] |
+| `fluorescence.svg` | 荧光能级图 | [[10-concepts/070-fluorescence|荧光]] |
+| `raman-scattering.svg` | 拉曼散射能级图 | [[10-concepts/071-raman-scattering|拉曼散射]] |
+| `global-vs-rolling-shutter.svg` | 全局快门 vs 卷帘快门 | [[10-concepts/058-全局快门|全局快门]]、[[10-concepts/059-卷帘快门|卷帘快门]] |
+| `telecentricity.svg` | 远心镜头主光线 | [[40-devices/001-telecentric-lens|远心镜头]] |
+| `abbe-number.svg` | 阿贝图 | [[10-concepts/016-abbe-number|阿贝数]] |
+| `numerical-aperture.svg` | 数值孔径示意图 | [[10-concepts/006-数值孔径|数值孔径]] |
+| `vignetting.svg` | 渐晕亮度分布 | [[10-concepts/057-渐晕|渐晕]] |
+| `chromaticity-diagram.svg` | CIE 1931 色度图 | [[10-concepts/069-chromaticity-diagram|色度图]] |
+| `spectral-resolution.svg` | 光谱分辨率对比 | [[10-concepts/074-spectral-resolution|光谱分辨率]]、[[20-formulas/010-瑞利分辨率|瑞利分辨率]] |
+| `domain-selection-map.svg` | 如何选择应用领域 | [[30-domains/README\|应用领域]]、[[90-maps/004-Visual Index|可视化索引]] |
+| `matching-workflow.svg` | LensFit 匹配工作流程 | [[50-learning/005-matching-basics|匹配基础]] |
+| `sensor-parameter-map.svg` | 传感器选型雷达图 | [[50-learning/004-sensors|传感器]]、[[40-devices/README\|设备类型]]、[[10-concepts/061-读出噪声|读出噪声]]、[[10-concepts/062-NETD|NETD]] |
+| `lens-selection-checklist.svg` | 镜头选型七步清单 | [[50-learning/003-lens-parameters|镜头参数]]、[[50-learning/005-matching-basics|匹配基础]] |
 
-完整索引见 [[90-maps/Visual Index\|可视化索引]]。
+完整索引见 [[90-maps/004-Visual Index|可视化索引]]。
 
 如需重新生成，运行仓库根目录下的 `scripts/generate_vault_visuals.py`（依赖 `scripts/.venv-viz` 中的 matplotlib、networkx、scipy）。
 
