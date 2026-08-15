@@ -349,5 +349,5 @@ Phase 7 (done)
 1. Pick the smallest dependency group it belongs to.
 2. Write the physical model and accuracy notes before writing code.
 3. Add the experiment module under `engine/lensfit/lab/experiments/`.
-4. Run `python scripts/sync_experiment_links.py` to update this catalog and vault notes.
+4. Add the entry to this catalog (the former `scripts/sync_experiment_links.py` was removed in the v4.0 vault restructure).
 5. Add a focused test in `engine/tests/test_lab.py` verifying both the numeric result and SVG output.
