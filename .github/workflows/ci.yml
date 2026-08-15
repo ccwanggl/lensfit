@@ -21,6 +21,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # Node enables the real ray-optics sidecar smoke tests; without it they
+      # are skipped. node-canvas is not installed, so smoke tests exercise the
+      # SVG-only (no CropBox) path.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Install dependencies
         working-directory: engine
         run: |

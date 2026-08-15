@@ -134,7 +134,7 @@ docs/development/specifications/lab/experiment-catalog.md
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest tests/test_lab.py tests/test_api_lab.py -q
 python build_sidecar.py
 ```
@@ -243,7 +243,7 @@ python build_sidecar.py
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest tests/test_workbench_scene.py -q
 ```
 
@@ -316,7 +316,7 @@ POST /api/v1/lab/workbench/run
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest tests/test_lab.py tests/test_api_lab.py tests/test_api_workbench.py -q
 ```
 
@@ -396,7 +396,7 @@ python -m pytest tests/test_lab.py tests/test_api_lab.py tests/test_api_workbenc
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/lensfit/apps/desktop"
 npm run build
 ```
 
@@ -467,7 +467,7 @@ npm run build
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest tests/test_ray_optics_contract.py -q
 ```
 
@@ -533,10 +533,10 @@ python -m pytest tests/test_ray_optics_contract.py -q
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest tests/test_workbench_scene.py tests/test_api_workbench.py tests/test_ray_optics_contract.py -q
 
-cd "E:/DevSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/lensfit/apps/desktop"
 npm run build
 ```
 
@@ -636,10 +636,10 @@ npm run build
 验证命令：
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest -q
 
-cd "E:/DevSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/lensfit/apps/desktop"
 npm run build
 ```
 

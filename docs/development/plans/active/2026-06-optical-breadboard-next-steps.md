@@ -3,6 +3,8 @@
 > 制定日期：2026-06-25  
 > 前提：`docs/development/plans/active/2026-06-optical-breadboard-development-plan.md` 阶段 0-5 已全部完成。
 
+> **状态注记（2026-08 更新）**：阶段 6（双缝衍射 breadboard preset）已完成，主计划阶段 0-6 全部勾完，双缝测试已通过（评审报告：`docs/development/reviews/2026-06-25-phase-6-double-slit-breadboard-preset.md`）。本文第 2 节“推荐路线：阶段 6”与第 5 节推荐顺序中的阶段 6 不再适用；当前待办是阶段 6.5（工程债务清理 + 前端测试，见第 4 节路线 C 的工程债务部分），之后按第 5 节进入阶段 7 用户试用。
+
 ## 1. 背景
 
 原 active plan 在阶段 5 后注明“需要重新评审”。本文件在阶段 5 验收通过后，给出下一阶段的可选路线与推荐方案。
@@ -57,10 +59,10 @@
 ### 验证命令
 
 ```powershell
-cd "E:/DevSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/lensfit/engine"
 python -m pytest tests/test_workbench_scene.py tests/test_api_workbench.py -q
 
-cd "E:/DevSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/lensfit/apps/desktop"
 npm run build
 ```
 

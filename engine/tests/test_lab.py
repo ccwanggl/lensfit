@@ -7,24 +7,24 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from lensfit.lab import OpticsExperiment, get_registry
+from lensfit.lab.experiments.aberration_spot import AberrationSpotExperiment
 from lensfit.lab.experiments.angle_of_view import AngleOfViewExperiment
+from lensfit.lab.experiments.blackbody import BlackbodyExperiment
+from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from lensfit.lab.experiments.color_mixing import ColorMixingExperiment
 from lensfit.lab.experiments.depth_of_field import DepthOfFieldExperiment
-from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
-from lensfit.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
-from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
+from lensfit.lab.experiments.diffraction import DiffractionExperiment
 from lensfit.lab.experiments.double_slit import DoubleSlitExperiment
 from lensfit.lab.experiments.grating import GratingExperiment
-from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
-from lensfit.lab.experiments.blackbody import BlackbodyExperiment
 from lensfit.lab.experiments.illumination_geometry import IlluminationGeometryExperiment
-from lensfit.lab.experiments.thermal_ifov_netd import ThermalIfovNetdExperiment
-from lensfit.lab.experiments.aberration_spot import AberrationSpotExperiment
+from lensfit.lab.experiments.magnification_scale import MagnificationScaleExperiment
+from lensfit.lab.experiments.mtf_explorer import MtfExplorerExperiment
+from lensfit.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from lensfit.lab.experiments.polarization_malus import PolarizationMalusExperiment
+from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
 from lensfit.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from lensfit.lab.experiments.snell_refraction import SnellRefractionExperiment
-from lensfit.lab.experiments.diffraction import DiffractionExperiment
-from lensfit.lab.experiments.sensor_coverage import SensorCoverageExperiment
+from lensfit.lab.experiments.thermal_ifov_netd import ThermalIfovNetdExperiment
 from lensfit.lab.experiments.thin_lens import ThinLensExperiment
 
 
@@ -253,7 +253,9 @@ class TestIlluminationGeometryExperiment:
         exp = IlluminationGeometryExperiment()
         result = exp.run({})
         assert result.data["mode"] == "bright-field"
-        assert result.data["visibility"] in {"dim", "bright", "glare", "shadow", "uniform", "silhouette", "edge"}
+        assert result.data["visibility"] in {
+            "dim", "bright", "glare", "shadow", "uniform", "silhouette", "edge",
+        }
         _assert_svg(result.svg)
 
     def test_each_mode_has_valid_visibility(self):

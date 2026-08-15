@@ -193,13 +193,12 @@ lensfit/
 │       ├── reviews/
 │       └── guides/
 │
-├── knowledge/                      # Obsidian 光学知识库
-│   ├── 10-concepts/
-│   ├── 20-formulas/
-│   ├── 30-domains/
-│   ├── 50-learning/
-│   ├── 80-sources/
-│   └── 90-maps/
+├── modules/                        # 光学知识库（v4.0 起，取代原 Obsidian vault）
+│   ├── 10-foundations/             # 光学基础
+│   ├── 20-geometric-optics/        # 几何光学
+│   ├── 30-wave-optics/             # 波动光学
+│   ├── 40-spectroscopy/            # 光谱学
+│   └── 50-optical-design/          # 光学设计
 │
 ├── scripts/                        # 构建与发布脚本
 │   ├── build-desktop.sh

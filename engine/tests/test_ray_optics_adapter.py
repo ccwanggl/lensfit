@@ -20,11 +20,14 @@ from lensfit.lab.workbench.ray_optics_adapter import (
 )
 from lensfit.lab.workbench.ray_optics_sidecar import (
     RayOpticsNotAvailableError,
-    RayOpticsSidecar,
 )
 from lensfit.lab.workbench.solver import WorkbenchSolver
 
 NODE_AVAILABLE = shutil.which("node") is not None
+RUNNER = (
+    Path(__file__).resolve().parents[1] / "third_party" / "ray-optics" / "runner.js"
+)
+RUNNER_AVAILABLE = RUNNER.exists()
 CANVAS_AVAILABLE = NODE_AVAILABLE and (
     Path(__file__).resolve().parents[1]
     / "third_party"
@@ -185,7 +188,9 @@ def test_adapter_includes_cropbox_when_explicitly_requested():
     ro_scene = to_ray_optics_scene(scene, include_image=True)
     has_cropbox = any(obj.get("type") == "CropBox" for obj in ro_scene["objs"])
     if CANVAS_AVAILABLE:
-        assert has_cropbox, "CropBox should be added when include_image=True and node-canvas is installed"
+        assert has_cropbox, (
+            "CropBox should be added when include_image=True and node-canvas is installed"
+        )
     else:
         assert not has_cropbox, "CropBox should be omitted when node-canvas is absent"
 
@@ -206,6 +211,7 @@ def test_scenegraph_fixture_remains_neutral():
 
 
 @pytest.mark.skipif(not NODE_AVAILABLE, reason="Node.js not available")
+@pytest.mark.skipif(not RUNNER_AVAILABLE, reason="ray-optics runner not available")
 def test_single_slit_runs_and_normalizes_without_image_by_default():
     scene = _single_slit_scene()
     data = run_ray_optics(scene)
@@ -219,6 +225,7 @@ def test_single_slit_runs_and_normalizes_without_image_by_default():
 
 
 @pytest.mark.skipif(not NODE_AVAILABLE, reason="Node.js not available")
+@pytest.mark.skipif(not RUNNER_AVAILABLE, reason="ray-optics runner not available")
 def test_double_slit_runs_and_normalizes_without_image_by_default():
     scene = _double_slit_scene()
     data = run_ray_optics(scene)

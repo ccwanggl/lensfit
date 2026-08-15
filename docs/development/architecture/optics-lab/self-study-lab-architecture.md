@@ -1,5 +1,7 @@
 # Architecture: LensFit Self-Study Optics Laboratory
 
+> **状态注记（2026-08 更新）**：本文多次引用的 `OpticKnowledgeSpace/` Obsidian vault（含 `10-concepts/`、`90-maps/` 等路径）已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代。下文中 vault 相关路径描述的是重构前的设计，概念链接机制待重新映射到 `modules/` 结构；`engine/lensfit/lab/` 与 `apps/desktop/src/lab/` 的架构描述仍然有效。
+
 ## 1. Vision
 
 LensFit evolves from a **lens/detector matching assistant** into a **self-study optics laboratory**:

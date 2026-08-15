@@ -2,7 +2,9 @@
 
 This document maps every planned experiment to the corresponding vault notes and learning chapters. The ordering is **dependency-driven**, not value-driven: each experiment only assumes concepts and experiments that appear before it. Every entry includes the exact physical model and accuracy notes so that implementations can be verified against first principles.
 
-> Last synced with `OpticKnowledgeSpace/` and `engine/lensfit/lab/`.
+> Last synced with `engine/lensfit/lab/`.
+>
+> 注：本文档中的 `10-concepts/`、`20-formulas/`、`50-learning/` 等链接路径是原 `OpticKnowledgeSpace/` vault 的相对路径。该 vault 已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代；这些路径目前仍作为 lab registry 中 `linked_concepts` 的标识符使用，待后续重新映射到 `modules/` 结构。
 
 ---
 

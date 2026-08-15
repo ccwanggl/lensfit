@@ -13,7 +13,6 @@ from typing import Any
 from lensfit.lab.workbench import SceneGraph
 from lensfit.lab.workbench.ray_optics_sidecar import (
     RayOpticsOutputError,
-    RayOpticsResult,
     RayOpticsRuntimeError,
     RayOpticsSidecar,
 )
