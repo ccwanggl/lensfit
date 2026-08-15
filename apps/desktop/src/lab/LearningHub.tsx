@@ -506,7 +506,7 @@ function ParameterPanel({
   );
 }
 
-function BreadboardPresetHeader({
+export function BreadboardPresetHeader({
   presetId,
   params,
   onChange,
