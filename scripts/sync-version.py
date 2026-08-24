@@ -70,7 +70,7 @@ def update_cargo_toml(version: str) -> None:
 
 
 def update_server_py(version: str) -> None:
-    path = ROOT / "engine" / "lensfit" / "api" / "server.py"
+    path = ROOT / "engine" / "optibench" / "api" / "server.py"
     text = path.read_text(encoding="utf-8")
     new_text = re.sub(
         r'("version"\s*:\s*").*?("\s*\})',
@@ -79,10 +79,10 @@ def update_server_py(version: str) -> None:
         count=1,
     )
     if new_text == text:
-        print("engine/lensfit/api/server.py: no change needed")
+        print("engine/optibench/api/server.py: no change needed")
     else:
         path.write_text(new_text, encoding="utf-8")
-        print(f"engine/lensfit/api/server.py health check -> {version}")
+        print(f"engine/optibench/api/server.py health check -> {version}")
 
 
 def main() -> int:

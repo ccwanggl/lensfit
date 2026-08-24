@@ -162,7 +162,7 @@ def update_software_architecture() -> None:
         '        """获取各评分维度的收益标志"""\n'
         "        pass\n"
         "    \n"
-        "    # 注意：当前代码中没有 get_visual_data_generators；可视化由 engine/lensfit/visualization/ 统一处理。\n"
+        "    # 注意：当前代码中没有 get_visual_data_generators；可视化由 engine/optibench/visualization/ 统一处理。\n"
     )
     text = text.replace(old_iface, new_iface)
 
@@ -276,7 +276,7 @@ def update_core_algorithms() -> None:
         "## 6. 完整匹配流程伪代码（四级流水线）\n"
     )
     new = (
-        "> **实现状态说明**：以下伪代码与 `engine/lensfit/matching/engine.py` 的四级流水线结构一致，\n"
+        "> **实现状态说明**：以下伪代码与 `engine/optibench/matching/engine.py` 的四级流水线结构一致，\n"
         "> 但 Stage 1 目前未使用 `query_lenses` 的数据库索引过滤（全表加载后 Python 过滤）。\n"
         "> 完整的性能预估（第 6 节表格）尚未通过回归测试验证。\n"
         "\n"
@@ -420,7 +420,7 @@ def update_tech_stack() -> None:
     old_engine = (
         "├── engine/                         # Python 核心引擎\n"
         "│   ├── pyproject.toml\n"
-        "│   ├── lensfit/\n"
+        "│   ├── optibench/\n"
         "│   │   ├── __init__.py\n"
         "│   │   ├── core/                   # 基础光学计算\n"
         "│   │   │   ├── __init__.py\n"
@@ -461,7 +461,7 @@ def update_tech_stack() -> None:
         "│   ├── pyproject.toml\n"
         "│   ├── alembic.ini\n"
         "│   ├── build_sidecar.py            # PyInstaller 打包脚本\n"
-        "│   ├── lensfit/\n"
+        "│   ├── optibench/\n"
         "│   │   ├── __init__.py\n"
         "│   │   ├── __main__.py             # 命令行入口\n"
         "│   │   ├── core/                   # 基础光学计算\n"
@@ -559,7 +559,7 @@ def update_tech_stack() -> None:
         "      - name: Upload Artifacts\n"
         "        uses: actions/upload-artifact@v4\n"
         "        with:\n"
-        "          name: lensfit-${{ matrix.platform }}\n"
+        "          name: optibench-${{ matrix.platform }}\n"
         "          path: apps/desktop/src-tauri/target/release/bundle/\n"
         "```\n"
         "\n"
@@ -569,7 +569,7 @@ def update_tech_stack() -> None:
         "      - name: Upload Artifacts\n"
         "        uses: actions/upload-artifact@v4\n"
         "        with:\n"
-        "          name: lensfit-${{ matrix.platform }}\n"
+        "          name: optibench-${{ matrix.platform }}\n"
         "          path: apps/desktop/src-tauri/target/release/bundle/\n"
         "```\n"
         "\n"

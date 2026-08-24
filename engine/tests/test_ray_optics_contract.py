@@ -14,8 +14,8 @@ from typing import Any
 
 import pytest
 
-from lensfit.lab.workbench import SceneGraph
-from lensfit.lab.workbench.ray_optics_sidecar import (
+from optibench.lab.workbench import SceneGraph
+from optibench.lab.workbench.ray_optics_sidecar import (
     RayOpticsNotAvailableError,
     RayOpticsOutputError,
     RayOpticsRuntimeError,

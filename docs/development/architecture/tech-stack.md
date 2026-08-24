@@ -94,7 +94,7 @@
 ## 3. 项目目录结构
 
 ```
-lensfit/
+optibench/
 ├── apps/
 │   ├── desktop/                    # Tauri 桌面应用
 │   │   ├── src/
@@ -120,7 +120,7 @@ lensfit/
 │   ├── pyproject.toml
 │   ├── alembic.ini
 │   ├── build_sidecar.py            # PyInstaller 打包脚本
-│   ├── lensfit/
+│   ├── optibench/
 │   │   ├── __init__.py
 │   │   ├── __main__.py             # 命令行入口
 │   │   ├── core/                   # 基础光学计算
@@ -222,7 +222,7 @@ lensfit/
 
 ```toml
 [project]
-name = "lensfit-engine"
+name = "optibench-engine"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
@@ -265,7 +265,7 @@ dependencies = [
 
 ```json
 {
-  "name": "lensfit-desktop",
+  "name": "optibench-desktop",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -352,7 +352,7 @@ impl EngineSupervisor {
         let endpoint = format!("http://127.0.0.1:{}", port);
         
         // 2. 启动 Python sidecar，传入端口参数
-        let child = tauri::api::process::Command::new_sidecar("lensfit-engine")
+        let child = tauri::api::process::Command::new_sidecar("optibench-engine")
             .map_err(|e| format!("Sidecar not found: {}", e))?
             .args(&["--port", &port.to_string(), "--mode", "desktop"])
             .spawn()
@@ -652,8 +652,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-org/lensfit.git
-cd lensfit
+git clone https://github.com/your-org/optibench.git
+cd optibench
 
 # 初始化Python引擎
 cd engine
@@ -663,10 +663,10 @@ pip install -e ".[dev]"
 
 # 初始化数据库
 alembic upgrade head
-python -m lensfit.db.seed  # 导入种子数据
+python -m optibench.db.seed  # 导入种子数据
 
 # 启动引擎API
-python -m lensfit.api.server
+python -m optibench.api.server
 
 # --- 新开终端 ---
 # 初始化前端
@@ -716,7 +716,7 @@ jobs:
         run: |
           cd engine
           pip install pyinstaller
-          pyinstaller --onefile --name lensfit-engine lensfit/api/server.py
+          pyinstaller --onefile --name optibench-engine optibench/api/server.py
       
       - name: Build Desktop
         run: |
@@ -727,7 +727,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: lensfit-${{ matrix.platform }}
+          name: optibench-${{ matrix.platform }}
           path: apps/desktop/src-tauri/target/release/bundle/
 ```
 
@@ -738,9 +738,9 @@ jobs:
 
 | 平台 | 产物 | 预估大小 |
 |------|------|:-------:|
-| Windows | `LensFit_0.1.0_x64_en-US.msi` | ~25MB |
-| macOS | `LensFit_0.1.0_x64.dmg` | ~20MB |
-| Linux | `lensfit_0.1.0_amd64.AppImage` | ~22MB |
+| Windows | `OptiBench_0.1.0_x64_en-US.msi` | ~25MB |
+| macOS | `OptiBench_0.1.0_x64.dmg` | ~20MB |
+| Linux | `optibench_0.1.0_amd64.AppImage` | ~22MB |
 
 ---
 

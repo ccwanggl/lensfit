@@ -2,7 +2,7 @@
 
 This document maps every planned experiment to the corresponding vault notes and learning chapters. The ordering is **dependency-driven**, not value-driven: each experiment only assumes concepts and experiments that appear before it. Every entry includes the exact physical model and accuracy notes so that implementations can be verified against first principles.
 
-> Last synced with `engine/lensfit/lab/`.
+> Last synced with `engine/optibench/lab/`.
 >
 > 注：本文档中的 `10-concepts/`、`20-formulas/`、`50-learning/` 等链接路径是原 `OpticKnowledgeSpace/` vault 的相对路径。该 vault 已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代；这些路径目前仍作为 lab registry 中 `linked_concepts` 的标识符使用，待后续重新映射到 `modules/` 结构。
 
@@ -88,7 +88,7 @@ This document maps every planned experiment to the corresponding vault notes and
 - **Linked chapters**: `50-learning/02-geometric-optics`, `50-learning/03-lens-parameters`
 - **Physical model**:
   - `AFOV = 2 arctan(sensor_size / (2 f))`.
-  - Sensor formats selectable from `lensfit.core.sensor` table.
+  - Sensor formats selectable from `optibench.core.sensor` table.
 - **Accuracy notes**:
   - Diagonal, horizontal, and vertical FOV computed separately.
   - Assumes a pinhole/thin-lens model; real lens distortion changes edges.
@@ -348,6 +348,6 @@ Phase 7 (done)
 
 1. Pick the smallest dependency group it belongs to.
 2. Write the physical model and accuracy notes before writing code.
-3. Add the experiment module under `engine/lensfit/lab/experiments/`.
+3. Add the experiment module under `engine/optibench/lab/experiments/`.
 4. Add the entry to this catalog (the former `scripts/sync_experiment_links.py` was removed in the v4.0 vault restructure).
 5. Add a focused test in `engine/tests/test_lab.py` verifying both the numeric result and SVG output.

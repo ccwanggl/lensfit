@@ -41,7 +41,7 @@ jobs:
 
       - name: Run lint
         working-directory: engine
-        run: ruff check lensfit/
+        run: ruff check optibench/
 
   test-frontend:
     runs-on: ubuntu-latest

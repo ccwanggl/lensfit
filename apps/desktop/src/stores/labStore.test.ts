@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { useLabStore } from "./labStore";
 
-const STORAGE_KEY = "lensfit-lab-store";
+const STORAGE_KEY = "optibench-lab-store";
 
 beforeEach(() => {
   localStorage.clear();

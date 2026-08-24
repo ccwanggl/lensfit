@@ -13,7 +13,7 @@ interface StoredProgress {
   domains: Record<Domain, DomainProgress>;
 }
 
-const STORAGE_KEY = "lensfit-learning-progress";
+const STORAGE_KEY = "optibench-learning-progress";
 const CURRENT_VERSION = 1;
 
 function getInitialDomainProgress(): DomainProgress {
@@ -26,7 +26,9 @@ function getInitialDomainProgress(): DomainProgress {
 
 function readStored(): StoredProgress {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    // Fallback to the legacy LensFit-era key so existing progress is kept.
+    const raw =
+      localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem("lensfit-learning-progress");
     if (!raw) return { version: CURRENT_VERSION, domains: { photography: getInitialDomainProgress(), microscope: getInitialDomainProgress(), infrared: getInitialDomainProgress(), industrial: getInitialDomainProgress() } };
     const parsed = JSON.parse(raw) as StoredProgress;
     if (!parsed.domains) throw new Error("Invalid progress");

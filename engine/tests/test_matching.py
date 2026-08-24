@@ -4,12 +4,12 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from lensfit.db.models import Base
-from lensfit.domains.base import DeviceCombo, Requirements
-from lensfit.domains.industrial import IndustrialVisionModule
-from lensfit.domains.photography import PhotographyModule
-from lensfit.matching.engine import MatchingEngine
-from lensfit.matching.scoring import ScoringEngine
+from optibench.db.models import Base
+from optibench.domains.base import DeviceCombo, Requirements
+from optibench.domains.industrial import IndustrialVisionModule
+from optibench.domains.photography import PhotographyModule
+from optibench.matching.engine import MatchingEngine
+from optibench.matching.scoring import ScoringEngine
 
 
 class TestMatchingEngine:

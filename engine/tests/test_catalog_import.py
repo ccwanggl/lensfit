@@ -9,8 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from lensfit.api.server import app
-from lensfit.db.models import Base
+from optibench.api.server import app
+from optibench.db.models import Base
 
 TEST_API_KEY = "test-api-key"
 
@@ -28,7 +28,7 @@ def client():
     Base.metadata.create_all(engine)
     session_factory = sessionmaker(bind=engine)
 
-    import lensfit.api.server as server_module
+    import optibench.api.server as server_module
 
     server_module._session_maker = session_factory
     server_module._API_KEY = TEST_API_KEY

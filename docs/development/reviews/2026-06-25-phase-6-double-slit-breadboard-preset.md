@@ -17,10 +17,10 @@
 修改文件：
 
 ```text
-engine/lensfit/lab/workbench/scene.py
-engine/lensfit/lab/workbench/equipment.py
-engine/lensfit/lab/workbench/native_interpreter.py
-engine/lensfit/lab/workbench/solver.py
+engine/optibench/lab/workbench/scene.py
+engine/optibench/lab/workbench/equipment.py
+engine/optibench/lab/workbench/native_interpreter.py
+engine/optibench/lab/workbench/solver.py
 engine/tests/test_workbench_scene.py
 engine/tests/test_api_workbench.py
 apps/desktop/src/lab/workbenchTypes.ts
@@ -124,9 +124,9 @@ docs/development/reviews/2026-06-25-phase-6-double-slit-breadboard-preset.md
 
 - `docs/development/plans/active/2026-06-optical-breadboard-development-plan.md`
 - `docs/development/decisions/ADR-002-optical-breadboard-strategy.md`
-- `engine/lensfit/lab/workbench/equipment.py`
-- `engine/lensfit/lab/workbench/native_interpreter.py`
-- `engine/lensfit/lab/workbench/solver.py`
+- `engine/optibench/lab/workbench/equipment.py`
+- `engine/optibench/lab/workbench/native_interpreter.py`
+- `engine/optibench/lab/workbench/solver.py`
 - `engine/tests/test_api_workbench.py`
 - `apps/desktop/src/lab/workbenchTypes.ts`
 - `apps/desktop/src/lab/LearningHub.tsx`

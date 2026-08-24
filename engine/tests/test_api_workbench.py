@@ -5,9 +5,9 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from lensfit.api import server as server_module
-from lensfit.api.server import app
-from lensfit.lab import get_registry
+from optibench.api import server as server_module
+from optibench.api.server import app
+from optibench.lab import get_registry
 
 
 @pytest.fixture

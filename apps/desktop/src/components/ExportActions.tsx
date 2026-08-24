@@ -61,7 +61,7 @@ export default function ExportActions({
         );
         const fmt = FORMATS.find((f) => f.key === format);
         const date = new Date().toISOString().slice(0, 10);
-        downloadBlob(blob, `lensfit-report-${date}.${fmt?.ext ?? format}`);
+        downloadBlob(blob, `optibench-report-${date}.${fmt?.ext ?? format}`);
         toast("success", "导出成功", `已下载 ${fmt?.label ?? format}`);
       } catch (e) {
         const message = e instanceof Error ? e.message : "导出失败";

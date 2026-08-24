@@ -1,10 +1,10 @@
-# Architecture: LensFit Self-Study Optics Laboratory
+# Architecture: OptiBench Self-Study Optics Laboratory
 
-> **状态注记（2026-08 更新）**：本文多次引用的 `OpticKnowledgeSpace/` Obsidian vault（含 `10-concepts/`、`90-maps/` 等路径）已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代。下文中 vault 相关路径描述的是重构前的设计，概念链接机制待重新映射到 `modules/` 结构；配套的 `scripts/sync_experiment_links.py` 等 vault 维护脚本已随重构删除，下文第 3、6.1、6.2 节中的同步流程描述同样失效；`engine/lensfit/lab/` 与 `apps/desktop/src/lab/` 的架构描述仍然有效。
+> **状态注记（2026-08 更新）**：本文多次引用的 `OpticKnowledgeSpace/` Obsidian vault（含 `10-concepts/`、`90-maps/` 等路径）已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代。下文中 vault 相关路径描述的是重构前的设计，概念链接机制待重新映射到 `modules/` 结构；配套的 `scripts/sync_experiment_links.py` 等 vault 维护脚本已随重构删除，下文第 3、6.1、6.2 节中的同步流程描述同样失效；`engine/optibench/lab/` 与 `apps/desktop/src/lab/` 的架构描述仍然有效。
 
 ## 1. Vision
 
-LensFit evolves from a **lens/detector matching assistant** into a **self-study optics laboratory**:
+OptiBench evolves from a **lens/detector matching assistant** into a **self-study optics laboratory**:
 
 > Every physical concept in the `OpticKnowledgeSpace` vault has a runnable, visual experiment. The learner reads the concept note, opens the linked experiment, changes parameters, and immediately sees the physical consequence.
 
@@ -16,7 +16,7 @@ The existing matching engine, catalog, and project features remain, but they bec
 |---|---|
 | **Vault-driven** | The Markdown vault is the source of truth for *what* concepts exist. Code provides experiments *for* those concepts. |
 | **Progressive disclosure** | An experiment starts as sliders + live SVG. Advanced learners can expand formulas, raw data, and warnings. |
-| **Reusable physics core** | Experiments build on `lensfit.core.*` and `lensfit.visualization.*`, not one-off math. |
+| **Reusable physics core** | Experiments build on `optibench.core.*` and `optibench.visualization.*`, not one-off math. |
 | **Stateless runtime** | An experiment run is a pure function `params → (data, svg, warnings)`. No DB required for the MVP. |
 | **Extensible registry** | Adding a new experiment means adding one Python module and one front-end card; no router or store changes. |
 | **Git-clean** | Generated plugin data, workspace state, and experiment run history stay out of version control. |
@@ -24,7 +24,7 @@ The existing matching engine, catalog, and project features remain, but they bec
 ## 3. Concept-to-Experiment Mapping
 
 ```text
-OpticKnowledgeSpace/                engine/lensfit/lab/                apps/desktop/src/lab/
+OpticKnowledgeSpace/                engine/optibench/lab/                apps/desktop/src/lab/
   10-concepts/focal-length.md  <--  experiments/thin_lens.py  <---->  ExperimentCard / Runner
     ## 关联实验
     - [[90-maps/Optics Lab#thin-lens|薄透镜成像实验]]
@@ -47,7 +47,7 @@ A sync script (`scripts/sync_experiment_links.py`) reads the registry and inject
 ### 4.1 Package Layout
 
 ```text
-engine/lensfit/lab/
+engine/optibench/lab/
   __init__.py           # public exports
   base.py               # OpticsExperiment, Parameter, ExperimentResult
   registry.py           # ExperimentRegistry with dynamic discovery
@@ -93,7 +93,7 @@ class OpticsExperiment(ABC):
 
 ### 4.3 Registry
 
-`ExperimentRegistry` discovers experiments by scanning `lensfit/lab/experiments/` for concrete subclasses of `OpticsExperiment`. This avoids the brittle hardcoded import list and broken imports.
+`ExperimentRegistry` discovers experiments by scanning `optibench/lab/experiments/` for concrete subclasses of `OpticsExperiment`. This avoids the brittle hardcoded import list and broken imports.
 
 ```python
 registry = ExperimentRegistry()
@@ -106,15 +106,15 @@ The registry is a singleton exposed via `get_registry()`.
 
 Experiments are thin orchestration layers:
 
-- Geometry → `lensfit.core.thin_lens.ThinLensCalculator`
-- Coverage → `lensfit.visualization.coverage.CoveragePlotData`
-- MTF / Nyquist → `lensfit.visualization.mtf.MtfPlotData`
-- DoF → `lensfit.visualization.coc.CocPlotData`
-- SVG rendering → new `lensfit.lab.renderer` helpers (to avoid matplotlib in the engine sidecar)
+- Geometry → `optibench.core.thin_lens.ThinLensCalculator`
+- Coverage → `optibench.visualization.coverage.CoveragePlotData`
+- MTF / Nyquist → `optibench.visualization.mtf.MtfPlotData`
+- DoF → `optibench.visualization.coc.CocPlotData`
+- SVG rendering → new `optibench.lab.renderer` helpers (to avoid matplotlib in the engine sidecar)
 
 ### 4.5 API Router
 
-New router: `engine/lensfit/api/routers/lab.py`
+New router: `engine/optibench/api/routers/lab.py`
 
 ```text
 GET  /api/v1/lab/experiments              -> list experiment metadata
@@ -123,7 +123,7 @@ POST /api/v1/lab/experiments/{id}/run     -> {data, svg, warnings, hints}
 POST /api/v1/lab/experiments/{id}/sweep   -> param sweep (future)
 ```
 
-Registered in `lensfit/api/server.py` with `app.include_router(lab.router)`.
+Registered in `optibench/api/server.py` with `app.include_router(lab.router)`.
 
 ### 4.6 Testing
 
@@ -213,7 +213,7 @@ For performance, the runner debounces parameter changes (e.g., 150 ms) before ca
 
 ## 7. Extensibility: Adding a New Experiment
 
-1. **Backend**: create `engine/lensfit/lab/experiments/<my_experiment>.py` subclassing `OpticsExperiment`.
+1. **Backend**: create `engine/optibench/lab/experiments/<my_experiment>.py` subclassing `OpticsExperiment`.
 2. **Test**: add a test in `engine/tests/test_lab.py`.
 3. **Frontend**: no code change required if it uses standard parameter types.
 4. **Vault links**: run `python scripts/sync_experiment_links.py`.
@@ -222,7 +222,7 @@ For performance, the runner debounces parameter changes (e.g., 150 ms) before ca
 ## 8. Roadmap
 
 ### Phase 1 — Lab foundation (this task)
-- [ ] Refactor `lensfit/lab/` to dynamic registry and reusable renderer.
+- [ ] Refactor `optibench/lab/` to dynamic registry and reusable renderer.
 - [ ] Fix broken `sensor_coverage` import.
 - [ ] Implement four MVP experiments: thin lens, diffraction, color mixing, sensor coverage.
 - [ ] Add `lab.py` API router and register it in `server.py`.

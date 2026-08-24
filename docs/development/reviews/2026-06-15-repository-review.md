@@ -1,4 +1,4 @@
-# LensFit 仓库审查报告
+# OptiBench 仓库审查报告
 
 > 审查日期：2026-06-15  
 > P1 修复复核日期：2026-06-15  
@@ -8,7 +8,7 @@
 
 ## 1. 结论
 
-LensFit 已经具备完整工程原型的基本形态，不是停留在界面或算法演示阶段。四个应用领域的匹配流程、器件目录、项目快照、报告导出、知识推理、可视化和 Tauri sidecar 均有实际实现，后端测试、前端构建和 Rust 静态检查也能通过。
+OptiBench 已经具备完整工程原型的基本形态，不是停留在界面或算法演示阶段。四个应用领域的匹配流程、器件目录、项目快照、报告导出、知识推理、可视化和 Tauri sidecar 均有实际实现，后端测试、前端构建和 Rust 静态检查也能通过。
 
 当前版本适合继续做内部试用和领域验证，但不建议直接作为稳定桌面产品发布。主要风险集中在三处：
 
@@ -52,8 +52,8 @@ LensFit 已经具备完整工程原型的基本形态，不是停留在界面或
 
 - 当前分支：`master`
 - 相对 `origin/master`：领先 16 个提交
-- 已修改：`engine/lensfit/api/catalog_router.py`
-- 已修改：`engine/lensfit/api/server.py`
+- 已修改：`engine/optibench/api/catalog_router.py`
+- 已修改：`engine/optibench/api/server.py`
 - 未跟踪：`log_config.json`
 
 这些改动被视为当前开发状态的一部分，本次审查未覆盖或回退它们。
@@ -64,10 +64,10 @@ LensFit 已经具备完整工程原型的基本形态，不是停留在界面或
 
 | 文件 | 行数 |
 |---|---:|
-| `engine/lensfit/matching/engine.py` | 1085 |
-| `engine/lensfit/api/server.py` | 873 |
-| `engine/lensfit/knowledge/presets.py` | 639 |
-| `engine/lensfit/api/catalog_router.py` | 574 |
+| `engine/optibench/matching/engine.py` | 1085 |
+| `engine/optibench/api/server.py` | 873 |
+| `engine/optibench/knowledge/presets.py` | 639 |
+| `engine/optibench/api/catalog_router.py` | 574 |
 
 前端较大的模块：
 
@@ -91,7 +91,7 @@ LensFit 已经具备完整工程原型的基本形态，不是停留在界面或
 |---|---|---|
 | 后端测试 | `python -m pytest -q` | 47 项通过，1 条依赖弃用警告 |
 | 后端静态检查 | `python -m ruff check .` | 通过 |
-| 后端覆盖率 | `pytest --cov=lensfit` | 总覆盖率约 70% |
+| 后端覆盖率 | `pytest --cov=optibench` | 总覆盖率约 70% |
 | 前端构建 | `npm run build` | TypeScript 和 Vite 构建通过 |
 | Rust 检查 | `cargo check` | 通过 |
 | Alembic | `alembic heads` | 唯一 head：`0ac6c641b5d7` |
@@ -116,11 +116,11 @@ LensFit 已经具备完整工程原型的基本形态，不是停留在界面或
 
 ### 4.1 P1：打包产物缺少最新迁移
 
-> **复核批注：未关闭。** 修复代码已改为通过 PyInstaller 的 `--collect-submodules lensfit.db.migrations` 收集全部迁移模块。重新构建后，归档中可以找到 `0ac6c641b5d7_add_data_source_and_manufacturer_indexes`，说明迁移 Python 模块已进入 sidecar。  
-> 真实二进制冒烟测试仍然失败。sidecar 在空目录启动时，Alembic 无法找到解包目录中的 `lensfit/db/migrations/env.py`，应用启动中止：
+> **复核批注：未关闭。** 修复代码已改为通过 PyInstaller 的 `--collect-submodules optibench.db.migrations` 收集全部迁移模块。重新构建后，归档中可以找到 `0ac6c641b5d7_add_data_source_and_manufacturer_indexes`，说明迁移 Python 模块已进入 sidecar。  
+> 真实二进制冒烟测试仍然失败。sidecar 在空目录启动时，Alembic 无法找到解包目录中的 `optibench/db/migrations/env.py`，应用启动中止：
 >
 > ```text
-> ImportError: Can't find Python file ...\lensfit\db\migrations\env.py
+> ImportError: Can't find Python file ...\optibench\db\migrations\env.py
 > ```
 >
 > `--collect-submodules` 只处理可导入模块，Alembic 还需要以磁盘文件形式读取 `env.py` 和迁移脚本目录。应把整个迁移目录作为 PyInstaller data 收集，并继续保留真实 sidecar 空库启动测试。只检查归档中是否存在 revision 模块不足以关闭此项。
@@ -128,10 +128,10 @@ LensFit 已经具备完整工程原型的基本形态，不是停留在界面或
 `engine/build_sidecar.py` 通过手工清单声明数据库迁移：
 
 ```python
-"lensfit.db.migrations.versions.001_init",
-"lensfit.db.migrations.versions.002_add_match_snapshot",
-"lensfit.db.migrations.versions.c53e30ed595b_add_catalog_indexes",
-"lensfit.db.migrations.versions.003_merge_heads",
+"optibench.db.migrations.versions.001_init",
+"optibench.db.migrations.versions.002_add_match_snapshot",
+"optibench.db.migrations.versions.c53e30ed595b_add_catalog_indexes",
+"optibench.db.migrations.versions.003_merge_heads",
 ```
 
 清单没有包含当前 Alembic head：
@@ -150,7 +150,7 @@ LensFit 已经具备完整工程原型的基本形态，不是停留在界面或
 
 建议：
 
-- 不再逐个维护迁移模块清单，改为收集完整的 `lensfit.db.migrations` 包。
+- 不再逐个维护迁移模块清单，改为收集完整的 `optibench.db.migrations` 包。
 - CI 构建 sidecar 后，使用临时目录启动真实二进制。
 - 验证空数据库能够升级到当前 head。
 - 再用当前版本数据库启动一次，确认 revision 可识别。
@@ -365,7 +365,7 @@ class ApiError extends Error {
 
 ### 4.11 P2：桌面安全配置仍是开发态
 
-Tauri 配置中 CSP 为 `null`，同时启用了 shell 插件执行权限。当前 capability 将执行范围限制为 `lensfit-engine` sidecar，这是合理的，但生产版本仍应设置 CSP。
+Tauri 配置中 CSP 为 `null`，同时启用了 shell 插件执行权限。当前 capability 将执行范围限制为 `optibench-engine` sidecar，这是合理的，但生产版本仍应设置 CSP。
 
 建议：
 
@@ -658,6 +658,6 @@ SQLite + Alembic
 
 ## 10. 审查结语
 
-LensFit 当前最大的优势是产品链路已经连通：用户能够输入需求、运行匹配、理解结果、对比候选、保存方案并导出报告。下一阶段不需要继续扩大功能面，应把已经存在的链路做稳，并证明结果可信。
+OptiBench 当前最大的优势是产品链路已经连通：用户能够输入需求、运行匹配、理解结果、对比候选、保存方案并导出报告。下一阶段不需要继续扩大功能面，应把已经存在的链路做稳，并证明结果可信。
 
 建议以打包产物可重复、数据库可升级、任务可控、结果可回归作为下一个版本的完成标准。完成这些工作后，项目才适合进入更广泛的试用和真实工程场景验证。

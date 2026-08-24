@@ -1,10 +1,10 @@
-# LensFit 研发文档
+# OptiBench 研发文档
 
-本目录记录 LensFit 的产品规划、现行架构、工程决策、开发指南、审查结果和发布过程。通用光学知识与学习资料位于仓库顶层的 `modules/` 目录（按 10-foundations ~ 50-optical-design 五个模块组织）。
+本目录记录 OptiBench 的产品规划、现行架构、工程决策、开发指南、审查结果和发布过程。通用光学知识与学习资料位于仓库顶层的 `modules/` 目录（按 10-foundations ~ 50-optical-design 五个模块组织）。
 
 ## 文档边界
 
-- `docs/development/` 描述 LensFit 当前如何设计、开发、测试和发布。
+- `docs/development/` 描述 OptiBench 当前如何设计、开发、测试和发布。
 - `modules/` 保存不依赖当前代码实现的光学知识、公式、教程和领域资料。
 - 当前实现与目标设计必须分开记录，旧计划应归档，不能继续作为现状说明。
 

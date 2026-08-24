@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- **项目改名**：LensFit → OptiBench（光学工程工作台）
+  - Python 包 `lensfit` → `optibench`，PyPI 包名 `lensfit-engine` → `optibench-engine`
+  - 数据库文件 `lensfit.db` → `optibench.db`（启动时自动迁移旧库文件）
+  - Tauri 标识符 `com.lensfit.app` → `com.optibench.app`，sidecar 二进制 `lensfit-engine` → `optibench-engine`
+  - API key 环境变量 `LENSFIT_API_KEY` → `OPTIBENCH_API_KEY`
+  - 前端 localStorage 键迁移（主题、学习进度、Lab 草稿自动保留）
+
 ## [1.1.0] - 2026-06-02
 
 ### Added

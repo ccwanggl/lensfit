@@ -191,7 +191,7 @@ class DomainModule(ABC):
         """获取各评分维度的收益标志"""
         pass
     
-    # 注意：当前代码中没有 get_visual_data_generators；可视化由 engine/lensfit/visualization/ 统一处理。
+    # 注意：当前代码中没有 get_visual_data_generators；可视化由 engine/optibench/visualization/ 统一处理。
 ```
 
 #### 注册与使用
@@ -448,7 +448,7 @@ def generate_coverage_data(req: CoverageRequest) -> CoverageData:
 #   POST /api/v1/projects/{id}/report 项目报告导出
 ```
 
-**路由组织**：`lensfit/api/server.py` 仅负责应用组装与生命周期，各业务域已拆分为 `lensfit/api/routers/` 下的独立 FastAPI 路由模块：
+**路由组织**：`optibench/api/server.py` 仅负责应用组装与生命周期，各业务域已拆分为 `optibench/api/routers/` 下的独立 FastAPI 路由模块：
 
 | 路由模块 | 前缀 | 说明 |
 |---|---|---|
@@ -463,7 +463,7 @@ def generate_coverage_data(req: CoverageRequest) -> CoverageData:
 ### 4.3 同步调用示例（SDK层包装）
 
 ```python
-from lensfit import MatchingEngine, Project
+from optibench import MatchingEngine, Project
 
 proj = Project.create(name="PCB检测项目", domain="industrial")
 
@@ -515,7 +515,7 @@ struct EngineSupervisor {
 impl EngineSupervisor {
     fn start() -> Result<Self, String> {
         let port = pick_unused_port()?;
-        let child = Command::new_sidecar("lensfit-engine")
+        let child = Command::new_sidecar("optibench-engine")
             .args(&["--port", &port.to_string()])
             .spawn()?;
         wait_for_healthy(format!("http://127.0.0.1:{}/health", port), timeout=10)?;

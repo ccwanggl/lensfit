@@ -2,7 +2,7 @@
 
 import pytest
 
-from lensfit.core.sensor import (
+from optibench.core.sensor import (
     SENSOR_FORMAT_TABLE,
     sensor_diag_from_format,
     sensor_size_from_format,

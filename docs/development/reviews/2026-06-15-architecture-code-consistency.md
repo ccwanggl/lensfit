@@ -1,4 +1,4 @@
-# LensFit 架构文档与代码实现一致性检查
+# OptiBench 架构文档与代码实现一致性检查
 
 > 检查日期：2026-06-15  
 > 检查范围：`docs/development/architecture/` 下的四份文档与 `engine/`、`apps/desktop/` 当前实现  
@@ -20,7 +20,7 @@
 1. **文档过度描述尚未实现的模块**：例如独立的 ProjectMgr / ConfigMgr / AuditLogger、适配器目录、光谱响应表、公式注册表、异步 PDF 导出等。
 2. **实现细节与文档描述有偏差**：例如缓存表未使用、sidecar supervisor 没有自动重启、部分 API 端点未实现等。
 
-> **本次修复后**：四份架构文档已更新，未实现内容已明确标注；`python-constraint`、`asteval`、`matplotlib` 已从依赖中移除；`server.py` 已拆分为 `lensfit/api/routers/` 下的独立路由模块。
+> **本次修复后**：四份架构文档已更新，未实现内容已明确标注；`python-constraint`、`asteval`、`matplotlib` 已从依赖中移除；`server.py` 已拆分为 `optibench/api/routers/` 下的独立路由模块。
 
 当前文档适合作为“目标架构”阅读，但若作为新成员的 onboarding 材料，会误导其对已实现能力的判断。建议把未实现部分明确标注为 `TODO / 规划中`，并修正已变更的实现细节。
 
@@ -32,7 +32,7 @@
 
 | 文档描述 | 代码实际 | 一致性 | 说明 |
 |---|---|:---:|:---|
-| 应用层包含 ProjectMgr / ConfigMgr / TaskQueue / AuditLogger / ReportGen / ImportPipe / ExportSvc / Cache Layer | 项目管理、匹配、可视化、导出等能力已拆分为 `lensfit/api/routers/` 下独立路由；TaskQueue 仍在 `MatchingEngine` 内部；无独立 ConfigMgr / AuditLogger / Cache Layer | ⚠️ 部分 | `server.py` 仅负责应用组装与生命周期；独立业务模块仍缺失 |
+| 应用层包含 ProjectMgr / ConfigMgr / TaskQueue / AuditLogger / ReportGen / ImportPipe / ExportSvc / Cache Layer | 项目管理、匹配、可视化、导出等能力已拆分为 `optibench/api/routers/` 下独立路由；TaskQueue 仍在 `MatchingEngine` 内部；无独立 ConfigMgr / AuditLogger / Cache Layer | ⚠️ 部分 | `server.py` 仅负责应用组装与生命周期；独立业务模块仍缺失 |
 | MatchingEngine 四级流水线：IndexPreFilter / QuickHardFilter / DomainHardFilter / FullScoring / ResultRanker | `engine.py` 中对应 `_match_one_pass` 调用 `index_pre_filter`、`quick_hard_filter`、`apply_domain_constraints`、`score_candidates`、`rank_results` | ✅ 基本一致 | 领域约束阶段的方法名是 `apply_domain_constraints`，文档写为 `DomainHardFilter` |
 | Stage 1 在数据库查询阶段用复合索引过滤，候选从 10M → <100K | `index_pre_filter` 目前加载全部镜头/探测器后在 Python 中过滤；`CatalogQuery.query_lenses` 已支持参数化查询但未被调用 | ❌ 不一致 | 性能潜力未发挥，大数据量时会是瓶颈 |
 | `DomainModule` 接口含 `get_parameters`、`get_hard_constraints`、`get_scoring_dimensions`、`calculate_derived`、`get_visual_data_generators` | 实际接口无 `get_visual_data_generators`；可视化由 `visualization/` 包直接根据 lens/det 尺寸计算 | ❌ 不一致 | 新增领域不需要提供可视化生成器 |
@@ -80,9 +80,9 @@
 | 含 `python-constraint`、`asteval` | 已从 `pyproject.toml` 移除 | ✅ 已修复 | 未在代码中使用 |
 | 含 `matplotlib` | 已从 `pyproject.toml` 移除 | ✅ 已修复 | PDF 导出使用 `reportlab` |
 | 前端依赖清单含 `@tanstack/react-query`、`recharts`、`fabric` | 实际 `package.json` 中均存在 | ✅ 一致 | 实际还多了 `lucide-react` |
-| 项目目录结构含 `engine/lensfit/core/dof.py`、`units.py` | 不存在；`depth_of_field` 在 `thin_lens.py`，单位换算未单独成模块 | ❌ 不一致 | — |
-| 含 `engine/lensfit/matching/constraints.py`、`solver.py` | 不存在；约束在 `domains/base.py`，排序在 `matching/scoring.py` | ❌ 不一致 | — |
-| 含 `engine/lensfit/visualization/report.py` | 不存在；报告生成在 `export/pdf_exporter.py` | ❌ 不一致 | — |
+| 项目目录结构含 `engine/optibench/core/dof.py`、`units.py` | 不存在；`depth_of_field` 在 `thin_lens.py`，单位换算未单独成模块 | ❌ 不一致 | — |
+| 含 `engine/optibench/matching/constraints.py`、`solver.py` | 不存在；约束在 `domains/base.py`，排序在 `matching/scoring.py` | ❌ 不一致 | — |
+| 含 `engine/optibench/visualization/report.py` | 不存在；报告生成在 `export/pdf_exporter.py` | ❌ 不一致 | — |
 | 含 `database/schema.sql` | 不存在；schema 由 Alembic 迁移管理 | ❌ 不一致 | — |
 | 描述 `.github/workflows/release.yml` | 仓库只有 `ci.yml` | ❌ 不一致 | 发布流水线未建立 |
 | 描述 sidecar 启动参数 `--port` 和 `--mode desktop` | 实际一致 | ✅ 一致 | — |
@@ -120,7 +120,7 @@
 - 在 `tech-stack.md` 中：
   - 更新依赖清单，移除 `diskcache`。
   - 把 `python-constraint`、`asteval`、`matplotlib` 标注为 **“已引入但未使用，待清理或启用”**。
-  - 修正目录结构图，移除不存在文件；补充 `lensfit/api/routers/`、`lensfit/export/`、`lensfit/knowledge/` 等实际目录。
+  - 修正目录结构图，移除不存在文件；补充 `optibench/api/routers/`、`optibench/export/`、`optibench/knowledge/` 等实际目录。
   - 说明 `release.yml` 尚未建立。
 
 ### 4.2 代码补齐（按优先级）
@@ -139,12 +139,12 @@
 
 ## 5. 附录：检查用到的关键代码位置
 
-- 匹配引擎：`engine/lensfit/matching/engine.py`
-- 评分与 TOPSIS：`engine/lensfit/matching/scoring.py`
-- 领域接口：`engine/lensfit/domains/base.py`
-- 数据模型：`engine/lensfit/db/models.py`
-- 目录查询：`engine/lensfit/db/catalog.py`
-- API 路由：`engine/lensfit/api/server.py`、`engine/lensfit/api/routers/`
-- 可视化：`engine/lensfit/visualization/coverage.py`
+- 匹配引擎：`engine/optibench/matching/engine.py`
+- 评分与 TOPSIS：`engine/optibench/matching/scoring.py`
+- 领域接口：`engine/optibench/domains/base.py`
+- 数据模型：`engine/optibench/db/models.py`
+- 目录查询：`engine/optibench/db/catalog.py`
+- API 路由：`engine/optibench/api/server.py`、`engine/optibench/api/routers/`
+- 可视化：`engine/optibench/visualization/coverage.py`
 - Sidecar 管理：`apps/desktop/src-tauri/src/main.rs`
 - 依赖清单：`engine/pyproject.toml`、`apps/desktop/package.json`

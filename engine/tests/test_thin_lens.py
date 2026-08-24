@@ -2,8 +2,8 @@
 
 import pytest
 
-from lensfit.core.thin_lens import ThinLensCalculator
-from lensfit.core.types import OpticalParams
+from optibench.core.thin_lens import ThinLensCalculator
+from optibench.core.types import OpticalParams
 
 
 class TestThinLensCalculator:

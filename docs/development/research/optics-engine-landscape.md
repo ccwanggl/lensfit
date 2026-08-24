@@ -2,15 +2,15 @@
 
 > 调研日期：2026-06-25  
 > 范围：几何光学追迹引擎与波动光学求解方案  
-> 目标：为 LensFit 光学面包板阶段 4 及后续扩展提供决策依据
+> 目标：为 OptiBench 光学面包板阶段 4 及后续扩展提供决策依据
 
 ## 1. 选型结论
 
-LensFit 采用**混合架构**：
+OptiBench 采用**混合架构**：
 
 - **几何光学 / 面包板布局**：复用开源 **[ray-optics](https://github.com/ricktu288/ray-optics)**（Apache-2.0），通过其 Node 集成工具以 sidecar 形式接入。
-- **波动 / 干涉 / 衍射**：保留 LensFit 原生 Python 求解器，避免把波动现象硬塞进几何追迹引擎。
-- **域模型隔离**：`SceneGraph v1` 是 LensFit 自有语义；`ray-optics` JSON 仅在 adapter 内部使用，不泄漏到前端载荷或持久化场景。
+- **波动 / 干涉 / 衍射**：保留 OptiBench 原生 Python 求解器，避免把波动现象硬塞进几何追迹引擎。
+- **域模型隔离**：`SceneGraph v1` 是 OptiBench 自有语义；`ray-optics` JSON 仅在 adapter 内部使用，不泄漏到前端载荷或持久化场景。
 
 ## 2. 候选方案对比
 
@@ -39,7 +39,7 @@ LensFit 采用**混合架构**：
 ## 4. 集成边界
 
 ```text
-LensFit SceneGraph v1
+OptiBench SceneGraph v1
         |
         v
   SolverDispatcher
@@ -55,7 +55,7 @@ node runner.js     Python experiments
 ```
 
 - 禁止反向依赖：`ray-optics` 的 JSON 类型名（`SingleRay`、`Detector`、`CropBox`、`SphericalLens` 等）不得出现在 `SceneGraph v1` 中。
-- Adapter 负责把 LensFit 语义组件（`laser-monochrome`、`thin-lens`、`screen` 等）翻译成 ray-optics 场景 JSON。
+- Adapter 负责把 OptiBench 语义组件（`laser-monochrome`、`thin-lens`、`screen` 等）翻译成 ray-optics 场景 JSON。
 - 若未来替换几何引擎，只需重写 adapter；已保存的 `SceneGraph` 仍然有效。
 
 ## 5. 风险与缓解
@@ -69,7 +69,7 @@ node runner.js     Python experiments
 
 ## 6. 备选方案简述
 
-- **Python `rayoptics` 包**（https://github.com/mjhoptics/rayoptics）：序列光学设计，API 面向镜头设计而非交互式面包板；与 LensFit 的场景化学习路径不匹配。
+- **Python `rayoptics` 包**（https://github.com/mjhoptics/rayoptics）：序列光学设计，API 面向镜头设计而非交互式面包板；与 OptiBench 的场景化学习路径不匹配。
 - **自研 Python 追迹器**：可控但开发周期长，需实现透镜、反射镜、光阑、探测器等完整元件集。
 - **其他 Web 模拟器（如 GeoGebra、PhET）**：多为教育演示，缺乏可编程接口与许可证兼容性。
 

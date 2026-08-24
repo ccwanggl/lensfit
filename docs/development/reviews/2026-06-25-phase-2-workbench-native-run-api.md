@@ -15,16 +15,16 @@
 新增文件：
 
 ```text
-engine/lensfit/lab/workbench/native_interpreter.py
-engine/lensfit/lab/workbench/solver.py
+engine/optibench/lab/workbench/native_interpreter.py
+engine/optibench/lab/workbench/solver.py
 engine/tests/test_api_workbench.py
 ```
 
 修改文件：
 
 ```text
-engine/lensfit/lab/schemas.py
-engine/lensfit/api/routers/lab.py
+engine/optibench/lab/schemas.py
+engine/optibench/api/routers/lab.py
 ```
 
 ## 3. 逐项检查
@@ -62,7 +62,7 @@ engine/lensfit/api/routers/lab.py
 |---|---|---|
 | Workbench API 测试 | `pytest tests/test_api_workbench.py -q` | **6 passed** |
 | 全量回归测试 | `pytest -q` | **137 passed, 4 warnings** |
-| 静态检查 | `ruff check lensfit/lab/workbench lensfit/api/routers/lab.py lensfit/lab/schemas.py tests/test_api_workbench.py` | 通过 |
+| 静态检查 | `ruff check optibench/lab/workbench optibench/api/routers/lab.py optibench/lab/schemas.py tests/test_api_workbench.py` | 通过 |
 
 ## 4. 实现细节
 
@@ -153,8 +153,8 @@ def run_workbench(req: WorkbenchRunRequest):
 
 - `docs/development/plans/active/2026-06-optical-breadboard-development-plan.md`
 - `docs/development/decisions/ADR-002-optical-breadboard-strategy.md`
-- `engine/lensfit/api/routers/lab.py`
-- `engine/lensfit/lab/schemas.py`
-- `engine/lensfit/lab/workbench/native_interpreter.py`
-- `engine/lensfit/lab/workbench/solver.py`
+- `engine/optibench/api/routers/lab.py`
+- `engine/optibench/lab/schemas.py`
+- `engine/optibench/lab/workbench/native_interpreter.py`
+- `engine/optibench/lab/workbench/solver.py`
 - `engine/tests/test_api_workbench.py`

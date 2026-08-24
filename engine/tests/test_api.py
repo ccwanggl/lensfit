@@ -6,11 +6,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from lensfit.api.server import app
-from lensfit.db.models import Base, DetectorCatalog, LensCatalog, Manufacturer
-from lensfit.domains.infrared import InfraredModule
-from lensfit.domains.microscope import MicroscopyModule
-from lensfit.domains.photography import PhotographyModule
+from optibench.api.server import app
+from optibench.db.models import Base, DetectorCatalog, LensCatalog, Manufacturer
+from optibench.domains.infrared import InfraredModule
+from optibench.domains.microscope import MicroscopyModule
+from optibench.domains.photography import PhotographyModule
 
 TEST_API_KEY = "test-api-key"
 
@@ -18,7 +18,7 @@ TEST_API_KEY = "test-api-key"
 @pytest.fixture
 def sample_catalog_items(client):
     """Insert a lens and detector into the in-memory DB for visualization tests."""
-    import lensfit.api.server as server_module
+    import optibench.api.server as server_module
 
     with server_module._session_maker() as session:
         mfg = Manufacturer(name="TestOptics", name_en="TestOptics")
@@ -68,11 +68,11 @@ def client():
     session_factory = sessionmaker(bind=engine)
 
     # Override lifespan to use in-memory db
-    import lensfit.api.server as server_module
+    import optibench.api.server as server_module
 
     server_module._session_maker = session_factory
-    from lensfit.domains.industrial import IndustrialVisionModule
-    from lensfit.matching.engine import MatchingEngine
+    from optibench.domains.industrial import IndustrialVisionModule
+    from optibench.matching.engine import MatchingEngine
 
     server_module._engine = MatchingEngine(session_factory)
     server_module._engine.register_domain(IndustrialVisionModule())
@@ -157,7 +157,7 @@ def test_match_async_and_poll(client, auth_headers):
 
 def _seed_domain_catalog(session, domain: str):
     """Insert a minimal lens+detector pair for the given domain."""
-    from lensfit.db.models import DetectorCatalog, LensCatalog, Manufacturer
+    from optibench.db.models import DetectorCatalog, LensCatalog, Manufacturer
 
     mfg = Manufacturer(name=f"TestMfg-{domain}")
     session.add(mfg)
@@ -339,7 +339,7 @@ def _poll_match_result(client, auth_headers, task_id: str):
     ],
 )
 def test_match_regression_all_domains(client, auth_headers, domain, requirements):
-    import lensfit.api.server as server_module
+    import optibench.api.server as server_module
 
     with server_module._session_maker() as session:
         _seed_domain_catalog(session, domain)
@@ -740,7 +740,7 @@ def test_export_csv(client, auth_headers):
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "text/csv; charset=utf-8"
     content = resp.content.decode("utf-8-sig")
-    assert "LensFit" in content
+    assert "OptiBench" in content
     assert "排名" in content
 
 

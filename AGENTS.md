@@ -57,4 +57,4 @@ docs/development/plans/active/2026-06-optical-breadboard-development-plan.md
 - KISS：优先最小可验证切片，避免一次性做通用平台。
 - YAGNI：没有进入 active plan checkpoint 的能力不实现。
 - DRY：复用现有 Lab、API、测试和前端运行壳，不重复建设实验系统。
-- SOLID：保持 LensFit `SceneGraph` 与第三方引擎 adapter 解耦，不让 `ray-optics` JSON 泄漏到产品域模型。
+- SOLID：保持 OptiBench `SceneGraph` 与第三方引擎 adapter 解耦，不让 `ray-optics` JSON 泄漏到产品域模型。

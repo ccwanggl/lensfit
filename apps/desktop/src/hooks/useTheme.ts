@@ -4,7 +4,9 @@ type Theme = "light" | "dark";
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("lensfit-theme");
+    // Fallback to the legacy LensFit-era key so existing users keep their theme.
+    const saved =
+      localStorage.getItem("optibench-theme") ?? localStorage.getItem("lensfit-theme");
     if (saved === "dark" || saved === "light") return saved;
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
@@ -16,7 +18,7 @@ export function useTheme() {
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem("lensfit-theme", theme);
+    localStorage.setItem("optibench-theme", theme);
   }, [theme]);
 
   const toggle = () => setTheme((t) => (t === "light" ? "dark" : "light"));

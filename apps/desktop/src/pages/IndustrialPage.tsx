@@ -393,7 +393,7 @@ export default function IndustrialPage() {
       const a = document.createElement("a");
       a.href = url;
       const extMap: Record<string, string> = { pdf: "pdf", excel: "xlsx", csv: "csv" };
-      a.download = `lensfit-report.${extMap[format]}`;
+      a.download = `optibench-report.${extMap[format]}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

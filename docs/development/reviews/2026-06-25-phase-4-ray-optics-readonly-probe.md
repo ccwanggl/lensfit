@@ -15,7 +15,7 @@
 新增文件：
 
 ```text
-engine/lensfit/lab/workbench/ray_optics_sidecar.py
+engine/optibench/lab/workbench/ray_optics_sidecar.py
 engine/tests/test_ray_optics_contract.py
 docs/development/research/optics-engine-landscape.md
 engine/third_party/ray-optics/{README.md,LICENSE,runner.js,rayOptics.js,example_*.py,.gitignore}
@@ -62,7 +62,7 @@ docs/development/plans/active/2026-06-optical-breadboard-development-plan.md
 | `node-canvas` 原生依赖失败 | 测试仅使用 Detector，未启用 CropBox / PNG 输出；`node-canvas` 不是必需依赖 |
 | ray-optics JSON 格式随版本变化 | 版本锁定 `5.3.2`；README 版本断言测试 |
 | 每请求启动 Node 开销 | 尚未测量，但 sidecar 为无状态 subprocess；long-lived sidecar 不在本阶段 |
-| LensFit 域模型耦合到 ray-optics JSON | `SceneGraph` 拒绝 ray-optics spec_id；adapter 未写入，保持隔离 |
+| OptiBench 域模型耦合到 ray-optics JSON | `SceneGraph` 拒绝 ray-optics spec_id；adapter 未写入，保持隔离 |
 
 ## 4. 发现与建议
 
@@ -123,6 +123,6 @@ docs/development/plans/active/2026-06-optical-breadboard-development-plan.md
 - `docs/development/plans/active/2026-06-optical-breadboard-development-plan.md`
 - `docs/development/decisions/ADR-002-optical-breadboard-strategy.md`
 - `docs/development/research/optics-engine-landscape.md`
-- `engine/lensfit/lab/workbench/ray_optics_sidecar.py`
+- `engine/optibench/lab/workbench/ray_optics_sidecar.py`
 - `engine/tests/test_ray_optics_contract.py`
 - `engine/third_party/ray-optics/README.md`

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-platform development launcher for LensFit.
+"""Cross-platform development launcher for OptiBench.
 
 Creates the Python virtual environment, installs dependencies, initializes the
 SQLite database, starts the FastAPI backend, and then starts the Vite frontend
@@ -151,9 +151,9 @@ def ensure_venv(venv_dir: Path) -> Path:
         error(f"Virtual environment created but Python not found at {py}")
         sys.exit(1)
 
-    # Check whether lensfit-engine is installed in editable mode
+    # Check whether optibench-engine is installed in editable mode
     try:
-        run([str(py), "-c", "import lensfit"], capture=True, check=True)
+        run([str(py), "-c", "import optibench"], capture=True, check=True)
     except subprocess.CalledProcessError:
         install_engine_deps(py, project_root() / "engine")
 
@@ -193,7 +193,7 @@ def reseed_database(py: Path) -> None:
 # Main
 # ---------------------------------------------------------------------------
 def main() -> NoReturn:
-    parser = argparse.ArgumentParser(description="Start LensFit development servers.")
+    parser = argparse.ArgumentParser(description="Start OptiBench development servers.")
     parser.add_argument(
         "--reseed",
         action="store_true",
@@ -216,7 +216,7 @@ def main() -> NoReturn:
     engine_dir = root / "engine"
     frontend_dir = root / "apps" / "desktop"
     venv_dir = engine_dir / ".venv"
-    db_path = root / "lensfit.db"
+    db_path = root / "optibench.db"
 
     py = ensure_venv(venv_dir)
 
@@ -233,7 +233,7 @@ def main() -> NoReturn:
     backend_cmd = [
         str(py),
         "-m",
-        "lensfit.api.server",
+        "optibench.api.server",
         "--port",
         str(args.port),
         "--host",
@@ -241,7 +241,7 @@ def main() -> NoReturn:
         "--mode",
         "dev",
         "--db",
-        "sqlite:///lensfit.db",
+        "sqlite:///optibench.db",
     ]
     backend_proc = subprocess.Popen(
         backend_cmd,
@@ -279,7 +279,7 @@ def main() -> NoReturn:
         text=True,
     )
 
-    info("LensFit is running!")
+    info("OptiBench is running!")
     info(f"  Frontend: {FRONTEND_URL}")
     info(f"  Backend:  http://{BACKEND_HOST}:{args.port}")
     info("Press Ctrl+C to stop both servers.")

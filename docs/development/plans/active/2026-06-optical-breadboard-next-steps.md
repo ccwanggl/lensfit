@@ -19,9 +19,9 @@
 
 | 候选 | 复用后端实验 | 新增 spec_id | 复杂度 |
 |---|---|---|---|
-| **双缝衍射面包板**（推荐） | `engine/lensfit/lab/experiments/double_slit.py` | `double-slit` | 低 |
-| 薄透镜成像面包板 | `engine/lensfit/lab/experiments/thin_lens.py` | `thin-lens` | 中（涉及物距/像距/焦距联动） |
-| 光栅衍射面包板 | `engine/lensfit/lab/experiments/grating.py` | `diffraction-grating` | 中 |
+| **双缝衍射面包板**（推荐） | `engine/optibench/lab/experiments/double_slit.py` | `double-slit` | 低 |
+| 薄透镜成像面包板 | `engine/optibench/lab/experiments/thin_lens.py` | `thin-lens` | 中（涉及物距/像距/焦距联动） |
+| 光栅衍射面包板 | `engine/optibench/lab/experiments/grating.py` | `diffraction-grating` | 中 |
 
 ### 推荐：双缝衍射面包板
 
@@ -48,10 +48,10 @@
 
 ### 涉及文件
 
-- `engine/lensfit/lab/workbench/scene.py`：扩展 `Component.spec_id` Literal。
-- `engine/lensfit/lab/workbench/equipment.py`：新增 `double-slit` 设备规格。
-- `engine/lensfit/lab/workbench/native_interpreter.py`：新增双缝参数映射。
-- `engine/lensfit/lab/workbench/solver.py`：根据 aperture spec_id 分发单缝/双缝。
+- `engine/optibench/lab/workbench/scene.py`：扩展 `Component.spec_id` Literal。
+- `engine/optibench/lab/workbench/equipment.py`：新增 `double-slit` 设备规格。
+- `engine/optibench/lab/workbench/native_interpreter.py`：新增双缝参数映射。
+- `engine/optibench/lab/workbench/solver.py`：根据 aperture spec_id 分发单缝/双缝。
 - `apps/desktop/src/lab/workbenchTypes.ts`：新增 `double-slit-breadboard` preset。
 - `apps/desktop/src/lab/LearningHub.tsx`：无改动或仅小幅调整（若新增通用化校验）。
 - `engine/tests/test_workbench_scene.py` / `tests/test_api_workbench.py`：新增双缝场景测试。
@@ -59,10 +59,10 @@
 ### 验证命令
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest tests/test_workbench_scene.py tests/test_api_workbench.py -q
 
-cd "E:/OpticHackerSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/optibench/apps/desktop"
 npm run build
 ```
 

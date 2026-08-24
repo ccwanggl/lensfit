@@ -34,8 +34,8 @@
 
 | 检查项 | 结果 |
 |---|---|
-| `python build_sidecar.py` | 成功生成 `apps/desktop/src-tauri/binaries/lensfit-engine-x86_64-pc-windows-msvc.exe` |
-| Alembic `env.py` 与迁移脚本 | 已作为 data 文件打入产物（日志显示 `lensfit.db.migrations.env` 及 5 个 revision 被分析） |
+| `python build_sidecar.py` | 成功生成 `apps/desktop/src-tauri/binaries/optibench-engine-x86_64-pc-windows-msvc.exe` |
+| Alembic `env.py` 与迁移脚本 | 已作为 data 文件打入产物（日志显示 `optibench.db.migrations.env` 及 5 个 revision 被分析） |
 | 实验模块 | 修复后，19 个实验模块全部作为 hidden import 被打包 |
 
 ### 2.3 迁移完整性
@@ -77,7 +77,7 @@ thin-lens
 | `engine/pyproject.toml` | 1.1.0 |
 | `apps/desktop/package.json` | 1.1.0 |
 | `apps/desktop/src-tauri/tauri.conf.json` | 1.1.0 |
-| `engine/lensfit/api/server.py` metadata | 1.1.0 |
+| `engine/optibench/api/server.py` metadata | 1.1.0 |
 | `CHANGELOG.md` | 1.1.0 |
 
 版本号已统一。
@@ -85,7 +85,7 @@ thin-lens
 ### 2.6 进程残留
 
 - 冒烟测试后，首次检查发现一个残留 sidecar 进程（PID 76368）。
-- 使用 `taskkill //F //IM lensfit-engine-x86_64-pc-windows-msvc.exe` 清理后，进程列表干净。
+- 使用 `taskkill //F //IM optibench-engine-x86_64-pc-windows-msvc.exe` 清理后，进程列表干净。
 - 该残留与 PyInstaller onefile 启动 uvicorn 的子进程结构有关，`subprocess.Popen.terminate()` 不一定能完全终止。
 
 ## 3. 发现的问题与修复
@@ -101,24 +101,24 @@ thin-lens
 `engine/build_sidecar.py` 的 `hidden_imports` 只硬编码了 4 个 MVP 实验：
 
 ```python
-"lensfit.lab.experiments.thin_lens",
-"lensfit.lab.experiments.diffraction",
-"lensfit.lab.experiments.color_mixing",
-"lensfit.lab.experiments.sensor_coverage",
+"optibench.lab.experiments.thin_lens",
+"optibench.lab.experiments.diffraction",
+"optibench.lab.experiments.color_mixing",
+"optibench.lab.experiments.sensor_coverage",
 ```
 
-而 `lensfit/lab/registry.py` 是动态发现 `experiments/` 目录下所有子类的。源码与打包产物因此不一致。
+而 `optibench/lab/registry.py` 是动态发现 `experiments/` 目录下所有子类的。源码与打包产物因此不一致。
 
 **修复：**
 
 在 `build_sidecar.py` 中自动发现所有实验模块：
 
 ```python
-experiments_dir = engine_dir / "lensfit" / "lab" / "experiments"
+experiments_dir = engine_dir / "optibench" / "lab" / "experiments"
 for exp_file in sorted(experiments_dir.glob("*.py")):
     if exp_file.name == "__init__.py":
         continue
-    module_name = f"lensfit.lab.experiments.{exp_file.stem}"
+    module_name = f"optibench.lab.experiments.{exp_file.stem}"
     hidden_imports.append(module_name)
 ```
 
@@ -131,7 +131,7 @@ for exp_file in sorted(experiments_dir.glob("*.py")):
 第一次重新构建时，PyInstaller 报告无法覆盖旧二进制：
 
 ```text
-PermissionError: [WinError 5] Access is denied: '...\lensfit-engine-x86_64-pc-windows-msvc.exe'
+PermissionError: [WinError 5] Access is denied: '...\optibench-engine-x86_64-pc-windows-msvc.exe'
 ```
 
 **根因：**
@@ -140,7 +140,7 @@ PermissionError: [WinError 5] Access is denied: '...\lensfit-engine-x86_64-pc-wi
 
 **处理：**
 
-使用 `taskkill //F //IM lensfit-engine-x86_64-pc-windows-msvc.exe` 强制终止残留进程后，构建成功。
+使用 `taskkill //F //IM optibench-engine-x86_64-pc-windows-msvc.exe` 强制终止残留进程后，构建成功。
 
 **建议：**
 
@@ -193,5 +193,5 @@ PermissionError: [WinError 5] Access is denied: '...\lensfit-engine-x86_64-pc-wi
 - `docs/development/plans/active/2026-06-optical-breadboard-development-plan.md`
 - `docs/development/decisions/ADR-002-optical-breadboard-strategy.md`
 - `engine/build_sidecar.py`
-- `engine/lensfit/lab/registry.py`
-- `engine/lensfit/api/routers/lab.py`
+- `engine/optibench/lab/registry.py`
+- `engine/optibench/api/routers/lab.py`

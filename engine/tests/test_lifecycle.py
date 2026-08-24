@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from lensfit.api.server import app
+from optibench.api.server import app
 
 
 def test_repeated_startup_in_same_process(tmp_path):

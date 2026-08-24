@@ -46,8 +46,8 @@ OpticKnowledgeSpace/.hinote/
 *.db
 *.sqlite
 *.sqlite3
-lensfit.db
-lensfit.db-*
+optibench.db
+optibench.db-*
 
 # Node
 node_modules/
@@ -79,3 +79,6 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Local agent tooling
+.omo/

@@ -1,1 +1,1 @@
-{"default":{"identifier":"default","description":"Default capabilities for LensFit desktop app","local":true,"windows":["main"],"permissions":["core:default","shell:allow-execute",{"identifier":"shell:allow-execute","allow":[{"name":"lensfit-engine","sidecar":true}]}]}}
+{"default":{"identifier":"default","description":"Default capabilities for OptiBench desktop app","local":true,"windows":["main"],"permissions":["core:default","shell:allow-execute",{"identifier":"shell:allow-execute","allow":[{"name":"optibench-engine","sidecar":true}]}]}}

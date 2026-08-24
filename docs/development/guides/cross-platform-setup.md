@@ -1,6 +1,6 @@
 # 跨平台开发与构建指南
 
-LensFit 采用 **Tauri v2 + React 前端 + Python FastAPI 后端引擎** 的架构。本文档说明如何在 Windows、macOS 和 Linux 上一致地搭建开发环境、运行调试以及构建桌面发布包。
+OptiBench 采用 **Tauri v2 + React 前端 + Python FastAPI 后端引擎** 的架构。本文档说明如何在 Windows、macOS 和 Linux 上一致地搭建开发环境、运行调试以及构建桌面发布包。
 
 ---
 
@@ -33,14 +33,14 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex" # Windows
 ## 2. 仓库结构与约定
 
 ```
-lensfit/
+optibench/
 ├── apps/desktop/          # React + Tauri 桌面应用
 ├── database/              # 种子数据与导入脚本
 ├── docs/                  # 项目文档
 ├── engine/                # Python 引擎
 │   ├── .venv/             # Python 虚拟环境（由脚本自动创建）
 │   ├── alembic.ini        # 迁移配置
-│   └── lensfit/           # 引擎源码
+│   └── optibench/           # 引擎源码
 ├── scripts/               # 跨平台启动与构建脚本
 │   ├── dev.py             # 主启动脚本（跨平台）
 │   ├── dev.sh             # Unix 包装器
@@ -61,11 +61,11 @@ lensfit/
 
 ```bash
 # Windows
-cd lensfit
+cd optibench
 python scripts/dev.py
 
 # macOS / Linux
-cd lensfit
+cd optibench
 python3 scripts/dev.py
 ```
 
@@ -79,7 +79,7 @@ python3 scripts/dev.py
    - 标准环境：`pip install -e ".[dev]"`
 3. 检测 `apps/desktop/node_modules`；不存在则执行 `npm install`
 4. 运行 `alembic upgrade head` 应用数据库迁移
-5. 若 `lensfit.db` 不存在，执行种子数据导入
+5. 若 `optibench.db` 不存在，执行种子数据导入
 6. 启动 FastAPI 后端（默认 `127.0.0.1:8765`）
 7. 等待 `/health` 就绪
 8. 启动 Vite 前端开发服务器（默认 `http://localhost:5173`）
@@ -146,7 +146,7 @@ alembic upgrade head
 python ../database/import_scripts/import_seed.py
 
 # 启动服务
-python -m lensfit.api.server --port 8765 --host 127.0.0.1
+python -m optibench.api.server --port 8765 --host 127.0.0.1
 ```
 
 后端 API 文档：`http://127.0.0.1:8765/docs`
@@ -185,7 +185,7 @@ alembic downgrade -1
 alembic revision --autogenerate -m "描述"
 ```
 
-> 注意：数据库文件 `lensfit.db` 已加入 `.gitignore`，不会提交到仓库。
+> 注意：数据库文件 `optibench.db` 已加入 `.gitignore`，不会提交到仓库。
 
 ---
 
@@ -195,11 +195,11 @@ alembic revision --autogenerate -m "描述"
 
 ```bash
 # Windows
-cd lensfit
+cd optibench
 python scripts/build-desktop.py
 
 # macOS / Linux
-cd lensfit
+cd optibench
 python3 scripts/build-desktop.py
 ```
 
@@ -219,10 +219,10 @@ apps/desktop/src-tauri/target/release/bundle/
 ### 6.2 sidecar 说明
 
 - `build_sidecar.py` 会按当前平台生成带 target triple 的二进制，例如：
-  - Windows: `lensfit-engine-x86_64-pc-windows-msvc.exe`
-  - Linux: `lensfit-engine-x86_64-unknown-linux-gnu`
-  - macOS: `lensfit-engine-aarch64-apple-darwin` 或 `lensfit-engine-x86_64-apple-darwin`
-- 同时会拷贝一份为 `lensfit-engine`（Windows 下为 `lensfit-engine.exe`），便于本地开发直接运行
+  - Windows: `optibench-engine-x86_64-pc-windows-msvc.exe`
+  - Linux: `optibench-engine-x86_64-unknown-linux-gnu`
+  - macOS: `optibench-engine-aarch64-apple-darwin` 或 `optibench-engine-x86_64-apple-darwin`
+- 同时会拷贝一份为 `optibench-engine`（Windows 下为 `optibench-engine.exe`），便于本地开发直接运行
 - `apps/desktop/src-tauri/binaries/` 目录已在 `.gitignore` 中，sidecar 二进制不应提交到仓库
 
 ### 6.3 手动构建

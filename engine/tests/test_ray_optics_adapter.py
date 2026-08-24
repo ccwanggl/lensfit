@@ -13,15 +13,15 @@ from typing import Any
 
 import pytest
 
-from lensfit.lab.workbench import SceneGraph
-from lensfit.lab.workbench.ray_optics_adapter import (
+from optibench.lab.workbench import SceneGraph
+from optibench.lab.workbench.ray_optics_adapter import (
     run_ray_optics,
     to_ray_optics_scene,
 )
-from lensfit.lab.workbench.ray_optics_sidecar import (
+from optibench.lab.workbench.ray_optics_sidecar import (
     RayOpticsNotAvailableError,
 )
-from lensfit.lab.workbench.solver import WorkbenchSolver
+from optibench.lab.workbench.solver import WorkbenchSolver
 
 NODE_AVAILABLE = shutil.which("node") is not None
 RUNNER = (
@@ -291,7 +291,7 @@ def test_solver_gracefully_handles_missing_ray_optics(monkeypatch):
         raise RayOpticsNotAvailableError("node missing for test")
 
     monkeypatch.setattr(
-        "lensfit.lab.workbench.solver.run_ray_optics", _raise_not_available
+        "optibench.lab.workbench.solver.run_ray_optics", _raise_not_available
     )
 
     solver = WorkbenchSolver()

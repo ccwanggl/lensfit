@@ -1,8 +1,8 @@
-# Plan: LensFit as a Self-Study Optics Laboratory
+# Plan: OptiBench as a Self-Study Optics Laboratory
 
 ## Goal
 
-Transform LensFit from a "selection helper" into a **self-study optics laboratory**: every physical concept in the knowledge vault should have a runnable, visual experiment that learners can manipulate to build intuition.
+Transform OptiBench from a "selection helper" into a **self-study optics laboratory**: every physical concept in the knowledge vault should have a runnable, visual experiment that learners can manipulate to build intuition.
 
 ## Philosophy
 
@@ -18,7 +18,7 @@ OpticKnowledgeSpace/          # human-readable concepts + experiment links
     ## 关联实验
     - [[lab/thin-lens|薄透镜成像实验]]
 
-engine/lensfit/lab/           # backend experiment framework
+engine/optibench/lab/           # backend experiment framework
   base.py                     # OpticsExperiment base class
   registry.py                 # ExperimentRegistry
   experiments/
@@ -29,7 +29,7 @@ engine/lensfit/lab/           # backend experiment framework
     interference.py           # double-slit (future)
     polarization.py           # Malus law (future)
 
-engine/lensfit/api/routers/lab.py
+engine/optibench/api/routers/lab.py
   GET  /api/v1/lab/experiments
   POST /api/v1/lab/experiments/{id}/run  -> {data, svg, notes}
 

@@ -1,8 +1,8 @@
 [package]
-name = "lensfit-desktop"
+name = "optibench-desktop"
 version = "1.1.0"
-description = "LensFit - Optical Lens & Detector Matching Tool"
-authors = ["LensFit Team"]
+description = "OptiBench - Optical Lens & Detector Matching Tool"
+authors = ["OptiBench Team"]
 license = "MIT"
 repository = ""
 edition = "2021"

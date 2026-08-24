@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// Migrate the legacy LensFit-era persisted store so existing lab drafts survive the rename.
+const LEGACY_STORAGE_KEY = "lensfit-lab-store";
+const STORAGE_KEY = "optibench-lab-store";
+if (!localStorage.getItem(STORAGE_KEY)) {
+  const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (legacy) localStorage.setItem(STORAGE_KEY, legacy);
+}
+
 interface LabState {
   activeExperimentId: string | null;
   paramDrafts: Record<string, Record<string, unknown>>;
@@ -89,7 +97,7 @@ export const useLabStore = create<LabState>()(
         })),
     }),
     {
-      name: "lensfit-lab-store",
+      name: STORAGE_KEY,
       partialize: (state) => ({
         paramDrafts: state.paramDrafts,
         sceneDrafts: state.sceneDrafts,

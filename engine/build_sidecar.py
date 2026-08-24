@@ -1,4 +1,4 @@
-"""Build LensFit engine as a standalone binary for Tauri sidecar."""
+"""Build OptiBench engine as a standalone binary for Tauri sidecar."""
 
 import platform
 import shutil
@@ -36,56 +36,56 @@ def build() -> None:
     else:
         target = f"{arch}-{system.lower()}"
 
-    binary_name = f"lensfit-engine-{target}"
+    binary_name = f"optibench-engine-{target}"
     if system == "Windows":
         binary_name += ".exe"
 
     print(f"Building sidecar for {target} ...")
 
     hidden_imports = [
-        "lensfit.api.server",
-        "lensfit.core.thin_lens",
-        "lensfit.core.sensor",
-        "lensfit.core.utils",
-        "lensfit.core.types",
-        "lensfit.db.models",
-        "lensfit.db.catalog",
-        "lensfit.domains.base",
-        "lensfit.domains.industrial",
-        "lensfit.domains.photography",
-        "lensfit.domains.microscope",
-        "lensfit.domains.infrared",
-        "lensfit.matching.engine",
-        "lensfit.matching.scoring",
-        "lensfit.visualization.coverage",
-        "lensfit.lab",
-        "lensfit.lab.base",
-        "lensfit.lab.registry",
-        "lensfit.lab.schemas",
-        "lensfit.lab.renderer",
-        "lensfit.api.routers.lab",
-        "lensfit.knowledge.formulas",
-        "lensfit.knowledge.constraints",
-        "lensfit.knowledge.presets",
-        "lensfit.knowledge.engine",
-        "lensfit.export.pdf_exporter",
-        "lensfit.export.excel_exporter",
+        "optibench.api.server",
+        "optibench.core.thin_lens",
+        "optibench.core.sensor",
+        "optibench.core.utils",
+        "optibench.core.types",
+        "optibench.db.models",
+        "optibench.db.catalog",
+        "optibench.domains.base",
+        "optibench.domains.industrial",
+        "optibench.domains.photography",
+        "optibench.domains.microscope",
+        "optibench.domains.infrared",
+        "optibench.matching.engine",
+        "optibench.matching.scoring",
+        "optibench.visualization.coverage",
+        "optibench.lab",
+        "optibench.lab.base",
+        "optibench.lab.registry",
+        "optibench.lab.schemas",
+        "optibench.lab.renderer",
+        "optibench.api.routers.lab",
+        "optibench.knowledge.formulas",
+        "optibench.knowledge.constraints",
+        "optibench.knowledge.presets",
+        "optibench.knowledge.engine",
+        "optibench.export.pdf_exporter",
+        "optibench.export.excel_exporter",
         "uvicorn",
         "fastapi",
         "sqlalchemy.ext.baked",
     ]
 
     # Auto-discover all lab experiments so the binary registry matches the source tree.
-    experiments_dir = engine_dir / "lensfit" / "lab" / "experiments"
+    experiments_dir = engine_dir / "optibench" / "lab" / "experiments"
     for exp_file in sorted(experiments_dir.glob("*.py")):
         if exp_file.name == "__init__.py":
             continue
-        module_name = f"lensfit.lab.experiments.{exp_file.stem}"
+        module_name = f"optibench.lab.experiments.{exp_file.stem}"
         hidden_imports.append(module_name)
 
     # PyInstaller data separator is ``;`` on Windows and ``:`` elsewhere.
     data_sep = ";" if system == "Windows" else ":"
-    migrations_dir = engine_dir / "lensfit" / "db" / "migrations"
+    migrations_dir = engine_dir / "optibench" / "db" / "migrations"
     alembic_ini = engine_dir / "alembic.ini"
 
     cmd = [
@@ -106,22 +106,22 @@ def build() -> None:
         "--collect-data",
         "sqlalchemy",
         "--collect-submodules",
-        "lensfit.db.migrations",
+        "optibench.db.migrations",
         "--collect-data",
-        "lensfit.db.migrations",
+        "optibench.db.migrations",
         "--add-data",
-        f"{migrations_dir}{data_sep}lensfit/db/migrations",
+        f"{migrations_dir}{data_sep}optibench/db/migrations",
         "--add-data",
         f"{alembic_ini}{data_sep}.",
     ]
     for imp in hidden_imports:
         cmd.extend(["--hidden-import", imp])
-    cmd.append(str(engine_dir / "lensfit" / "__main__.py"))
+    cmd.append(str(engine_dir / "optibench" / "__main__.py"))
 
     subprocess.run(cmd, check=True)
 
-    # Rename to plain "lensfit-engine" for local dev if target matches host
-    plain_name = "lensfit-engine"
+    # Rename to plain "optibench-engine" for local dev if target matches host
+    plain_name = "optibench-engine"
     if system == "Windows":
         plain_name += ".exe"
 

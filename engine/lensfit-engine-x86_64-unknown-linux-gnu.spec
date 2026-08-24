@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['/home/guoliang/WorkSpace/lensfit/engine/lensfit/__main__.py'],
+    ['/home/guoliang/WorkSpace/optibench/engine/optibench/__main__.py'],
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['lensfit.api.server', 'lensfit.api.routers.lab', 'lensfit.core.thin_lens', 'lensfit.core.sensor', 'lensfit.core.utils', 'lensfit.db.models', 'lensfit.db.catalog', 'lensfit.domains.base', 'lensfit.domains.industrial', 'lensfit.matching.engine', 'lensfit.matching.scoring', 'lensfit.visualization.coverage', 'lensfit.lab', 'lensfit.lab.base', 'lensfit.lab.registry', 'lensfit.lab.schemas', 'lensfit.lab.renderer', 'lensfit.lab.experiments.thin_lens', 'lensfit.lab.experiments.diffraction', 'lensfit.lab.experiments.color_mixing', 'lensfit.lab.experiments.sensor_coverage', 'uvicorn', 'fastapi', 'sqlalchemy.ext.baked'],
+    hiddenimports=['optibench.api.server', 'optibench.api.routers.lab', 'optibench.core.thin_lens', 'optibench.core.sensor', 'optibench.core.utils', 'optibench.db.models', 'optibench.db.catalog', 'optibench.domains.base', 'optibench.domains.industrial', 'optibench.matching.engine', 'optibench.matching.scoring', 'optibench.visualization.coverage', 'optibench.lab', 'optibench.lab.base', 'optibench.lab.registry', 'optibench.lab.schemas', 'optibench.lab.renderer', 'optibench.lab.experiments.thin_lens', 'optibench.lab.experiments.diffraction', 'optibench.lab.experiments.color_mixing', 'optibench.lab.experiments.sensor_coverage', 'uvicorn', 'fastapi', 'sqlalchemy.ext.baked'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='lensfit-engine-x86_64-unknown-linux-gnu',
+    name='optibench-engine-x86_64-unknown-linux-gnu',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

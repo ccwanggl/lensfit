@@ -56,7 +56,7 @@ function AppContent() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-[15px] font-extrabold text-slate-900 dark:text-slate-100 leading-none tracking-tight">LensFit</h1>
+                <h1 className="text-[15px] font-extrabold text-slate-900 dark:text-slate-100 leading-none tracking-tight">OptiBench</h1>
                 <p className="text-xs text-slate-400 dark:text-slate-500 font-medium leading-none mt-0.5 tracking-wide uppercase">光学选型</p>
               </div>
             </div>

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from lensfit.lab.workbench import CATALOG, SceneGraph
+from optibench.lab.workbench import CATALOG, SceneGraph
 
 
 def _minimal_scene(

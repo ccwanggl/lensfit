@@ -10,14 +10,14 @@ from pathlib import Path
 from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine, text
 
-import lensfit.db.migrations
-import lensfit.db.migrations.versions
-from lensfit.db.models import init_db
+import optibench.db.migrations
+import optibench.db.migrations.versions
+from optibench.db.models import init_db
 
 
 def test_all_version_modules_are_importable() -> None:
-    """Every migration module under lensfit.db.migrations.versions can be imported."""
-    versions_package = lensfit.db.migrations.versions
+    """Every migration module under optibench.db.migrations.versions can be imported."""
+    versions_package = optibench.db.migrations.versions
     prefix = versions_package.__name__ + "."
     modules = [name for _, name, _ in pkgutil.iter_modules(versions_package.__path__, prefix)]
     assert modules, "expected at least one version module"
@@ -27,7 +27,7 @@ def test_all_version_modules_are_importable() -> None:
 
 def test_upgrade_to_head_sets_latest_alembic_version() -> None:
     """Upgrading a fresh SQLite database to head sets the expected revision."""
-    migrations_dir = Path(lensfit.db.migrations.__file__).parent
+    migrations_dir = Path(optibench.db.migrations.__file__).parent
     script_dir = ScriptDirectory(str(migrations_dir))
 
     head_revision = script_dir.get_current_head()

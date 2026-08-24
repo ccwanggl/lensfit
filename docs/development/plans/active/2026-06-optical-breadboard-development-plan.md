@@ -2,12 +2,12 @@
 
 > **状态**：草案
 > **日期**：2026-06-25
-> **适用范围**：LensFit Self-Study Lab 的光学面包板能力，不替代镜头-传感器选型主线。
+> **适用范围**：OptiBench Self-Study Lab 的光学面包板能力，不替代镜头-传感器选型主线。
 > **多 Agent 输入**：产品路线、后端/发布、前端/Lab、文档信息架构、面包板技术切片五个只读 agent 已完成评审。
 
 ## 1. 项目定位
 
-LensFit 的主线仍是面向光学工程师和系统集成商的镜头-传感器智能匹配与工程决策工具。光学面包板不是近期主产品主线，而是 Self-Study Lab 的高级交互形态，用于把少数高价值实验从“参数滑块”升级为“场景化操作”。
+OptiBench 的主线仍是面向光学工程师和系统集成商的镜头-传感器智能匹配与工程决策工具。光学面包板不是近期主产品主线，而是 Self-Study Lab 的高级交互形态，用于把少数高价值实验从“参数滑块”升级为“场景化操作”。
 
 本计划只推进最小可落地切片：
 
@@ -89,7 +89,7 @@ docs/development/specifications/lab/experiment-catalog.md
 
 ### 主要风险
 
-- `engine/lensfit/lab/registry.py` 动态发现实验，但 `engine/build_sidecar.py` 可能只显式收集部分实验。
+- `engine/optibench/lab/registry.py` 动态发现实验，但 `engine/build_sidecar.py` 可能只显式收集部分实验。
 - PyInstaller 产物可能缺少 Alembic migration 文件。
 - SQLite 生命周期和二次 lifespan 启动仍有历史风险。
 - CI 未覆盖真实 sidecar 冒烟测试。
@@ -98,8 +98,8 @@ docs/development/specifications/lab/experiment-catalog.md
 
 - `engine/build_sidecar.py`
 - `scripts/build-desktop.py`
-- `engine/lensfit/lab/registry.py`
-- `engine/lensfit/api/routers/lab.py`
+- `engine/optibench/lab/registry.py`
+- `engine/optibench/api/routers/lab.py`
 - `engine/tests/test_lab.py`
 - `engine/tests/test_api_lab.py`
 - `.github/workflows/ci.yml`
@@ -123,7 +123,7 @@ docs/development/specifications/lab/experiment-catalog.md
 实际完成内容：
 
 - 源码测试 120 passed，Lab 专项测试 63 passed，Ruff 通过。
-- 修复 `engine/build_sidecar.py`：从硬编码 4 个实验改为自动发现 `lensfit/lab/experiments/` 下全部模块。
+- 修复 `engine/build_sidecar.py`：从硬编码 4 个实验改为自动发现 `optibench/lab/experiments/` 下全部模块。
 - 重新构建 sidecar，验证 19 个实验全部可用。
 - 空库启动 sidecar 后自动迁移到 Alembic head `0ac6c641b5d7`。
 - 真实 sidecar `/health`、`/api/v1/lab/experiments`、`/api/v1/lab/experiments/single-slit-diffraction/run` 冒烟通过。
@@ -134,7 +134,7 @@ docs/development/specifications/lab/experiment-catalog.md
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest tests/test_lab.py tests/test_api_lab.py -q
 python build_sidecar.py
 ```
@@ -150,7 +150,7 @@ python build_sidecar.py
 
 ### 目标
 
-定义 LensFit 自有、solver-neutral 的 `SceneGraph v1`。它只服务无状态运行，不保存到数据库。
+定义 OptiBench 自有、solver-neutral 的 `SceneGraph v1`。它只服务无状态运行，不保存到数据库。
 
 ### 最小模型
 
@@ -200,9 +200,9 @@ python build_sidecar.py
 
 新增：
 
-- `engine/lensfit/lab/workbench/__init__.py`
-- `engine/lensfit/lab/workbench/scene.py`
-- `engine/lensfit/lab/workbench/equipment.py`
+- `engine/optibench/lab/workbench/__init__.py`
+- `engine/optibench/lab/workbench/scene.py`
+- `engine/optibench/lab/workbench/equipment.py`
 - `engine/tests/test_workbench_scene.py`
 
 ### Checkpoint 1
@@ -216,7 +216,7 @@ python build_sidecar.py
 
 - `SceneGraph.version == 1` 必填。
 - `components[].id` 场景内唯一。
-- `spec_id` 使用 LensFit 语义，不出现 `SingleRay`、`Detector`、`SphericalLens` 等第三方对象名。
+- `spec_id` 使用 OptiBench 语义，不出现 `SingleRay`、`Detector`、`SphericalLens` 等第三方对象名。
 - 缺少 source/aperture/screen 任一组件会校验失败。
 - screen 与 slit 的 x 距离可推导为 `screen_distance_m`。
 - `rotation_deg` 第一阶段只允许 `0`；其他值给 warning 或校验失败。
@@ -225,14 +225,14 @@ python build_sidecar.py
 
 实际完成内容：
 
-- 新增 `engine/lensfit/lab/workbench/` 包：
+- 新增 `engine/optibench/lab/workbench/` 包：
   - `scene.py`：`SceneGraph`、`Component`、`Transform`、`Observable`、`Units` 等 Pydantic 模型。
   - `equipment.py`：最小内存设备目录（`laser-monochrome`、`single-slit`、`screen`）。
   - `__init__.py`：公共导出。
 - 校验规则全部落地：
   - `version` 必须为 `1`。
   - `components[].id` 唯一。
-  - `spec_id` 为 LensFit 语义字面量，拒绝 `SingleRay` 等第三方类型名。
+  - `spec_id` 为 OptiBench 语义字面量，拒绝 `SingleRay` 等第三方类型名。
   - 必须且只能有一个 `source`、一个 `aperture`、一个 `screen`。
   - `rotation_deg` 必须为 `0`。
   - observable 引用的组件 id 必须存在。
@@ -243,7 +243,7 @@ python build_sidecar.py
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest tests/test_workbench_scene.py -q
 ```
 
@@ -269,14 +269,14 @@ POST /api/v1/lab/workbench/run
 
 新增：
 
-- `engine/lensfit/lab/workbench/native_interpreter.py`
-- `engine/lensfit/lab/workbench/solver.py`
+- `engine/optibench/lab/workbench/native_interpreter.py`
+- `engine/optibench/lab/workbench/solver.py`
 - `engine/tests/test_api_workbench.py`
 
 修改：
 
-- `engine/lensfit/api/routers/lab.py`
-- `engine/lensfit/lab/schemas.py`
+- `engine/optibench/api/routers/lab.py`
+- `engine/optibench/lab/schemas.py`
 
 ### Checkpoint 2
 
@@ -299,16 +299,16 @@ POST /api/v1/lab/workbench/run
 
 实际完成内容：
 
-- 新增 `engine/lensfit/lab/workbench/native_interpreter.py`：
+- 新增 `engine/optibench/lab/workbench/native_interpreter.py`：
   - 将 `SceneGraph` 映射到 `SingleSlitDiffractionExperiment` 参数。
   - 推导 `screen_distance_m`。
   - 当屏距不满足夫琅禾费远场条件时返回 warning。
-- 新增 `engine/lensfit/lab/workbench/solver.py`：
+- 新增 `engine/optibench/lab/workbench/solver.py`：
   - `WorkbenchSolver.solve(scene)` 分发 observable。
   - 阶段 2 只支持 `fraunhofer_intensity` → `single-slit-diffraction`。
-- 修改 `engine/lensfit/lab/schemas.py`：
+- 修改 `engine/optibench/lab/schemas.py`：
   - 新增 `WorkbenchRunRequest`，`scene` 字段直接使用 `SceneGraph` 模型。
-- 修改 `engine/lensfit/api/routers/lab.py`：
+- 修改 `engine/optibench/api/routers/lab.py`：
   - 新增 `POST /api/v1/lab/workbench/run`，返回与现有实验相同的 `data`/`svg`/`warnings`/`learning_hints`。
 - 新增 `engine/tests/test_api_workbench.py`（6 个测试全部通过）。
 - 全量测试：`137 passed, 4 warnings`。
@@ -316,7 +316,7 @@ POST /api/v1/lab/workbench/run
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest tests/test_lab.py tests/test_api_lab.py tests/test_api_workbench.py -q
 ```
 
@@ -396,7 +396,7 @@ python -m pytest tests/test_lab.py tests/test_api_lab.py tests/test_api_workbenc
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/optibench/apps/desktop"
 npm run build
 ```
 
@@ -425,7 +425,7 @@ npm run build
 
 新增：
 
-- `engine/lensfit/lab/workbench/ray_optics_sidecar.py`
+- `engine/optibench/lab/workbench/ray_optics_sidecar.py`
 - `engine/tests/test_ray_optics_contract.py`
 - `docs/development/research/optics-engine-landscape.md`
 
@@ -450,7 +450,7 @@ npm run build
 实际完成内容：
 
 - 下载并固定 `ray-optics` 集成包 `5.3.2` 到 `engine/third_party/ray-optics/`。
-- 新增 `engine/lensfit/lab/workbench/ray_optics_sidecar.py`：
+- 新增 `engine/optibench/lab/workbench/ray_optics_sidecar.py`：
   - `RayOpticsSidecar` 封装 `node runner.js` 调用。
   - 默认 runner 路径指向 vendored 副本。
   - 超时、stdout/stderr 大小上限、进程清理、非零退出、坏 JSON 全部归一化为异常。
@@ -467,7 +467,7 @@ npm run build
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest tests/test_ray_optics_contract.py -q
 ```
 
@@ -533,10 +533,10 @@ python -m pytest tests/test_ray_optics_contract.py -q
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest tests/test_workbench_scene.py tests/test_api_workbench.py tests/test_ray_optics_contract.py -q
 
-cd "E:/OpticHackerSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/optibench/apps/desktop"
 npm run build
 ```
 
@@ -561,8 +561,8 @@ npm run build
 | Agent | 责任 | 写入范围 |
 |---|---|---|
 | 发布链 Agent | 修复 sidecar 实验收集、migration data、真实二进制冒烟 | `engine/build_sidecar.py`、CI、发布脚本、相关测试 |
-| 后端 SceneGraph Agent | 实现 SceneGraph v1、校验、native interpreter | `engine/lensfit/lab/workbench/`、`engine/tests/test_workbench_scene.py` |
-| API Agent | 实现 `/api/v1/lab/workbench/run` 和 API 测试 | `engine/lensfit/api/routers/lab.py`、`engine/lensfit/lab/schemas.py`、`engine/tests/test_api_workbench.py` |
+| 后端 SceneGraph Agent | 实现 SceneGraph v1、校验、native interpreter | `engine/optibench/lab/workbench/`、`engine/tests/test_workbench_scene.py` |
+| API Agent | 实现 `/api/v1/lab/workbench/run` 和 API 测试 | `engine/optibench/api/routers/lab.py`、`engine/optibench/lab/schemas.py`、`engine/tests/test_api_workbench.py` |
 | 前端 Preset Agent | 实现 `single-slit-breadboard` preset UI | `apps/desktop/src/lab/`、`apps/desktop/src/utils/api.ts`、`apps/desktop/src/stores/labStore.ts` |
 | 文档 Agent | 拆分 ADR、research、architecture、specification、active plan | `docs/development/` |
 | 验证 Agent | 运行测试、构建和手动验收清单 | 不改业务代码，只提交验证报告 |
@@ -636,10 +636,10 @@ npm run build
 验证命令：
 
 ```powershell
-cd "E:/OpticHackerSpace/lensfit/engine"
+cd "E:/OpticHackerSpace/optibench/engine"
 python -m pytest -q
 
-cd "E:/OpticHackerSpace/lensfit/apps/desktop"
+cd "E:/OpticHackerSpace/optibench/apps/desktop"
 npm run build
 ```
 
@@ -652,4 +652,4 @@ npm run build
 
 本计划建议立即执行阶段 0。阶段 1-3 可以在阶段 0 通过后作为一个小版本完成。阶段 4 只能作为独立探针，不能阻塞 native 面包板。阶段 5 完成后，阶段 6 作为扩展新增了双缝 preset，验证了 preset 框架对不同 aperture 类型的可扩展性。
 
-核心原则：先让 LensFit 成为可信的选型工具，再让 Lab 成为可信的解释层，最后才让面包板成为可信的场景化实验环境。
+核心原则：先让 OptiBench 成为可信的选型工具，再让 Lab 成为可信的解释层，最后才让面包板成为可信的场景化实验环境。

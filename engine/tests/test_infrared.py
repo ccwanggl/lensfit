@@ -2,8 +2,8 @@
 
 import pytest
 
-from lensfit.domains.base import DeviceCombo, Requirements
-from lensfit.domains.infrared import InfraredModule
+from optibench.domains.base import DeviceCombo, Requirements
+from optibench.domains.infrared import InfraredModule
 
 
 class MockLens:

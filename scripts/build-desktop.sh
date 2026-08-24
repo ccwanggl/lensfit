@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build LensFit desktop application (sidecar + Tauri bundle)
+# Build OptiBench desktop application (sidecar + Tauri bundle)
 #
 # This is a thin Unix wrapper around scripts/build-desktop.py, which is the
 # canonical cross-platform build script.  On Windows use scripts/build-desktop.bat

@@ -8,7 +8,7 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
-from lensfit.db.models import (
+from optibench.db.models import (
     DetectorCatalog,
     LensCatalog,
     Manufacturer,
@@ -135,7 +135,7 @@ def import_detectors(session: Session, csv_path: Path) -> int:
     return count
 
 
-def main(db_url: str = "sqlite:///lensfit.db") -> None:
+def main(db_url: str = "sqlite:///optibench.db") -> None:
     """Import all seed data."""
     # 通过 Alembic 迁移创建/更新 schema，保证与模型一致
     init_db(db_url)

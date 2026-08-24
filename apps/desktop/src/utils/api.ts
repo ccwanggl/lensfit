@@ -1,4 +1,4 @@
-/** API client for LensFit engine.
+/** API client for OptiBench engine.
  *
  * In Tauri desktop mode, the endpoint is discovered dynamically from the
  * Rust sidecar supervisor. In web/dev mode it falls back to localhost.

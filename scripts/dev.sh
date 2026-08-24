@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start LensFit in development mode: backend + frontend
+# Start OptiBench in development mode: backend + frontend
 #
 # This is a thin Unix wrapper around scripts/dev.py, which is the canonical
 # cross-platform launcher.  On Windows use scripts/dev.bat or run

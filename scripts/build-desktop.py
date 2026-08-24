@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-platform desktop build script for LensFit.
+"""Cross-platform desktop build script for OptiBench.
 
 Builds the Python engine sidecar with PyInstaller and then packages the Tauri
 desktop application.  Works on Windows, macOS, and Linux.
@@ -86,7 +86,7 @@ def ensure_venv(venv_dir: Path) -> Path:
 
     try:
         subprocess.run(
-            [str(py), "-c", "import lensfit"],
+            [str(py), "-c", "import optibench"],
             cwd=project_root(),
             check=True,
             capture_output=True,

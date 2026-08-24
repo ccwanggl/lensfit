@@ -12,10 +12,10 @@
 
 ## 2. 实现概览
 
-新增 `engine/lensfit/lab/workbench/` 包：
+新增 `engine/optibench/lab/workbench/` 包：
 
 ```text
-engine/lensfit/lab/workbench/
+engine/optibench/lab/workbench/
   __init__.py     # 公共导出
   scene.py        # SceneGraph v1 模型与校验
   equipment.py    # 最小内存设备目录
@@ -44,7 +44,7 @@ engine/tests/test_workbench_scene.py
 | 退出条件 | 实现 | 测试覆盖 | 状态 |
 |---|---|---|---|
 | `components[].id` 场景内唯一 | `_unique_component_ids` | `test_duplicate_id_fails` | ✅ |
-| `spec_id` 使用 LensFit 语义，无第三方对象名 | `Literal["laser-monochrome", "single-slit", "screen"]` | `test_unknown_spec_id_fails` | ✅ |
+| `spec_id` 使用 OptiBench 语义，无第三方对象名 | `Literal["laser-monochrome", "single-slit", "screen"]` | `test_unknown_spec_id_fails` | ✅ |
 | 缺少 source/aperture/screen 任一组件会校验失败 | `_validate_scene` 统计各类别数量 | `test_missing_component_fails` | ✅ |
 | screen 与 slit 的 x 距离可推导为 `screen_distance_m` | `screen_distance_m()` | `test_screen_distance_derived_from_x_positions` | ✅ |
 | `rotation_deg` 第一阶段只允许 `0` | `_validate_scene` 检查 | `test_rotation_nonzero_fails` | ✅ |
@@ -56,7 +56,7 @@ engine/tests/test_workbench_scene.py
 |---|---|---|
 | SceneGraph 专项测试 | `pytest tests/test_workbench_scene.py -q` | **11 passed** |
 | 全量回归测试 | `pytest -q` | **131 passed, 4 warnings** |
-| 静态检查 | `ruff check lensfit/lab/workbench tests/test_workbench_scene.py` | 通过 |
+| 静态检查 | `ruff check optibench/lab/workbench tests/test_workbench_scene.py` | 通过 |
 
 ### 3.4 与现有代码的隔离
 
@@ -89,7 +89,7 @@ engine/tests/test_workbench_scene.py
 
 2. **`params_for` 可改为顶层导入**
 
-   目前 `params_for` 在方法内部 `from lensfit.lab.workbench.equipment import CATALOG`。虽然能避免循环依赖，但顶层导入更清晰。当前包内没有循环依赖风险，可以考虑重构。
+   目前 `params_for` 在方法内部 `from optibench.lab.workbench.equipment import CATALOG`。虽然能避免循环依赖，但顶层导入更清晰。当前包内没有循环依赖风险，可以考虑重构。
 
 3. **扩展设备目录时避免 Literal 硬编码**
 
@@ -105,7 +105,7 @@ engine/tests/test_workbench_scene.py
 |---|---|---|
 | `SceneGraph.version == 1` 必填 | ✅ | `Literal[1]` |
 | `components[].id` 场景内唯一 | ✅ | 已测试 |
-| `spec_id` 使用 LensFit 语义，无第三方对象名 | ✅ | `Literal` 限制 |
+| `spec_id` 使用 OptiBench 语义，无第三方对象名 | ✅ | `Literal` 限制 |
 | 缺少 source/aperture/screen 任一组件会校验失败 | ✅ | 严格为恰好一个 |
 | screen 与 slit 的 x 距离可推导为 `screen_distance_m` | ✅ | 已测试 |
 | `rotation_deg` 第一阶段只允许 `0` | ✅ | 已测试 |
@@ -124,6 +124,6 @@ engine/tests/test_workbench_scene.py
 
 - `docs/development/plans/active/2026-06-optical-breadboard-development-plan.md`
 - `docs/development/decisions/ADR-002-optical-breadboard-strategy.md`
-- `engine/lensfit/lab/workbench/scene.py`
-- `engine/lensfit/lab/workbench/equipment.py`
+- `engine/optibench/lab/workbench/scene.py`
+- `engine/optibench/lab/workbench/equipment.py`
 - `engine/tests/test_workbench_scene.py`

@@ -10,10 +10,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from lensfit.db.models import Base, DetectorCatalog, LensCatalog, Manufacturer
-from lensfit.domains.base import Requirements
-from lensfit.domains.industrial import IndustrialVisionModule
-from lensfit.matching.engine import MatchingEngine
+from optibench.db.models import Base, DetectorCatalog, LensCatalog, Manufacturer
+from optibench.domains.base import Requirements
+from optibench.domains.industrial import IndustrialVisionModule
+from optibench.matching.engine import MatchingEngine
 
 
 def _build_engine_with_catalog() -> MatchingEngine:

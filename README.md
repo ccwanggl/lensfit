@@ -1,9 +1,9 @@
-# LensFit — 智能镜头与传感器匹配系统
+# OptiBench — 光学工程工作台
 
-**LensFit — Intelligent Lens & Sensor Matching System**
+**OptiBench — Optical Engineering Workbench**
 
 <p align="center">
-  <img src="apps/desktop/src-tauri/icons/128x128.png" alt="LensFit Logo" width="96">
+  <img src="apps/desktop/src-tauri/icons/128x128.png" alt="OptiBench Logo" width="96">
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 ### 简介
 
-LensFit 是一款面向光学工程师和系统集成商的智能镜头与传感器匹配软件。它基于物理光学和几何光学的严谨计算，帮助用户在不同应用场景（工业视觉、摄影、显微镜、红外成像）中快速找到最优的镜头-传感器组合。
+OptiBench 是一款面向光学工程师和系统集成商的光学工程工作台，原名 LensFit。它以镜头-传感器智能匹配为主线，基于物理光学和几何光学的严谨计算，帮助用户在不同应用场景（工业视觉、摄影、显微镜、红外成像）中快速找到最优的镜头-传感器组合；同时内置 Self-Study Lab 交互式光学实验与光学知识库，覆盖从选型决策到原理学习的完整工作流。
 
 ### 核心特性
 
@@ -85,15 +85,15 @@ LensFit 是一款面向光学工程师和系统集成商的智能镜头与传感
 
 #### 一键启动开发环境（推荐）
 
-LensFit 提供了跨平台的启动脚本，自动创建 Python 虚拟环境、安装依赖、初始化数据库并同时启动前后端。
+OptiBench 提供了跨平台的启动脚本，自动创建 Python 虚拟环境、安装依赖、初始化数据库并同时启动前后端。
 
 ```bash
 # Windows
-cd lensfit
+cd optibench
 python scripts/dev.py
 
 # macOS / Linux
-cd lensfit
+cd optibench
 python3 scripts/dev.py
 # 或
 ./scripts/dev.sh
@@ -130,7 +130,7 @@ uv pip install -e ".[dev]"
 
 alembic upgrade head
 python database/import_scripts/import_seed.py
-python -m lensfit.api.server --port 8765
+python -m optibench.api.server --port 8765
 
 # 终端 2：启动前端
 cd apps/desktop
@@ -142,11 +142,11 @@ npm run dev
 
 ```bash
 # Windows
-cd lensfit
+cd optibench
 python scripts/build-desktop.py
 
 # macOS / Linux
-cd lensfit
+cd optibench
 python3 scripts/build-desktop.py
 # 或
 ./scripts/build-desktop.sh
@@ -157,7 +157,7 @@ python3 scripts/build-desktop.py
 ### 项目结构
 
 ```
-lensfit/
+optibench/
 ├── apps/
 │   └── desktop/              # Tauri 桌面应用
 │       ├── src/              # React 前端源码
@@ -169,7 +169,7 @@ lensfit/
 │           ├── src/          # Rust 源码
 │           └── binaries/     # 后端 sidecar 二进制
 ├── engine/
-│   └── lensfit/              # Python 后端引擎
+│   └── optibench/              # Python 后端引擎
 │       ├── api/              # FastAPI 路由
 │       ├── core/             # 光学核心计算
 │       ├── matching/         # 匹配引擎与评分
@@ -205,7 +205,7 @@ MIT License — 详见 [LICENSE](LICENSE) 文件。
 
 ### Introduction
 
-LensFit is an intelligent lens and sensor matching system for optical engineers and system integrators. Based on rigorous calculations from physical and geometric optics, it helps users quickly find optimal lens-sensor combinations across various application domains (industrial vision, photography, microscopy, infrared imaging).
+OptiBench is an optical engineering workbench for optical engineers and system integrators, formerly known as LensFit. Its core is intelligent lens-sensor matching: based on rigorous calculations from physical and geometric optics, it helps users quickly find optimal lens-sensor combinations across various application domains (industrial vision, photography, microscopy, infrared imaging). It also ships with an interactive Self-Study Lab and an optics knowledge base, covering the full workflow from selection decisions to learning the underlying principles.
 
 ### Key Features
 
@@ -275,15 +275,15 @@ LensFit is an intelligent lens and sensor matching system for optical engineers 
 
 #### One-Command Development Launcher (Recommended)
 
-LensFit provides cross-platform launch scripts that automatically create the Python virtual environment, install dependencies, initialize the database, and start both the backend and frontend.
+OptiBench provides cross-platform launch scripts that automatically create the Python virtual environment, install dependencies, initialize the database, and start both the backend and frontend.
 
 ```bash
 # Windows
-cd lensfit
+cd optibench
 python scripts/dev.py
 
 # macOS / Linux
-cd lensfit
+cd optibench
 python3 scripts/dev.py
 # or
 ./scripts/dev.sh
@@ -320,7 +320,7 @@ uv pip install -e ".[dev]"
 
 alembic upgrade head
 python database/import_scripts/import_seed.py
-python -m lensfit.api.server --port 8765
+python -m optibench.api.server --port 8765
 
 # Terminal 2: Start frontend
 cd apps/desktop
@@ -332,11 +332,11 @@ npm run dev
 
 ```bash
 # Windows
-cd lensfit
+cd optibench
 python scripts/build-desktop.py
 
 # macOS / Linux
-cd lensfit
+cd optibench
 python3 scripts/build-desktop.py
 # or
 ./scripts/build-desktop.sh
@@ -347,7 +347,7 @@ This script first builds the platform-specific sidecar with PyInstaller, then in
 ### Project Structure
 
 ```
-lensfit/
+optibench/
 ├── apps/
 │   └── desktop/              # Tauri desktop application
 │       ├── src/              # React frontend source
@@ -359,7 +359,7 @@ lensfit/
 │           ├── src/          # Rust source
 │           └── binaries/     # Backend sidecar binaries
 ├── engine/
-│   └── lensfit/              # Python backend engine
+│   └── optibench/              # Python backend engine
 │       ├── api/              # FastAPI routes
 │       ├── core/             # Core optical computations
 │       ├── matching/         # Matching engine & scoring

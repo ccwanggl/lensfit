@@ -22,7 +22,7 @@ impl EngineSupervisor {
 
         let shell = app.shell();
         let (mut rx, child) = shell
-            .sidecar("lensfit-engine")
+            .sidecar("optibench-engine")
             .map_err(|e| format!("Failed to create sidecar: {}", e))?
             .args(["--port", &port.to_string(), "--mode", "desktop"])
             .spawn()
@@ -37,7 +37,7 @@ impl EngineSupervisor {
                 match event {
                     CommandEvent::Stdout(line) => {
                         let text = String::from_utf8_lossy(&line);
-                        const KEY_PREFIX: &str = "LENSFIT_API_KEY ";
+                        const KEY_PREFIX: &str = "OPTIBENCH_API_KEY ";
                         if let Some(stripped) = text.strip_prefix(KEY_PREFIX) {
                             let key = stripped.trim().to_string();
                             if let Ok(mut guard) = api_key_stdout.lock() {
