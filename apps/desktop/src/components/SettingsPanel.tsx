@@ -1,5 +1,7 @@
 import { X, GraduationCap, Eye, Monitor, Info } from "lucide-react";
+import { useId } from "react";
 import { useLearningMode } from "../contexts/LearningModeContext";
+import { useDialogBehavior } from "./ui/Modal";
 
 interface SettingsPanelProps {
   open: boolean;
@@ -8,6 +10,8 @@ interface SettingsPanelProps {
 
 export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const { learningMode, setLearningMode } = useLearningMode();
+  const drawerRef = useDialogBehavior(open, onClose);
+  const titleId = useId();
 
   if (!open) return null;
 
@@ -20,14 +24,22 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
       />
 
       {/* Drawer */}
-      <div className="relative w-full max-w-sm h-full bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col animate-in slide-in-from-right duration-200">
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="relative w-full max-w-sm h-full bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col animate-in slide-in-from-right duration-200 outline-none"
+      >
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
             <Monitor size={18} className="text-indigo-500" />
-            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">设置</h2>
+            <h2 id={titleId} className="text-base font-bold text-slate-900 dark:text-slate-100">设置</h2>
           </div>
           <button
             onClick={onClose}
+            aria-label="关闭"
             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <X size={18} />
@@ -46,6 +58,8 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             </p>
 
             <button
+              role="switch"
+              aria-checked={learningMode}
               onClick={() => setLearningMode(!learningMode)}
               className={`w-full flex items-center justify-between p-3.5 rounded-xl border transition-colors ${
                 learningMode

@@ -69,7 +69,7 @@ export default function LabPage() {
               <button
                 onClick={handleBack}
                 className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden dark:text-slate-400 dark:hover:bg-slate-800"
-                title="返回目录"
+                title="返回目录" aria-label="返回目录"
               >
                 <ArrowLeft size={18} />
               </button>

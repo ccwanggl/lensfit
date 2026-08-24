@@ -69,7 +69,7 @@ export default function CompareParetoToolbar({
         <button
           onClick={onClearSelection}
           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
-          title="清空选择"
+          title="清空选择" aria-label="清空选择"
         >
           <X size={14} />
         </button>

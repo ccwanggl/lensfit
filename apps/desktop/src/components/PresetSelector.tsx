@@ -41,7 +41,7 @@ export default function PresetSelector({ domain, onSelect }: PresetSelectorProps
         onClick={() => setIsOpen(!isOpen)}
         className={`
           w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border
-          text-sm font-medium transition-all
+          text-sm font-medium transition-all focus-ring
           ${selected
             ? "bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800/40 dark:text-indigo-400"
             : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"

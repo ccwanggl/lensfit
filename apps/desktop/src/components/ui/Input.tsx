@@ -1,4 +1,4 @@
-import { type ReactNode, forwardRef, type InputHTMLAttributes, useState } from "react";
+import { type ReactNode, forwardRef, type InputHTMLAttributes, useId, useState } from "react";
 import { HelpCircle } from "lucide-react";
 
 export type InputChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>;
@@ -19,6 +19,9 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement | HTMLSelectEl
 const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
   ({ label, icon, error, helper, unit, className = "", as = "input", compact = false, layout = "vertical", learnHint, hintExpanded = false, ...props }, ref) => {
     const [showHint, setShowHint] = useState(false);
+    const autoId = useId();
+    const inputId = (props.id as string | undefined) ?? autoId;
+    const errorId = `${inputId}-error`;
     const isHorizontal = layout === "horizontal";
 
     const sharedClasses = `
@@ -44,12 +47,18 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
         {as === "input" ? (
           <input
             ref={ref as React.Ref<HTMLInputElement>}
+            id={inputId}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
             className={sharedClasses}
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
         ) : (
           <select
             ref={ref as React.Ref<HTMLSelectElement>}
+            id={inputId}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
             className={`${sharedClasses} appearance-none cursor-pointer`}
             {...(props as InputHTMLAttributes<HTMLSelectElement>)}
           >
@@ -70,6 +79,8 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
       <div className="relative inline-flex items-center">
         <button
           type="button"
+          aria-label="查看参数说明"
+          aria-expanded={showHint}
           className="ml-1 text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
           onMouseEnter={() => setShowHint(true)}
           onMouseLeave={() => setShowHint(false)}
@@ -78,7 +89,7 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
           <HelpCircle size={12} />
         </button>
         {showHint && (
-          <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 p-2.5 rounded-lg bg-slate-800 dark:bg-slate-700 text-slate-100 text-xs leading-relaxed shadow-xl border border-slate-600">
+          <div role="tooltip" className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 p-2.5 rounded-lg bg-slate-800 dark:bg-slate-700 text-slate-100 text-xs leading-relaxed shadow-xl border border-slate-600">
             {learnHint}
             <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-800 dark:border-t-slate-700" />
           </div>
@@ -97,7 +108,7 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
         <div className="w-full">
           <div className="flex items-center gap-2">
             {label && (
-              <label className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none flex items-center justify-end">
+              <label htmlFor={inputId} className="w-20 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300 text-right leading-none flex items-center justify-end">
                 {label}
                 {!hintExpanded && hintNode}
               </label>
@@ -117,14 +128,14 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className={`flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
+          <label htmlFor={inputId} className={`flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
             {label}
             {!hintExpanded && hintNode}
           </label>
         )}
         {inputWrap}
         {inlineHintNode}
-        {error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-rose-500 font-medium`}>{error}</p>}
+        {error && <p id={errorId} role="alert" className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-rose-500 font-medium`}>{error}</p>}
         {helper && !error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-slate-400 dark:text-slate-500`}>{helper}</p>}
       </div>
     );

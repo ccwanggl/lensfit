@@ -80,7 +80,7 @@ export function ParameterControl({ param, value, onChange }: ParameterControlPro
             <button
               onClick={() => onChange(param.default)}
               className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
-              title="恢复默认值"
+              title="恢复默认值" aria-label="恢复默认值"
             >
               <RotateCcw size={14} />
             </button>

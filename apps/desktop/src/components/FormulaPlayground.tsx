@@ -238,7 +238,7 @@ export default function FormulaPlayground() {
               <button
                 onClick={() => { setInputs({}); setResult(null); setChartData([]); }}
                 className="px-2 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-                title="重置"
+                title="重置" aria-label="重置"
               >
                 <RotateCcw size={12} />
               </button>

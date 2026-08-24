@@ -447,16 +447,16 @@ export default function IndustrialPage() {
       )}
       {!compareMode && (
         <div className="flex items-center gap-1">
-          <button title="导出 PDF" onClick={() => handleExport("pdf")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+          <button title="导出 PDF" aria-label="导出 PDF" onClick={() => handleExport("pdf")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             <FileText size={14} />
           </button>
-          <button title="导出 Excel" onClick={() => handleExport("excel")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+          <button title="导出 Excel" aria-label="导出 Excel" onClick={() => handleExport("excel")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             <Table2 size={14} />
           </button>
-          <button title="导出 CSV" onClick={() => handleExport("csv")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+          <button title="导出 CSV" aria-label="导出 CSV" onClick={() => handleExport("csv")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             {Icons.table}
           </button>
-          <button title="保存到项目" onClick={() => setSaveDialogOpen(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
+          <button title="保存到项目" aria-label="保存到项目" onClick={() => setSaveDialogOpen(true)} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
             <FolderPlus size={14} />
           </button>
         </div>

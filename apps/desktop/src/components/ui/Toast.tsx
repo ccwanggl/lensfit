@@ -32,6 +32,8 @@ export default function ToastContainer() {
       {toasts.map((t) => (
         <div
           key={t.id}
+          role={t.type === "error" ? "alert" : "status"}
+          aria-live={t.type === "error" ? "assertive" : "polite"}
           className={`
             flex items-start gap-3 p-4 rounded-xl border shadow-lg
             animate-slide-in-right
@@ -48,6 +50,7 @@ export default function ToastContainer() {
           <button
             onClick={() => remove(t.id)}
             className="flex-shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            aria-label="关闭通知"
           >
             <X size={14} />
           </button>

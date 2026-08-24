@@ -6,7 +6,6 @@ import {
   Package,
   Camera,
   Calendar,
-  X,
   HardDrive,
   Layers,
   Search,
@@ -22,6 +21,7 @@ import {
   Button,
   Input,
   Badge,
+  Modal,
   SectionHeader,
   EmptyState,
 } from "../components/ui";
@@ -498,7 +498,7 @@ export default function ProjectsPage() {
             {selectedProject && setups.length > 0 && (
               <div className="flex items-center gap-1">
                 <button
-                  title="导出 PDF"
+                  title="导出 PDF" aria-label="导出 PDF"
                   onClick={() => handleExportProjectReport("pdf")}
                   className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors"
                 >
@@ -619,90 +619,78 @@ export default function ProjectsPage() {
       </div>
 
       {/* ── Create Project Modal ── */}
-      {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <Card className="w-full max-w-md animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">新建项目</h3>
-              <button
-                type="button"
-                onClick={() => setShowCreate(false)}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-              >
-                <X size={14} />
-              </button>
-            </div>
-            <form onSubmit={handleCreateProject} className="space-y-4">
-              <Input
-                label="项目名称"
-                value={newProject.name}
-                onChange={(e: InputChangeEvent) => setNewProject({ ...newProject, name: e.target.value })}
-                placeholder="例如：产线视觉检测项目"
-                required
-              />
-              <Input
-                label="项目描述"
-                value={newProject.description}
-                onChange={(e: InputChangeEvent) => setNewProject({ ...newProject, description: e.target.value })}
-                placeholder="可选：项目背景和需求描述"
-              />
-              <Input
-                as="select"
-                label="应用领域"
-                value={newProject.domain}
-                onChange={(e: InputChangeEvent) => setNewProject({ ...newProject, domain: e.target.value })}
-              >
-                <option value="industrial">工业视觉</option>
-                <option value="photography">摄影</option>
-                <option value="microscope">显微镜</option>
-                <option value="infrared">红外成像</option>
-              </Input>
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <Button type="button" variant="ghost" size="sm" onClick={() => setShowCreate(false)}>
-                  取消
-                </Button>
-                <Button type="submit" variant="primary" size="sm" leftIcon={<Plus size={14} />}>
-                  创建
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
+      <Modal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="新建项目"
+      >
+        <form onSubmit={handleCreateProject} className="space-y-4">
+          <Input
+            label="项目名称"
+            value={newProject.name}
+            onChange={(e: InputChangeEvent) => setNewProject({ ...newProject, name: e.target.value })}
+            placeholder="例如：产线视觉检测项目"
+            required
+          />
+          <Input
+            label="项目描述"
+            value={newProject.description}
+            onChange={(e: InputChangeEvent) => setNewProject({ ...newProject, description: e.target.value })}
+            placeholder="可选：项目背景和需求描述"
+          />
+          <Input
+            as="select"
+            label="应用领域"
+            value={newProject.domain}
+            onChange={(e: InputChangeEvent) => setNewProject({ ...newProject, domain: e.target.value })}
+          >
+            <option value="industrial">工业视觉</option>
+            <option value="photography">摄影</option>
+            <option value="microscope">显微镜</option>
+            <option value="infrared">红外成像</option>
+          </Input>
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setShowCreate(false)}>
+              取消
+            </Button>
+            <Button type="submit" variant="primary" size="sm" leftIcon={<Plus size={14} />}>
+              创建
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* ── Delete Confirm Modal ── */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <Card className="w-full max-w-sm animate-fade-in">
-            <div className="flex items-start gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-500">
-                <AlertTriangle size={16} />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                  确认删除{deleteConfirm.type === "project" ? "项目" : "方案"}？
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  「{deleteConfirm.name}」将被永久删除，此操作不可撤销。
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>
-                取消
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                leftIcon={<Trash2 size={14} />}
-                onClick={deleteConfirm.type === "project" ? handleDeleteProject : handleDeleteSetup}
-              >
-                删除
-              </Button>
-            </div>
-          </Card>
+      <Modal
+        open={deleteConfirm !== null}
+        onClose={() => setDeleteConfirm(null)}
+        title={`确认删除${deleteConfirm?.type === "project" ? "项目" : "方案"}？`}
+        widthClass="max-w-sm"
+        footer={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>
+              取消
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<Trash2 size={14} />}
+              onClick={deleteConfirm?.type === "project" ? handleDeleteProject : handleDeleteSetup}
+            >
+              删除
+            </Button>
+          </>
+        }
+      >
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-500">
+            <AlertTriangle size={16} />
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            「{deleteConfirm?.name}」将被永久删除，此操作不可撤销。
+          </p>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

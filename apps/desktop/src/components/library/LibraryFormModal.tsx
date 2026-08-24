@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { X, Plus, CheckCircle2 } from "lucide-react";
-import { Card, Button, Input } from "../ui";
+import { Plus, CheckCircle2 } from "lucide-react";
+import { Button, Input, Modal } from "../ui";
 import { type InputChangeEvent } from "../ui/Input";
 import type {
   CatalogLens,
@@ -344,22 +344,15 @@ export default function LibraryFormModal({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-6">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-            {editing ? `编辑${KIND_LABEL[kind]}` : `新建${KIND_LABEL[kind]}`}
-          </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-          >
-            <X size={14} />
-          </button>
-        </div>
+    <Modal
+      open
+      onClose={onClose}
+      title={editing ? `编辑${KIND_LABEL[kind]}` : `新建${KIND_LABEL[kind]}`}
+      widthClass="max-w-2xl"
+    >
+      <div className="max-h-[70vh] overflow-y-auto -mx-1 px-1">
         {kind === "lens" ? renderLensForm() : renderDetectorForm()}
-      </Card>
-    </div>
+      </div>
+    </Modal>
   );
 }

@@ -103,7 +103,7 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
               <button
                 key={p.key}
                 onClick={() => setActiveParam(p.key)}
-                className="w-full flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors text-left"
+                className="w-full flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors text-left focus-ring"
               >
                 <div>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{p.label}</span>

@@ -224,6 +224,7 @@ export default function LearningHub() {
             <button
               onClick={() => setMobilePanel(null)}
               className="self-end rounded-lg p-2 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800"
+              aria-label="关闭面板"
             >
               <X size={18} />
             </button>
@@ -262,7 +263,7 @@ export default function LearningHub() {
             <button
               onClick={() => setMobilePanel("left")}
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 lg:hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-              title="目录"
+              title="目录" aria-label="目录"
             >
               <PanelLeft size={18} />
             </button>
@@ -310,14 +311,14 @@ export default function LearningHub() {
                 <button
                   onClick={() => setMobilePanel("right")}
                   className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 lg:hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                  title="知识点"
+                  title="知识点" aria-label="知识点"
                 >
                   <BookOpen size={18} />
                 </button>
                 <button
                   onClick={handleCloseExperiment}
                   className="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
-                  title="关闭实验"
+                  title="关闭实验" aria-label="关闭实验"
                 >
                   <X size={18} />
                 </button>
@@ -431,6 +432,7 @@ export default function LearningHub() {
             <button
               onClick={() => setMobilePanel(null)}
               className="self-end rounded-lg p-2 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800"
+              aria-label="关闭面板"
             >
               <X size={18} />
             </button>

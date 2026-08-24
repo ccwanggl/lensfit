@@ -97,7 +97,7 @@ function AppContent() {
               <button
                 onClick={() => setSettingsOpen(true)}
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                title="设置"
+                title="设置" aria-label="设置"
               >
                 <Settings size={16} />
               </button>
@@ -105,6 +105,7 @@ function AppContent() {
                 onClick={toggle}
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 title={theme === "dark" ? "切换到亮色模式" : "切换到暗色模式"}
+                aria-label={theme === "dark" ? "切换到亮色模式" : "切换到暗色模式"}
               >
                 {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
               </button>

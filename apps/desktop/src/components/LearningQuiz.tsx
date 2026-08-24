@@ -97,7 +97,7 @@ export default function LearningQuiz({ title, questions, onComplete }: LearningQ
         {q.options.map((opt, i) => {
           const answered = showResult && selected === i;
           const isCorrectOption = showResult && i === q.correctIndex;
-          const base = "w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors";
+          const base = "w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium border transition-colors focus-ring";
           const idle = "bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700";
           const correct = "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/30 text-emerald-700 dark:text-emerald-400";
           const wrong = "bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800/30 text-rose-700 dark:text-rose-400";
