@@ -78,15 +78,15 @@ function RelationshipDiagram({ form }: { form: Record<string, unknown> }) {
       </svg>
       <div className="grid grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-300">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500 dark:text-slate-400">推算焦距</span>
+          <span className="block text-xs text-slate-500 dark:text-slate-400">推算焦距</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{focal.toFixed(1)} mm</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500 dark:text-slate-400">放大倍率 β</span>
+          <span className="block text-xs text-slate-500 dark:text-slate-400">放大倍率 β</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{beta.toFixed(3)}×</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500 dark:text-slate-400">像素精度</span>
+          <span className="block text-xs text-slate-500 dark:text-slate-400">像素精度</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{pxAcc.toFixed(4)} mm/px</span>
         </div>
       </div>
@@ -209,15 +209,15 @@ function DOFDiagram({ form }: { form: Record<string, unknown> }) {
     <div className="space-y-3">
       <div className="grid grid-cols-3 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/60">
-          <span className="block text-[10px] text-slate-500">超焦距 H</span>
+          <span className="block text-xs text-slate-500">超焦距 H</span>
           <span className="font-mono font-semibold">{H.toFixed(0)} mm</span>
         </div>
         <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/60">
-          <span className="block text-[10px] text-slate-500">近端</span>
+          <span className="block text-xs text-slate-500">近端</span>
           <span className="font-mono font-semibold">{near.toFixed(0)} mm</span>
         </div>
         <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/60">
-          <span className="block text-[10px] text-slate-500">远端</span>
+          <span className="block text-xs text-slate-500">远端</span>
           <span className="font-mono font-semibold">{Number.isFinite(far) ? `${far.toFixed(0)} mm` : "∞"}</span>
         </div>
       </div>
@@ -263,11 +263,11 @@ function CoverageDiagram({ form }: { form: Record<string, unknown> }) {
       </div>
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/60">
-          <span className="block text-[10px] text-slate-500">覆盖比例</span>
+          <span className="block text-xs text-slate-500">覆盖比例</span>
           <span className="font-mono font-semibold">{(ratio * 100).toFixed(0)}%</span>
         </div>
         <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/60">
-          <span className="block text-[10px] text-slate-500">状态</span>
+          <span className="block text-xs text-slate-500">状态</span>
           <span className={`font-semibold ${ratio >= 1 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
             {ratio >= 1 ? "无暗角" : "可能暗角"}
           </span>
@@ -425,7 +425,7 @@ export default function IndustrialLearningHub({ form }: Props) {
       </div>
 
       <div className="mb-4">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
         </div>

@@ -98,11 +98,11 @@ function FOVDiagram({ form }: { form: Record<string, unknown> }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">视场角</span>
+          <span className="block text-xs text-slate-500">视场角</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{fov.toFixed(1)}°</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">地面覆盖宽度</span>
+          <span className="block text-xs text-slate-500">地面覆盖宽度</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{groundWidth.toFixed(2)} m</span>
         </div>
       </div>
@@ -144,11 +144,11 @@ function ResolutionDiagram({ form }: { form: Record<string, unknown> }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">图像分辨率</span>
+          <span className="block text-xs text-slate-500">图像分辨率</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{resolutionW} px</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">目标分辨率（5m处）</span>
+          <span className="block text-xs text-slate-500">目标分辨率（5m处）</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{groundRes.toFixed(1)} cm/px</span>
         </div>
       </div>
@@ -341,7 +341,7 @@ export default function InfraredLearningHub({ form }: Props) {
       </div>
 
       <div className="mb-4">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
         </div>

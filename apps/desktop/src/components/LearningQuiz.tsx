@@ -86,7 +86,7 @@ export default function LearningQuiz({ title, questions, onComplete }: LearningQ
           <HelpCircle size={14} className="text-indigo-500" />
           {title}
         </h4>
-        <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+        <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">
           {current + 1} / {questions.length}
         </span>
       </div>

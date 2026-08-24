@@ -18,9 +18,6 @@ interface DomainDetailPanelProps {
   onTabChange: (tab: RightTab) => void;
   tabs?: TabConfig[];
   theme?: "indigo" | "orange";
-  /** Rendered in place of tabs when a comparison view is active. */
-  compareView?: ReactNode;
-  isCompareActive?: boolean;
   viz: ReactNode;
   trace: ReactNode;
   knowledge: ReactNode;
@@ -50,8 +47,6 @@ export function DomainDetailPanel({
   onTabChange,
   tabs = DEFAULT_TABS,
   theme = "indigo",
-  compareView,
-  isCompareActive = false,
   viz,
   trace,
   knowledge,
@@ -71,31 +66,25 @@ export function DomainDetailPanel({
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 flex flex-col">
-        {isCompareActive && compareView ? (
-          compareView
-        ) : (
-          <>
-            <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
-              {tabs.map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => onTabChange(t.key)}
-                  className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
-                    activeTab === t.key
-                      ? ACTIVE_TAB_CLASSES[theme]
-                      : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                  }`}
-                >
-                  {t.icon}
-                  {t.label}
-                </button>
-              ))}
-            </div>
-            <div className="flex-1 overflow-y-auto pr-1">
-              {tabContent[activeTab]}
-            </div>
-          </>
-        )}
+        <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+          {tabs.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => onTabChange(t.key)}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                activeTab === t.key
+                  ? ACTIVE_TAB_CLASSES[theme]
+                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+              }`}
+            >
+              {t.icon}
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex-1 overflow-y-auto pr-1">
+          {tabContent[activeTab]}
+        </div>
       </div>
     </Card>
   );

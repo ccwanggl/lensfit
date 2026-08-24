@@ -109,7 +109,7 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 "使用“游乐场”页任意调整参数，观察公式结果如何变化。",
               ].map((tip, idx) => (
                 <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  <span className="w-5 h-5 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-bold">
+                  <span className="w-5 h-5 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
                     {idx + 1}
                   </span>
                   {tip}

@@ -173,7 +173,7 @@ function CoverageDiagram() {
         />
         <MetricCard
           label="状态"
-          value={fullyCovered ? "完全覆盖 ✅" : cornerCovered ? "轻微渐晕 ⚠️" : "严重暗角 ❌"}
+          value={fullyCovered ? "完全覆盖" : cornerCovered ? "轻微渐晕" : "严重暗角"}
           color={fullyCovered ? "text-emerald-600 dark:text-emerald-400" : cornerCovered ? "text-amber-600 dark:text-amber-400" : "text-rose-600 dark:text-rose-400"}
         />
       </div>
@@ -216,7 +216,7 @@ function NyquistDiagram() {
         <MetricCard label="过采样率" value={oversampling.toFixed(2)} color={oversampling >= 0.5 && oversampling <= 1.2 ? "text-emerald-600 dark:text-emerald-400" : oversampling < 0.5 ? "text-rose-600 dark:text-rose-400" : "text-amber-600 dark:text-amber-400"} />
         <MetricCard
           label="匹配状态"
-          value={oversampling >= 0.5 && oversampling <= 1.2 ? "理想 ✅" : oversampling < 0.5 ? "欠采样 ❌" : "过采样 ⚠️"}
+          value={oversampling >= 0.5 && oversampling <= 1.2 ? "理想" : oversampling < 0.5 ? "欠采样" : "过采样"}
           color={oversampling >= 0.5 && oversampling <= 1.2 ? "text-emerald-600 dark:text-emerald-400" : oversampling < 0.5 ? "text-rose-600 dark:text-rose-400" : "text-amber-600 dark:text-amber-400"}
         />
       </div>
@@ -244,7 +244,7 @@ function NyquistDiagram() {
 
         {/* Aliasing indicator */}
         {oversampling < 0.5 && (
-          <text x="200" y="110" textAnchor="middle" fontSize="10" fill="#ef4444">⚠️ 混叠警告：镜头分辨率超过传感器奈奎斯特极限</text>
+          <text x="200" y="110" textAnchor="middle" fontSize="10" fill="#ef4444">混叠警告：镜头分辨率超过传感器奈奎斯特极限</text>
         )}
       </svg>
     </div>
@@ -258,7 +258,7 @@ function NyquistDiagram() {
 function MetricCard({ label, value, color = "text-slate-700 dark:text-slate-200" }: { label: string; value: string; color?: string }) {
   return (
     <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700">
-      <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">{label}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase">{label}</p>
       <p className={`text-sm font-mono font-bold ${color}`}>{value}</p>
     </div>
   );

@@ -96,11 +96,11 @@ function ApertureDiagram({ form }: { form: Record<string, unknown> }) {
       </div>
       <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-300">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">进光量</span>
+          <span className="block text-xs text-slate-500">进光量</span>
           <span className="font-semibold">{f <= 2.8 ? "多" : f <= 5.6 ? "中等" : "少"}</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">背景虚化</span>
+          <span className="block text-xs text-slate-500">背景虚化</span>
           <span className="font-semibold">{f <= 2.8 ? "强" : f <= 5.6 ? "中等" : "弱"}</span>
         </div>
       </div>
@@ -306,7 +306,7 @@ export default function PhotographyLearningHub({ form }: Props) {
       </div>
 
       <div className="mb-4">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
         </div>

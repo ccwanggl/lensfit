@@ -102,6 +102,7 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<CatalogLens | CatalogDetector | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CatalogLens | CatalogDetector | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Debounce search input
   useEffect(() => {
@@ -222,7 +223,8 @@ export default function LibraryPage() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget || deleting) return;
+    setDeleting(true);
     try {
       if (kind === "lens") {
         await deleteLens(deleteTarget.id);
@@ -243,6 +245,8 @@ export default function LibraryPage() {
     } catch (err) {
       console.error("Delete failed:", err);
       toast("error", "删除失败", "无法删除该条目");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -332,7 +336,7 @@ export default function LibraryPage() {
         />
       )}
 
-      <LibraryDeleteModal item={deleteTarget} onConfirm={handleConfirmDelete} onCancel={() => setDeleteTarget(null)} />
+      <LibraryDeleteModal item={deleteTarget} onConfirm={handleConfirmDelete} onCancel={() => setDeleteTarget(null)} loading={deleting} />
     </div>
   );
 }

@@ -68,13 +68,13 @@ export default function LibraryFilters({
           onChange={(e: InputChangeEvent) => onSearchChange(e.target.value)}
         />
         <div>
-          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">数据来源</p>
+          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">数据来源</p>
           <div className="flex flex-wrap gap-1.5">
             {(["all", "seed", "user"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => onSourceFilterChange(s)}
-                className={`text-[10px] px-2 py-1 rounded-md transition-colors ${
+                className={`text-xs px-2 py-1 rounded-md transition-colors ${
                   sourceFilter === s
                     ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 font-semibold"
                     : "bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -88,11 +88,11 @@ export default function LibraryFilters({
         <div className="grid grid-cols-2 gap-2 text-center">
           <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800">
             <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{lensCount}</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500">镜头</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">镜头</p>
           </div>
           <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800">
             <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{detectorCount}</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500">探测器</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">探测器</p>
           </div>
         </div>
         <div className="space-y-2 pt-1">

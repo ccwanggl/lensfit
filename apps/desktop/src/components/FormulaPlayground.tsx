@@ -196,7 +196,7 @@ export default function FormulaPlayground() {
                 <div key={p.name}>
                   <div className="flex items-center justify-between mb-0.5">
                     <span className="text-xs text-slate-700 dark:text-slate-200">{p.name_cn}</span>
-                    <span className="text-[10px] text-slate-400">{p.unit}</span>
+                    <span className="text-xs text-slate-400">{p.unit}</span>
                   </div>
                   <input
                     type="range"
@@ -279,7 +279,7 @@ export default function FormulaPlayground() {
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(result).map(([k, v]) => (
                     <div key={k} className="p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">{k}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase">{k}</p>
                       <p className="text-sm font-mono font-bold text-slate-800 dark:text-slate-200">
                         {Number.isNaN(v) ? "无效" : Number.isFinite(v) ? (Math.abs(v) > 10000 ? v.toExponential(3) : v.toFixed(v % 1 === 0 ? 0 : 4)) : "∞"}
                       </p>

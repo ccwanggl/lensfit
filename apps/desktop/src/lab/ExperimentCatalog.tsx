@@ -105,7 +105,7 @@ export function ExperimentCatalog({ onSelect }: ExperimentCatalogProps) {
             <div className="mb-1 flex items-center justify-between">
               <span className="font-semibold text-slate-900 dark:text-slate-100">{exp.title}</span>
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
                   exp.difficulty === "foundation"
                     ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                     : exp.difficulty === "intermediate"
@@ -122,7 +122,7 @@ export function ExperimentCatalog({ onSelect }: ExperimentCatalogProps) {
                 {exp.linked_concepts.slice(0, 3).map((c) => (
                   <span
                     key={c}
-                    className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500 dark:bg-slate-700 dark:text-slate-400"
+                    className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500 dark:bg-slate-700 dark:text-slate-400"
                   >
                     {c.split("/").pop()}
                   </span>

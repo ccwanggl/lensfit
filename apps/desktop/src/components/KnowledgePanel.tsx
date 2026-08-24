@@ -271,7 +271,7 @@ function FormulaCalculator({ formula }: { formula: KnowledgeFormula }) {
                 setInputs((prev) => ({ ...prev, [p.name]: v === "" ? 0 : parseFloat(v) }));
               }}
             />
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 w-8">{p.unit}</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500 w-8">{p.unit}</span>
           </div>
         ))}
       </div>
@@ -467,7 +467,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{f.name_cn}</span>
                 {learningMode && LEARN_LINKS[f.id] && (
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
                     <GraduationCap size={10} />
                     可学习
                   </span>

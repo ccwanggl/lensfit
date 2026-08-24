@@ -6,9 +6,10 @@ interface Props {
   item: CatalogLens | CatalogDetector | null;
   onConfirm: () => void;
   onCancel: () => void;
+  loading?: boolean;
 }
 
-export default function LibraryDeleteModal({ item, onConfirm, onCancel }: Props) {
+export default function LibraryDeleteModal({ item, onConfirm, onCancel, loading = false }: Props) {
   return (
     <Modal
       open={item !== null}
@@ -17,10 +18,10 @@ export default function LibraryDeleteModal({ item, onConfirm, onCancel }: Props)
       widthClass="max-w-sm"
       footer={
         <>
-          <Button variant="ghost" size="sm" onClick={onCancel}>
+          <Button variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
             取消
           </Button>
-          <Button variant="danger" size="sm" leftIcon={<Trash2 size={14} />} onClick={onConfirm}>
+          <Button variant="danger" size="sm" leftIcon={<Trash2 size={14} />} onClick={onConfirm} loading={loading} disabled={loading}>
             删除
           </Button>
         </>

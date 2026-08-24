@@ -94,7 +94,7 @@ export default function PresetSelector({ domain, onSelect }: PresetSelectorProps
                           <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
                             {preset.name_cn}
                           </span>
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium ${diff.className}`}>
+                          <span className={`text-xs px-1.5 py-0.5 rounded-md border font-medium ${diff.className}`}>
                             {diff.label}
                           </span>
                         </div>
@@ -165,7 +165,7 @@ export default function PresetSelector({ domain, onSelect }: PresetSelectorProps
           {selected.standards.length > 0 && (
             <div className="flex items-center gap-1.5">
               <Shield size={11} className="text-slate-400" />
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">
+              <span className="text-xs text-slate-400 dark:text-slate-500">
                 相关标准：{selected.standards.join("、")}
               </span>
             </div>

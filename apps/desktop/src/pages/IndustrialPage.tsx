@@ -19,7 +19,6 @@ import {
   Layers,
   Image,
   Download,
-  ArrowLeftRight,
   FolderPlus,
   BarChart3,
   Zap,
@@ -33,9 +32,7 @@ import ScoreRadarChart from "../components/ScoreRadarChart";
 import MatchExplanation from "../components/MatchExplanation";
 import DomainForm from "../components/DomainForm";
 import {
-  Button,
   Badge,
-  SectionHeader,
   EmptyState,
 } from "../components/ui";
 import { ResultCardSkeleton, CoverageSkeleton } from "../components/ui/Skeleton";
@@ -107,50 +104,33 @@ function ResultCard({
   rank,
   isSelected,
   onClick,
-  compareMode,
-  isCompareSelected,
-  onToggleCompare,
 }: {
   result: UnifiedMatchResult;
   rank: number;
   isSelected: boolean;
   onClick: () => void;
-  compareMode?: boolean;
-  isCompareSelected?: boolean;
-  onToggleCompare?: () => void;
 }) {
   const scorePct = Math.min(result.score * 100, 100);
   const scoreColor = scorePct >= 80 ? "emerald" : scorePct >= 50 ? "amber" : "rose";
-
-  const handleActivate = () => {
-    if (compareMode) {
-      onToggleCompare?.();
-    } else {
-      onClick();
-    }
-  };
 
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={handleActivate}
+      onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          handleActivate();
+          onClick();
         }
       }}
       className={`
-        group relative flex items-start gap-3 p-4 rounded-xl
+        group relative flex items-start gap-3 p-4 rounded-xl cursor-pointer
         transition-all duration-200 ease-out
-        ${isSelected && !compareMode
+        ${isSelected
           ? "bg-indigo-50/70 dark:bg-indigo-900/30 border-2 border-indigo-300 dark:border-indigo-700 shadow-[0_2px_12px_rgba(99,102,241,0.12)]"
-          : isCompareSelected
-          ? "bg-indigo-50/50 dark:bg-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-800 shadow-sm"
           : "bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 hover:shadow-md hover:-translate-y-0.5"
         }
-        ${compareMode ? "cursor-pointer" : "cursor-pointer"}
       `}
     >
       <div className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full transition-all duration-200 ${
@@ -188,18 +168,6 @@ function ResultCard({
           }`}>
             {result.reason}
           </p>
-        )}
-
-        {compareMode && (
-          <div className="flex-shrink-0 flex items-center">
-            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-              isCompareSelected
-                ? "bg-indigo-500 border-indigo-500"
-                : "border-slate-300 dark:border-slate-600 group-hover:border-indigo-300"
-            }`}>
-              {isCompareSelected && <CheckCircle2 size={12} className="text-white" />}
-            </div>
-          </div>
         )}
 
         <div className="mt-2.5">
@@ -303,6 +271,7 @@ export default function IndustrialPage() {
   const whatIfCloseRef = useRef<(() => void) | null>(null);
 
   const paretoResults = useMemo(() => computeParetoFrontier(results), [results]);
+  const [showAllResults, setShowAllResults] = useState(false);
   const displayResults = useMemo(() => {
     return paretoOnly ? paretoResults : results;
   }, [results, paretoResults, paretoOnly]);
@@ -442,9 +411,6 @@ export default function IndustrialPage() {
         selectionCount={compareSelection.length}
         onClearSelection={() => setCompareSelection([])}
       />
-      {compareMode && compareSelection.length >= 2 && (
-        <Button variant="primary" size="sm" leftIcon={<ArrowLeftRight size={14} />} onClick={() => setSelectedResult(null)}>开始对比</Button>
-      )}
       {!compareMode && (
         <div className="flex items-center gap-1">
           <button title="导出 PDF" aria-label="导出 PDF" onClick={() => handleExport("pdf")} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors">
@@ -494,6 +460,12 @@ export default function IndustrialPage() {
                 setForm((prev) => ({ ...prev, [name]: value }));
                 toast("info", "参数已调整", `${name} 已设为 ${String(value)}，请重新匹配`);
               }}
+              quickAdjusts={[
+                { label: "改用 1/2\" 传感器", param: "sensor_size", value: "1/2" },
+                { label: "改用 CS-mount", param: "interface", value: "CS-mount" },
+                { label: "工作距离 500mm", param: "working_distance_mm", value: 500 },
+                { label: "视场 100mm", param: "target_width_mm", value: 100 },
+              ]}
             />
           ) : paretoOnly ? (
             <div className="h-full flex items-center justify-center">
@@ -546,29 +518,47 @@ export default function IndustrialPage() {
       )}
 
       {displayResults.length > 0 && (
+        <>
+          {compareSelection.length >= 2 && (
+            <div className="mb-4">
+              <CompareView results={compareSelection} />
+            </div>
+          )}
         <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
-          {displayResults.slice(0, 20).map((r, i) => (
-            <ResultCard
-              key={`${r.lens_id}-${r.detector_id}`}
-              result={r}
-              rank={i + 1}
-              isSelected={selectedResult?.lens_id === r.lens_id && selectedResult?.detector_id === r.detector_id}
-              onClick={() => setSelectedResult(r)}
-              compareMode={compareMode}
-              isCompareSelected={compareSelection.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id)}
-              onToggleCompare={() => toggleCompare(r)}
-            />
+          {(showAllResults ? displayResults : displayResults.slice(0, 20)).map((r, i) => (
+            <div key={`${r.lens_id}-${r.detector_id}`} className="relative">
+              {compareMode && (
+                <label className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 shadow-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-indigo-600"
+                    checked={compareSelection.some((x) => x.lens_id === r.lens_id && x.detector_id === r.detector_id)}
+                    onChange={() => toggleCompare(r)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </label>
+              )}
+              <ResultCard
+                result={r}
+                rank={i + 1}
+                isSelected={selectedResult?.lens_id === r.lens_id && selectedResult?.detector_id === r.detector_id}
+                onClick={() => setSelectedResult(r)}
+              />
+            </div>
           ))}
         </div>
+        </>
+      )}
+
+      {!showAllResults && displayResults.length > 20 && (
+        <button
+          onClick={() => setShowAllResults(true)}
+          className="mt-2.5 w-full py-2 rounded-lg text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50/60 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors focus-ring"
+        >
+          显示全部 {displayResults.length} 条结果
+        </button>
       )}
     </DomainResultsPanel>
-  );
-
-  const compareView = (
-    <>
-      <SectionHeader title="方案对比" subtitle={`已选中 ${compareSelection.length} 个方案`} icon={<ArrowLeftRight size={16} />} />
-      <CompareView results={compareSelection} />
-    </>
   );
 
   const vizTab = (
@@ -665,8 +655,6 @@ export default function IndustrialPage() {
       activeTab={rightTab}
       onTabChange={setRightTab}
       theme="indigo"
-      isCompareActive={compareMode && compareSelection.length >= 2}
-      compareView={compareView}
       tabs={[
         { key: "viz", label: "可视化", icon: <BarChart3 size={13} /> },
         { key: "trace", label: "推导链", icon: <Activity size={13} /> },

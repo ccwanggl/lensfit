@@ -11,6 +11,7 @@ interface Props {
   lensId?: number;
   detectorId?: number;
   matchResultSnapshot?: object;
+  defaultName?: string;
 }
 
 interface Project {
@@ -26,12 +27,14 @@ export default function SaveToProjectDialog({
   lensId,
   detectorId,
   matchResultSnapshot,
+  defaultName,
 }: Props) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
   const [newProjectName, setNewProjectName] = useState("");
+  const [setupName, setSetupName] = useState("");
   const [mode, setMode] = useState<"select" | "create">("select");
 
   useEffect(() => {
@@ -42,6 +45,7 @@ export default function SaveToProjectDialog({
       setMode("select");
       return;
     }
+    setSetupName(defaultName?.trim() || `方案 ${new Date().toLocaleString("zh-CN")}`);
     setLoading(true);
     listProjects()
       .then((data) => {
@@ -52,9 +56,13 @@ export default function SaveToProjectDialog({
       })
       .catch(() => toast("error", "加载失败", "无法获取项目列表"))
       .finally(() => setLoading(false));
-  }, [isOpen]);
+  }, [isOpen, defaultName]);
 
   const handleSave = async () => {
+    if (!setupName.trim()) {
+      toast("error", "请输入方案名称");
+      return;
+    }
     let projectId = selectedProjectId;
     if (mode === "create") {
       if (!newProjectName.trim()) {
@@ -76,7 +84,7 @@ export default function SaveToProjectDialog({
     setSaving(true);
     try {
       await saveSetup(projectId, {
-        name: `方案 ${new Date().toLocaleString("zh-CN")}`,
+        name: setupName.trim(),
         lens_id: lensId,
         detector_id: detectorId,
         match_result_snapshot: matchResultSnapshot,
@@ -111,6 +119,15 @@ export default function SaveToProjectDialog({
         </div>
       ) : (
         <>
+          <div className="mb-3">
+            <Input
+              label="方案名称"
+              value={setupName}
+              onChange={(e: InputChangeEvent) => setSetupName(e.target.value)}
+              placeholder="输入方案名称"
+            />
+          </div>
+
           <div className="flex items-center gap-2 mb-3">
             <button
               onClick={() => setMode("select")}

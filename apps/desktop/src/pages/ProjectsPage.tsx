@@ -117,6 +117,7 @@ export default function ProjectsPage() {
   const [domainFilter, setDomainFilter] = useState<string>("all");
   const [selectedSetup, setSelectedSetup] = useState<SetupItem | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: "project" | "setup"; id: number; name: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [newProject, setNewProject] = useState({
     name: "",
@@ -201,7 +202,8 @@ export default function ProjectsPage() {
   };
 
   const handleDeleteProject = async () => {
-    if (!deleteConfirm) return;
+    if (!deleteConfirm || deleting) return;
+    setDeleting(true);
     try {
       await deleteProject(deleteConfirm.id);
       toast("success", "已删除", `项目「${deleteConfirm.name}」已删除`);
@@ -212,12 +214,14 @@ export default function ProjectsPage() {
     } catch (e) {
       toast("error", "删除失败", "无法删除项目");
     } finally {
+      setDeleting(false);
       setDeleteConfirm(null);
     }
   };
 
   const handleDeleteSetup = async () => {
-    if (!deleteConfirm || !selectedProject) return;
+    if (!deleteConfirm || !selectedProject || deleting) return;
+    setDeleting(true);
     try {
       await deleteSetup(selectedProject.id, deleteConfirm.id);
       toast("success", "已删除", `方案「${deleteConfirm.name}」已删除`);
@@ -228,6 +232,7 @@ export default function ProjectsPage() {
     } catch (e) {
       toast("error", "删除失败", "无法删除方案");
     } finally {
+      setDeleting(false);
       setDeleteConfirm(null);
     }
   };
@@ -305,7 +310,7 @@ export default function ProjectsPage() {
                 <button
                   key={d}
                   onClick={() => setDomainFilter(d)}
-                  className={`text-[10px] px-2 py-1 rounded-md transition-colors ${
+                  className={`text-xs px-2 py-1 rounded-md transition-colors ${
                     domainFilter === d
                       ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 font-semibold"
                       : "bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -474,7 +479,7 @@ export default function ProjectsPage() {
                         <span className="truncate">{getDetectorModel(s.detector_id)}</span>
                       </div>
                     </div>
-                    <div className="mt-2 flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500">
+                    <div className="mt-2 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
                       <Calendar size={10} />
                       <span>{formatDate(s.created_at)}</span>
                     </div>
@@ -668,7 +673,7 @@ export default function ProjectsPage() {
         widthClass="max-w-sm"
         footer={
           <>
-            <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>
+            <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)} disabled={deleting}>
               取消
             </Button>
             <Button
@@ -676,6 +681,8 @@ export default function ProjectsPage() {
               size="sm"
               leftIcon={<Trash2 size={14} />}
               onClick={deleteConfirm?.type === "project" ? handleDeleteProject : handleDeleteSetup}
+              loading={deleting}
+              disabled={deleting}
             >
               删除
             </Button>

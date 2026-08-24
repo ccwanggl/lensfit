@@ -121,6 +121,11 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
             )}
           </div>
           {inlineHintNode}
+          {error && (
+            <p id={errorId} role="alert" className={`mt-1 text-xs text-rose-500 font-medium ${label ? "pl-[5.5rem]" : ""}`}>
+              {error}
+            </p>
+          )}
         </div>
       );
     }

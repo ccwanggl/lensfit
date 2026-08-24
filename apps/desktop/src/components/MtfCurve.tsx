@@ -51,12 +51,12 @@ export default function MtfCurve({ data, height = 220 }: Props) {
           <h4 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
             估算 MTF 曲线
           </h4>
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
             基于镜头 MTF50 估算，供对比参考
           </p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] text-slate-400 dark:text-slate-500">MTF50</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">MTF50</p>
           <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
             {data.lens_mtf50_lpmm.toFixed(1)} lp/mm
           </p>
@@ -127,7 +127,7 @@ export default function MtfCurve({ data, height = 220 }: Props) {
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-3 flex items-center gap-4 text-[10px] text-slate-500 dark:text-slate-400">
+      <div className="mt-3 flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-0.5 rounded-full bg-indigo-500" />
           <span>MTF</span>

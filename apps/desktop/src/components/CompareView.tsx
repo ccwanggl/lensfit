@@ -168,7 +168,7 @@ export default function CompareView({ results }: Props) {
                           }`}
                         >
                           {isBest && <CheckCircle2 size={12} />}
-                          {row.type === "vignetting" ? (val ? "有 ⚠" : "无") : formatVal(val)}
+                          {row.type === "vignetting" ? (val ? "有" : "无") : formatVal(val)}
                         </span>
                       </td>
                     );

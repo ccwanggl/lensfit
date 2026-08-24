@@ -291,6 +291,7 @@ export default function PhotographyPage() {
   const selectedDet = selectedMatch ? detMap.get(selectedMatch.detector_id) : undefined;
 
   const paretoResults = useMemo(() => computeParetoFrontier(enrichedResults.map((e) => e.match)), [enrichedResults]);
+  const [showAllResults, setShowAllResults] = useState(false);
   const displayResults = useMemo(() => {
     if (!paretoOnly) return enrichedResults;
     const paretoSet = new Set(paretoResults.map((r) => `${r.lens_id}-${r.detector_id}`));
@@ -483,7 +484,7 @@ export default function PhotographyPage() {
             </div>
           )}
           <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 stagger-children">
-            {displayResults.slice(0, 20).map(({ match, lens }, i) => (
+            {(showAllResults ? displayResults : displayResults.slice(0, 20)).map(({ match, lens }, i) => (
               <div key={lens.id} className="relative">
                 {compareMode && (
                   <label className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-600 shadow-sm cursor-pointer">
@@ -506,6 +507,14 @@ export default function PhotographyPage() {
               </div>
             ))}
           </div>
+          {!showAllResults && displayResults.length > 20 && (
+            <button
+              onClick={() => setShowAllResults(true)}
+              className="mt-2.5 w-full py-2 rounded-lg text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50/60 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors focus-ring"
+            >
+              显示全部 {displayResults.length} 条结果
+            </button>
+          )}
         </>
       )}
     </DomainResultsPanel>
@@ -530,7 +539,7 @@ export default function PhotographyPage() {
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">焦距</p>
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">焦距</p>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
                 {selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max
                   ? `${selectedLens.focal_length_min}-${selectedLens.focal_length_max}mm`
@@ -538,23 +547,23 @@ export default function PhotographyPage() {
               </p>
             </div>
             <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">最大光圈</p>
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">最大光圈</p>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">f/{selectedLens.max_aperture}</p>
             </div>
             <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">卡口</p>
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">卡口</p>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedLens.mount_type}</p>
             </div>
             <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">价格</p>
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">价格</p>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">${selectedLens.price_usd.toFixed(0)}</p>
             </div>
             <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">像圈</p>
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">像圈</p>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{selectedLens.image_circle_mm}mm</p>
             </div>
             <div className="p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
-              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">类型</p>
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">类型</p>
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
                 {selectedLens.focal_length_min && selectedLens.focal_length_min !== selectedLens.focal_length_max ? "变焦" : "定焦"}
               </p>

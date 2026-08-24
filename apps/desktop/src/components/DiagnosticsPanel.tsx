@@ -1,9 +1,16 @@
 import { AlertTriangle, Lightbulb, SlidersHorizontal } from "lucide-react";
 import { type FilterDiagnosticItem } from "../hooks/useMatching";
 
+interface QuickAdjust {
+  label: string;
+  param: string;
+  value: unknown;
+}
+
 interface Props {
   diagnostics: FilterDiagnosticItem[];
   onAdjustParam?: (name: string, value: unknown) => void;
+  quickAdjusts?: QuickAdjust[];
 }
 
 const STAGE_LABELS: Record<string, string> = {
@@ -18,7 +25,7 @@ const REASON_LABELS: Record<string, string> = {
   wd_out_of_range: "工作距离超出范围",
 };
 
-export default function DiagnosticsPanel({ diagnostics, onAdjustParam }: Props) {
+export default function DiagnosticsPanel({ diagnostics, onAdjustParam, quickAdjusts }: Props) {
   if (!diagnostics || diagnostics.length === 0) return null;
 
   const hasZeroResult = diagnostics.every((d) => d.after_count === 0);
@@ -81,37 +88,22 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam }: Props) 
         ))}
       </div>
 
-      {hasZeroResult && onAdjustParam && (
+      {hasZeroResult && onAdjustParam && quickAdjusts && quickAdjusts.length > 0 && (
         <div className="p-3 rounded-[10px] bg-indigo-50/60 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
           <div className="flex items-center gap-1.5 mb-2">
             <SlidersHorizontal size={14} className="text-indigo-500" />
             <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">快捷调整</span>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => onAdjustParam("sensor_size", "1/2")}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
-            >
-              改用 1/2" 传感器
-            </button>
-            <button
-              onClick={() => onAdjustParam("interface", "CS-mount")}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
-            >
-              改用 CS-mount
-            </button>
-            <button
-              onClick={() => onAdjustParam("working_distance_mm", 500)}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
-            >
-              工作距离 500mm
-            </button>
-            <button
-              onClick={() => onAdjustParam("target_width_mm", 100)}
-              className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors"
-            >
-              视场 100mm
-            </button>
+            {quickAdjusts.map((q) => (
+              <button
+                key={q.param}
+                onClick={() => onAdjustParam(q.param, q.value)}
+                className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors focus-ring"
+              >
+                {q.label}
+              </button>
+            ))}
           </div>
         </div>
       )}

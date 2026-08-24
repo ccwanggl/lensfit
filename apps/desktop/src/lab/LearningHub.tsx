@@ -688,7 +688,7 @@ function MediaPanel({ experimentId }: { experimentId: string }) {
                 loading="lazy"
               />
               {media.image.credit && (
-                <p className="mt-1 text-[10px] text-slate-400">
+                <p className="mt-1 text-xs text-slate-400">
                   来源：{media.image.credit}
                 </p>
               )}
@@ -770,7 +770,7 @@ function DifficultyBadge({ difficulty }: { difficulty: string }) {
   const label =
     difficulty === "foundation" ? "基础" : difficulty === "intermediate" ? "进阶" : "高级";
   return (
-    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}>
+    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cls}`}>
       {label}
     </span>
   );
@@ -823,7 +823,9 @@ function ErrorState({ message }: { message: string }) {
 function EmptyState({ onOpenCatalog }: { onOpenCatalog: () => void }) {
   return (
     <div className="flex h-full flex-col items-center justify-center rounded-[14px] border border-dashed border-slate-300 bg-white/50 p-8 text-center dark:border-slate-700 dark:bg-slate-800/50">
-      <div className="mb-3 text-4xl">🔬</div>
+      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 dark:bg-indigo-900/30 dark:text-indigo-400">
+        <FlaskConical size={28} />
+      </div>
       <h2 className="mb-2 text-lg font-semibold text-slate-800 dark:text-slate-200">
         欢迎来到学习中心
       </h2>

@@ -70,11 +70,11 @@ function ResolutionDiagram({ form }: { form: Record<string, unknown> }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">波长</span>
+          <span className="block text-xs text-slate-500">波长</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{wavelength.toFixed(0)} nm</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">分辨率极限</span>
+          <span className="block text-xs text-slate-500">分辨率极限</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{d.toFixed(2)} μm</span>
         </div>
       </div>
@@ -105,11 +105,11 @@ function MagnificationDiagram({ form }: { form: Record<string, unknown> }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">总放大倍率</span>
+          <span className="block text-xs text-slate-500">总放大倍率</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{mag.toFixed(0)}×</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">像素精度</span>
+          <span className="block text-xs text-slate-500">像素精度</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{pxAcc.toFixed(4)} mm/px</span>
         </div>
       </div>
@@ -147,15 +147,15 @@ function SamplingDiagram({ form }: { form: Record<string, unknown> }) {
     <div className="space-y-3">
       <div className="grid grid-cols-3 gap-2 text-xs">
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">传感器奈奎斯特</span>
+          <span className="block text-xs text-slate-500">传感器奈奎斯特</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{fn.toFixed(1)} lp/mm</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">光学分辨率</span>
+          <span className="block text-xs text-slate-500">光学分辨率</span>
           <span className="font-mono font-semibold text-indigo-700 dark:text-indigo-400">{opticalLimit.toFixed(1)} lp/mm</span>
         </div>
         <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-          <span className="block text-[10px] text-slate-500">过采样比</span>
+          <span className="block text-xs text-slate-500">过采样比</span>
           <span className={`font-mono font-semibold ${ratio >= 1 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>{ratio.toFixed(2)}×</span>
         </div>
       </div>
@@ -312,7 +312,7 @@ export default function MicroscopeLearningHub({ form }: Props) {
       </div>
 
       <div className="mb-4">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
         </div>
