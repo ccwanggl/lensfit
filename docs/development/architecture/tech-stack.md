@@ -201,8 +201,8 @@ optibench/
 │   └── 50-optical-design/          # 光学设计
 │
 ├── scripts/                        # 构建与发布脚本
-│   ├── build-desktop.sh
-│   └── release.sh
+│   ├── dev.py                      # 开发环境启动（跨平台）
+│   └── build-desktop.py            # 桌面版构建（跨平台）
 │
 ├── README.md
 ├── LICENSE

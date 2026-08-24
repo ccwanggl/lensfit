@@ -9,6 +9,8 @@
   - Tauri 标识符 `com.lensfit.app` → `com.optibench.app`，sidecar 二进制 `lensfit-engine` → `optibench-engine`
   - API key 环境变量 `LENSFIT_API_KEY` → `OPTIBENCH_API_KEY`
   - 前端 localStorage 键迁移（主题、学习进度、Lab 草稿自动保留）
+- **运行方式全平台统一**：开发启动与桌面构建统一为 `uv run scripts/dev.py` / `uv run scripts/build-desktop.py`，删除 `dev.sh`/`dev.bat`/`build-desktop.sh`/`build-desktop.bat` 平台包装脚本
+  - `dev.py` 自动识别并重建其他操作系统创建的 `engine/.venv` 与 `node_modules`
 
 ## [1.1.0] - 2026-06-02
 

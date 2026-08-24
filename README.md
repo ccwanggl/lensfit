@@ -85,25 +85,21 @@ OptiBench 是一款面向光学工程师和系统集成商的光学工程工作�
 
 #### 一键启动开发环境（推荐）
 
-OptiBench 提供了跨平台的启动脚本，自动创建 Python 虚拟环境、安装依赖、初始化数据库并同时启动前后端。
+OptiBench 提供了跨平台的启动脚本，自动创建 Python 虚拟环境、安装依赖、初始化数据库并同时启动前后端。**Windows、macOS、Linux 上使用同一条命令**：
 
 ```bash
-# Windows
 cd optibench
-python scripts/dev.py
-
-# macOS / Linux
-cd optibench
-python3 scripts/dev.py
-# 或
-./scripts/dev.sh
+uv run scripts/dev.py
 ```
+
+> 没有安装 [uv](https://docs.astral.sh/uv/) 时，用任意在 PATH 上的 Python 3.12+ 运行同一路径即可：`python3 scripts/dev.py`。
 
 脚本会：
 1. 创建 `engine/.venv` 并安装 Python 依赖（可编辑模式）
    - 若已安装 [uv](https://docs.astral.sh/uv/)，自动使用 `uv venv` + `uv pip install`
    - 否则回退到标准 `venv` + `pip`
-2. 安装前端 `node_modules`
+   - 如果 `engine/.venv` 是在其他操作系统上创建的，脚本会自动识别并重建
+2. 安装前端 `node_modules`（若目录来自其他操作系统，会自动重装）
 3. 运行 Alembic 数据库迁移
 4. 导入种子数据（如数据库不存在）
 5. 启动 FastAPI 后端（`http://127.0.0.1:8765`）
@@ -141,15 +137,8 @@ npm run dev
 #### 构建桌面生产版本
 
 ```bash
-# Windows
 cd optibench
-python scripts/build-desktop.py
-
-# macOS / Linux
-cd optibench
-python3 scripts/build-desktop.py
-# 或
-./scripts/build-desktop.sh
+uv run scripts/build-desktop.py
 ```
 
 该脚本会先使用 PyInstaller 构建当前平台的 sidecar，再调用 Tauri 打包桌面应用。
@@ -275,25 +264,21 @@ OptiBench is an optical engineering workbench for optical engineers and system i
 
 #### One-Command Development Launcher (Recommended)
 
-OptiBench provides cross-platform launch scripts that automatically create the Python virtual environment, install dependencies, initialize the database, and start both the backend and frontend.
+OptiBench provides a cross-platform launch script that automatically creates the Python virtual environment, installs dependencies, initializes the database, and starts both the backend and frontend. **The same command works on Windows, macOS, and Linux**:
 
 ```bash
-# Windows
 cd optibench
-python scripts/dev.py
-
-# macOS / Linux
-cd optibench
-python3 scripts/dev.py
-# or
-./scripts/dev.sh
+uv run scripts/dev.py
 ```
+
+> Without [uv](https://docs.astral.sh/uv/), run the same path with any Python 3.12+ on your PATH: `python3 scripts/dev.py`.
 
 The script will:
 1. Create `engine/.venv` and install Python dependencies in editable mode
    - If [uv](https://docs.astral.sh/uv/) is installed, it uses `uv venv` + `uv pip install`
    - Otherwise falls back to standard `venv` + `pip`
-2. Install frontend `node_modules`
+   - A virtual environment created on another OS is detected and recreated automatically
+2. Install frontend `node_modules` (reinstalled automatically if the tree came from another OS)
 3. Run Alembic database migrations
 4. Import seed data (if the database does not exist)
 5. Start the FastAPI backend (`http://127.0.0.1:8765`)
@@ -331,15 +316,8 @@ npm run dev
 #### Build Desktop Production Bundle
 
 ```bash
-# Windows
 cd optibench
-python scripts/build-desktop.py
-
-# macOS / Linux
-cd optibench
-python3 scripts/build-desktop.py
-# or
-./scripts/build-desktop.sh
+uv run scripts/build-desktop.py
 ```
 
 This script first builds the platform-specific sidecar with PyInstaller, then invokes Tauri to bundle the desktop application.

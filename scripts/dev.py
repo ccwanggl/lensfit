@@ -5,8 +5,10 @@ Creates the Python virtual environment, installs dependencies, initializes the
 SQLite database, starts the FastAPI backend, and then starts the Vite frontend
 dev server.  Works on Windows, macOS, and Linux.
 
-Usage:
-    python scripts/dev.py
+Usage (identical on every platform):
+    uv run scripts/dev.py
+or, with any Python 3.12+ already on PATH:
+    python3 scripts/dev.py
 """
 
 from __future__ import annotations
@@ -144,6 +146,12 @@ def ensure_venv(venv_dir: Path) -> Path:
     """Create virtual environment and install engine dependencies if needed."""
     py = python_executable(venv_dir)
 
+    if venv_dir.exists() and not py.exists():
+        # The venv was created on another platform (its interpreter layout
+        # differs), so it cannot run here. Recreate it from scratch.
+        warn("Existing virtual environment belongs to another platform; recreating...")
+        shutil.rmtree(venv_dir)
+
     if not venv_dir.exists():
         create_venv(venv_dir)
 
@@ -161,10 +169,23 @@ def ensure_venv(venv_dir: Path) -> Path:
 
 
 def ensure_npm_deps(frontend_dir: Path) -> None:
-    """Install Node.js dependencies if node_modules is missing."""
-    if not (frontend_dir / "node_modules").exists():
+    """Install Node.js dependencies if missing or built for another platform."""
+    node_modules = frontend_dir / "node_modules"
+    marker = node_modules / ".optibench-platform"
+
+    if node_modules.exists():
+        current = marker.read_text(encoding="utf-8").strip() if marker.exists() else None
+        if current == sys.platform:
+            return
+        # node_modules contains platform-specific binaries (esbuild, rollup...);
+        # a tree copied from another OS will not run here. Reinstall in place.
+        warn("node_modules was installed on another platform; reinstalling...")
+        run([npm_executable(), "install"], cwd=frontend_dir)
+    else:
         info("Installing Node.js dependencies...")
         run([npm_executable(), "install"], cwd=frontend_dir)
+
+    marker.write_text(sys.platform + "\n", encoding="utf-8")
 
 
 def ensure_database(py: Path, db_path: Path) -> None:

@@ -42,12 +42,8 @@ optibench/
 │   ├── alembic.ini        # 迁移配置
 │   └── optibench/           # 引擎源码
 ├── scripts/               # 跨平台启动与构建脚本
-│   ├── dev.py             # 主启动脚本（跨平台）
-│   ├── dev.sh             # Unix 包装器
-│   ├── dev.bat            # Windows 包装器
-│   ├── build-desktop.py   # 主构建脚本（跨平台）
-│   ├── build-desktop.sh   # Unix 包装器
-│   └── build-desktop.bat  # Windows 包装器
+│   ├── dev.py             # 开发环境启动脚本（跨平台）
+│   └── build-desktop.py   # 桌面版构建脚本（跨平台）
 └── README.md
 ```
 
@@ -57,27 +53,26 @@ optibench/
 
 ### 3.1 推荐方式：`scripts/dev.py`
 
-`scripts/dev.py` 是跨平台的主启动脚本，使用 Python 标准库实现，不依赖 `curl`、`source` 等 Unix 命令。
+`scripts/dev.py` 是跨平台的主启动脚本，使用 Python 标准库实现，不依赖 `curl`、`source` 等 Unix 命令。**所有平台使用同一条命令**：
 
 ```bash
-# Windows
 cd optibench
-python scripts/dev.py
-
-# macOS / Linux
-cd optibench
-python3 scripts/dev.py
+uv run scripts/dev.py
 ```
+
+没有安装 [uv](https://docs.astral.sh/uv/) 时，用任意在 PATH 上的 Python 3.12+ 运行同一路径即可：`python3 scripts/dev.py`。
 
 脚本行为：
 
 1. 检测 `engine/.venv`；不存在则创建虚拟环境
    - 若系统已安装 [uv](https://docs.astral.sh/uv/)，使用 `uv venv`
    - 否则回退到 `python -m venv`
+   - 若现有 venv 是在其他操作系统上创建的（解释器布局不同），自动删除并重建
 2. 安装引擎依赖（可编辑模式）
    - uv 环境：`uv pip install -e ".[dev]"`
    - 标准环境：`pip install -e ".[dev]"`
 3. 检测 `apps/desktop/node_modules`；不存在则执行 `npm install`
+   - 通过 `node_modules/.optibench-platform` 标记识别其他操作系统安装的依赖树，平台不符时自动重装
 4. 运行 `alembic upgrade head` 应用数据库迁移
 5. 若 `optibench.db` 不存在，执行种子数据导入
 6. 启动 FastAPI 后端（默认 `127.0.0.1:8765`）
@@ -85,31 +80,17 @@ python3 scripts/dev.py
 8. 启动 Vite 前端开发服务器（默认 `http://localhost:5173`）
 9. 捕获 `Ctrl+C` 后优雅停止两个子进程
 
-### 3.2 包装器脚本
-
-如果你更习惯 shell/batch：
-
-```bash
-# macOS / Linux
-./scripts/dev.sh
-
-# Windows CMD
-scripts\dev.bat
-```
-
-它们最终都调用 `scripts/dev.py`。
-
-### 3.3 常用选项
+### 3.2 常用选项
 
 ```bash
 # 只启动后端（前端自行启动或调试 API）
-python scripts/dev.py --backend-only
+uv run scripts/dev.py --backend-only
 
 # 强制重新导入种子数据
-python scripts/dev.py --reseed
+uv run scripts/dev.py --reseed
 
 # 自定义后端端口
-python scripts/dev.py --port 9876
+uv run scripts/dev.py --port 9876
 ```
 
 ---
@@ -297,8 +278,8 @@ npm run build
 | 操作 | Windows | macOS / Linux |
 |---|---|---|
 | 激活虚拟环境 | `.venv\Scripts\activate` | `source .venv/bin/activate` |
-| 启动开发环境 | `python scripts/dev.py` | `python3 scripts/dev.py` 或 `./scripts/dev.sh` |
-| 构建桌面包 | `python scripts/build-desktop.py` | `python3 scripts/build-desktop.py` 或 `./scripts/build-desktop.sh` |
+| 启动开发环境 | `uv run scripts/dev.py`（全平台一致） |
+| 构建桌面包 | `uv run scripts/build-desktop.py`（全平台一致） |
 | Python 解释器调用 | `python` | `python3` |
 | 路径分隔符 | `\` 或 `/` | `/` |
 
