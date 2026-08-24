@@ -236,7 +236,7 @@ def main() -> NoReturn:
     root = project_root()
     engine_dir = root / "engine"
     frontend_dir = root / "apps" / "desktop"
-    venv_dir = engine_dir / ".venv"
+    venv_dir = root / ".venv"
     db_path = root / "optibench.db"
 
     py = ensure_venv(venv_dir)

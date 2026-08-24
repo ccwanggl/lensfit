@@ -95,10 +95,10 @@ uv run scripts/dev.py
 > 没有安装 [uv](https://docs.astral.sh/uv/) 时，用任意在 PATH 上的 Python 3.12+ 运行同一路径即可：`python3 scripts/dev.py`。
 
 脚本会：
-1. 创建 `engine/.venv` 并安装 Python 依赖（可编辑模式）
+1. 创建 `.venv`（仓库根目录）并安装 Python 依赖（可编辑模式）
    - 若已安装 [uv](https://docs.astral.sh/uv/)，自动使用 `uv venv` + `uv pip install`
    - 否则回退到标准 `venv` + `pip`
-   - 如果 `engine/.venv` 是在其他操作系统上创建的，脚本会自动识别并重建
+   - 如果 `.venv` 是在其他操作系统上创建的，脚本会自动识别并重建
 2. 安装前端 `node_modules`（若目录来自其他操作系统，会自动重装）
 3. 运行 Alembic 数据库迁移
 4. 导入种子数据（如数据库不存在）
@@ -274,7 +274,7 @@ uv run scripts/dev.py
 > Without [uv](https://docs.astral.sh/uv/), run the same path with any Python 3.12+ on your PATH: `python3 scripts/dev.py`.
 
 The script will:
-1. Create `engine/.venv` and install Python dependencies in editable mode
+1. Create `.venv` (repository root) and install Python dependencies in editable mode
    - If [uv](https://docs.astral.sh/uv/) is installed, it uses `uv venv` + `uv pip install`
    - Otherwise falls back to standard `venv` + `pip`
    - A virtual environment created on another OS is detected and recreated automatically

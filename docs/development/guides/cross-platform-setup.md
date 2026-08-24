@@ -64,7 +64,7 @@ uv run scripts/dev.py
 
 脚本行为：
 
-1. 检测 `engine/.venv`；不存在则创建虚拟环境
+1. 检测 `.venv`（仓库根目录）；不存在则创建虚拟环境
    - 若系统已安装 [uv](https://docs.astral.sh/uv/)，使用 `uv venv`
    - 否则回退到 `python -m venv`
    - 若现有 venv 是在其他操作系统上创建的（解释器布局不同），自动删除并重建
@@ -186,7 +186,7 @@ python3 scripts/build-desktop.py
 
 脚本行为：
 
-1. 确保 `engine/.venv` 与依赖已安装
+1. 确保 `.venv`（仓库根目录）与依赖已安装
 2. 调用 `engine/build_sidecar.py` 生成当前平台的 sidecar 二进制
 3. 安装前端依赖
 4. 调用 `npm run tauri build` 打包桌面应用
