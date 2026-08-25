@@ -22,6 +22,12 @@ from optibench.lab.experiments.grating import GratingExperiment
 from optibench.lab.experiments.illumination_geometry import IlluminationGeometryExperiment
 from optibench.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from optibench.lab.experiments.mtf_explorer import MtfExplorerExperiment
+from optibench.lab.experiments.rayleigh_two_point import RayleighTwoPointExperiment
+from optibench.lab.experiments.photometric_flux import PhotometricFluxExperiment
+from optibench.lab.experiments.color_gamut import ColorGamutExperiment
+from optibench.lab.experiments.qe_responsivity import QeResponsivityExperiment
+from optibench.lab.experiments.solid_angle_cone import SolidAngleConeExperiment
+from optibench.lab.experiments.lambertian_radiance import LambertianRadianceExperiment
 from optibench.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
 from optibench.lab.experiments.penumbra import PenumbraExperiment
 from optibench.lab.experiments.polarization_malus import PolarizationMalusExperiment
@@ -573,3 +579,105 @@ class TestPenumbraExperiment:
         assert result.data["umbra_tip_distance_mm"] is None
         assert result.data["umbra_exists_on_screen"] is True
         assert result.data["penumbra_band_width_mm"] > 0
+
+
+class TestLambertianRadianceExperiment:
+    def test_cosine_law_at_60deg(self):
+        exp = LambertianRadianceExperiment()
+        result = exp.run({"viewing_angle_deg": 60})
+        assert result.data["intensity_at_angle"] == pytest.approx(30.0, abs=0.1)
+        _assert_svg(result.svg)
+
+    def test_radiance_independent_of_angle(self):
+        exp = LambertianRadianceExperiment()
+        normal = exp.run({"viewing_angle_deg": 0})
+        tilted = exp.run({"viewing_angle_deg": 60})
+        assert normal.data["radiance_relative"] == pytest.approx(
+            tilted.data["radiance_relative"], rel=1e-3
+        )
+
+
+class TestSolidAngleConeExperiment:
+    def test_exact_value_at_30_deg(self):
+        exp = SolidAngleConeExperiment()
+        result = exp.run({"half_angle_deg": 30.0})
+        expected = 2 * math.pi * (1 - math.cos(math.radians(30.0)))
+        assert result.data["omega_exact_sr"] == pytest.approx(expected, rel=1e-4)
+        _assert_svg(result.svg)
+
+    def test_hemisphere_limit(self):
+        exp = SolidAngleConeExperiment()
+        result = exp.run({"half_angle_deg": 89.0})
+        assert result.data["omega_exact_sr"] < 2 * math.pi
+        assert result.data["approx_error_pct"] > 10
+
+
+class TestQeResponsivityExperiment:
+    def test_responsivity_formula(self):
+        exp = QeResponsivityExperiment()
+        result = exp.run({"quantum_efficiency": 0.8, "wavelength_nm": 800})
+        expected = 0.8 * 1.602176634e-19 * 800e-9 / (6.62607015e-34 * 2.99792458e8)
+        assert result.data["responsivity_a_per_w"] == pytest.approx(expected, rel=1e-3)
+        _assert_svg(result.svg)
+
+    def test_higher_qe_higher_responsivity(self):
+        exp = QeResponsivityExperiment()
+        low = exp.run({"quantum_efficiency": 0.3})
+        high = exp.run({"quantum_efficiency": 0.9})
+        assert high.data["responsivity_a_per_w"] > low.data["responsivity_a_per_w"] * 2
+
+
+class TestColorGamutExperiment:
+    def test_red_primary_maps_to_srgb_corner(self):
+        exp = ColorGamutExperiment()
+        result = exp.run({"rgb_r": 255, "rgb_g": 0, "rgb_b": 0})
+        assert result.data["cie_x"] == pytest.approx(0.64, abs=0.005)
+        assert result.data["cie_y"] == pytest.approx(0.33, abs=0.005)
+        _assert_svg(result.svg)
+
+    def test_white_is_d65_inside_gamut(self):
+        exp = ColorGamutExperiment()
+        result = exp.run({"rgb_r": 255, "rgb_g": 255, "rgb_b": 255})
+        assert result.data["cie_x"] == pytest.approx(0.3127, abs=0.002)
+        assert result.data["inside_srgb_gamut"] is True
+
+    def test_deep_spectral_green_outside_srgb(self):
+        exp = ColorGamutExperiment()
+        result = exp.run({"rgb_r": 120, "rgb_g": 255, "rgb_b": 0})
+        assert result.data["inside_srgb_gamut"] is True  # RGB 输入必然在 sRGB 内
+
+
+class TestPhotometricFluxExperiment:
+    def test_efficacy_bounded_by_km(self):
+        exp = PhotometricFluxExperiment()
+        for temp in (3000.0, 5500.0, 10000.0):
+            result = exp.run({"temperature_k": temp})
+            assert 0 < result.data["luminous_efficacy_lm_per_w"] <= 683.0
+            _assert_svg(result.svg)
+
+    def test_hotter_blackbody_more_efficient(self):
+        exp = PhotometricFluxExperiment()
+        warm = exp.run({"temperature_k": 3000.0})
+        hot = exp.run({"temperature_k": 6500.0})
+        assert hot.data["luminous_efficacy_lm_per_w"] > warm.data["luminous_efficacy_lm_per_w"]
+
+
+class TestRayleighTwoPointExperiment:
+    def test_rayleigh_criterion_dip(self):
+        exp = RayleighTwoPointExperiment()
+        result = exp.run({"separation_ratio": 1.0})
+        assert result.data["resolved_by_rayleigh"] is True
+        assert 15.0 < result.data["center_dip_pct"] < 40.0
+        _assert_svg(result.svg)
+
+    def test_unresolved_when_close(self):
+        exp = RayleighTwoPointExperiment()
+        merged = exp.run({"separation_ratio": 0.4})
+        assert merged.data["resolved_by_rayleigh"] is False
+        assert merged.data["resolved_by_sparrow"] is False
+
+    def test_airy_radius_scales_with_f_number(self):
+        exp = RayleighTwoPointExperiment()
+        r8 = exp.run({"f_number": 8}).data["airy_radius_um"]
+        r16 = exp.run({"f_number": 16}).data["airy_radius_um"]
+        assert r16 == pytest.approx(2 * r8)
