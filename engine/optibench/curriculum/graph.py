@@ -75,6 +75,8 @@ class CurriculumGraph:
             "assessment": resolver.assessments,
         }
         for node in nodes:
+            if node.kind == "concept" and node.source == "vault":
+                continue  # 知识库理论节点（ADR-004）：ref 由前端链接表解析
             if node.ref not in valid_refs[node.kind]:
                 raise CurriculumError(
                     f"节点 {node.id!r}（kind={node.kind}）的 ref {node.ref!r} "

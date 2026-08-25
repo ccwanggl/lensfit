@@ -34,6 +34,7 @@ class CurriculumNode:
     title: str
     module: str = ""
     prerequisites: list[str] = field(default_factory=list)
+    source: str = ""  # "vault" → 知识库理论节点（ADR-004），ref 为知识库 slug
 
 
 def resolve_curriculum_path() -> Path:
@@ -73,6 +74,9 @@ def _validate_node(raw: object, source: Path | str, index: int) -> CurriculumNod
     module = raw.get("module", "")
     if not isinstance(module, str):
         raise CurriculumError(f"{where}: 字段 'module' 必须是字符串")
+    source = raw.get("source", "")
+    if not isinstance(source, str):
+        raise CurriculumError(f"{where}: 字段 'source' 必须是字符串")
     return CurriculumNode(
         id=raw["id"],
         kind=kind,
@@ -80,6 +84,7 @@ def _validate_node(raw: object, source: Path | str, index: int) -> CurriculumNod
         title=raw["title"],
         module=module,
         prerequisites=list(prerequisites),
+        source=source,
     )
 
 

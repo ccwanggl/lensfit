@@ -11,6 +11,48 @@
 
 nodes:
   # ─── 10-foundations ───
+  # 概念骨架节点（ADR-004）：ref 为知识库 slug，点击跳转 Obsidian 阅读；
+  # 无实验锚点的概念以「理论节点」形态参与路径，缺口即实验立项选题池。
+  - id: concept-speed-of-light
+    kind: concept
+    ref: speed-of-light
+    title: 光速
+    module: 10-foundations
+    prerequisites: []
+    source: vault
+
+  - id: concept-wavelength
+    kind: concept
+    ref: wavelength
+    title: 波长
+    module: 10-foundations
+    prerequisites: []
+    source: vault
+
+  - id: concept-frequency
+    kind: concept
+    ref: frequency
+    title: 频率
+    module: 10-foundations
+    prerequisites: [concept-wavelength]
+    source: vault
+
+  - id: concept-photon-energy
+    kind: concept
+    ref: photon-energy
+    title: 光子能量
+    module: 10-foundations
+    prerequisites: [concept-wavelength]
+    source: vault
+
+  - id: concept-solid-angle
+    kind: concept
+    ref: solid-angle
+    title: 立体角
+    module: 10-foundations
+    prerequisites: []
+    source: vault
+
   - id: color-mixing
     kind: experiment
     ref: color-mixing
@@ -19,6 +61,102 @@ nodes:
     prerequisites: []
 
   # ─── 20-geometric-optics ───
+  - id: concept-thin-lens
+    kind: concept
+    ref: thin-lens
+    title: 薄透镜
+    module: 20-geometric-optics
+    prerequisites: []
+    source: vault
+
+  - id: concept-近轴近似
+    kind: concept
+    ref: 近轴近似
+    title: 近轴近似
+    module: 20-geometric-optics
+    prerequisites: [concept-thin-lens]
+    source: vault
+
+  - id: concept-aperture-stop
+    kind: concept
+    ref: aperture-stop
+    title: 孔径光阑
+    module: 20-geometric-optics
+    prerequisites: [concept-thin-lens]
+    source: vault
+
+  - id: concept-entrance-exit-pupil
+    kind: concept
+    ref: entrance-exit-pupil
+    title: 入瞳/出瞳
+    module: 20-geometric-optics
+    prerequisites: [concept-aperture-stop]
+    source: vault
+
+  - id: concept-数值孔径
+    kind: concept
+    ref: 数值孔径
+    title: 数值孔径
+    module: 20-geometric-optics
+    prerequisites: [concept-aperture-stop]
+    source: vault
+
+  - id: concept-视场
+    kind: concept
+    ref: 视场
+    title: 视场
+    module: 20-geometric-optics
+    prerequisites: [concept-thin-lens]
+    source: vault
+
+  - id: concept-放大倍率
+    kind: concept
+    ref: 放大倍率
+    title: 放大倍率
+    module: 20-geometric-optics
+    prerequisites: [thin-lens]
+    source: vault
+
+  - id: concept-像元
+    kind: concept
+    ref: pixel
+    title: 像元
+    module: 20-geometric-optics
+    prerequisites: []
+    source: vault
+
+  - id: concept-etendue
+    kind: concept
+    ref: etendue
+    title: 光学扩展量
+    module: 20-geometric-optics
+    prerequisites: [concept-数值孔径, concept-solid-angle]
+    source: vault
+
+  - id: concept-spherical-aberration
+    kind: concept
+    ref: spherical-aberration
+    title: 球差
+    module: 20-geometric-optics
+    prerequisites: [thin-lens]
+    source: vault
+
+  - id: concept-coma
+    kind: concept
+    ref: coma
+    title: 彗差
+    module: 20-geometric-optics
+    prerequisites: [concept-spherical-aberration]
+    source: vault
+
+  - id: concept-astigmatism
+    kind: concept
+    ref: astigmatism
+    title: 像散
+    module: 20-geometric-optics
+    prerequisites: [concept-coma]
+    source: vault
+
   - id: thin-lens
     kind: experiment
     ref: thin-lens
@@ -90,6 +228,14 @@ nodes:
     prerequisites: [thin-lens, depth-of-field, chromatic-aberration]
 
   # ─── 30-wave-optics ───
+  - id: concept-coherence
+    kind: concept
+    ref: coherence
+    title: 相干
+    module: 30-wave-optics
+    prerequisites: []
+    source: vault
+
   - id: diffraction
     kind: experiment
     ref: diffraction
@@ -133,6 +279,86 @@ nodes:
     prerequisites: [double-slit]
 
   # ─── 40-spectroscopy ───
+  - id: concept-radiant-flux
+    kind: concept
+    ref: radiant-flux
+    title: 辐射通量
+    module: 40-spectroscopy
+    prerequisites: [concept-solid-angle]
+    source: vault
+
+  - id: concept-luminous-flux
+    kind: concept
+    ref: luminous-flux
+    title: 光通量
+    module: 40-spectroscopy
+    prerequisites: [concept-radiant-flux]
+    source: vault
+
+  - id: concept-illuminance
+    kind: concept
+    ref: illuminance
+    title: 照度
+    module: 40-spectroscopy
+    prerequisites: [concept-radiant-flux]
+    source: vault
+
+  - id: concept-luminance
+    kind: concept
+    ref: luminance
+    title: 亮度
+    module: 40-spectroscopy
+    prerequisites: [concept-luminous-flux]
+    source: vault
+
+  - id: concept-radiance
+    kind: concept
+    ref: radiance
+    title: 辐射亮度
+    module: 40-spectroscopy
+    prerequisites: [concept-radiant-flux]
+    source: vault
+
+  - id: concept-lambertian-surface
+    kind: concept
+    ref: lambertian-surface
+    title: 朗伯面
+    module: 40-spectroscopy
+    prerequisites: [concept-luminance]
+    source: vault
+
+  - id: concept-fluorescence
+    kind: concept
+    ref: fluorescence
+    title: 荧光
+    module: 40-spectroscopy
+    prerequisites: [concept-wavelength]
+    source: vault
+
+  - id: concept-quantum-efficiency
+    kind: concept
+    ref: quantum-efficiency
+    title: 量子效率
+    module: 40-spectroscopy
+    prerequisites: []
+    source: vault
+
+  - id: concept-responsivity
+    kind: concept
+    ref: responsivity
+    title: 响应度
+    module: 40-spectroscopy
+    prerequisites: [concept-quantum-efficiency]
+    source: vault
+
+  - id: concept-photodiode
+    kind: concept
+    ref: photodiode
+    title: 光电二极管
+    module: 40-spectroscopy
+    prerequisites: []
+    source: vault
+
   - id: grating
     kind: experiment
     ref: grating
@@ -155,6 +381,38 @@ nodes:
     prerequisites: [cmos-fundamentals]
 
   # ─── 50-optical-design ───
+  - id: concept-cutoff-frequency
+    kind: concept
+    ref: cutoff-frequency
+    title: 截止频率
+    module: 50-optical-design
+    prerequisites: [mtf-explorer]
+    source: vault
+
+  - id: concept-distortion
+    kind: concept
+    ref: distortion
+    title: 畸变
+    module: 50-optical-design
+    prerequisites: [concept-spherical-aberration]
+    source: vault
+
+  - id: concept-动态范围
+    kind: concept
+    ref: 动态范围
+    title: 动态范围
+    module: 50-optical-design
+    prerequisites: []
+    source: vault
+
+  - id: concept-noise-equivalent-power
+    kind: concept
+    ref: noise-equivalent-power
+    title: 噪声等效功率
+    module: 50-optical-design
+    prerequisites: []
+    source: vault
+
   - id: nyquist-sampling
     kind: experiment
     ref: nyquist-sampling
