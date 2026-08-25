@@ -125,7 +125,7 @@ function ResultCard({
         }
       }}
       className={`
-        group relative flex items-start gap-3 p-4 rounded-xl cursor-pointer
+        group relative flex items-start gap-3 p-3 rounded-xl cursor-pointer
         transition-all duration-200 ease-out
         ${isSelected
           ? "bg-indigo-50/70 dark:bg-indigo-900/30 border-2 border-indigo-300 dark:border-indigo-700 shadow-[0_2px_12px_rgba(99,102,241,0.12)]"
@@ -562,7 +562,7 @@ export default function IndustrialPage() {
   );
 
   const vizTab = (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {selectedResult && (
         <MatchExplanation result={selectedResult} domain="industrial" />
       )}
@@ -628,7 +628,7 @@ export default function IndustrialPage() {
       )}
 
       {!selectedResult && !coverageLoading && (
-        <div className="text-center py-8">
+        <div className="text-center py-6">
           <EmptyState icon={<Image size={24} />} title="选择匹配方案" description="点击左侧结果卡片查看覆盖图与详细参数" />
         </div>
       )}
@@ -640,7 +640,7 @@ export default function IndustrialPage() {
       {selectedResult?.derivation_chain && selectedResult.derivation_chain.length > 0 ? (
         <PhysicsTrace traces={selectedResult.derivation_chain} />
       ) : (
-        <div className="text-center py-8">
+        <div className="text-center py-6">
           <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
         </div>
       )}

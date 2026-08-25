@@ -37,7 +37,7 @@ export default function LibraryImportModal({ kind, onClose, onDownloadTemplate, 
 
   return (
     <Modal open onClose={onClose} title={`批量导入${KIND_LABEL[kind]}`}>
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
           <p className="text-xs text-slate-600 dark:text-slate-300 mb-2">
             当前导入类型：{KIND_LABEL[kind]}

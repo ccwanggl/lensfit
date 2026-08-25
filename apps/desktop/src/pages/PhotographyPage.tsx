@@ -605,7 +605,7 @@ export default function PhotographyPage() {
           )}
         </>
       ) : (
-        <div className="text-center py-8">
+        <div className="text-center py-6">
           <EmptyState
             icon={<Camera size={24} />}
             title="选择镜头"
@@ -621,7 +621,7 @@ export default function PhotographyPage() {
       {selectedMatch?.derivation_chain && selectedMatch.derivation_chain.length > 0 ? (
         <PhysicsTrace traces={selectedMatch.derivation_chain} />
       ) : (
-        <div className="text-center py-8">
+        <div className="text-center py-6">
           <EmptyState icon={<Activity size={24} />} title="推导链" description="选择一个匹配方案查看光学计算推导过程" />
         </div>
       )}

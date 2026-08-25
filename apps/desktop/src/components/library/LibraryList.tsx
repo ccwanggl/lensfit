@@ -47,7 +47,7 @@ export default function LibraryList({
 
   return (
     <Card padding="none" className="overflow-hidden h-full flex flex-col">
-      <div className="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
         <SectionHeader
           title={KIND_LABEL[kind] + "列表"}
           subtitle={`${items.length} / ${total} 个`}
@@ -61,7 +61,7 @@ export default function LibraryList({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-3">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <EmptyState icon={<Package size={24} />} title="加载中" description="正在读取器件目录..." />
@@ -80,14 +80,14 @@ export default function LibraryList({
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-2">
             {items.map((it) => {
               const isUser = it.data_source === "user";
               const manufacturer = it.manufacturer_id ? manufacturerMap.get(it.manufacturer_id) : undefined;
               return (
                 <div
                   key={it.id}
-                  className="group p-4 rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700 transition-all"
+                  className="group p-3 rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700 transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">

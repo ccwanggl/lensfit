@@ -5,7 +5,7 @@ export default function LibraryHelpPanel() {
   return (
     <Card className="h-full">
       <SectionHeader title="使用说明" subtitle="如何管理自定义器件" icon={<FileSpreadsheet size={16} />} />
-      <div className="space-y-4 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+      <div className="space-y-3 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
         <p>
           <strong className="text-slate-800 dark:text-slate-200">内置数据：</strong>
           来自系统预置目录，只读。匹配引擎会自动将其纳入候选。

@@ -359,7 +359,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
+      <div className="flex items-center justify-center py-6">
         <Loader2 size={16} className="animate-spin text-indigo-500" />
       </div>
     );
@@ -476,10 +476,10 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
               {expandedFormula === f.id ? <ChevronDown size={16} className="text-slate-500 shrink-0" /> : <ChevronRight size={16} className="text-slate-500 shrink-0" />}
             </button>
             {expandedFormula === f.id && (
-              <div className="px-4 pb-4 space-y-3">
+              <div className="px-3 pb-3 space-y-3">
                 {/* LaTeX formula — centered, large */}
                 <div
-                  className="latex-formula py-5 px-4 flex justify-center overflow-x-auto rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 shadow-sm"
+                  className="latex-formula py-4 px-4 flex justify-center overflow-x-auto rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 shadow-sm"
                   dangerouslySetInnerHTML={{ __html: latexToHtml(f.latex || f.expression) }}
                 />
 
@@ -567,7 +567,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
               {expandedConstraint === c.id ? <ChevronDown size={16} className="text-slate-500 shrink-0" /> : <ChevronRight size={16} className="text-slate-500 shrink-0" />}
             </button>
             {expandedConstraint === c.id && (
-              <div className="px-4 pb-4 space-y-3">
+              <div className="px-3 pb-3 space-y-3">
                 <div>
                   <p className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">物理原理</p>
                   <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">{c.principle}</p>
@@ -590,7 +590,7 @@ export default function KnowledgePanel({ form, domain = "industrial", activeTab,
 
   // trace tab
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {!selectedResult?.derivation_chain || selectedResult.derivation_chain.length === 0 ? (
         <div className="text-center py-4">
           <p className="text-sm text-slate-500 dark:text-slate-400">选择一个匹配方案查看推导链的物理原理解释</p>

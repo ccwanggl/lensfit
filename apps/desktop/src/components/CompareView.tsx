@@ -127,7 +127,7 @@ export default function CompareView({ results }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center gap-2 mb-3">
         <ArrowLeftRight size={16} className="text-indigo-500" />
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">方案对比</h3>
@@ -137,9 +137,9 @@ export default function CompareView({ results }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 dark:border-slate-700">
-              <th className="text-left py-2.5 pr-3 text-slate-500 dark:text-slate-400 font-semibold">维度</th>
+              <th className="text-left py-2 pr-3 text-slate-500 dark:text-slate-400 font-semibold">维度</th>
               {results.map((r, i) => (
-                <th key={i} className="text-center py-2.5 px-2 text-slate-700 dark:text-slate-200 font-bold min-w-[100px]">
+                <th key={i} className="text-center py-2 px-2 text-slate-700 dark:text-slate-200 font-bold min-w-[100px]">
                   <div className="truncate max-w-[110px]">{r.lens_model || `方案${i + 1}`}</div>
                   <span className="text-xs font-normal text-slate-400 dark:text-slate-500">Rank {i + 1}</span>
                 </th>
@@ -151,13 +151,13 @@ export default function CompareView({ results }: Props) {
               const { bestIdx, worstIdx } = getBestWorst(row);
               return (
                 <tr key={ri} className="border-b border-slate-100 dark:border-slate-800/50">
-                  <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300 font-semibold">{row.label}</td>
+                  <td className="py-2 pr-3 text-slate-600 dark:text-slate-300 font-semibold">{row.label}</td>
                   {results.map((r, ci) => {
                     const val = getCellValue(r, row);
                     const isBest = ci === bestIdx;
                     const isWorst = ci === worstIdx && results.length > 1 && bestIdx !== worstIdx;
                     return (
-                      <td key={ci} className="py-2.5 px-2 text-center">
+                      <td key={ci} className="py-2 px-2 text-center">
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
                             isBest

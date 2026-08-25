@@ -28,14 +28,14 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2.5 w-[340px]">
+    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-[340px]">
       {toasts.map((t) => (
         <div
           key={t.id}
           role={t.type === "error" ? "alert" : "status"}
           aria-live={t.type === "error" ? "assertive" : "polite"}
           className={`
-            flex items-start gap-3 p-4 rounded-xl border shadow-lg
+            flex items-start gap-2.5 p-3 rounded-xl border shadow-lg
             animate-slide-in-right
             ${bgColors[t.type]}
           `}

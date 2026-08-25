@@ -114,7 +114,7 @@ export default function SaveToProjectDialog({
       }
     >
       {loading ? (
-        <div className="flex items-center justify-center py-8">
+        <div className="flex items-center justify-center py-6">
           <Loader2 size={20} className="animate-spin text-indigo-500" />
         </div>
       ) : (

@@ -25,7 +25,7 @@ export function BreadboardPresetRunner({
   const isDoubleSlit = presetId === "double-slit-breadboard";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="rounded-lg border border-slate-200/60 bg-slate-50/60 p-3 text-sm dark:border-slate-700/60 dark:bg-slate-800/60">
         <div className="flex items-center justify-between">
           <div className="font-semibold text-slate-800 dark:text-slate-200">

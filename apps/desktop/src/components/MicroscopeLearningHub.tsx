@@ -184,7 +184,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   switch (section) {
     case "overview":
       return (
-        <div className="space-y-4 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
           <p>
             显微成像系统由<strong>光源</strong>、<strong>样品台</strong>、<strong>物镜</strong>、<strong>镜筒/相机适配器</strong>和<strong>相机</strong>组成。核心是物镜的数值孔径和相机的像素匹配。
           </p>
@@ -209,7 +209,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "na":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             数值孔径 NA 衡量物镜收集光线的能力。NA 越大，分辨率越高，但工作距离通常越短、景深越浅。
           </p>
@@ -218,7 +218,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "resolution":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             瑞利判据给出显微镜能分辨的最小间距：d = 0.61λ/NA。
           </p>
@@ -227,7 +227,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "magnification":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             放大倍率 β = 像高/物高。它决定物体在传感器上成像的大小，也影响每个像素对应的物理尺寸。
           </p>
@@ -236,7 +236,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "sampling":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             根据奈奎斯特-香农采样定理，相机的像素尺寸必须足够小，使得其奈奎斯特频率高于光学系统的分辨率极限。
           </p>
@@ -277,7 +277,7 @@ const QUIZ_QUESTIONS = [
 
 function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
         完成以下小测验，检验你对显微成像核心概念的理解。
       </p>
@@ -311,7 +311,7 @@ export default function MicroscopeLearningHub({ form }: Props) {
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">显微镜学习指南</h3>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
@@ -324,12 +324,12 @@ export default function MicroscopeLearningHub({ form }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      <div className="flex flex-wrap gap-1.5 mb-3">
         {SECTIONS.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
               activeSection === section.id
                 ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/30"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -341,7 +341,7 @@ export default function MicroscopeLearningHub({ form }: Props) {
         ))}
         <button
           onClick={() => setActiveSection("quiz")}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
             activeSection === "quiz"
               ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
               : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -354,7 +354,7 @@ export default function MicroscopeLearningHub({ form }: Props) {
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-        <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
+        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-3">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
             {currentSection ? (
               <>

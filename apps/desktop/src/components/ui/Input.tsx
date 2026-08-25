@@ -26,7 +26,7 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
 
     const sharedClasses = `
       w-full bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700
-      rounded-[10px] px-3 ${isHorizontal ? "h-7 py-0 text-[13px]" : compact ? "py-2 text-[13px]" : "py-2.5 text-[13px]"} text-slate-800 dark:text-slate-200
+      rounded-[10px] px-3 ${isHorizontal ? "h-7 py-0 text-[13px]" : compact ? "py-1.5 text-[13px]" : "py-2 text-[13px]"} text-slate-800 dark:text-slate-200
       placeholder:text-slate-400 dark:placeholder:text-slate-500
       transition-all duration-200 ease-out
       focus:outline-none focus:bg-white dark:focus:bg-slate-800
@@ -133,15 +133,15 @@ const Input = forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className={`flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-1" : "mb-1.5"}`}>
+          <label htmlFor={inputId} className={`flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${compact ? "mb-0.5" : "mb-1"}`}>
             {label}
             {!hintExpanded && hintNode}
           </label>
         )}
         {inputWrap}
         {inlineHintNode}
-        {error && <p id={errorId} role="alert" className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-rose-500 font-medium`}>{error}</p>}
-        {helper && !error && <p className={`${compact ? "mt-1" : "mt-1.5"} text-xs text-slate-400 dark:text-slate-500`}>{helper}</p>}
+        {error && <p id={errorId} role="alert" className={`${compact ? "mt-0.5" : "mt-1"} text-xs text-rose-500 font-medium`}>{error}</p>}
+        {helper && !error && <p className={`${compact ? "mt-0.5" : "mt-1"} text-xs text-slate-400 dark:text-slate-500`}>{helper}</p>}
       </div>
     );
   }

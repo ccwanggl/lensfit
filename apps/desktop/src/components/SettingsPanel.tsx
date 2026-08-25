@@ -32,7 +32,7 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         tabIndex={-1}
         className="relative w-full max-w-sm h-full bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col animate-in slide-in-from-right duration-200 outline-none"
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2">
             <Monitor size={18} className="text-indigo-500" />
             <h2 id={titleId} className="text-base font-bold text-slate-900 dark:text-slate-100">设置</h2>
@@ -46,7 +46,7 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Learning-aid section（作用域：实践场四个工作台） */}
           <section className="space-y-3">
             <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               role="switch"
               aria-checked={learningMode}
               onClick={() => setLearningMode(!learningMode)}
-              className={`w-full flex items-center justify-between p-3.5 rounded-xl border transition-colors ${
+              className={`w-full flex items-center justify-between p-3 rounded-xl border transition-colors ${
                 learningMode
                   ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/40"
                   : "bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"

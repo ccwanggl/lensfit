@@ -133,8 +133,8 @@ export default function PathView() {
   }
 
   return (
-    <div className="h-full overflow-auto rounded-[14px] border border-slate-200/60 bg-white/80 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
-      <div className="mb-4 flex items-center gap-2">
+    <div className="h-full overflow-auto rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+      <div className="mb-3 flex items-center gap-2">
         <Milestone size={18} className="text-indigo-500" />
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">学习路径</h2>
         <span className="text-xs text-slate-400">完成先修节点后解锁后续内容</span>
@@ -157,7 +157,7 @@ export default function PathView() {
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {layers.map(({ module, nodes }) => (
           <section key={module}>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">

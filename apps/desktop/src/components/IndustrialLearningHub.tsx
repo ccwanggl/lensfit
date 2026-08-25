@@ -285,7 +285,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   switch (section) {
     case "overview":
       return (
-        <div className="space-y-4 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
           <p>
             工业视觉系统的核心任务是让相机“看清”被测物体，并把图像交给算法处理。一个完整的选型过程需要同时考虑
             <strong>光学</strong>、<strong>机械</strong>和<strong>电子</strong>三方面的约束。
@@ -311,7 +311,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "relationship":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             工业视觉中最常用的关系链是：<strong>工作距离 WD</strong> → <strong>视场 FOV</strong> → <strong>焦距 f</strong> → <strong>放大倍率 β</strong> → <strong>像素精度</strong>。
             修改左侧表单中的任意一个参数，下图和三个关键指标都会实时更新。
@@ -321,7 +321,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "focal":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             薄透镜成像公式 <span className="font-mono text-indigo-600 dark:text-indigo-400">f = (WD × s) / (FOV + s)</span> 是工业选型的起点。
             它说明焦距由工作距离、目标宽度和传感器宽度共同决定。
@@ -331,7 +331,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "pixel":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             像素精度衡量“一个像素代表多少实际物理尺寸”。例如 5 μm/px 意味着每个像素对应 5 微米。精度越高，能检测的缺陷越小，但对镜头和照明要求也越高。
           </p>
@@ -340,7 +340,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "dof":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             景深决定被测物体在前后移动时仍能保持清晰的范围。工业检测中，如果物体平面不完全平整或定位有误差，就需要更大的景深。
           </p>
@@ -349,7 +349,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "coverage":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             即使焦距和分辨率都满足，如果镜头的像圈盖不住传感器，图像四角也会变暗。大靶面相机必须搭配大像圈镜头。
           </p>
@@ -390,7 +390,7 @@ const QUIZ_QUESTIONS = [
 
 function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
         完成以下小测验，检验你对工业视觉核心概念的理解。
       </p>
@@ -424,7 +424,7 @@ export default function IndustrialLearningHub({ form }: Props) {
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">工业视觉学习指南</h3>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
@@ -438,12 +438,12 @@ export default function IndustrialLearningHub({ form }: Props) {
       </div>
 
       {/* Section nav */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      <div className="flex flex-wrap gap-1.5 mb-3">
         {SECTIONS.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
               activeSection === section.id
                 ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/30"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -455,7 +455,7 @@ export default function IndustrialLearningHub({ form }: Props) {
         ))}
         <button
           onClick={() => setActiveSection("quiz")}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
             activeSection === "quiz"
               ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
               : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -469,7 +469,7 @@ export default function IndustrialLearningHub({ form }: Props) {
 
       {/* Content card */}
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-        <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
+        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-3">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
             {currentSection ? (
               <>

@@ -18,7 +18,7 @@ function conceptName(path: string): string {
 export function KnowledgeSidebar({ experiment }: KnowledgeSidebarProps) {
   if (!experiment) {
     return (
-      <div className="flex h-full flex-col items-center justify-center rounded-[14px] border border-dashed border-slate-300 bg-white/50 p-6 text-center dark:border-slate-700 dark:bg-slate-800/50">
+      <div className="flex h-full flex-col items-center justify-center rounded-[14px] border border-dashed border-slate-300 bg-white/50 p-4 text-center dark:border-slate-700 dark:bg-slate-800/50">
         <Lightbulb size={32} className="mb-3 text-slate-300 dark:text-slate-600" />
         <p className="text-sm text-slate-500 dark:text-slate-400">
           选择一个实验后，这里会展示它涉及的关键概念与公式。
@@ -31,7 +31,7 @@ export function KnowledgeSidebar({ experiment }: KnowledgeSidebarProps) {
   const hasFormulas = experiment.linked_formulas.length > 0;
 
   return (
-    <div className="flex h-full flex-col gap-4 rounded-[14px] border border-slate-200/60 bg-white/80 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+    <div className="flex h-full flex-col gap-3 rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
       <div className="flex items-center gap-2">
         <BookOpen size={18} className="text-emerald-500" />
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">

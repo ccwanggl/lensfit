@@ -274,7 +274,7 @@ export default function LibraryFormModal({
   );
 
   const renderLensForm = () => (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div className="sm:col-span-2">{renderManufacturerSelect(lensForm.manufacturer_id, (v) => setLensForm({ ...lensForm, manufacturer_id: v }))}</div>
       <Input label="型号 *" value={lensForm.model} onChange={(e) => setLensForm({ ...lensForm, model: e.target.value })} required />
       <Input as="select" label="分类" value={lensForm.category} onChange={(e) => setLensForm({ ...lensForm, category: e.target.value })}>
@@ -308,7 +308,7 @@ export default function LibraryFormModal({
   );
 
   const renderDetectorForm = () => (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div className="sm:col-span-2">{renderManufacturerSelect(detectorForm.manufacturer_id, (v) => setDetectorForm({ ...detectorForm, manufacturer_id: v }))}</div>
       <Input label="型号 *" value={detectorForm.model} onChange={(e) => setDetectorForm({ ...detectorForm, model: e.target.value })} required />
       <Input as="select" label="分类" value={detectorForm.category} onChange={(e) => setDetectorForm({ ...detectorForm, category: e.target.value })}>

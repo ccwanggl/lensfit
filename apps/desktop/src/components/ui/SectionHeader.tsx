@@ -16,10 +16,10 @@ export default function SectionHeader({
   className = "",
 }: SectionHeaderProps) {
   return (
-    <div className={`flex items-center justify-between mb-5 ${className}`}>
+    <div className={`flex items-center justify-between mb-4 ${className}`}>
       <div className="flex items-center gap-2.5">
         {icon && (
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
             {icon}
           </div>
         )}

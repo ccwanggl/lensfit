@@ -23,11 +23,11 @@ export function DomainResultsPanel({
   if (headerBorder) {
     return (
       <Card padding="none" className="overflow-hidden h-full flex flex-col">
-        <div className="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
           <SectionHeader title={title} subtitle={subtitle} icon={icon} />
           {action}
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-3 space-y-3">
           {children}
         </div>
       </Card>
@@ -36,7 +36,7 @@ export function DomainResultsPanel({
 
   return (
     <Card padding="none" className="overflow-hidden h-full flex flex-col">
-      <div className="p-6 flex-1 flex flex-col">
+      <div className="p-4 flex-1 flex flex-col">
         <SectionHeader title={title} subtitle={subtitle} icon={icon} action={action} />
         {children}
       </div>

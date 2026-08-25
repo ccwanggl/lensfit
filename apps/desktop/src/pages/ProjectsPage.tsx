@@ -278,11 +278,11 @@ export default function ProjectsPage() {
   const detectorDrift = getSnapshotDrift(selectedDetector, selectedSetup?.detector_snapshot);
 
   return (
-    <div className="grid grid-cols-12 gap-5">
+    <div className="grid grid-cols-12 gap-4">
       {/* ── Left: Project List ── */}
       <div className="col-span-4">
         <Card padding="none" className="overflow-hidden h-full flex flex-col">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <SectionHeader
               title="项目列表"
               subtitle={`${filteredProjects.length} / ${projects.length} 个项目`}
@@ -345,7 +345,7 @@ export default function ProjectsPage() {
                     setSelectedProject(p);
                   }
                 }}
-                className={`w-full text-left p-4 rounded-xl border transition-all duration-200 group ${
+                className={`w-full text-left p-3 rounded-xl border transition-all duration-200 group ${
                   selectedProject?.id === p.id
                     ? "border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-900/20 shadow-sm"
                     : "border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm"
@@ -391,7 +391,7 @@ export default function ProjectsPage() {
       {/* ── Center: Setup List ── */}
       <div className="col-span-4">
         <Card padding="none" className="overflow-hidden h-full flex flex-col">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <SectionHeader
               title={selectedProject ? selectedProject.name : "方案详情"}
               subtitle={selectedProject ? `${setups.length} 个保存的方案` : "选择项目查看方案"}
@@ -410,7 +410,7 @@ export default function ProjectsPage() {
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-3">
             {!selectedProject ? (
               <div className="flex-1 flex items-center justify-center h-64">
                 <EmptyState
@@ -432,7 +432,7 @@ export default function ProjectsPage() {
                 />
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {setups.map((s) => (
                   <div
                     key={s.id}
@@ -445,7 +445,7 @@ export default function ProjectsPage() {
                         setSelectedSetup(s);
                       }
                     }}
-                    className={`w-full text-left p-4 rounded-xl border transition-all duration-200 group ${
+                    className={`w-full text-left p-3 rounded-xl border transition-all duration-200 group ${
                       selectedSetup?.id === s.id
                         ? "border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-900/20 shadow-sm"
                         : "border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm"
@@ -494,7 +494,7 @@ export default function ProjectsPage() {
       {/* ── Right: Setup Detail ── */}
       <div className="col-span-4">
         <Card padding="none" className="overflow-hidden h-full flex flex-col">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <SectionHeader
               title={selectedSetup ? selectedSetup.name : "方案快照"}
               subtitle={selectedSetup ? "目录数据与保存快照对比" : "选择方案查看详情"}
@@ -513,7 +513,7 @@ export default function ProjectsPage() {
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-3">
             {!selectedSetup ? (
               <div className="flex-1 flex items-center justify-center h-64">
                 <EmptyState
@@ -523,7 +523,7 @@ export default function ProjectsPage() {
                 />
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {(lensDrift.drifted || detectorDrift.drifted) && (
                   <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 flex items-start gap-2.5">
                     <AlertTriangle size={14} className="text-amber-500 mt-0.5 flex-shrink-0" />
@@ -629,7 +629,7 @@ export default function ProjectsPage() {
         onClose={() => setShowCreate(false)}
         title="新建项目"
       >
-        <form onSubmit={handleCreateProject} className="space-y-4">
+        <form onSubmit={handleCreateProject} className="space-y-3">
           <Input
             label="项目名称"
             value={newProject.name}

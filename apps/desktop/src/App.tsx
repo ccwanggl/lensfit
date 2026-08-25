@@ -75,11 +75,11 @@ function AppContent() {
 
       {/* Glass Header */}
       <header className="glass sticky top-0 z-50 transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="flex items-center justify-between h-[60px]">
+        <div className="max-w-[1440px] mx-auto px-4">
+          <div className="flex items-center justify-between h-[52px]">
             {/* Brand */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_2px_8px_rgba(99,102,241,0.3)]">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_2px_8px_rgba(99,102,241,0.3)]">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="3" />
                   <path d="M12 2v4" /><path d="M12 18v4" />
@@ -111,7 +111,7 @@ function AppContent() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`
-                          relative flex items-center gap-2 px-4 py-2 rounded-[10px] text-sm font-semibold
+                          relative flex items-center gap-2 px-3 py-1.5 rounded-[10px] text-sm font-semibold
                           transition-all duration-200 ease-out
                           ${isActive
                             ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
@@ -163,7 +163,7 @@ function AppContent() {
       {/* Learning-aid Notice */}
       {learningMode && (
         <div className="bg-emerald-50 dark:bg-emerald-900/20 border-b border-emerald-100 dark:border-emerald-800/30">
-          <div className="max-w-[1440px] mx-auto px-6 py-2 flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
+          <div className="max-w-[1440px] mx-auto px-4 py-1.5 flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
             <GraduationCap size={14} />
             <span className="font-medium">实践场学习辅助已开启</span>
             <span className="text-emerald-600/70 dark:text-emerald-400/70">实践场工作台中参数旁会出现提示图标，知识面板会高亮并展开相关学习章节。</span>
@@ -172,7 +172,7 @@ function AppContent() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 py-6">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 py-4">
         <Suspense
           fallback={(
             <div className="flex items-center justify-center h-[60vh]">

@@ -134,7 +134,7 @@ export default function FormulaPlayground() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
           <TrendingUp size={16} />
         </div>
@@ -145,7 +145,7 @@ export default function FormulaPlayground() {
       </div>
 
       {/* Formula selector */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      <div className="flex flex-wrap gap-1.5 mb-3">
         {formulas.map((f) => (
           <button
             key={f.id}

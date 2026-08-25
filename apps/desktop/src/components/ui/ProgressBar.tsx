@@ -33,7 +33,7 @@ export default function ProgressBar({
   return (
     <div className="w-full">
       {(label || showValue) && (
-        <div className="flex justify-between items-center mb-1.5">
+        <div className="flex justify-between items-center mb-1">
           {label && (
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {label}

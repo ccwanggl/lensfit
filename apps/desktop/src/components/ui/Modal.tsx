@@ -102,7 +102,7 @@ export default function Modal({
         className={`w-full ${widthClass} rounded-xl bg-white dark:bg-slate-800 shadow-2xl border border-slate-200 dark:border-slate-700 outline-none`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700">
           <h2 id={titleId} className="text-sm font-bold text-slate-900 dark:text-slate-100">
             {title}
           </h2>
@@ -115,9 +115,9 @@ export default function Modal({
             <X size={16} />
           </button>
         </div>
-        <div className="px-5 py-4">{children}</div>
+        <div className="px-4 py-3">{children}</div>
         {footer && (
-          <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-slate-100 dark:border-slate-700">
+          <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-100 dark:border-slate-700">
             {footer}
           </div>
         )}

@@ -202,7 +202,7 @@ export default function LearningHub() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-140px)] flex-col gap-3">
+    <div className="flex h-[calc(100vh-112px)] flex-col gap-3">
       {/* View switcher: 学习路径 / 实验沙盘 / 教程 */}
       <div className="flex items-center gap-1 self-start rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-900">
         <TabButton
@@ -240,13 +240,13 @@ export default function LearningHub() {
         <aside
           className={`${
             showSidebar ? "hidden lg:flex" : "hidden"
-          } h-full w-80 shrink-0 flex-col gap-3`}
+          } h-full w-72 shrink-0 flex-col gap-3`}
         >
           <div className="min-h-0 flex-[1.2]">
             <ExperimentCatalog onSelect={handleSelectExperiment} />
           </div>
           {experiment && (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-3 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
               {isPreset && activeExperimentId && (
                 <BreadboardPresetHeader
                   presetId={activeExperimentId}
@@ -283,7 +283,7 @@ export default function LearningHub() {
               <ExperimentCatalog onSelect={handleSelectExperiment} />
             </div>
             {experiment && (
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-3 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
                 {isPreset && activeExperimentId && (
                   <BreadboardPresetHeader
                     presetId={activeExperimentId}
@@ -434,7 +434,7 @@ export default function LearningHub() {
                         scene={workbenchScene ?? undefined}
                       />
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <MediaPanel experimentId={experiment.id} />
                         <div
                           className={`transition-opacity duration-200 ${
@@ -470,7 +470,7 @@ export default function LearningHub() {
         <aside
           className={`${
             showKnowledge ? "hidden lg:flex" : "hidden"
-          } h-full w-80 shrink-0 flex-col`}
+          } h-full w-72 shrink-0 flex-col`}
         >
           <KnowledgeSidebar experiment={experiment} />
         </aside>
@@ -782,7 +782,7 @@ function HintsPanel({
   result?: { warnings: string[]; learning_hints: string[] };
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {result?.warnings.length ? (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/30">
           <div className="mb-1 text-sm font-semibold text-amber-800 dark:text-amber-400">
@@ -865,8 +865,8 @@ function LoadingState() {
 
 function ErrorState({ message }: { message: string }) {
   return (
-    <div className="flex h-full items-center justify-center p-6">
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
+    <div className="flex h-full items-center justify-center p-4">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
         无法加载实验：{message}
       </div>
     </div>
@@ -875,7 +875,7 @@ function ErrorState({ message }: { message: string }) {
 
 function EmptyState({ onOpenCatalog }: { onOpenCatalog: () => void }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center rounded-[14px] border border-dashed border-slate-300 bg-white/50 p-8 text-center dark:border-slate-700 dark:bg-slate-800/50">
+    <div className="flex h-full flex-col items-center justify-center rounded-[14px] border border-dashed border-slate-300 bg-white/50 p-6 text-center dark:border-slate-700 dark:bg-slate-800/50">
       <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 dark:bg-indigo-900/30 dark:text-indigo-400">
         <FlaskConical size={28} />
       </div>

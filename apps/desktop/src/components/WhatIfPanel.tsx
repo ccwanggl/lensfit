@@ -88,7 +88,7 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
   const diffCount = whatIfResults.length - baselineResults.length;
 
   return (
-    <div className="mt-5 p-4 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
+    <div className="mt-4 p-3 rounded-[10px] bg-slate-50/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700">
       <div className="flex items-center gap-2 mb-3">
         <SlidersHorizontal size={16} className="text-indigo-500" />
         <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200">参数灵敏度分析</h3>
@@ -103,7 +103,7 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
               <button
                 key={p.key}
                 onClick={() => setActiveParam(p.key)}
-                className="w-full flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors text-left focus-ring"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors text-left focus-ring"
               >
                 <div>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{p.label}</span>
@@ -118,7 +118,7 @@ export default function WhatIfPanel({ form, onChange, onRunWhatIf, baselineResul
           })}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{paramDef?.label}</span>
             <button

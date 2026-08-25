@@ -19,7 +19,7 @@ export default function QuizPanel({ quizId }: { quizId: string }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-6">
+      <div className="flex items-center justify-center p-4">
         <Loader2 className="animate-spin text-indigo-500" size={24} />
       </div>
     );

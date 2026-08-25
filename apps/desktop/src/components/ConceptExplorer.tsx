@@ -302,7 +302,7 @@ export default function ConceptExplorer() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3">
         <div className="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-400">
           <Eye size={16} />
         </div>
@@ -313,7 +313,7 @@ export default function ConceptExplorer() {
       </div>
 
       {/* Diagram selector */}
-      <div className="flex gap-1.5 mb-4">
+      <div className="flex gap-1.5 mb-3">
         {DIAGRAMS.map((d) => (
           <button
             key={d.id}

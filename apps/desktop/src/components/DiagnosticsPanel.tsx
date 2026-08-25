@@ -31,8 +31,8 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam, quickAdju
   const hasZeroResult = diagnostics.every((d) => d.after_count === 0);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-3 p-4 bg-amber-50/60 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 rounded-xl">
+    <div className="space-y-3">
+      <div className="flex items-start gap-3 p-3 bg-amber-50/60 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 rounded-xl">
         <AlertTriangle size={18} className="text-amber-500 dark:text-amber-400 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-bold text-amber-800 dark:text-amber-300">未找到匹配方案</p>
@@ -42,7 +42,7 @@ export default function DiagnosticsPanel({ diagnostics, onAdjustParam, quickAdju
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {diagnostics.map((d, i) => (
           <div
             key={i}

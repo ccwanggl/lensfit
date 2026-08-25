@@ -15,13 +15,13 @@ export function ParameterControl({ param, value, onChange }: ParameterControlPro
   if (param.type === "bool") {
     const boolValue = Boolean(value ?? param.default);
     return (
-      <label className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 bg-white p-3 dark:border-slate-700/50 dark:bg-slate-800/50">
+      <label className="flex items-center justify-between gap-2 rounded-lg border border-slate-100 bg-white px-3 py-2 dark:border-slate-700/50 dark:bg-slate-800/50">
         <Label param={param} />
         <input
           type="checkbox"
           checked={boolValue}
           onChange={(e) => onChange(e.target.checked)}
-          className="h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
         />
       </label>
     );
@@ -31,7 +31,7 @@ export function ParameterControl({ param, value, onChange }: ParameterControlPro
     const options = param.options ?? [];
     const selected = value ?? param.default;
     return (
-      <label className="flex flex-col gap-2 rounded-lg border border-slate-100 bg-white p-3 dark:border-slate-700/50 dark:bg-slate-800/50">
+      <label className="flex flex-col gap-1.5 rounded-lg border border-slate-100 bg-white px-3 py-2 dark:border-slate-700/50 dark:bg-slate-800/50">
         <Label param={param} />
         <select
           value={String(selected)}
@@ -39,7 +39,7 @@ export function ParameterControl({ param, value, onChange }: ParameterControlPro
             const opt = options.find((o) => String(o.value) === e.target.value);
             onChange(opt?.value ?? e.target.value);
           }}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
         >
           {options.map((opt) => (
             <option key={String(opt.value)} value={String(opt.value)}>
@@ -57,8 +57,8 @@ export function ParameterControl({ param, value, onChange }: ParameterControlPro
   const isChanged = numericValue !== Number(param.default);
 
   return (
-    <div className="rounded-lg border border-slate-100 bg-white p-3 transition-colors hover:border-slate-200 dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-700">
-      <div className="mb-2 flex items-center justify-between">
+    <div className="rounded-lg border border-slate-100 bg-white px-3 py-2 transition-colors hover:border-slate-200 dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-700">
+      <div className="mb-1.5 flex items-center justify-between">
         <Label param={param} />
         <div className="flex items-center gap-2">
           <input

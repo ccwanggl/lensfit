@@ -178,7 +178,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
   switch (section) {
     case "overview":
       return (
-        <div className="space-y-4 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+        <div className="space-y-3 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
           <p>
             摄影系统的核心是让相机在特定场景下拍出符合创作意图的照片。关键选择包括<strong>机身画幅</strong>、<strong>镜头焦距</strong>、<strong>最大光圈</strong>和<strong>卡口系统</strong>。
           </p>
@@ -203,7 +203,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "focal":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             焦距是镜头光学中心到成像面的距离。它直接决定视角和透视感。
           </p>
@@ -212,7 +212,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "aperture":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             光圈是镜头中允许光线通过的孔径。f 值越小，孔径越大。
           </p>
@@ -221,7 +221,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "sensor":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             画幅是传感器物理尺寸。它影响视角、景深和机身体积。
           </p>
@@ -230,7 +230,7 @@ function SectionContent({ section, form }: { section: SectionId; form: Record<st
       );
     case "bokeh":
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
             景深是照片中看起来清晰的纵深范围。光圈、焦距和对焦距离共同决定景深。
           </p>
@@ -271,7 +271,7 @@ const QUIZ_QUESTIONS = [
 
 function QuizContent({ onComplete }: { onComplete: (score: number) => void }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
         完成以下小测验，检验你对摄影系统核心概念的理解。
       </p>
@@ -305,7 +305,7 @@ export default function PhotographyLearningHub({ form }: Props) {
         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">摄影学习指南</h3>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-3">
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
           <span>学习进度</span>
           <span>{progressValue}%</span>
@@ -318,12 +318,12 @@ export default function PhotographyLearningHub({ form }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      <div className="flex flex-wrap gap-1.5 mb-3">
         {SECTIONS.map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
               activeSection === section.id
                 ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/30"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -335,7 +335,7 @@ export default function PhotographyLearningHub({ form }: Props) {
         ))}
         <button
           onClick={() => setActiveSection("quiz")}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
             activeSection === "quiz"
               ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30"
               : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -348,7 +348,7 @@ export default function PhotographyLearningHub({ form }: Props) {
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-        <div className="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
+        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm space-y-3">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700">
             {currentSection ? (
               <>

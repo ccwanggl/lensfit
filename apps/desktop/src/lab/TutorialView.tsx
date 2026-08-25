@@ -68,7 +68,7 @@ export default function TutorialView() {
   return (
     <div className="flex h-full gap-4">
       {/* Concept list grouped by module */}
-      <aside className="flex h-full w-80 shrink-0 flex-col gap-3 overflow-auto rounded-[14px] border border-slate-200/60 bg-white/80 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+      <aside className="flex h-full w-72 shrink-0 flex-col gap-3 overflow-auto rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
         <div className="flex items-center gap-2">
           <BookOpen size={18} className="text-indigo-500" />
           <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">教程</h2>
@@ -129,7 +129,7 @@ export default function TutorialView() {
       </aside>
 
       {/* Concept detail */}
-      <main className="min-w-0 flex-1 overflow-auto rounded-[14px] border border-slate-200/60 bg-white/80 p-6 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+      <main className="min-w-0 flex-1 overflow-auto rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
         {activeConceptId ? (
           <ConceptDetail conceptId={activeConceptId} />
         ) : (
@@ -233,11 +233,11 @@ function LinkedQuizzes({ conceptId }: { conceptId: string }) {
   if (quizzes.length === 0) return null;
 
   return (
-    <section className="mt-6 border-t border-slate-200/60 pt-4 dark:border-slate-700/60">
+    <section className="mt-4 border-t border-slate-200/60 pt-3 dark:border-slate-700/60">
       <h2 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-200">
         配套测验
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {quizzes.map((quiz) => (
           <QuizPanel key={quiz.id} quizId={quiz.id} />
         ))}

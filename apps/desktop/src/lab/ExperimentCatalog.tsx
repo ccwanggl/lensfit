@@ -52,7 +52,7 @@ export function ExperimentCatalog({ onSelect }: ExperimentCatalogProps) {
   };
 
   return (
-    <div className="flex h-full flex-col gap-4 rounded-[14px] border border-slate-200/60 bg-white/80 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
+    <div className="flex h-full flex-col gap-3 rounded-[14px] border border-slate-200/60 bg-white/80 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
       <div className="flex items-center gap-2">
         <FlaskConical size={18} className="text-indigo-500" />
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">光学实验室</h2>
@@ -100,7 +100,7 @@ export function ExperimentCatalog({ onSelect }: ExperimentCatalogProps) {
           <button
             key={exp.id}
             onClick={() => onSelect(exp.id)}
-            className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition-all hover:border-indigo-300 hover:shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500"
+            className="w-full rounded-xl border border-slate-200 bg-white p-3 text-left transition-all hover:border-indigo-300 hover:shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500"
           >
             <div className="mb-1 flex items-center justify-between">
               <span className="font-semibold text-slate-900 dark:text-slate-100">{exp.title}</span>

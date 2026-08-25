@@ -39,18 +39,18 @@ export function DomainFormPanel({
 }: DomainFormPanelProps) {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="p-6">
+      <div className="p-4">
         <SectionHeader title={title} subtitle={subtitle} icon={icon} />
-        <div className="mb-4">
+        <div className="mb-3">
           <PresetSelector domain={domain} onSelect={onPresetSelect} />
         </div>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-3">
           {children}
           <div className="pt-2">
             <Button
               type="submit"
               variant="primary"
-              size="lg"
+              size="md"
               loading={isLoading}
               leftIcon={submitIcon}
               className="w-full"

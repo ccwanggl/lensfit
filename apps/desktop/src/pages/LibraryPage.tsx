@@ -276,7 +276,7 @@ export default function LibraryPage() {
   };
 
   return (
-    <div className="grid grid-cols-12 gap-5">
+    <div className="grid grid-cols-12 gap-4">
       <div className="col-span-3">
         <LibraryFilters
           kind={kind}

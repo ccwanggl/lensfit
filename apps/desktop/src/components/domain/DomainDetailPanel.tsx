@@ -61,12 +61,12 @@ export function DomainDetailPanel({
 
   return (
     <Card padding="none" className="overflow-hidden h-full flex flex-col">
-      <div className="p-5 border-b border-slate-100 dark:border-slate-700">
+      <div className="p-4 border-b border-slate-100 dark:border-slate-700">
         <SectionHeader title={title} subtitle={subtitle} icon={icon} />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 flex flex-col">
-        <div className="flex items-center gap-1 mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+        <div className="flex items-center gap-1 mb-3 pb-2 border-b border-slate-100 dark:border-slate-700">
           {tabs.map((t) => (
             <button
               key={t.key}

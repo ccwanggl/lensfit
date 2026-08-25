@@ -86,10 +86,10 @@ function splitTableRow(line: string): string[] {
 }
 
 const HEADING_CLASSES: Record<number, string> = {
-  1: "mt-6 mb-3 text-2xl font-bold",
-  2: "mt-6 mb-3 text-xl font-bold",
-  3: "mt-5 mb-2 text-lg font-semibold",
-  4: "mt-4 mb-2 text-base font-semibold",
+  1: "mt-4 mb-2 text-2xl font-bold",
+  2: "mt-4 mb-2 text-xl font-bold",
+  3: "mt-4 mb-2 text-lg font-semibold",
+  4: "mt-3 mb-1.5 text-base font-semibold",
 };
 
 export function MarkdownView({ markdown }: MarkdownViewProps) {

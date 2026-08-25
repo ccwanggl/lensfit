@@ -19,12 +19,12 @@ export default function EmptyState({
     <div
       className={`
         flex flex-col items-center justify-center
-        py-16 px-4 text-center
+        py-10 px-4 text-center
         ${className}
       `}
     >
       {icon && (
-        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-4">
+        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-3">
           {icon}
         </div>
       )}
@@ -34,7 +34,7 @@ export default function EmptyState({
           {description}
         </p>
       )}
-      {action && <div className="mt-4">{action}</div>}
+      {action && <div className="mt-3">{action}</div>}
     </div>
   );
 }

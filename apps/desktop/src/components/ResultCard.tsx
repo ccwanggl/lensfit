@@ -33,7 +33,7 @@ export default function ResultCard({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-4 rounded-xl border transition-all duration-200 focus-ring ${
+      className={`w-full text-left p-3 rounded-xl border transition-all duration-200 focus-ring ${
         isSelected
           ? "border-indigo-300 dark:border-indigo-700 bg-indigo-50/60 dark:bg-indigo-900/30 shadow-sm"
           : "border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-200 hover:shadow-sm"
