@@ -71,6 +71,7 @@ const MODULE_ORDER = [
   "30-wave-optics",
   "40-spectroscopy",
   "50-optical-design",
+  "60-photonics",
   "practice",
 ];
 
@@ -80,6 +81,7 @@ const MODULE_LABELS: Record<string, string> = {
   "30-wave-optics": "波动光学",
   "40-spectroscopy": "光谱学",
   "50-optical-design": "光学设计",
+  "60-photonics": "光子学与光纤",
   practice: "实践场",
 };
 

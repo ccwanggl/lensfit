@@ -2,7 +2,7 @@
 
 > 类别：调研参考（`docs/development/research/`），不可直接当作执行计划；实验立项须先进入 `plans/active/`。
 > 数据口径：2026-08-25，`scripts/knowledge_coverage.py` 对 `knowledgeLinks.json`（147 概念 + 66 公式）与 lab registry（19 实验）/面包板 preset（2）的对账结果。
-> 结论先行：未锚定知识共 **84 概念 + 37 公式**（2026-08-25 晚间快照；当日三批共落地十六个实验（含黑体发射率扩展与五个零成本概念补链）（黑体扩展、高斯光束、全反射/光纤NA、探测器SNR、半影、朗伯体角分布、立体角几何、QE-响应度、CIE色域、双点分辨）并补链「瑞利判据」，详见 T1 表状态列）；其中真正适合"补实验"的是 T1 子集，大量内容属于其他能力域或天然纯阅读。
+> 结论先行：未锚定知识共 **77 概念 + 31 公式**（2026-08-25 晚间快照；当日三批共落地十六个实验 + T3 首批四个数值仿真实验（傅里叶光学FFT/光纤V参数/激光阈值/GVD展宽/EDFA增益），并新建 60-photonics 课程层；含黑体发射率扩展与五处零成本概念补链（黑体扩展、高斯光束、全反射/光纤NA、探测器SNR、半影、朗伯体角分布、立体角几何、QE-响应度、CIE色域、双点分辨）并补链「瑞利判据」，详见 T1 表状态列）；其中真正适合"补实验"的是 T1 子集，大量内容属于其他能力域或天然纯阅读。
 
 ## 1. 分级定义
 
@@ -50,27 +50,11 @@
 - **偏振/电光器件**：`faraday-rotation`、`faraday-rotation-angle`、`pockels-effect`、`half-wave-voltage`、`extinction-ratio`(公式)、`mz-transfer-function`、`mach-zehnder-modulator`
 - **分光器件**：`分光镜`、`fabry-perot-microcavity`
 
-## 4. T3 · 需新增数值仿真能力
+## 4. T3 · 数值仿真能力（2026-08-25 推进后状态）
 
-- **傅里叶光学**：`fourier-transform-pair`、`fourier-transform-optics`、`angular-spectrum`（FFT 场传播，价值高、成本 M-L，建议 T3 内最优先评估）
-- **光纤物理**：`single-mode-fiber`、`multi-mode-fiber`、`chromatic-dispersion`、`fiber-v-parameter`、`fiber-bending-loss`、`soliton-condition`、`pulse-broadening-gvd`
-- **激光物理**：`gain-medium`、`population-inversion`、`optical-resonator`、`laser-threshold`(概念+公式)、`laser-rate-equations`、`mode-locking`、`q-switching`、`laser-linewidth`、`saturation-intensity`、`gain-bandwidth`（速率方程数值积分为核心）
-- **非线性/放大器**：`nonlinear-effects`、`nonlinear-phase-matching`、`edfa`、`edfa-gain-model`
-- **集成光子学**：`microring-resonator`、`microring-resonance`、`directional-coupler`、`grating-coupler`、`silicon-photonics`、`photonic-integrated-circuit`、`metasurface`
-
+**已落地（60-photonics 新层 + fourier-optics 入 30-wave）：**
+- 傅里叶光学：\ourier-optics\ 实验（数值 FFT）→ 锚定 \ourier-transform-pair\、\ourier-transform-optics\、\ngular-spectrum- 光纤物理（部分）：\iber-v-parameter\ 实验 → \iber-v-parameter\、\single-mode-fiber\、\multi-mode-fiber\、\chromatic-dispersion\(概念)、\pulse-broadening-gvd- 激光物理（部分，P-I 线性模型）：\laser-threshold\ 实验 → \laser-threshold\、\gain-medium\、\population-inversion\、\optical-resonator- 放大器（教学模型）：\dfa-gain\ 实验 → \dfa\、\dfa-gain-model
+**仍未覆盖（后续批次候选）：**
+- 光纤：\iber-bending-loss\、\soliton-condition- 激光动力学：\mode-locking\、\q-switching\、\laser-linewidth\、\saturation-intensity\(概念)、\gain-bandwidth\(公式)
+- 非线性：onlinear-effects\、onlinear-phase-matching- 集成光子学：\microring-resonator\、\microring-resonance\、\directional-coupler\、\grating-coupler\、\silicon-photonics\、\photonic-integrated-circuit\、\metasurface
 ## 5. T4 · 保持纯阅读（含建议补入课程骨架者）
-
-- 应用综述类：`hyperspectral-imaging`、`multispectral-imaging`、`snapshot-spectral-imaging`、`multispectral-filter-array`、`spectral-reconstruction`
-- 度量学补充（高中心度，建议下批补入 curriculum 概念骨架）：`luminous-intensity`、`radiant-intensity`、`irradiance`(公式侧)、`亮度-照度关系`、`radiance-flux`
-- 其余零散：`concepts`(元笔记)、`speed-of-light` 等——已由骨架节点覆盖导航
-
-## 6. 维护方式
-
-1. 每次知识库同步后运行 `python scripts/knowledge_coverage.py --write-report` 刷新覆盖率与本清单的事实基础。
-2. 从 T1 提案进入 active plan 时，同步勾选本表并在 `linked_concepts`/`linked_formulas` 中挂接全部相关 slug。
-3. T2/T3 条目的解锁条件以各自能力 checkpoint 为准，不在学习主线 plan 中提前排期。
-
-## 7. 与既有计划的关系
-
-- 本文件是选题池，不是排期表；不改变 ADR-002/003 及各 active plan 的任何门禁。
-- 学习路径视图当前已通过 concept 骨架节点把未覆盖知识以「理论节点」形态暴露（点击跳知识库），因此本清单的落地节奏不影响学习者可见的知识广度。

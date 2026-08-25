@@ -4,18 +4,17 @@
 
 | 类别 | 知识库 | 已锚定 | 未覆盖 | 覆盖率 |
 |---|---|---|---|---|
-| concepts | 149 | 65 | 84 | 44% |
-| formulas | 72 | 35 | 37 | 49% |
+| concepts | 149 | 72 | 77 | 48% |
+| formulas | 72 | 41 | 31 | 57% |
 
 遗留旧路径字面量：2 处（见 knowledge_links_unresolved.md）
 
-## 未覆盖概念（84）
+## 未覆盖概念（77）
 
 - `4f-system` — 双透镜傅里叶系统（10-概念/4-双透镜傅里叶系统.md）
 - `aperture-stop` — 孔径光阑（10-概念/145-孔径光阑.md）
 - `astigmatism` — 像散（10-概念/149-像散.md）
 - `brightness-enhancement-film` — 增亮膜（10-概念/090-增亮膜.md）
-- `chromatic-dispersion` — 光纤色散（10-概念/111-光纤色散.md）
 - `color-rendering-index` — 显色指数（10-概念/130-显色指数.md）
 - `coma` — 彗差（10-概念/148-彗差.md）
 - `concentration-ratio` — 聚光比（10-概念/085-聚光比.md）
@@ -27,7 +26,6 @@
 - `directional-coupler` — 定向耦合器（10-概念/118-定向耦合器.md）
 - `distortion` — 畸变（10-概念/151-畸变.md）
 - `doublet` — 双透镜（双胶合）（10-概念/152-双透镜双胶合.md）
-- `edfa` — 掺铒光纤放大器（10-概念/113-掺铒光纤放大器.md）
 - `edge-ray-principle` — 边缘光线原理（10-概念/099-边缘光线原理.md）
 - `entrance-exit-pupil` — 入瞳/出瞳（10-概念/146-入瞳出瞳.md）
 - `etendue` — 光学扩展量（10-概念/081-光学扩展量.md）
@@ -36,11 +34,9 @@
 - `faraday-rotation` — 法拉第旋转（10-概念/137-法拉第旋转.md）
 - `field-curvature` — 场曲（10-概念/150-场曲.md）
 - `fluorescence` — 荧光（10-概念/070-荧光.md）
-- `fourier-transform-pair` — 傅里叶变换对（10-概念/傅里叶变换对.md）
 - `free-spectral-range` — 自由光谱范围（10-概念/117-自由光谱范围.md）
 - `freeform-optics` — 自由曲面光学（10-概念/084-自由曲面光学.md）
 - `frequency` — 频率（10-概念/141-频率.md）
-- `gain-medium` — 增益介质（10-概念/101-增益介质.md）
 - `grating-coupler` — 光栅耦合器（10-概念/094-光栅耦合器.md）
 - `hyperspectral-imaging` — 高光谱成像（10-概念/073-高光谱成像.md）
 - `irradiance` — 辐射照度（10-概念/123-辐射照度.md）
@@ -59,13 +55,11 @@
 - `multispectral-filter-array` — 多光谱滤光片阵列（10-概念/076-多光谱滤光片阵列.md）
 - `multispectral-imaging` — 多光谱成像（10-概念/072-多光谱成像.md）
 - `nonlinear-effects` — 非线性效应（10-概念/112-非线性效应.md）
-- `optical-resonator` — 光学谐振腔（10-概念/100-光学谐振腔.md）
 - `photomultiplier-tube` — 光电倍增管（10-概念/139-光电倍增管.md）
 - `photon-energy` — 光子能量（10-概念/142-光子能量.md）
 - `photonic-integrated-circuit` — 光子集成电路（10-概念/119-光子集成电路.md）
 - `pixel` — 像元（10-概念/036-像元.md）
 - `pockels-effect` — 泡克耳斯效应（10-概念/136-泡克耳斯效应.md）
-- `population-inversion` — 粒子数反转（10-概念/102-粒子数反转.md）
 - `q-switching` — 脉冲激光调制（10-概念/104-脉冲激光调制.md）
 - `quantum-dot-film` — 量子点增强膜（10-概念/091-量子点增强膜.md）
 - `radiance` — 辐射亮度（10-概念/122-辐射亮度.md）
@@ -73,7 +67,6 @@
 - `radiant-intensity` — 辐射强度（10-概念/121-辐射强度.md）
 - `raman-scattering` — 拉曼散射（10-概念/071-拉曼散射.md）
 - `silicon-photonics` — 硅光子学（10-概念/114-硅光子学.md）
-- `single-mode-fiber` — 单模光纤（10-概念/109-单模光纤.md）
 - `slit` — 入射狭缝（10-概念/入射狭缝.md）
 - `snapshot-spectral-imaging` — 快照式光谱成像（10-概念/075-快照式光谱成像.md）
 - `source-target-mapping` — 源-靶映射（10-概念/096-源-靶映射.md）
@@ -96,28 +89,23 @@
 - `边缘检测` — 边缘检测（10-概念/043-边缘检测.md）
 - `近轴近似` — 近轴近似（10-概念/001-近轴近似.md）
 
-## 未覆盖公式（37）
+## 未覆盖公式（31）
 
-- `angular-spectrum` — 角谱传播公式（20-公式/角谱传播公式.md）
 - `concentration-ratio` — 几何聚光比（20-公式/018-几何聚光比.md）
 - `coupling-efficiency` — 耦合效率计算（20-公式/019-耦合效率计算.md）
 - `cpc-geometry` — 复合抛物面聚光器设计（20-公式/048-复合抛物面聚光器设计.md）
 - `czerny-turner-resolution` — 切尔尼特纳光谱仪分辨率（20-公式/切尔尼特纳光谱仪分辨率.md）
 - `directional-coupler` — 方向耦合器功率分配（20-公式/031-方向耦合器功率分配.md）
-- `edfa-gain-model` — 掺铒光纤放大器增益与噪声（20-公式/028-掺铒光纤放大器增益与噪声.md）
 - `etendue` — 光学扩展量守恒关系（20-公式/017-光学扩展量守恒关系.md）
 - `extinction-ratio` — 消光比计算（20-公式/042-消光比计算.md）
 - `faraday-rotation-angle` — 法拉第旋转角（20-公式/040-法拉第旋转角.md）
 - `fiber-bending-loss` — 光纤弯曲损耗（20-公式/054-光纤弯曲损耗.md）
-- `fiber-v-parameter` — 光纤归一化频率（20-公式/026-光纤归一化频率.md）
 - `formulas` — 公式（20-公式/公式.md）
-- `fourier-transform-optics` — 光学傅里叶变换对（20-公式/光学傅里叶变换对.md）
 - `freeform-mapping` — 自由曲面源-靶映射（20-公式/043-自由曲面源-靶映射.md）
 - `gain-bandwidth` — 增益带宽积（20-公式/051-增益带宽积.md）
 - `half-wave-voltage` — 半波电压（20-公式/039-半波电压.md）
 - `laser-linewidth` — 激光本征线宽（20-公式/050-激光本征线宽.md）
 - `laser-rate-equations` — 激光速率方程（20-公式/032-激光速率方程.md）
-- `laser-threshold` — 激光阈值条件（20-公式/020-激光阈值条件.md）
 - `light-extraction` — 发光二极管光提取效率（20-公式/046-发光二极管光提取效率.md）
 - `luminance-illuminance` — 亮度-照度关系（朗伯面）（20-公式/057-亮度-照度关系朗伯面.md）
 - `m2-beam-quality` — 光束质量因子（20-公式/025-光束质量因子.md）
@@ -128,7 +116,6 @@
 - `pmt-gain` — 光电倍增管增益（20-公式/041-光电倍增管增益.md）
 - `pockels-phase-modulation` — 泡克耳斯效应相位调制（20-公式/038-泡克耳斯效应相位调制.md）
 - `prism-dispersion` — 棱镜色散率（20-公式/014-棱镜色散率.md）
-- `pulse-broadening-gvd` — 群速度色散脉冲展宽（20-公式/053-群速度色散脉冲展宽.md）
 - `radiance-flux` — 亮度-通量关系（20-公式/049-亮度-通量关系.md）
 - `rms-wavefront-error` — 均方根波前误差计算（20-公式/均方根波前误差计算.md）
 - `saturation-intensity` — 饱和强度（20-公式/052-饱和强度.md）

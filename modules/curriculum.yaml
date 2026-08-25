@@ -350,6 +350,12 @@ nodes:
     title: 高斯光束传播实验
     module: 30-wave-optics
     prerequisites: []
+  - id: fourier-optics
+    kind: experiment
+    ref: fourier-optics
+    title: 傅里叶光学变换实验
+    module: 30-wave-optics
+    prerequisites: [single-slit-diffraction, diffraction]
 
   # ─── 40-spectroscopy ───
   - id: concept-radiant-flux
@@ -540,6 +546,32 @@ nodes:
     title: 热成像 IFOV 与 NETD 实验
     module: 50-optical-design
     prerequisites: [magnification-scale, angle-of-view]
+
+  # ─── 60-photonics（光子学与光纤）───
+  - id: fiber-v-parameter
+    kind: experiment
+    ref: fiber-v-parameter
+    title: 光纤归一化频率实验
+    module: 60-photonics
+    prerequisites: []
+  - id: gvd-pulse-broadening
+    kind: experiment
+    ref: gvd-pulse-broadening
+    title: 群速度色散脉冲展宽实验
+    module: 60-photonics
+    prerequisites: []
+  - id: laser-threshold
+    kind: experiment
+    ref: laser-threshold
+    title: 激光阈值实验（P-I 曲线）
+    module: 60-photonics
+    prerequisites: []
+  - id: edfa-gain
+    kind: experiment
+    ref: edfa-gain
+    title: EDFA 增益饱和实验
+    module: 60-photonics
+    prerequisites: []
 
   # ─── practice（实践场）───
   - id: industrial
