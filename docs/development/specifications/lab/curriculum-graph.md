@@ -21,6 +21,7 @@
 | `title` | string | 是 | 展示标题 |
 | `prerequisites` | string[] | 否（默认 `[]`） | 先修节点 id 列表，必须引用本文件内已定义的节点 id |
 | `module` | string | 否（默认 `""`） | 分层展示层级：`10-foundations` / `20-geometric-optics` / `30-wave-optics` / `40-spectroscopy` / `50-optical-design` / `practice`（实践场层） |
+| `source` | string | 否（默认 `""`，仅 concept 节点有意义） | `"vault"` → 知识库理论节点（ADR-004）：`ref` 为知识库 slug，前端经 `knowledgeLinks.json` 解析为 `obsidian://` 深链，引擎跳过内容合同索引校验；空值 → 内容合同概念，ref 必须命中内容索引 |
 
 边不由 `edges` 字段声明，而是从各节点 `prerequisites` 派生：对每个先修关系生成一条 `先修节点 → 依赖节点` 的有向边。
 
@@ -85,7 +86,7 @@
 - 挂载：学习中心"学习路径"视图（`apps/desktop/src/lab/PathView.tsx`）。
 - 展示：按 `module` 分层（10 → 50，practice 层居末），层内按 YAML 声明顺序线性排列；节点显示 kind 徽章与标题。
 - 锁定：`computeLocks(nodes, completed)`——节点的全部直接先修都在完成集合中才解锁；锁定节点显示缺失先修标题。完成集合来自 graph 节点 `status === "completed"`（learning_records 合并结果）；`completed` 节点自身即使先修缺失也不显示锁定（状态以服务端合并为准），行尾显示绿色完成标记。
-- 跳转：experiment/preset → 沙盘加载对应实验；concept → 教程视图打开对应概念；practice → 对应领域工作台 Tab（经 `appStore`）；assessment → 路径视图内嵌打开测验面板（`QuizPanel`）。
+- 跳转（ADR-004 修订）：experiment/preset → 沙盘加载对应实验；concept → 若 `knowledgeLinks.json` 命中该 ref 则 `obsidian://` 跳转知识库笔记，未命中（内容合同教程，如 `cmos-fundamentals`）则回退教程视图；practice → 对应领域工作台 Tab（经 `appStore`）；assessment → 路径视图内嵌打开测验面板（`QuizPanel`）。
 
 ## 7. 先修关系的物理基线
 

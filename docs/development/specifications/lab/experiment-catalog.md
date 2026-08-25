@@ -4,7 +4,7 @@ This document maps every planned experiment to the corresponding vault notes and
 
 > Last synced with `engine/optibench/lab/`.
 >
-> 注：本文档中的 `10-concepts/`、`20-formulas/`、`50-learning/` 等链接路径是原 `OpticKnowledgeSpace/` vault 的相对路径。该 vault 已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代。2026-08-24 起按内容合同 v1（`content-contract.md` 第 7 节）确立映射方案：`10-concepts/<slug>` → 概念 id `<slug>`（待 `modules/<module>/learning/` 补齐正文后生效）；`50-learning/<NN>-<slug>` → 对应模块目录（如 `02-geometric-optics → 20-geometric-optics`、`16-spectroscopy → 40-spectroscopy`）；`20-formulas/<slug>` → 由 `linked_formulas` 原样保留。进度（2026-08-24 更新）：阶段 1 已在 `curriculum.yaml` 中以概念 id 关联概念节点；实验元数据中 `linked_concepts` 的旧路径未批量改写（目标概念文档大多未补齐），挂账随教程正文补写逐批完成，详见 `curriculum-graph.md` 第 8 节。
+> 注：本文档中的 `10-concepts/`、`20-formulas/`、`50-learning/` 等链接路径是原 `OpticKnowledgeSpace/` vault 的相对路径。该 vault 已在 v4.0 知识库重构中删除，由仓库顶层的 `modules/`（10-foundations ~ 50-optical-design）取代。**2026-08-25 起清偿机制由 ADR-004 接管**：实验元数据中的 `10-concepts/<X>`、`20-formulas/<X>` 已批量替换为裸 slug `<X>`，前端经 `apps/desktop/src/lab/knowledgeLinks.json`（由 `scripts/generate_knowledge_links.py` 从知识库 frontmatter 生成）解析为 `obsidian://` 深链；知识库中无对应笔记的条目保留原字面量，登记于 `scripts/knowledge_links_unresolved.md`。`50-learning/<NN>-<slug>` 章节级引用维持原值，待章节链接机制另行明确。
 
 ---
 

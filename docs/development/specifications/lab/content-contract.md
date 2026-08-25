@@ -88,10 +88,13 @@ engine 在构建索引时对每个候选文件执行校验，违规即产生明�
 
 ## 7. 旧 vault 路径映射（linked_concepts 债务）
 
-lab 实验元数据中的 `linked_concepts` / `linked_formulas` 仍使用已删除的 `OpticKnowledgeSpace/` vault 相对路径（见 `experiment-catalog.md` 头部注记）。阶段 0 采用以下映射方案，**不全量改写实验代码**：
+> **2026-08-25 修订**：本节清偿机制由 [ADR-004](../../decisions/ADR-004-vault-software-knowledge-interlink.md) 接管。以下为现行机制；原"逐篇正文补齐后重映射到合同 id"的方案已被取代（历史方案见文末附注）。
 
-- `10-concepts/<slug>` → 概念 id `<slug>`。待对应概念教程在 `modules/<module>/learning/` 补齐正文后，以本合同的 `id` 形式直接引用；阶段 1 的 `curriculum.yaml` 负责把实验节点与概念节点关联。
-- `50-learning/<NN>-<slug>` → 模块目录映射：`01-light-and-waves → 10-foundations`、`02-geometric-optics → 20-geometric-optics`、波动光学相关 → `30-wave-optics`、`16-spectroscopy → 40-spectroscopy`、光学设计相关 → `50-optical-design`。
-- `20-formulas/<slug>` → 公式标识，暂由 `linked_formulas` 原样保留，待知识子系统归口后统一处理，不属于本合同范围。
+**现行机制（ADR-004）**：实验元数据中的 `linked_concepts` / `linked_formulas` 统一使用**裸 slug**（知识库 frontmatter `id` 去命名空间前缀，如 `concept.diffraction-limit` → `diffraction-limit`），概念与公式各自成表，同名 slug 合法并存。前端经生成的映射表解析：
 
-实验 `linked_concepts` 的正式重映射进度（2026-08-24 更新）：阶段 1 已确立概念 id 命名空间并在 curriculum 图（`curriculum-graph.md`）中关联概念节点；但实验元数据中的旧 vault 路径未批量改写——目标概念文档大多尚未补齐，改写会产生悬空引用。该挂账随教程正文补写逐批完成：每补齐一篇概念文档，即可把相关实验的旧路径替换为本合同的 `id`。
+- 映射表：`apps/desktop/src/lab/knowledgeLinks.json`（`{concepts: {slug: {path,title}}, formulas: {...}}`）
+- 生成器：`scripts/generate_knowledge_links.py`（只读扫描知识库 `10-概念/`、`20-公式/` 的 frontmatter）
+- 渲染：`apps/desktop/src/lab/KnowledgeSidebar.tsx` 按 slug 查表构造 `obsidian://open?vault=OpticKnowledgeSpace&file=<path>` 链接
+- 未在知识库中找到对应笔记的字面量保留原值并登记于 `scripts/knowledge_links_unresolved.md`（2026-08-25 快照：8 个唯一值，含 `20-formulas/snell-law`、`20-formulas/single-slit-minima` 等）
+
+**历史方案（已被取代）**：原 §7 规定 `10-concepts/<slug>` 待对应概念教程补齐后重映射为本合同 id、公式暂由 `linked_formulas` 原样保留且不属于本合同范围——该方案的"逐批清偿依赖正文补写"与"公式除外"两点均不再成立，详见 ADR-004 §2/§5。
