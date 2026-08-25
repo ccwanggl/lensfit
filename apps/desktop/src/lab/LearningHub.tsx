@@ -7,6 +7,7 @@ import {
   Lightbulb,
   Loader2,
   Maximize2,
+  Milestone,
   Minimize2,
   PanelLeft,
   Play,
@@ -26,6 +27,9 @@ import { ParameterControl } from "./ParameterControl";
 import { KnowledgeSidebar } from "./KnowledgeSidebar";
 import { getExperimentMedia } from "./experimentMedia";
 import { BreadboardPresetRunner } from "./BreadboardPresetRunner";
+import { useReportProgress } from "./reportProgress";
+import TutorialView from "./TutorialView";
+import PathView from "./PathView";
 import {
   getBreadboardPreset,
   isBreadboardPreset,
@@ -46,6 +50,8 @@ export default function LearningHub() {
   const setSceneDraft = useLabStore((s) => s.setSceneDraft);
   const resetSceneDraft = useLabStore((s) => s.resetSceneDraft);
   const allDrafts = useLabStore((s) => s.paramDrafts);
+  const learningView = useLabStore((s) => s.learningView);
+  const setLearningView = useLabStore((s) => s.setLearningView);
 
   const [showKnowledge, setShowKnowledge] = useState(true);
   const [centerExpanded, setCenterExpanded] = useState(false);
@@ -127,6 +133,15 @@ export default function LearningHub() {
       (!isPreset || !!workbenchScene),
   });
 
+  const reportProgress = useReportProgress();
+
+  // 实验运行成功后上报 completed（同一实验只上报一次）
+  useEffect(() => {
+    if (result && !runError && activeExperimentId) {
+      reportProgress(isPreset ? "preset" : "experiment", activeExperimentId, "completed");
+    }
+  }, [result, runError, activeExperimentId, isPreset, reportProgress]);
+
   const handleSelectExperiment = (id: string) => {
     setActiveExperimentId(id);
     setActiveTab("visual");
@@ -183,7 +198,39 @@ export default function LearningHub() {
   };
 
   return (
-    <div className="relative flex h-[calc(100vh-140px)] gap-4">
+    <div className="flex h-[calc(100vh-140px)] flex-col gap-3">
+      {/* View switcher: 学习路径 / 实验沙盘 / 教程 */}
+      <div className="flex items-center gap-1 self-start rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-900">
+        <TabButton
+          active={learningView === "path"}
+          onClick={() => setLearningView("path")}
+          icon={<Milestone size={14} />}
+          label="学习路径"
+        />
+        <TabButton
+          active={learningView === "sandbox"}
+          onClick={() => setLearningView("sandbox")}
+          icon={<FlaskConical size={14} />}
+          label="实验沙盘"
+        />
+        <TabButton
+          active={learningView === "tutorials"}
+          onClick={() => setLearningView("tutorials")}
+          icon={<BookOpen size={14} />}
+          label="教程"
+        />
+      </div>
+
+      {learningView === "path" ? (
+        <div className="min-h-0 flex-1">
+          <PathView />
+        </div>
+      ) : learningView === "tutorials" ? (
+        <div className="min-h-0 flex-1">
+          <TutorialView />
+        </div>
+      ) : (
+    <div className="relative flex min-h-0 flex-1 gap-4">
       {/* ─── Left column: catalog + parameters ─── */}
       {!centerExpanded && (
         <aside
@@ -449,6 +496,8 @@ export default function LearningHub() {
           className="absolute inset-0 z-20 bg-slate-900/20 backdrop-blur-sm lg:hidden"
           onClick={() => setMobilePanel(null)}
         />
+      )}
+    </div>
       )}
     </div>
   );

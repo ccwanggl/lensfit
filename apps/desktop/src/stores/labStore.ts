@@ -9,6 +9,8 @@ if (!localStorage.getItem(STORAGE_KEY)) {
   if (legacy) localStorage.setItem(STORAGE_KEY, legacy);
 }
 
+export type LearningView = "path" | "sandbox" | "tutorials";
+
 interface LabState {
   activeExperimentId: string | null;
   paramDrafts: Record<string, Record<string, unknown>>;
@@ -16,6 +18,9 @@ interface LabState {
   showDataPanel: boolean;
   showSidebar: boolean;
   recentExperiments: string[];
+  learningView: LearningView;
+  activeConceptId: string | null;
+  activeQuizId: string | null;
 
   setActiveExperimentId: (id: string | null) => void;
   setParam: (experimentId: string, name: string, value: unknown) => void;
@@ -25,6 +30,11 @@ interface LabState {
   toggleDataPanel: () => void;
   toggleSidebar: () => void;
   addRecentExperiment: (id: string) => void;
+  setLearningView: (view: LearningView) => void;
+  setActiveConceptId: (id: string | null) => void;
+  setActiveQuizId: (id: string | null) => void;
+  openExperimentFromTutorial: (experimentId: string) => void;
+  openConceptFromPath: (conceptId: string) => void;
 }
 
 export const useLabStore = create<LabState>()(
@@ -36,6 +46,9 @@ export const useLabStore = create<LabState>()(
       showDataPanel: true,
       showSidebar: true,
       recentExperiments: [],
+      learningView: "path",
+      activeConceptId: null,
+      activeQuizId: null,
 
       setActiveExperimentId: (id) =>
         set((state) => ({
@@ -95,6 +108,25 @@ export const useLabStore = create<LabState>()(
         set((state) => ({
           recentExperiments: [id, ...state.recentExperiments.filter((x) => x !== id)].slice(0, 8),
         })),
+
+      setLearningView: (view) => set({ learningView: view }),
+
+      setActiveConceptId: (id) => set({ activeConceptId: id }),
+
+      setActiveQuizId: (id) => set({ activeQuizId: id }),
+
+      openExperimentFromTutorial: (experimentId) =>
+        set((state) => ({
+          learningView: "sandbox",
+          activeExperimentId: experimentId,
+          recentExperiments: [
+            experimentId,
+            ...state.recentExperiments.filter((x) => x !== experimentId),
+          ].slice(0, 8),
+        })),
+
+      openConceptFromPath: (conceptId) =>
+        set({ learningView: "tutorials", activeConceptId: conceptId }),
     }),
     {
       name: STORAGE_KEY,
@@ -104,6 +136,7 @@ export const useLabStore = create<LabState>()(
         recentExperiments: state.recentExperiments,
         showDataPanel: state.showDataPanel,
         showSidebar: state.showSidebar,
+        learningView: state.learningView,
       }),
     }
   )

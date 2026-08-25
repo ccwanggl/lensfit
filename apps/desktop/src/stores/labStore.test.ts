@@ -117,3 +117,16 @@ describe("localStorage 数据恢复", () => {
     expect(useLabStore.getState().sceneDrafts).toEqual({});
   });
 });
+
+describe("学习中心子视图默认值与跳转（阶段 4）", () => {
+  it("默认子视图为学习路径", () => {
+    expect(useLabStore.getState().learningView).toBe("path");
+  });
+
+  it("openExperimentFromTutorial 跳转沙盘并加载实验", () => {
+    useLabStore.getState().openExperimentFromTutorial("thin-lens");
+    const state = useLabStore.getState();
+    expect(state.learningView).toBe("sandbox");
+    expect(state.activeExperimentId).toBe("thin-lens");
+  });
+});

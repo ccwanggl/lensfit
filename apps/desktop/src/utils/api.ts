@@ -676,6 +676,119 @@ export async function runWorkbench(
   });
 }
 
+/* ─── Learning Content (content contract v1) ─── */
+export interface ContentConcept {
+  id: string;
+  title: string;
+  module: string;
+  difficulty: string;
+  prerequisites: string[];
+  linked_experiments: string[];
+  status: string;
+}
+
+export interface ContentConceptDetail extends ContentConcept {
+  body: string;
+}
+
+export async function listContentConcepts() {
+  return apiFetch<{
+    items: ContentConcept[];
+    errors: { path: string; error: string }[];
+  }>("/api/v1/content/concepts");
+}
+
+export async function getContentConcept(id: string) {
+  return apiFetch<ContentConceptDetail>(
+    `/api/v1/content/concepts/${encodeURIComponent(id)}`
+  );
+}
+
+/* ─── Curriculum (learning-path graph) ─── */
+export type CurriculumNodeKind = "concept" | "experiment" | "preset" | "practice" | "assessment";
+
+export interface CurriculumNode {
+  id: string;
+  kind: CurriculumNodeKind;
+  ref: string;
+  title: string;
+  module: string;
+  prerequisites: string[];
+  status: string;
+}
+
+export interface CurriculumEdge {
+  from_id: string;
+  to_id: string;
+}
+
+export async function getCurriculumGraph() {
+  return apiFetch<{ nodes: CurriculumNode[]; edges: CurriculumEdge[] }>(
+    "/api/v1/curriculum/graph"
+  );
+}
+
+/* ─── Learning progress (learner state, phase 2) ─── */
+export type LearningProgressStatus = "viewed" | "completed" | "scored";
+
+export interface LearningProgressItem {
+  learner_id: string;
+  item_kind: string;
+  item_id: string;
+  status: string;
+  score: number | null;
+  updated_at: string | null;
+}
+
+export async function getLearningProgress(itemKind?: string) {
+  const qs = itemKind ? `?item_kind=${encodeURIComponent(itemKind)}` : "";
+  return apiFetch<{ items: LearningProgressItem[] }>(
+    `/api/v1/learning/progress${qs}`
+  );
+}
+
+export async function putLearningProgress(record: {
+  item_kind: string;
+  item_id: string;
+  status: LearningProgressStatus;
+  score?: number | null;
+}) {
+  return apiFetch<LearningProgressItem>("/api/v1/learning/progress", {
+    method: "PUT",
+    body: JSON.stringify(record),
+  });
+}
+
+/* ─── Assessment quizzes (phase 3) ─── */
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  correct_index: number;
+  explanation: string;
+}
+
+export interface ContentQuiz {
+  id: string;
+  title: string;
+  module: string;
+  concepts: string[];
+  pass_score: number;
+  questions: QuizQuestion[];
+}
+
+export async function listContentQuizzes(concept?: string) {
+  const qs = concept ? `?concept=${encodeURIComponent(concept)}` : "";
+  return apiFetch<{ items: ContentQuiz[]; errors: { path: string; error: string }[] }>(
+    `/api/v1/content/quizzes${qs}`
+  );
+}
+
+export async function getContentQuiz(quizId: string) {
+  return apiFetch<ContentQuiz>(
+    `/api/v1/content/quizzes/${encodeURIComponent(quizId)}`
+  );
+}
+
 /* ─── Preset Configs ─── */
 export interface PresetConfigItem {
   id: string;

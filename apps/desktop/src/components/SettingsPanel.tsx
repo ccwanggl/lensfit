@@ -47,14 +47,14 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
-          {/* Learning Mode section */}
+          {/* Learning-aid section（作用域：实践场四个工作台） */}
           <section className="space-y-3">
             <div className="flex items-center gap-2">
               <GraduationCap size={16} className="text-emerald-500" />
-              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">学习模式</h3>
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">实践场学习辅助</h3>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              开启后，所有参数旁会显示光学知识提示，知识面板会高亮并自动展开相关学习章节，帮助非专业人员理解每个参数和公式的物理含义。
+              开启后，实践场（工业视觉/摄影/显微镜/红外）工作台中所有参数旁会显示光学知识提示，知识面板会高亮并自动展开相关学习章节。学习中心的教程、实验与路径引导始终可用，不受此开关影响。
             </p>
 
             <button
@@ -77,7 +77,7 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 </div>
                 <div className="text-left">
                   <p className={`text-sm font-semibold ${learningMode ? "text-emerald-700 dark:text-emerald-400" : "text-slate-700 dark:text-slate-200"}`}>
-                    {learningMode ? "学习模式已开启" : "学习模式已关闭"}
+                    {learningMode ? "学习辅助已开启" : "学习辅助已关闭"}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">参数提示 · 公式讲解 · 概念图解</p>
                 </div>
@@ -90,7 +90,7 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             {learningMode && (
               <div className="p-3 rounded-lg bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/20">
                 <p className="text-xs text-emerald-700 dark:text-emerald-400 leading-relaxed">
-                  已启用：表单参数会显示 ? 提示，展开公式可查看交互式计算器和章节链接。
+                  已启用：实践场表单参数会显示 ? 提示，展开公式可查看交互式计算器和章节链接。
                 </p>
               </div>
             )}

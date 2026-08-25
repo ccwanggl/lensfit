@@ -5,6 +5,7 @@ import ToastContainer from "./components/ui/Toast";
 import { useTheme } from "./hooks/useTheme";
 import { LearningModeProvider, useLearningMode } from "./contexts/LearningModeContext";
 import SettingsPanel from "./components/SettingsPanel";
+import { useAppStore, type AppTabId } from "./stores/appStore";
 
 const IndustrialPage = lazy(() => import("./pages/IndustrialPage"));
 const MicroscopePage = lazy(() => import("./pages/MicroscopePage"));
@@ -17,21 +18,53 @@ const LearningHub = lazy(() => import("./lab/LearningHub"));
 
 const queryClient = new QueryClient();
 
-type TabId = "industrial" | "microscope" | "infrared" | "photography" | "projects" | "library" | "playground" | "learning";
+interface NavTab {
+  id: AppTabId;
+  label: string;
+  icon: React.ReactNode;
+}
 
-const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: "industrial", label: "工业视觉", icon: <Monitor size={16} /> },
-  { id: "photography", label: "摄影", icon: <Camera size={16} /> },
-  { id: "microscope", label: "显微镜", icon: <Microscope size={16} /> },
-  { id: "infrared", label: "红外成像", icon: <Sun size={16} /> },
-  { id: "learning", label: "学习中心", icon: <GraduationCap size={16} /> },
-  { id: "projects", label: "项目", icon: <FolderOpen size={16} /> },
-  { id: "library", label: "器件库", icon: <Database size={16} /> },
-  { id: "playground", label: "游乐场", icon: <TrendingUp size={16} /> },
+interface NavGroup {
+  id: string;
+  label: string;
+  tabs: NavTab[];
+}
+
+/**
+ * 阶段 4（应用壳导航反转）：学习中心为默认首页；
+ * 导航分三组——学习（学习中心）、实践场（四领域工作台）、工具（项目/器件库/游乐场）。
+ * 设置经右上角图标进入，不占 Tab。
+ */
+const NAV_GROUPS: NavGroup[] = [
+  {
+    id: "learn",
+    label: "学习",
+    tabs: [{ id: "learning", label: "学习中心", icon: <GraduationCap size={16} /> }],
+  },
+  {
+    id: "practice",
+    label: "实践场",
+    tabs: [
+      { id: "industrial", label: "工业视觉", icon: <Monitor size={16} /> },
+      { id: "photography", label: "摄影", icon: <Camera size={16} /> },
+      { id: "microscope", label: "显微镜", icon: <Microscope size={16} /> },
+      { id: "infrared", label: "红外成像", icon: <Sun size={16} /> },
+    ],
+  },
+  {
+    id: "tools",
+    label: "工具",
+    tabs: [
+      { id: "projects", label: "项目", icon: <FolderOpen size={16} /> },
+      { id: "library", label: "器件库", icon: <Database size={16} /> },
+      { id: "playground", label: "游乐场", icon: <TrendingUp size={16} /> },
+    ],
+  },
 ];
 
 function AppContent() {
-  const [activeTab, setActiveTab] = useState<TabId>("industrial");
+  const activeTab = useAppStore((s) => s.activeTab);
+  const setActiveTab = useAppStore((s) => s.setActiveTab);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { theme, toggle } = useTheme();
   const { learningMode } = useLearningMode();
@@ -57,33 +90,43 @@ function AppContent() {
               </div>
               <div>
                 <h1 className="text-[15px] font-extrabold text-slate-900 dark:text-slate-100 leading-none tracking-tight">OptiBench</h1>
-                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium leading-none mt-0.5 tracking-wide uppercase">光学选型</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium leading-none mt-0.5 tracking-wide uppercase">光学学习</p>
               </div>
             </div>
 
-            {/* Tab Navigation */}
+            {/* Tab Navigation: 学习 / 实践场 / 工具 三组 */}
             <nav className="flex items-center gap-0.5 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl p-1">
-              {tabs.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`
-                      relative flex items-center gap-2 px-4 py-2 rounded-[10px] text-sm font-semibold
-                      transition-all duration-200 ease-out
-                      ${isActive
-                        ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
-                        : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50"
-                      }
-                    `}
-                  >
-                    <span className={isActive ? "text-indigo-500" : "text-slate-400 dark:text-slate-500"}>{tab.icon}</span>
-                    {tab.label}
+              {NAV_GROUPS.map((group, gi) => (
+                <div key={group.id} className="flex items-center gap-0.5">
+                  {gi > 0 && (
+                    <span className="mx-1 h-5 w-px bg-slate-300/70 dark:bg-slate-600/70" aria-hidden="true" />
+                  )}
+                  <span className="hidden lg:block px-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {group.label}
+                  </span>
+                  {group.tabs.map((tab) => {
+                    const isActive = activeTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`
+                          relative flex items-center gap-2 px-4 py-2 rounded-[10px] text-sm font-semibold
+                          transition-all duration-200 ease-out
+                          ${isActive
+                            ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50"
+                          }
+                        `}
+                      >
+                        <span className={isActive ? "text-indigo-500" : "text-slate-400 dark:text-slate-500"}>{tab.icon}</span>
+                        {tab.label}
 
-                  </button>
-                );
-              })}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
             </nav>
 
             {/* Right side */}
@@ -91,7 +134,7 @@ function AppContent() {
               {learningMode && (
                 <span className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/30 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                   <GraduationCap size={12} />
-                  学习模式
+                  学习辅助
                 </span>
               )}
               <button
@@ -117,13 +160,13 @@ function AppContent() {
         </div>
       </header>
 
-      {/* Learning Mode Notice */}
+      {/* Learning-aid Notice */}
       {learningMode && (
         <div className="bg-emerald-50 dark:bg-emerald-900/20 border-b border-emerald-100 dark:border-emerald-800/30">
           <div className="max-w-[1440px] mx-auto px-6 py-2 flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
             <GraduationCap size={14} />
-            <span className="font-medium">学习模式已开启</span>
-            <span className="text-emerald-600/70 dark:text-emerald-400/70">参数旁会出现提示图标，知识面板会高亮并展开相关学习章节。</span>
+            <span className="font-medium">实践场学习辅助已开启</span>
+            <span className="text-emerald-600/70 dark:text-emerald-400/70">实践场工作台中参数旁会出现提示图标，知识面板会高亮并展开相关学习章节。</span>
           </div>
         </div>
       )}
