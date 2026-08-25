@@ -14,9 +14,10 @@ class ThinLensExperiment(OpticsExperiment):
     description = "改变焦距和物距，观察像距、放大倍率和光路图的变化。"
     difficulty = "foundation"
     linked_concepts = [
-        "10-concepts/focal-length",
-        "20-formulas/thin-lens-gauss",
-        "10-concepts/焦距",
+        "focal-length",
+    ]
+    linked_formulas = [
+        "thin-lens-gauss",
     ]
     learning_objectives = [
         "理解 1/f = 1/u + 1/v 的物像关系。",

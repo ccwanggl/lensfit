@@ -19,12 +19,14 @@ class MagnificationScaleExperiment(OpticsExperiment):
     difficulty = "foundation"
     prerequisites = ["thin-lens", "angle-of-view"]
     linked_concepts = [
-        "10-concepts/像素精度",
-        "10-concepts/工作距离",
-        "10-concepts/focal-length",
-        "20-formulas/lateral-magnification",
-        "20-formulas/pixel-precision",
-        "20-formulas/focal-length-from-wd",
+        "像素精度",
+        "工作距离",
+        "focal-length",
+    ]
+    linked_formulas = [
+        "lateral-magnification",
+        "pixel-precision",
+        "focal-length-from-wd",
     ]
     learning_objectives = [
         "理解放大倍率 β = f / (WD - f) 的物理意义。",

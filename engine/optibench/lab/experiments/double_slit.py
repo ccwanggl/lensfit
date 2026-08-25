@@ -16,12 +16,11 @@ class DoubleSlitExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["single-slit-diffraction", "polarization-malus"]
     linked_concepts = [
-        "10-concepts/interference",
-        "10-concepts/diffraction-limit",
-        "10-concepts/衍射极限",
+        "interference",
+        "diffraction-limit",
     ]
     linked_formulas = [
-        "20-formulas/double-slit-fringe-spacing",
+        "double-slit-fringe-spacing",
     ]
     learning_objectives = [
         "理解条纹间距 Δy = λL / d。",

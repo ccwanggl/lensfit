@@ -15,10 +15,12 @@ class DiffractionExperiment(OpticsExperiment):
     description = "改变波长和光圈孔径，观察艾里斑大小和衍射图样的变化。"
     difficulty = "intermediate"
     linked_concepts = [
-        "10-concepts/airy-disk",
-        "10-concepts/衍射极限",
-        "20-formulas/rayleigh-criterion",
-        "10-concepts/艾里斑",
+        "airy-disk",
+        "diffraction-limit",
+        "瑞利判据",
+    ]
+    linked_formulas = [
+        "rayleigh-criterion",
     ]
     learning_objectives = [
         "理解艾里斑是理想光学系统的极限点扩散函数。",

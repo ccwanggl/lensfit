@@ -15,9 +15,11 @@ class SensorCoverageExperiment(OpticsExperiment):
     description = "调整传感器尺寸和镜头像圈，观察覆盖率与渐晕区域。"
     difficulty = "foundation"
     linked_concepts = [
-        "10-concepts/image-circle",
-        "20-formulas/coverage-ratio",
-        "10-concepts/渐晕",
+        "image-circle",
+        "渐晕",
+    ]
+    linked_formulas = [
+        "coverage-ratio",
     ]
     learning_objectives = [
         "理解像圈直径必须大于传感器对角线才能无渐晕。",

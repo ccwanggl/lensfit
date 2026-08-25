@@ -17,8 +17,8 @@ class DepthOfFieldExperiment(OpticsExperiment):
     difficulty = "foundation"
     prerequisites = ["thin-lens", "magnification-scale"]
     linked_concepts = [
-        "10-concepts/depth-of-field",
-        "10-concepts/f-number",
+        "depth-of-field",
+        "f-number",
     ]
     linked_formulas = [
         "20-formulas/depth-of-field",

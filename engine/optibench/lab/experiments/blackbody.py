@@ -22,12 +22,11 @@ class BlackbodyExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["color-mixing"]
     linked_concepts = [
-        "10-concepts/color-temperature",
-        "10-concepts/色温",
-        "10-concepts/spectral-power-distribution",
+        "color-temperature",
+        "spectral-power-distribution",
     ]
     linked_formulas = [
-        "20-formulas/planck-blackbody",
+        "planck-blackbody",
     ]
     learning_objectives = [
         "掌握普朗克黑体辐射定律 B(λ, T)。",

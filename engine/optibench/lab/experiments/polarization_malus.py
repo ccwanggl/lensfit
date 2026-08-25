@@ -18,7 +18,7 @@ class PolarizationMalusExperiment(OpticsExperiment):
     # prerequisite is physically unmotivated (fixed in learning-first phase 1).
     prerequisites = []
     linked_concepts = [
-        "10-concepts/polarization",
+        "polarization",
     ]
     linked_formulas = [
         "20-formulas/malus-law",

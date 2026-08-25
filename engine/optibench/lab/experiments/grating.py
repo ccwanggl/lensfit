@@ -17,11 +17,11 @@ class GratingExperiment(OpticsExperiment):
     prerequisites = ["double-slit", "color-mixing"]
     linked_concepts = [
         "10-concepts/diffraction-grating",
-        "10-concepts/spectral-resolution",
+        "spectral-resolution",
     ]
     linked_formulas = [
-        "20-formulas/grating-equation",
-        "20-formulas/grating-resolving-power",
+        "grating-equation",
+        "grating-resolving-power",
     ]
     learning_objectives = [
         "掌握光栅方程 d(sin θ_i + sin θ_m) = m λ。",

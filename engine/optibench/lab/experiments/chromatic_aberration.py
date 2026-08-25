@@ -15,10 +15,9 @@ class ChromaticAberrationExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["thin-lens", "snell-refraction"]
     linked_concepts = [
-        "10-concepts/chromatic-aberration",
-        "10-concepts/abbe-number",
-        "10-concepts/dispersion",
-        "10-concepts/色散",
+        "chromatic-aberration",
+        "abbe-number",
+        "dispersion",
     ]
     linked_formulas = [
         "20-formulas/longitudinal-chromatic-aberration",

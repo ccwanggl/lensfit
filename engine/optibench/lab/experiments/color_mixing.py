@@ -15,10 +15,9 @@ class ColorMixingExperiment(OpticsExperiment):
     description = "混合两种单色光，观察合成光谱和感知颜色。"
     difficulty = "foundation"
     linked_concepts = [
-        "10-concepts/spectral-power-distribution",
-        "10-concepts/color-temperature",
-        "10-concepts/chromaticity-diagram",
-        "10-concepts/色温",
+        "spectral-power-distribution",
+        "color-temperature",
+        "chromaticity-diagram",
     ]
     learning_objectives = [
         "理解颜色是光谱分布在人眼中的综合感知。",

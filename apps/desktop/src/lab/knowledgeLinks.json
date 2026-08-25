@@ -1,0 +1,858 @@
+{
+  "concepts": {
+    "4f-system": {
+      "path": "10-概念/4-双透镜傅里叶系统.md",
+      "title": "双透镜傅里叶系统"
+    },
+    "NETD": {
+      "path": "10-概念/062-噪声等效温差.md",
+      "title": "噪声等效温差"
+    },
+    "abbe-number": {
+      "path": "10-概念/016-阿贝数.md",
+      "title": "阿贝数"
+    },
+    "acceptance-angle": {
+      "path": "10-概念/086-接受角.md",
+      "title": "接受角"
+    },
+    "airy-disk": {
+      "path": "10-概念/027-艾里斑.md",
+      "title": "艾里斑"
+    },
+    "aliasing": {
+      "path": "10-概念/040-混叠.md",
+      "title": "混叠"
+    },
+    "aperture-stop": {
+      "path": "10-概念/145-孔径光阑.md",
+      "title": "孔径光阑"
+    },
+    "astigmatism": {
+      "path": "10-概念/149-像散.md",
+      "title": "像散"
+    },
+    "beam-quality-m2": {
+      "path": "10-概念/107-光束质量.md",
+      "title": "光束质量"
+    },
+    "brightness-enhancement-film": {
+      "path": "10-概念/090-增亮膜.md",
+      "title": "增亮膜"
+    },
+    "chromatic-aberration": {
+      "path": "10-概念/019-色差.md",
+      "title": "色差"
+    },
+    "chromatic-dispersion": {
+      "path": "10-概念/111-光纤色散.md",
+      "title": "光纤色散"
+    },
+    "chromaticity-diagram": {
+      "path": "10-概念/069-色度图.md",
+      "title": "色度图"
+    },
+    "coherence": {
+      "path": "10-概念/相干.md",
+      "title": "相干"
+    },
+    "color-gamut": {
+      "path": "10-概念/097-色域.md",
+      "title": "色域"
+    },
+    "color-rendering-index": {
+      "path": "10-概念/130-显色指数.md",
+      "title": "显色指数"
+    },
+    "color-temperature": {
+      "path": "10-概念/067-色温.md",
+      "title": "色温"
+    },
+    "coma": {
+      "path": "10-概念/148-彗差.md",
+      "title": "彗差"
+    },
+    "concentration-ratio": {
+      "path": "10-概念/085-聚光比.md",
+      "title": "聚光比"
+    },
+    "concepts": {
+      "path": "10-概念/概念.md",
+      "title": "概念"
+    },
+    "coupling-efficiency": {
+      "path": "10-概念/092-耦合效率.md",
+      "title": "耦合效率"
+    },
+    "cpc": {
+      "path": "10-概念/087-复合抛物面聚光器.md",
+      "title": "复合抛物面聚光器"
+    },
+    "cutoff-frequency": {
+      "path": "10-概念/截止频率.md",
+      "title": "截止频率"
+    },
+    "czerny-turner": {
+      "path": "10-概念/切尔尼特纳光谱仪结构.md",
+      "title": "切尔尼特纳光谱仪结构"
+    },
+    "depth-of-field": {
+      "path": "10-概念/007-景深.md",
+      "title": "景深"
+    },
+    "detectivity-d-star": {
+      "path": "10-概念/135-比探测率.md",
+      "title": "比探测率"
+    },
+    "diffraction-limit": {
+      "path": "10-概念/025-衍射极限.md",
+      "title": "衍射极限"
+    },
+    "directional-coupler": {
+      "path": "10-概念/118-定向耦合器.md",
+      "title": "定向耦合器"
+    },
+    "dispersion": {
+      "path": "10-概念/017-色散.md",
+      "title": "色散"
+    },
+    "distortion": {
+      "path": "10-概念/151-畸变.md",
+      "title": "畸变"
+    },
+    "doublet": {
+      "path": "10-概念/152-双透镜双胶合.md",
+      "title": "双透镜（双胶合）"
+    },
+    "edfa": {
+      "path": "10-概念/113-掺铒光纤放大器.md",
+      "title": "掺铒光纤放大器"
+    },
+    "edge-ray-principle": {
+      "path": "10-概念/099-边缘光线原理.md",
+      "title": "边缘光线原理"
+    },
+    "entrance-exit-pupil": {
+      "path": "10-概念/146-入瞳出瞳.md",
+      "title": "入瞳/出瞳"
+    },
+    "etendue": {
+      "path": "10-概念/081-光学扩展量.md",
+      "title": "光学扩展量"
+    },
+    "extinction-ratio": {
+      "path": "10-概念/138-消光比.md",
+      "title": "消光比"
+    },
+    "f-number": {
+      "path": "10-概念/005-光圈系数.md",
+      "title": "光圈系数"
+    },
+    "fabry-perot-microcavity": {
+      "path": "10-概念/077-法布里珀罗微腔.md",
+      "title": "法布里珀罗微腔"
+    },
+    "faraday-rotation": {
+      "path": "10-概念/137-法拉第旋转.md",
+      "title": "法拉第旋转"
+    },
+    "field-curvature": {
+      "path": "10-概念/150-场曲.md",
+      "title": "场曲"
+    },
+    "fluorescence": {
+      "path": "10-概念/070-荧光.md",
+      "title": "荧光"
+    },
+    "focal-length": {
+      "path": "10-概念/003-焦距.md",
+      "title": "焦距"
+    },
+    "fourier-transform-pair": {
+      "path": "10-概念/傅里叶变换对.md",
+      "title": "傅里叶变换对"
+    },
+    "free-spectral-range": {
+      "path": "10-概念/117-自由光谱范围.md",
+      "title": "自由光谱范围"
+    },
+    "freeform-optics": {
+      "path": "10-概念/084-自由曲面光学.md",
+      "title": "自由曲面光学"
+    },
+    "frequency": {
+      "path": "10-概念/141-频率.md",
+      "title": "频率"
+    },
+    "gain-medium": {
+      "path": "10-概念/101-增益介质.md",
+      "title": "增益介质"
+    },
+    "gaussian-beam": {
+      "path": "10-概念/106-高斯光束.md",
+      "title": "高斯光束"
+    },
+    "grating-coupler": {
+      "path": "10-概念/094-光栅耦合器.md",
+      "title": "光栅耦合器"
+    },
+    "hyperspectral-imaging": {
+      "path": "10-概念/073-高光谱成像.md",
+      "title": "高光谱成像"
+    },
+    "illuminance": {
+      "path": "10-概念/129-照度.md",
+      "title": "照度"
+    },
+    "illumination-geometry": {
+      "path": "10-概念/045-照明方式.md",
+      "title": "照明方式"
+    },
+    "image-circle": {
+      "path": "10-概念/009-像圈.md",
+      "title": "像圈"
+    },
+    "interference": {
+      "path": "10-概念/022-干涉.md",
+      "title": "干涉"
+    },
+    "irradiance": {
+      "path": "10-概念/123-辐射照度.md",
+      "title": "辐射照度"
+    },
+    "lambertian-emitter": {
+      "path": "10-概念/082-朗伯体.md",
+      "title": "朗伯体"
+    },
+    "lambertian-surface": {
+      "path": "10-概念/125-朗伯面.md",
+      "title": "朗伯面"
+    },
+    "laser-threshold": {
+      "path": "10-概念/103-激光阈值.md",
+      "title": "激光阈值"
+    },
+    "light-extraction-efficiency": {
+      "path": "10-概念/083-光提取效率.md",
+      "title": "光提取效率"
+    },
+    "light-guide-plate": {
+      "path": "10-概念/089-导光板.md",
+      "title": "导光板"
+    },
+    "local-dimming": {
+      "path": "10-概念/098-分区调光.md",
+      "title": "分区调光"
+    },
+    "luminance": {
+      "path": "10-概念/128-亮度.md",
+      "title": "亮度"
+    },
+    "luminous-flux": {
+      "path": "10-概念/126-光通量.md",
+      "title": "光通量"
+    },
+    "luminous-intensity": {
+      "path": "10-概念/127-发光强度.md",
+      "title": "发光强度"
+    },
+    "mach-zehnder-modulator": {
+      "path": "10-概念/116-马赫-曾德尔调制器.md",
+      "title": "马赫-曾德尔调制器"
+    },
+    "merit-function": {
+      "path": "10-概念/评价函数优化目标函数.md",
+      "title": "评价函数（优化目标函数）"
+    },
+    "metasurface": {
+      "path": "10-概念/078-超表面.md",
+      "title": "超表面"
+    },
+    "microring-resonator": {
+      "path": "10-概念/115-微环谐振器.md",
+      "title": "微环谐振器"
+    },
+    "mixing-rod": {
+      "path": "10-概念/099-混光棒.md",
+      "title": "混光棒"
+    },
+    "mode-field-diameter": {
+      "path": "10-概念/093-模场直径.md",
+      "title": "模场直径"
+    },
+    "mode-locking": {
+      "path": "10-概念/105-锁模.md",
+      "title": "锁模"
+    },
+    "mtf": {
+      "path": "10-概念/034-调制传递函数.md",
+      "title": "调制传递函数"
+    },
+    "multi-mode-fiber": {
+      "path": "10-概念/110-多模光纤.md",
+      "title": "多模光纤"
+    },
+    "multispectral-filter-array": {
+      "path": "10-概念/076-多光谱滤光片阵列.md",
+      "title": "多光谱滤光片阵列"
+    },
+    "multispectral-imaging": {
+      "path": "10-概念/072-多光谱成像.md",
+      "title": "多光谱成像"
+    },
+    "noise-equivalent-power": {
+      "path": "10-概念/134-噪声等效功率.md",
+      "title": "噪声等效功率"
+    },
+    "nonlinear-effects": {
+      "path": "10-概念/112-非线性效应.md",
+      "title": "非线性效应"
+    },
+    "nyquist-frequency": {
+      "path": "10-概念/038-奈奎斯特频率.md",
+      "title": "奈奎斯特频率"
+    },
+    "optical-resonator": {
+      "path": "10-概念/100-光学谐振腔.md",
+      "title": "光学谐振腔"
+    },
+    "otf": {
+      "path": "10-概念/032-光学传递函数.md",
+      "title": "光学传递函数"
+    },
+    "photodiode": {
+      "path": "10-概念/131-光电二极管.md",
+      "title": "光电二极管"
+    },
+    "photomultiplier-tube": {
+      "path": "10-概念/139-光电倍增管.md",
+      "title": "光电倍增管"
+    },
+    "photon-energy": {
+      "path": "10-概念/142-光子能量.md",
+      "title": "光子能量"
+    },
+    "photonic-integrated-circuit": {
+      "path": "10-概念/119-光子集成电路.md",
+      "title": "光子集成电路"
+    },
+    "pixel": {
+      "path": "10-概念/036-像元.md",
+      "title": "像元"
+    },
+    "pockels-effect": {
+      "path": "10-概念/136-泡克耳斯效应.md",
+      "title": "泡克耳斯效应"
+    },
+    "polarization": {
+      "path": "10-概念/050-偏振.md",
+      "title": "偏振"
+    },
+    "population-inversion": {
+      "path": "10-概念/102-粒子数反转.md",
+      "title": "粒子数反转"
+    },
+    "psf": {
+      "path": "10-概念/030-点扩散函数.md",
+      "title": "点扩散函数"
+    },
+    "q-switching": {
+      "path": "10-概念/104-脉冲激光调制.md",
+      "title": "脉冲激光调制"
+    },
+    "quantum-dot-film": {
+      "path": "10-概念/091-量子点增强膜.md",
+      "title": "量子点增强膜"
+    },
+    "quantum-efficiency": {
+      "path": "10-概念/132-量子效率.md",
+      "title": "量子效率"
+    },
+    "radiance": {
+      "path": "10-概念/122-辐射亮度.md",
+      "title": "辐射亮度"
+    },
+    "radiant-flux": {
+      "path": "10-概念/120-辐射通量.md",
+      "title": "辐射通量"
+    },
+    "radiant-intensity": {
+      "path": "10-概念/121-辐射强度.md",
+      "title": "辐射强度"
+    },
+    "raman-scattering": {
+      "path": "10-概念/071-拉曼散射.md",
+      "title": "拉曼散射"
+    },
+    "rayleigh-range": {
+      "path": "10-概念/108-瑞利范围.md",
+      "title": "瑞利范围"
+    },
+    "refractive-index": {
+      "path": "10-概念/000-折射率.md",
+      "title": "折射率"
+    },
+    "responsivity": {
+      "path": "10-概念/133-响应度.md",
+      "title": "响应度"
+    },
+    "silicon-photonics": {
+      "path": "10-概念/114-硅光子学.md",
+      "title": "硅光子学"
+    },
+    "single-mode-fiber": {
+      "path": "10-概念/109-单模光纤.md",
+      "title": "单模光纤"
+    },
+    "slit": {
+      "path": "10-概念/入射狭缝.md",
+      "title": "入射狭缝"
+    },
+    "snapshot-spectral-imaging": {
+      "path": "10-概念/075-快照式光谱成像.md",
+      "title": "快照式光谱成像"
+    },
+    "solid-angle": {
+      "path": "10-概念/124-立体角.md",
+      "title": "立体角"
+    },
+    "source-target-mapping": {
+      "path": "10-概念/096-源-靶映射.md",
+      "title": "源-靶映射"
+    },
+    "spatial-filtering": {
+      "path": "10-概念/空间滤波.md",
+      "title": "空间滤波"
+    },
+    "spectral-bandwidth": {
+      "path": "10-概念/光谱带宽与半高全宽.md",
+      "title": "光谱带宽与半高全宽"
+    },
+    "spectral-power-distribution": {
+      "path": "10-概念/066-光谱分布函数.md",
+      "title": "光谱分布函数"
+    },
+    "spectral-reconstruction": {
+      "path": "10-概念/079-光谱重建.md",
+      "title": "光谱重建"
+    },
+    "spectral-resolution": {
+      "path": "10-概念/074-光谱分辨率.md",
+      "title": "光谱分辨率"
+    },
+    "speed-of-light": {
+      "path": "10-概念/143-光速.md",
+      "title": "光速"
+    },
+    "spherical-aberration": {
+      "path": "10-概念/147-球差.md",
+      "title": "球差"
+    },
+    "strehl-ratio": {
+      "path": "10-概念/斯特列尔比.md",
+      "title": "斯特列尔比"
+    },
+    "thin-lens": {
+      "path": "10-概念/144-薄透镜.md",
+      "title": "薄透镜"
+    },
+    "tir-lens": {
+      "path": "10-概念/095-全反射透镜.md",
+      "title": "全反射透镜"
+    },
+    "wavefront-error": {
+      "path": "10-概念/均方根波前误差.md",
+      "title": "均方根波前误差"
+    },
+    "wavelength": {
+      "path": "10-概念/140-波长.md",
+      "title": "波长"
+    },
+    "zernike-polynomials": {
+      "path": "10-概念/泽尼克多项式.md",
+      "title": "泽尼克多项式"
+    },
+    "低角度照明": {
+      "path": "10-概念/047-低角度照明.md",
+      "title": "低角度照明"
+    },
+    "像素精度": {
+      "path": "10-概念/037-像素精度.md",
+      "title": "像素精度"
+    },
+    "全局快门": {
+      "path": "10-概念/058-全局快门.md",
+      "title": "全局快门"
+    },
+    "分光镜": {
+      "path": "10-概念/049-分光镜.md",
+      "title": "分光镜"
+    },
+    "动态范围": {
+      "path": "10-概念/060-动态范围.md",
+      "title": "动态范围"
+    },
+    "半影": {
+      "path": "10-概念/054-半影.md",
+      "title": "半影"
+    },
+    "卷帘快门": {
+      "path": "10-概念/059-卷帘快门.md",
+      "title": "卷帘快门"
+    },
+    "双远心": {
+      "path": "10-概念/080-双远心.md",
+      "title": "双远心"
+    },
+    "发射率": {
+      "path": "10-概念/064-发射率.md",
+      "title": "发射率"
+    },
+    "均匀性": {
+      "path": "10-概念/055-均匀性.md",
+      "title": "均匀性"
+    },
+    "工作距离": {
+      "path": "10-概念/002-工作距离.md",
+      "title": "工作距离"
+    },
+    "平场": {
+      "path": "10-概念/056-平场.md",
+      "title": "平场"
+    },
+    "微测辐射热计": {
+      "path": "10-概念/063-微测辐射热计.md",
+      "title": "微测辐射热计"
+    },
+    "放大倍率": {
+      "path": "10-概念/008-放大倍率.md",
+      "title": "放大倍率"
+    },
+    "数值孔径": {
+      "path": "10-概念/006-数值孔径.md",
+      "title": "数值孔径"
+    },
+    "果冻效应": {
+      "path": "10-概念/065-果冻效应.md",
+      "title": "果冻效应"
+    },
+    "法兰距": {
+      "path": "10-概念/015-法兰距.md",
+      "title": "法兰距"
+    },
+    "渐晕": {
+      "path": "10-概念/057-渐晕.md",
+      "title": "渐晕"
+    },
+    "漫射": {
+      "path": "10-概念/052-漫射.md",
+      "title": "漫射"
+    },
+    "瑞利判据": {
+      "path": "10-概念/029-瑞利判据.md",
+      "title": "瑞利判据"
+    },
+    "视场": {
+      "path": "10-概念/011-视场.md",
+      "title": "视场"
+    },
+    "视差": {
+      "path": "10-概念/014-视差.md",
+      "title": "视差"
+    },
+    "视角": {
+      "path": "10-概念/012-视角.md",
+      "title": "视角"
+    },
+    "读出噪声": {
+      "path": "10-概念/061-读出噪声.md",
+      "title": "读出噪声"
+    },
+    "边缘检测": {
+      "path": "10-概念/043-边缘检测.md",
+      "title": "边缘检测"
+    },
+    "过采样": {
+      "path": "10-概念/042-过采样.md",
+      "title": "过采样"
+    },
+    "近轴近似": {
+      "path": "10-概念/001-近轴近似.md",
+      "title": "近轴近似"
+    },
+    "透视畸变": {
+      "path": "10-概念/013-透视畸变.md",
+      "title": "透视畸变"
+    },
+    "镜面反射": {
+      "path": "10-概念/053-镜面反射.md",
+      "title": "镜面反射"
+    }
+  },
+  "formulas": {
+    "NEP": {
+      "path": "20-公式/024-噪声等效功率计算.md",
+      "title": "噪声等效功率计算"
+    },
+    "airy-disk-diameter": {
+      "path": "20-公式/008-艾里斑直径.md",
+      "title": "艾里斑直径"
+    },
+    "angle-of-view": {
+      "path": "20-公式/003-视角公式.md",
+      "title": "视角公式"
+    },
+    "angular-spectrum": {
+      "path": "20-公式/角谱传播公式.md",
+      "title": "角谱传播公式"
+    },
+    "concentration-ratio": {
+      "path": "20-公式/018-几何聚光比.md",
+      "title": "几何聚光比"
+    },
+    "coupling-efficiency": {
+      "path": "20-公式/019-耦合效率计算.md",
+      "title": "耦合效率计算"
+    },
+    "coverage-ratio": {
+      "path": "20-公式/004-像圈覆盖比.md",
+      "title": "像圈覆盖比"
+    },
+    "cpc-geometry": {
+      "path": "20-公式/048-复合抛物面聚光器设计.md",
+      "title": "复合抛物面聚光器设计"
+    },
+    "czerny-turner-resolution": {
+      "path": "20-公式/切尔尼特纳光谱仪分辨率.md",
+      "title": "切尔尼特纳光谱仪分辨率"
+    },
+    "delta-e": {
+      "path": "20-公式/016-综合色差.md",
+      "title": "综合色差"
+    },
+    "detector-snr": {
+      "path": "20-公式/059-探测器信噪比.md",
+      "title": "探测器信噪比"
+    },
+    "directional-coupler": {
+      "path": "20-公式/031-方向耦合器功率分配.md",
+      "title": "方向耦合器功率分配"
+    },
+    "double-slit-fringe-spacing": {
+      "path": "20-公式/011-双缝干涉条纹间距.md",
+      "title": "双缝干涉条纹间距"
+    },
+    "edfa-gain-model": {
+      "path": "20-公式/028-掺铒光纤放大器增益与噪声.md",
+      "title": "掺铒光纤放大器增益与噪声"
+    },
+    "etendue": {
+      "path": "20-公式/017-光学扩展量守恒关系.md",
+      "title": "光学扩展量守恒关系"
+    },
+    "extinction-ratio": {
+      "path": "20-公式/042-消光比计算.md",
+      "title": "消光比计算"
+    },
+    "faraday-rotation-angle": {
+      "path": "20-公式/040-法拉第旋转角.md",
+      "title": "法拉第旋转角"
+    },
+    "fiber-bending-loss": {
+      "path": "20-公式/054-光纤弯曲损耗.md",
+      "title": "光纤弯曲损耗"
+    },
+    "fiber-na": {
+      "path": "20-公式/022-光纤数值孔径.md",
+      "title": "光纤数值孔径"
+    },
+    "fiber-v-parameter": {
+      "path": "20-公式/026-光纤归一化频率.md",
+      "title": "光纤归一化频率"
+    },
+    "focal-length-from-wd": {
+      "path": "20-公式/002-焦距反推公式.md",
+      "title": "焦距反推公式"
+    },
+    "formulas": {
+      "path": "20-公式/公式.md",
+      "title": "公式"
+    },
+    "fourier-transform-optics": {
+      "path": "20-公式/光学傅里叶变换对.md",
+      "title": "光学傅里叶变换对"
+    },
+    "freeform-mapping": {
+      "path": "20-公式/043-自由曲面源-靶映射.md",
+      "title": "自由曲面源-靶映射"
+    },
+    "gain-bandwidth": {
+      "path": "20-公式/051-增益带宽积.md",
+      "title": "增益带宽积"
+    },
+    "gaussian-beam-waist": {
+      "path": "20-公式/021-高斯光束束腰.md",
+      "title": "高斯光束束腰"
+    },
+    "grating-equation": {
+      "path": "20-公式/012-光栅方程.md",
+      "title": "光栅方程"
+    },
+    "grating-resolving-power": {
+      "path": "20-公式/013-光栅光谱分辨率.md",
+      "title": "光栅光谱分辨率"
+    },
+    "half-wave-voltage": {
+      "path": "20-公式/039-半波电压.md",
+      "title": "半波电压"
+    },
+    "illumination-uniformity": {
+      "path": "20-公式/044-照明均匀度.md",
+      "title": "照明均匀度"
+    },
+    "lambert-cosine": {
+      "path": "20-公式/045-朗伯余弦定律.md",
+      "title": "朗伯余弦定律"
+    },
+    "laser-linewidth": {
+      "path": "20-公式/050-激光本征线宽.md",
+      "title": "激光本征线宽"
+    },
+    "laser-rate-equations": {
+      "path": "20-公式/032-激光速率方程.md",
+      "title": "激光速率方程"
+    },
+    "laser-threshold": {
+      "path": "20-公式/020-激光阈值条件.md",
+      "title": "激光阈值条件"
+    },
+    "lateral-magnification": {
+      "path": "20-公式/001-横向放大倍率.md",
+      "title": "横向放大倍率"
+    },
+    "light-extraction": {
+      "path": "20-公式/046-发光二极管光提取效率.md",
+      "title": "发光二极管光提取效率"
+    },
+    "luminance-illuminance": {
+      "path": "20-公式/057-亮度-照度关系朗伯面.md",
+      "title": "亮度-照度关系（朗伯面）"
+    },
+    "m2-beam-quality": {
+      "path": "20-公式/025-光束质量因子.md",
+      "title": "光束质量因子"
+    },
+    "microring-resonance": {
+      "path": "20-公式/029-微环谐振条件与自由光谱范围.md",
+      "title": "微环谐振条件与自由光谱范围"
+    },
+    "mz-transfer-function": {
+      "path": "20-公式/030-马赫曾德尔调制器传输函数.md",
+      "title": "马赫曾德尔调制器传输函数"
+    },
+    "nonlinear-phase-matching": {
+      "path": "20-公式/027-非线性光学相位匹配.md",
+      "title": "非线性光学相位匹配"
+    },
+    "nyquist-frequency": {
+      "path": "20-公式/006-奈奎斯特频率计算.md",
+      "title": "奈奎斯特频率计算"
+    },
+    "oversampling-ratio": {
+      "path": "20-公式/007-过采样率.md",
+      "title": "过采样率"
+    },
+    "photodiode-current": {
+      "path": "20-公式/035-光电二极管信号电流.md",
+      "title": "光电二极管信号电流"
+    },
+    "pixel-precision": {
+      "path": "20-公式/005-像素精度计算.md",
+      "title": "像素精度计算"
+    },
+    "planck-blackbody": {
+      "path": "20-公式/015-普朗克黑体辐射公式.md",
+      "title": "普朗克黑体辐射公式"
+    },
+    "pmt-gain": {
+      "path": "20-公式/041-光电倍增管增益.md",
+      "title": "光电倍增管增益"
+    },
+    "pockels-phase-modulation": {
+      "path": "20-公式/038-泡克耳斯效应相位调制.md",
+      "title": "泡克耳斯效应相位调制"
+    },
+    "prism-dispersion": {
+      "path": "20-公式/014-棱镜色散率.md",
+      "title": "棱镜色散率"
+    },
+    "pulse-broadening-gvd": {
+      "path": "20-公式/053-群速度色散脉冲展宽.md",
+      "title": "群速度色散脉冲展宽"
+    },
+    "qe-responsivity-relation": {
+      "path": "20-公式/036-量子效率与响应度关系.md",
+      "title": "量子效率与响应度关系"
+    },
+    "radiance-flux": {
+      "path": "20-公式/049-亮度-通量关系.md",
+      "title": "亮度-通量关系"
+    },
+    "rayleigh-criterion": {
+      "path": "20-公式/009-瑞利分辨率公式.md",
+      "title": "瑞利分辨率公式"
+    },
+    "responsivity": {
+      "path": "20-公式/023-光电响应度计算.md",
+      "title": "光电响应度计算"
+    },
+    "rms-wavefront-error": {
+      "path": "20-公式/均方根波前误差计算.md",
+      "title": "均方根波前误差计算"
+    },
+    "saturation-intensity": {
+      "path": "20-公式/052-饱和强度.md",
+      "title": "饱和强度"
+    },
+    "solid-angle-cone": {
+      "path": "20-公式/056-锥形立体角.md",
+      "title": "锥形立体角"
+    },
+    "soliton-condition": {
+      "path": "20-公式/055-光纤孤子条件.md",
+      "title": "光纤孤子条件"
+    },
+    "specific-detectivity": {
+      "path": "20-公式/037-比探测率计算.md",
+      "title": "比探测率计算"
+    },
+    "stefan-boltzmann-law": {
+      "path": "20-公式/033-斯特藩玻尔兹曼定律.md",
+      "title": "斯特藩玻尔兹曼定律"
+    },
+    "strehl-ratio": {
+      "path": "20-公式/斯特列尔比计算.md",
+      "title": "斯特列尔比计算"
+    },
+    "thin-lens-gauss": {
+      "path": "20-公式/000-薄透镜高斯公式.md",
+      "title": "薄透镜高斯公式"
+    },
+    "tir-critical-angle": {
+      "path": "20-公式/047-全反射临界角.md",
+      "title": "全反射临界角"
+    },
+    "visible-flux-integral": {
+      "path": "20-公式/058-光通量积分辐射度→光度.md",
+      "title": "光通量积分（辐射度→光度）"
+    },
+    "wien-displacement-law": {
+      "path": "20-公式/034-维恩位移定律.md",
+      "title": "维恩位移定律"
+    },
+    "瑞利分辨率": {
+      "path": "20-公式/010-瑞利分辨率.md",
+      "title": "瑞利分辨率"
+    }
+  }
+}

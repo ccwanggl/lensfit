@@ -18,9 +18,10 @@ class AngleOfViewExperiment(OpticsExperiment):
     difficulty = "foundation"
     prerequisites = ["thin-lens"]
     linked_concepts = [
-        "10-concepts/focal-length",
-        "10-concepts/焦距",
-        "20-formulas/angle-of-view",
+        "focal-length",
+    ]
+    linked_formulas = [
+        "angle-of-view",
     ]
     learning_objectives = [
         "理解视角同时取决于焦距和传感器尺寸。",

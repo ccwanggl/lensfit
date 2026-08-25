@@ -15,12 +15,11 @@ class IlluminationGeometryExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["snell-refraction"]
     linked_concepts = [
-        "10-concepts/illumination-geometry",
-        "10-concepts/照明方式",
-        "10-concepts/低角度照明",
+        "illumination-geometry",
+        "低角度照明",
         "10-concepts/同轴照明",
-        "10-concepts/镜面反射",
-        "10-concepts/漫射",
+        "镜面反射",
+        "漫射",
     ]
     learning_objectives = [
         "理解照明几何决定了相机看到哪些表面特征。",

@@ -19,8 +19,8 @@ class ThermalIfovNetdExperiment(OpticsExperiment):
     difficulty = "advanced"
     prerequisites = ["magnification-scale", "angle-of-view"]
     linked_concepts = [
-        "10-concepts/NETD",
-        "10-concepts/微测辐射热计",
+        "NETD",
+        "微测辐射热计",
     ]
     learning_objectives = [
         "理解 IFOV = 像元尺寸 / 焦距。",

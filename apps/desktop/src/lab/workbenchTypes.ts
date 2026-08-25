@@ -54,8 +54,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
       "在锁定布局的单缝衍射场景中调整波长、缝宽和屏幕位置，观察夫琅禾费衍射强度分布。",
     difficulty: "intermediate",
     linked_concepts: [
-      "10-concepts/diffraction-limit",
-      "10-concepts/衍射极限",
+      "diffraction-limit",
     ],
     linked_formulas: ["20-formulas/single-slit-minima"],
     prerequisites: ["diffraction"],
@@ -146,11 +145,10 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
       "在锁定布局的双缝干涉场景中调整波长、缝宽、缝间距和屏幕位置，观察干涉条纹与单缝包络。",
     difficulty: "intermediate",
     linked_concepts: [
-      "10-concepts/interference",
-      "10-concepts/diffraction-limit",
-      "10-concepts/衍射极限",
+      "interference",
+      "diffraction-limit",
     ],
-    linked_formulas: ["20-formulas/double-slit-fringe-spacing"],
+    linked_formulas: ["double-slit-fringe-spacing"],
     prerequisites: ["single-slit-diffraction"],
     learning_objectives: [
       "理解条纹间距与缝间距成反比。",

@@ -18,9 +18,8 @@ class SnellRefractionExperiment(OpticsExperiment):
     # first inverts the physics order (fixed in learning-first phase 1).
     prerequisites = []
     linked_concepts = [
-        "10-concepts/refractive-index",
-        "10-concepts/dispersion",
-        "10-concepts/色散",
+        "refractive-index",
+        "dispersion",
     ]
     linked_formulas = [
         "20-formulas/snell-law",

@@ -17,14 +17,12 @@ class NyquistSamplingExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["diffraction", "magnification-scale"]
     linked_concepts = [
-        "10-concepts/nyquist-frequency",
-        "10-concepts/奈奎斯特频率",
-        "10-concepts/aliasing",
-        "10-concepts/混叠",
+        "nyquist-frequency",
+        "aliasing",
     ]
     linked_formulas = [
-        "20-formulas/nyquist-frequency",
-        "20-formulas/oversampling-ratio",
+        "nyquist-frequency",
+        "oversampling-ratio",
     ]
     learning_objectives = [
         "理解传感器奈奎斯特频率是它能无歧义记录的最高空间频率。",

@@ -18,15 +18,12 @@ class MtfExplorerExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["nyquist-sampling", "diffraction"]
     linked_concepts = [
-        "10-concepts/mtf",
-        "10-concepts/otf",
-        "10-concepts/psf",
-        "10-concepts/调制传递函数",
-        "10-concepts/光学传递函数",
-        "10-concepts/点扩散函数",
+        "mtf",
+        "otf",
+        "psf",
     ]
     linked_formulas = [
-        "20-formulas/airy-disk-diameter",
+        "airy-disk-diameter",
     ]
     learning_objectives = [
         "理解衍射极限给出了光学系统的最高空间频率截止。",
