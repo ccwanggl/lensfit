@@ -131,6 +131,10 @@ export default function LearningHub() {
       !!experiment &&
       sceneError === null &&
       (!isPreset || !!workbenchScene),
+    // 调参触发新 queryKey 时保留上一次结果，避免 SVG 区域清空重绘造成闪烁；
+    // 切换实验（queryKey[1] 变化）时不保留，防止短暂显示上一个实验的图像。
+    placeholderData: (prev, prevQuery) =>
+      prevQuery?.queryKey[1] === activeExperimentId ? prev : undefined,
   });
 
   const reportProgress = useReportProgress();
