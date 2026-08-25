@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -13,19 +14,23 @@ from optibench.lab.experiments.blackbody import BlackbodyExperiment
 from optibench.lab.experiments.chromatic_aberration import ChromaticAberrationExperiment
 from optibench.lab.experiments.color_mixing import ColorMixingExperiment
 from optibench.lab.experiments.depth_of_field import DepthOfFieldExperiment
+from optibench.lab.experiments.detector_snr import DetectorSnrExperiment
 from optibench.lab.experiments.diffraction import DiffractionExperiment
 from optibench.lab.experiments.double_slit import DoubleSlitExperiment
+from optibench.lab.experiments.gaussian_beam import GaussianBeamExperiment
 from optibench.lab.experiments.grating import GratingExperiment
 from optibench.lab.experiments.illumination_geometry import IlluminationGeometryExperiment
 from optibench.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from optibench.lab.experiments.mtf_explorer import MtfExplorerExperiment
 from optibench.lab.experiments.nyquist_sampling import NyquistSamplingExperiment
+from optibench.lab.experiments.penumbra import PenumbraExperiment
 from optibench.lab.experiments.polarization_malus import PolarizationMalusExperiment
 from optibench.lab.experiments.sensor_coverage import SensorCoverageExperiment
 from optibench.lab.experiments.single_slit_diffraction import SingleSlitDiffractionExperiment
 from optibench.lab.experiments.snell_refraction import SnellRefractionExperiment
 from optibench.lab.experiments.thermal_ifov_netd import ThermalIfovNetdExperiment
 from optibench.lab.experiments.thin_lens import ThinLensExperiment
+from optibench.lab.experiments.tir_critical_angle import TirCriticalAngleExperiment
 
 
 @pytest.fixture
@@ -475,3 +480,96 @@ def test_all_experiments_are_subclasses():
     ):
         assert issubclass(exp_cls, OpticsExperiment)
         assert exp_cls.experiment_id
+
+
+class TestBlackbodyDualTemperature:
+    def test_exitance_ratio_follows_t4(self):
+        exp = BlackbodyExperiment()
+        result = exp.run({"temperature_k": 6000.0, "temperature_2_k": 3000.0})
+        assert result.data["exitance_ratio_t2_over_t1"] == pytest.approx(0.0625, rel=1e-3)
+        _assert_svg(result.svg)
+
+    def test_wien_peak_scales_inverse(self):
+        exp = BlackbodyExperiment()
+        result = exp.run({"temperature_k": 6000.0, "temperature_2_k": 3000.0})
+        assert result.data["peak_wavelength_nm"] == pytest.approx(483.0, abs=1.0)
+        assert result.data["peak_wavelength_2_nm"] == pytest.approx(965.9, abs=1.0)
+
+
+class TestGaussianBeamExperiment:
+    def test_default_run_rayleigh_range(self):
+        exp = GaussianBeamExperiment()
+        result = exp.run({})
+        expected_zr_mm = math.pi * 50e-6**2 / 632.8e-9 * 1e3
+        assert result.data["rayleigh_range_mm"] == pytest.approx(expected_zr_mm, rel=1e-3)
+        _assert_svg(result.svg)
+
+    def test_divergence_angle_formula(self):
+        exp = GaussianBeamExperiment()
+        result = exp.run({})
+        expected_mrad = 632.8e-9 / (math.pi * 50e-6) * 1e3
+        assert result.data["divergence_half_angle_mrad"] == pytest.approx(expected_mrad, rel=1e-3)
+
+    def test_smaller_waist_diverges_faster(self):
+        exp = GaussianBeamExperiment()
+        wide = exp.run({"waist_radius_um": 100})
+        narrow = exp.run({"waist_radius_um": 25})
+        assert narrow.data["divergence_half_angle_mrad"] > wide.data["divergence_half_angle_mrad"]
+
+
+class TestDetectorSnrExperiment:
+    def test_default_run_snr_matches_formula(self):
+        exp = DetectorSnrExperiment()
+        result = exp.run({})
+        lam_m = 550e-9
+        area = (3.3e-6) ** 2
+        t_s = 10e-3
+        n_signal = 0.6 * 0.01 * lam_m / (6.62607015e-34 * 2.99792458e8) * area * t_s
+        expected_snr = n_signal / math.sqrt(n_signal + 50 * t_s + 5**2)
+        assert result.data["signal_electrons"] == pytest.approx(n_signal, rel=1e-3)
+        assert result.data["snr"] == pytest.approx(expected_snr, rel=1e-3)
+        _assert_svg(result.svg)
+
+    def test_shot_limited_flag(self):
+        exp = DetectorSnrExperiment()
+        bright = exp.run({"irradiance_w_m2": 1.0})
+        dim = exp.run({"irradiance_w_m2": 0.0001})
+        assert bright.data["shot_limited"] is True
+        assert dim.data["shot_limited"] is False
+
+
+class TestTirCriticalAngleExperiment:
+    def test_default_run_values(self):
+        exp = TirCriticalAngleExperiment()
+        result = exp.run({})
+        assert result.data["critical_angle_deg"] == pytest.approx(80.51, abs=0.05)
+        assert result.data["numerical_aperture"] == pytest.approx(0.2408, abs=0.001)
+        _assert_svg(result.svg)
+
+    def test_no_guiding_when_clad_denser(self):
+        exp = TirCriticalAngleExperiment()
+        result = exp.run({"n_core": 1.4, "n_clad": 1.45})
+        assert result.data["guiding"] is False
+
+    def test_air_interface_critical_angle(self):
+        exp = TirCriticalAngleExperiment()
+        result = exp.run({"n_core": 1.5, "n_clad": 1.0})
+        assert result.data["critical_angle_deg"] == pytest.approx(41.81, abs=0.05)
+
+
+class TestPenumbraExperiment:
+    def test_default_run_geometry(self):
+        exp = PenumbraExperiment()
+        result = exp.run({})
+        assert result.data["umbra_radius_at_screen_mm"] == pytest.approx(2.5, abs=0.01)
+        assert result.data["penumbra_outer_radius_mm"] == pytest.approx(32.5, abs=0.01)
+        assert result.data["umbra_tip_distance_mm"] == pytest.approx(200.0, abs=0.1)
+        _assert_svg(result.svg)
+
+    def test_pointlike_source_sharp_shadow(self):
+        exp = PenumbraExperiment()
+        result = exp.run({"source_diameter_mm": 5, "object_diameter_mm": 20,
+                          "screen_distance_mm": 100})
+        assert result.data["umbra_tip_distance_mm"] is None
+        assert result.data["umbra_exists_on_screen"] is True
+        assert result.data["penumbra_band_width_mm"] > 0

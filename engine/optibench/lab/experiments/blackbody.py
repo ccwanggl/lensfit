@@ -27,18 +27,31 @@ class BlackbodyExperiment(OpticsExperiment):
     ]
     linked_formulas = [
         "planck-blackbody",
+        "wien-displacement-law",
+        "stefan-boltzmann-law",
     ]
     learning_objectives = [
         "掌握普朗克黑体辐射定律 B(λ, T)。",
         "理解维恩位移定律 λ_max = b / T。",
+        "掌握斯特藩-玻尔兹曼定律 M = σT⁴：总辐射功率对温度极端敏感。",
         "观察色温从低到高时颜色由红橙向蓝白变化。",
     ]
     parameters = [
         Parameter(
             name="temperature_k",
-            label="黑体温度",
+            label="黑体温度 T₁",
             type="float",
             default=5500.0,
+            min=1000.0,
+            max=10000.0,
+            step=100.0,
+            unit="K",
+        ),
+        Parameter(
+            name="temperature_2_k",
+            label="对比温度 T₂",
+            type="float",
+            default=2900.0,
             min=1000.0,
             max=10000.0,
             step=100.0,
@@ -48,6 +61,7 @@ class BlackbodyExperiment(OpticsExperiment):
 
     def run(self, params: dict[str, Any]) -> ExperimentResult:
         t_k = float(params.get("temperature_k", 5500.0))
+        t2_k = float(params.get("temperature_2_k", 2900.0))
 
         # Sample spectrum over a range that captures the visible peak for
         # temperatures up to 10,000 K.
@@ -60,34 +74,53 @@ class BlackbodyExperiment(OpticsExperiment):
         ]
 
         radiance = [self._planck_radiance(lam_nm, t_k) for lam_nm in lambdas_nm]
-        max_radiance = max(radiance)
+        radiance2 = [self._planck_radiance(lam_nm, t2_k) for lam_nm in lambdas_nm]
+        max_radiance = max(max(radiance), max(radiance2))
         normalized = [r / max_radiance for r in radiance]
+        normalized2 = [r / max_radiance for r in radiance2]
 
         peak_nm = _WIEN_B_M_K / t_k * 1e9
+        peak2_nm = _WIEN_B_M_K / t2_k * 1e9
+
+        exitance_ratio = (t2_k / t_k) ** 4
 
         # Approximate perceived RGB by weighting the heuristic per-wavelength RGB
         # with the radiance at each sample.
         rgb = self._spectrum_to_rgb(lambdas_nm, radiance)
 
         svg = self._draw_svg(
-            t_k, lambdas_nm, normalized, peak_nm, rgb, lambda_min_nm, lambda_max_nm
+            t_k,
+            lambdas_nm,
+            normalized,
+            normalized2,
+            peak_nm,
+            rgb,
+            lambda_min_nm,
+            lambda_max_nm,
+            exitance_ratio,
         )
 
         return ExperimentResult(
             data={
                 "temperature_k": t_k,
+                "temperature_2_k": t2_k,
                 "peak_wavelength_nm": round(peak_nm, 1),
+                "peak_wavelength_2_nm": round(peak2_nm, 1),
                 "radiance": radiance,
+                "radiance_2": radiance2,
                 "normalized_radiance": normalized,
+                "normalized_radiance_2": normalized2,
                 "wavelengths_nm": lambdas_nm,
                 "perceived_rgb": rgb,
                 "perceived_hex": f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}",
+                "exitance_ratio_t2_over_t1": round(exitance_ratio, 5),
             },
             svg=svg,
             warnings=[],
             learning_hints=[
-                "温度越高，峰值波长越短（维恩位移定律）。",
-                "总辐射功率随 T⁴ 增长（斯特藩-玻尔兹曼定律），这里只显示相对光谱。",
+                "温度越高，峰值波长越短（维恩位移定律 λ_max = b/T）。",
+                "总辐射出射度 M = σT⁴：T₂ 对比曲线下面积与 T₁ 的比值即 (T₂/T₁)⁴——"
+                "温度翻倍，功率×16。",
                 "感知的 RGB 是粗略近似，未经过 CIE 标准色度学精确计算。",
             ],
         )
@@ -130,10 +163,12 @@ class BlackbodyExperiment(OpticsExperiment):
         t_k: float,
         lambdas_nm: list[float],
         normalized: list[float],
+        normalized2: list[float],
         peak_nm: float,
         rgb: tuple[int, int, int],
         lambda_min_nm: float,
         lambda_max_nm: float,
+        exitance_ratio: float,
     ) -> str:
         width, height = 640, 320
         plot_x, plot_y = 50, 40
@@ -149,6 +184,9 @@ class BlackbodyExperiment(OpticsExperiment):
         pts = " ".join(
             f"{x_to_px(lam):.1f},{y_to_px(norm):.1f}" for lam, norm in zip(lambdas_nm, normalized)
         )
+        pts2 = " ".join(
+            f"{x_to_px(lam):.1f},{y_to_px(norm):.1f}" for lam, norm in zip(lambdas_nm, normalized2)
+        )
 
         color = f"rgb({rgb[0]},{rgb[1]},{rgb[2]})"
 
@@ -158,6 +196,7 @@ class BlackbodyExperiment(OpticsExperiment):
             f'x2="{plot_x + plot_w:.1f}" y2="{plot_y + plot_h:.1f}" stroke="#475569"/>',
             f'<line x1="{plot_x:.1f}" y1="{plot_y:.1f}" '
             f'x2="{plot_x:.1f}" y2="{plot_y + plot_h:.1f}" stroke="#475569"/>',
+            path(pts2, fill="none", stroke="#3b82f6", stroke_width=1.5),
             path(pts, fill="none", stroke="#f59e0b", stroke_width=2),
             # Peak marker.
             f'<line x1="{x_to_px(peak_nm):.1f}" y1="{plot_y:.1f}" '
@@ -171,6 +210,10 @@ class BlackbodyExperiment(OpticsExperiment):
                 font_size=10,
                 anchor="middle",
             ),
+            text(plot_x + plot_w - 8, plot_y + 16, "T₁", fill="#f59e0b", font_size=11, anchor="end"),
+            text(plot_x + plot_w - 34, plot_y + 16, "—", fill="#f59e0b", font_size=12, anchor="end"),
+            text(plot_x + plot_w - 8, plot_y + 32, "T₂", fill="#3b82f6", font_size=11, anchor="end"),
+            text(plot_x + plot_w - 34, plot_y + 32, "—", fill="#3b82f6", font_size=12, anchor="end"),
             # Axis labels.
             text(
                 plot_x + plot_w / 2,
@@ -186,6 +229,22 @@ class BlackbodyExperiment(OpticsExperiment):
                 "相对辐射",
                 fill="#64748b",
                 font_size=11,
+                anchor="middle",
+            ),
+            text(
+                plot_x + plot_w + 80,
+                plot_y + 140,
+                "M₂/M₁ = (T₂/T₁)⁴",
+                fill="#64748b",
+                font_size=10,
+                anchor="middle",
+            ),
+            text(
+                plot_x + plot_w + 80,
+                plot_y + 156,
+                f"= {exitance_ratio:.3f}",
+                fill="#0f172a",
+                font_size=13,
                 anchor="middle",
             ),
             # Color swatch.
