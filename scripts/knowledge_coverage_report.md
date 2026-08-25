@@ -4,18 +4,16 @@
 
 | 类别 | 知识库 | 已锚定 | 未覆盖 | 覆盖率 |
 |---|---|---|---|---|
-| concepts | 147 | 31 | 116 | 21% |
-| formulas | 66 | 14 | 52 | 21% |
+| concepts | 149 | 45 | 104 | 30% |
+| formulas | 72 | 27 | 45 | 38% |
 
-遗留旧路径字面量：11 处（见 knowledge_links_unresolved.md）
+遗留旧路径字面量：2 处（见 knowledge_links_unresolved.md）
 
-## 未覆盖概念（116）
+## 未覆盖概念（104）
 
 - `4f-system` — 双透镜傅里叶系统（10-概念/4-双透镜傅里叶系统.md）
-- `acceptance-angle` — 接受角（10-概念/086-接受角.md）
 - `aperture-stop` — 孔径光阑（10-概念/145-孔径光阑.md）
 - `astigmatism` — 像散（10-概念/149-像散.md）
-- `beam-quality-m2` — 光束质量（10-概念/107-光束质量.md）
 - `brightness-enhancement-film` — 增亮膜（10-概念/090-增亮膜.md）
 - `chromatic-dispersion` — 光纤色散（10-概念/111-光纤色散.md）
 - `coherence` — 相干（10-概念/相干.md）
@@ -46,7 +44,6 @@
 - `freeform-optics` — 自由曲面光学（10-概念/084-自由曲面光学.md）
 - `frequency` — 频率（10-概念/141-频率.md）
 - `gain-medium` — 增益介质（10-概念/101-增益介质.md）
-- `gaussian-beam` — 高斯光束（10-概念/106-高斯光束.md）
 - `grating-coupler` — 光栅耦合器（10-概念/094-光栅耦合器.md）
 - `hyperspectral-imaging` — 高光谱成像（10-概念/073-高光谱成像.md）
 - `illuminance` — 照度（10-概念/129-照度.md）
@@ -67,13 +64,10 @@
 - `mixing-rod` — 混光棒（10-概念/099-混光棒.md）
 - `mode-field-diameter` — 模场直径（10-概念/093-模场直径.md）
 - `mode-locking` — 锁模（10-概念/105-锁模.md）
-- `multi-mode-fiber` — 多模光纤（10-概念/110-多模光纤.md）
 - `multispectral-filter-array` — 多光谱滤光片阵列（10-概念/076-多光谱滤光片阵列.md）
 - `multispectral-imaging` — 多光谱成像（10-概念/072-多光谱成像.md）
-- `noise-equivalent-power` — 噪声等效功率（10-概念/134-噪声等效功率.md）
 - `nonlinear-effects` — 非线性效应（10-概念/112-非线性效应.md）
 - `optical-resonator` — 光学谐振腔（10-概念/100-光学谐振腔.md）
-- `photodiode` — 光电二极管（10-概念/131-光电二极管.md）
 - `photomultiplier-tube` — 光电倍增管（10-概念/139-光电倍增管.md）
 - `photon-energy` — 光子能量（10-概念/142-光子能量.md）
 - `photonic-integrated-circuit` — 光子集成电路（10-概念/119-光子集成电路.md）
@@ -82,13 +76,10 @@
 - `population-inversion` — 粒子数反转（10-概念/102-粒子数反转.md）
 - `q-switching` — 脉冲激光调制（10-概念/104-脉冲激光调制.md）
 - `quantum-dot-film` — 量子点增强膜（10-概念/091-量子点增强膜.md）
-- `quantum-efficiency` — 量子效率（10-概念/132-量子效率.md）
 - `radiance` — 辐射亮度（10-概念/122-辐射亮度.md）
 - `radiant-flux` — 辐射通量（10-概念/120-辐射通量.md）
 - `radiant-intensity` — 辐射强度（10-概念/121-辐射强度.md）
 - `raman-scattering` — 拉曼散射（10-概念/071-拉曼散射.md）
-- `rayleigh-range` — 瑞利范围（10-概念/108-瑞利范围.md）
-- `responsivity` — 响应度（10-概念/133-响应度.md）
 - `silicon-photonics` — 硅光子学（10-概念/114-硅光子学.md）
 - `single-mode-fiber` — 单模光纤（10-概念/109-单模光纤.md）
 - `slit` — 入射狭缝（10-概念/入射狭缝.md）
@@ -108,8 +99,6 @@
 - `zernike-polynomials` — 泽尼克多项式（10-概念/泽尼克多项式.md）
 - `全局快门` — 全局快门（10-概念/058-全局快门.md）
 - `分光镜` — 分光镜（10-概念/049-分光镜.md）
-- `动态范围` — 动态范围（10-概念/060-动态范围.md）
-- `半影` — 半影（10-概念/054-半影.md）
 - `卷帘快门` — 卷帘快门（10-概念/059-卷帘快门.md）
 - `双远心` — 双远心（10-概念/080-双远心.md）
 - `发射率` — 发射率（10-概念/064-发射率.md）
@@ -122,35 +111,30 @@
 - `视场` — 视场（10-概念/011-视场.md）
 - `视差` — 视差（10-概念/014-视差.md）
 - `视角` — 视角（10-概念/012-视角.md）
-- `读出噪声` — 读出噪声（10-概念/061-读出噪声.md）
 - `边缘检测` — 边缘检测（10-概念/043-边缘检测.md）
 - `过采样` — 过采样（10-概念/042-过采样.md）
 - `近轴近似` — 近轴近似（10-概念/001-近轴近似.md）
 - `透视畸变` — 透视畸变（10-概念/013-透视畸变.md）
 
-## 未覆盖公式（52）
+## 未覆盖公式（45）
 
-- `NEP` — 噪声等效功率计算（20-公式/024-噪声等效功率计算.md）
 - `angular-spectrum` — 角谱传播公式（20-公式/角谱传播公式.md）
 - `concentration-ratio` — 几何聚光比（20-公式/018-几何聚光比.md）
 - `coupling-efficiency` — 耦合效率计算（20-公式/019-耦合效率计算.md）
 - `cpc-geometry` — 复合抛物面聚光器设计（20-公式/048-复合抛物面聚光器设计.md）
 - `czerny-turner-resolution` — 切尔尼特纳光谱仪分辨率（20-公式/切尔尼特纳光谱仪分辨率.md）
 - `delta-e` — 综合色差（20-公式/016-综合色差.md）
-- `detector-snr` — 探测器信噪比（20-公式/059-探测器信噪比.md）
 - `directional-coupler` — 方向耦合器功率分配（20-公式/031-方向耦合器功率分配.md）
 - `edfa-gain-model` — 掺铒光纤放大器增益与噪声（20-公式/028-掺铒光纤放大器增益与噪声.md）
 - `etendue` — 光学扩展量守恒关系（20-公式/017-光学扩展量守恒关系.md）
 - `extinction-ratio` — 消光比计算（20-公式/042-消光比计算.md）
 - `faraday-rotation-angle` — 法拉第旋转角（20-公式/040-法拉第旋转角.md）
 - `fiber-bending-loss` — 光纤弯曲损耗（20-公式/054-光纤弯曲损耗.md）
-- `fiber-na` — 光纤数值孔径（20-公式/022-光纤数值孔径.md）
 - `fiber-v-parameter` — 光纤归一化频率（20-公式/026-光纤归一化频率.md）
 - `formulas` — 公式（20-公式/公式.md）
 - `fourier-transform-optics` — 光学傅里叶变换对（20-公式/光学傅里叶变换对.md）
 - `freeform-mapping` — 自由曲面源-靶映射（20-公式/043-自由曲面源-靶映射.md）
 - `gain-bandwidth` — 增益带宽积（20-公式/051-增益带宽积.md）
-- `gaussian-beam-waist` — 高斯光束束腰（20-公式/021-高斯光束束腰.md）
 - `half-wave-voltage` — 半波电压（20-公式/039-半波电压.md）
 - `illumination-uniformity` — 照明均匀度（20-公式/044-照明均匀度.md）
 - `lambert-cosine` — 朗伯余弦定律（20-公式/045-朗伯余弦定律.md）
@@ -176,9 +160,6 @@
 - `solid-angle-cone` — 锥形立体角（20-公式/056-锥形立体角.md）
 - `soliton-condition` — 光纤孤子条件（20-公式/055-光纤孤子条件.md）
 - `specific-detectivity` — 比探测率计算（20-公式/037-比探测率计算.md）
-- `stefan-boltzmann-law` — 斯特藩玻尔兹曼定律（20-公式/033-斯特藩玻尔兹曼定律.md）
 - `strehl-ratio` — 斯特列尔比计算（20-公式/斯特列尔比计算.md）
-- `tir-critical-angle` — 全反射临界角（20-公式/047-全反射临界角.md）
 - `visible-flux-integral` — 光通量积分（辐射度→光度）（20-公式/058-光通量积分辐射度→光度.md）
-- `wien-displacement-law` — 维恩位移定律（20-公式/034-维恩位移定律.md）
 - `瑞利分辨率` — 瑞利分辨率（20-公式/010-瑞利分辨率.md）

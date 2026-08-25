@@ -2,7 +2,7 @@
 
 > 类别：调研参考（`docs/development/research/`），不可直接当作执行计划；实验立项须先进入 `plans/active/`。
 > 数据口径：2026-08-25，`scripts/knowledge_coverage.py` 对 `knowledgeLinks.json`（147 概念 + 66 公式）与 lab registry（19 实验）/面包板 preset（2）的对账结果。
-> 结论先行：未锚定知识共 **116 概念 + 52 公式**（2026-08-25 晚间快照；`瑞利判据` 已于当日补链至 diffraction 实验）；其中真正适合"补实验"的是 T1 子集（约 20 项），大量内容属于其他能力域或天然纯阅读。
+> 结论先行：未锚定知识共 **104 概念 + 45 公式**（2026-08-25 晚间快照；当日已落地黑体扩展、高斯光束、全反射/光纤 NA、探测器 SNR、半影共五个实验并补链「瑞利判据」，详见 T1 表状态列）；其中真正适合"补实验"的是 T1 子集，大量内容属于其他能力域或天然纯阅读。
 
 ## 1. 分级定义
 
@@ -15,21 +15,21 @@
 
 ## 2. T1 · 建议立项清单（约 20 项）
 
-| # | 提案实验 | 锚定的未覆盖笔记 | 复用基建 | 量级 |
-|---|---|---|---|---|
-| 1 | 黑体辐射扩展：维恩位移 + 斯特藩玻尔兹曼定律 | `wien-displacement-law`、`stefan-boltzmann-law` | blackbody 实验 | S |
+| # | 提案实验 | 锚定的未覆盖笔记 | 复用基建 | 量级 | 状态 |
+|---|---|---|---|---|---|
+| 1 | 黑体辐射扩展：维恩位移 + 斯特藩玻尔兹曼定律 | `wien-displacement-law`、`stefan-boltzmann-law` | blackbody 实验 | S | ✅ 已落地（2026-08-25，双温对比模式） |
 | 2 | 朗伯体角分布实验（朗伯余弦定律） | `lambertian-emitter`、`lambertian-surface`、`lambert-cosine` | 极坐标绘制 | S |
 | 3 | 立体角与锥形孔径几何实验 | `solid-angle-cone`、`acceptance-angle` | 几何 canvas | S |
-| 4 | 高斯光束传播实验（束腰/瑞利范围/M²） | `gaussian-beam-waist`、`rayleigh-range`、`m2-beam-quality`、概念 `gaussian-beam`、`rayleigh-range`、`beam-quality-m2` | 1D 曲线族 | S/M |
-| 5 | 全反射临界角实验 | `tir-critical-angle`、`tir-lens`(部分) | snell_refraction 扩展 | S |
-| 6 | 光纤数值孔径与受光锥实验 | `fiber-na`、概念 `multi-mode-fiber`(部分) | 同上复用 | S |
+| 4 | 高斯光束传播实验（束腰/瑞利范围/M²） | `gaussian-beam-waist`、`rayleigh-range`、`m2-beam-quality`、概念 `gaussian-beam`、`rayleigh-range`、`beam-quality-m2` | 1D 曲线族 | S/M | S/M | ✅ 已落地（2026-08-25，锚定 gaussian-beam/rayleigh-range/beam-quality-m2 + 束腰公式） |
+| 5 | 全反射临界角实验 | `tir-critical-angle`、`tir-lens`(部分) | snell_refraction 扩展 | S | ✅ 已落地（2026-08-25，tir-critical-angle 实验，含光纤 NA 面板） |
+| 6 | 光纤数值孔径与受光锥实验 | `fiber-na`、概念 `multi-mode-fiber`(部分) | 同上复用 | S | ✅ 已并入 #5（fiber-na 公式已锚定） |
 | 7 | 量子效率—响应度关系实验 | `qe-responsivity-relation`、`responsivity`(公式) | 关系曲线 | S |
-| 8 | 探测器信噪比预算实验 | `detector-snr`、`NEP`、`specific-detectivity`、概念 `noise-equivalent-power`、`读出噪声`、`动态范围` | 噪声瀑布图 | M |
+| 8 | 探测器信噪比预算实验 | `detector-snr`、`NEP`、`specific-detectivity`、概念 `noise-equivalent-power`、`读出噪声`、`动态范围` | 噪声瀑布图 | M | ✅ 已落地（2026-08-25，detector-snr 实验） |
 | 9 | 色域映射实验（CIE 上叠加 gamut/ΔE） | `color-gamut`、`delta-e` | color_mixing 色度图 | S/M |
 | 10 | 显色指数 CRI 演示 | `color-rendering-index` | 光谱合成 | M |
 | 11 | 快门时序实验（卷帘 vs 全局快门、果冻效应） | `卷帘快门`、`全局快门`、`果冻效应` | 动画 | M |
 | 12 | 视差与景深感知实验 | `视差`、`半影`(并入#13) | 双视图 canvas | M |
-| 13 | 半影与光源尺度实验 | `半影` | 几何 canvas | S |
+| 13 | 半影与光源尺度实验 | `半影` | 几何 canvas | S | ✅ 已落地（2026-08-25，penumbra 实验） |
 | 14 | 透视畸变演示 | `透视畸变`、`distortion`(概念已有) | 相机投影模拟 | M |
 | 15 | 过采样与有效分辨率实验 | `过采样`、概念 `过采样` | nyquist_sampling 扩展 | S |
 | 16 | 照明均匀度实验 | `illumination-uniformity`、概念 `均匀性`、`mixing-rod`(简化) | 热图 | M |
