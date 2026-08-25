@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { conceptLink, obsidianUrlFor } from "./knowledgeLinks";
+import { useReportProgress } from "./reportProgress";
 import {
   BookOpen,
   Briefcase,
@@ -190,6 +191,7 @@ function PathNodeRow({
   const openConceptFromPath = useLabStore((s) => s.openConceptFromPath);
   const setActiveQuizId = useLabStore((s) => s.setActiveQuizId);
   const setActiveTab = useAppStore((s) => s.setActiveTab);
+  const reportProgress = useReportProgress();
 
   const locked = (lock?.locked ?? false) && node.status !== "completed";
   const isCompleted = node.status === "completed";
@@ -206,6 +208,7 @@ function PathNodeRow({
     if (node.kind === "concept") {
       const entry = conceptLink(node.ref);
       if (entry) {
+        reportProgress("concept", node.ref, "viewed");
         window.open(obsidianUrlFor(entry, node.ref), "_blank", "noreferrer");
       } else {
         openConceptFromPath(node.ref);
