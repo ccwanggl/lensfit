@@ -16,7 +16,7 @@ class GratingExperiment(OpticsExperiment):
     difficulty = "intermediate"
     prerequisites = ["double-slit", "color-mixing"]
     linked_concepts = [
-        "10-concepts/diffraction-grating",
+        "diffraction-grating",
         "spectral-resolution",
     ]
     linked_formulas = [

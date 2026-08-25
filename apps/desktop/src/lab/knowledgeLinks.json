@@ -104,6 +104,10 @@
       "path": "10-概念/135-比探测率.md",
       "title": "比探测率"
     },
+    "diffraction-grating": {
+      "path": "10-概念/010-衍射光栅.md",
+      "title": "衍射光栅"
+    },
     "diffraction-limit": {
       "path": "10-概念/025-衍射极限.md",
       "title": "衍射极限"
@@ -508,6 +512,10 @@
       "path": "10-概念/064-发射率.md",
       "title": "发射率"
     },
+    "同轴照明": {
+      "path": "10-概念/018-同轴照明.md",
+      "title": "同轴照明"
+    },
     "均匀性": {
       "path": "10-概念/055-均匀性.md",
       "title": "均匀性"
@@ -630,6 +638,10 @@
       "path": "20-公式/016-综合色差.md",
       "title": "综合色差"
     },
+    "depth-of-field": {
+      "path": "20-公式/063-景深公式.md",
+      "title": "景深近似公式"
+    },
     "detector-snr": {
       "path": "20-公式/059-探测器信噪比.md",
       "title": "探测器信噪比"
@@ -706,6 +718,10 @@
       "path": "20-公式/039-半波电压.md",
       "title": "半波电压"
     },
+    "hyperfocal-distance": {
+      "path": "20-公式/064-超焦距.md",
+      "title": "超焦距"
+    },
     "illumination-uniformity": {
       "path": "20-公式/044-照明均匀度.md",
       "title": "照明均匀度"
@@ -734,6 +750,10 @@
       "path": "20-公式/046-发光二极管光提取效率.md",
       "title": "发光二极管光提取效率"
     },
+    "longitudinal-chromatic-aberration": {
+      "path": "20-公式/065-纵向色差.md",
+      "title": "纵向色差（位置色差）"
+    },
     "luminance-illuminance": {
       "path": "20-公式/057-亮度-照度关系朗伯面.md",
       "title": "亮度-照度关系（朗伯面）"
@@ -741,6 +761,10 @@
     "m2-beam-quality": {
       "path": "20-公式/025-光束质量因子.md",
       "title": "光束质量因子"
+    },
+    "malus-law": {
+      "path": "20-公式/062-马吕斯定律.md",
+      "title": "马吕斯定律"
     },
     "microring-resonance": {
       "path": "20-公式/029-微环谐振条件与自由光谱范围.md",
@@ -813,6 +837,14 @@
     "saturation-intensity": {
       "path": "20-公式/052-饱和强度.md",
       "title": "饱和强度"
+    },
+    "single-slit-minima": {
+      "path": "20-公式/061-单缝衍射极小条件.md",
+      "title": "单缝衍射极小条件"
+    },
+    "snell-law": {
+      "path": "20-公式/060-斯涅尔定律.md",
+      "title": "斯涅尔定律（折射定律）"
     },
     "solid-angle-cone": {
       "path": "20-公式/056-锥形立体角.md",

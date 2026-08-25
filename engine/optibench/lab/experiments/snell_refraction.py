@@ -22,7 +22,7 @@ class SnellRefractionExperiment(OpticsExperiment):
         "dispersion",
     ]
     linked_formulas = [
-        "20-formulas/snell-law",
+        "snell-law",
     ]
     learning_objectives = [
         "掌握 n₁ sin θ₁ = n₂ sin θ₂ 的折射定律。",

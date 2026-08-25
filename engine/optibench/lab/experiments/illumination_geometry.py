@@ -17,7 +17,7 @@ class IlluminationGeometryExperiment(OpticsExperiment):
     linked_concepts = [
         "illumination-geometry",
         "低角度照明",
-        "10-concepts/同轴照明",
+        "同轴照明",
         "镜面反射",
         "漫射",
     ]

@@ -21,8 +21,8 @@ class DepthOfFieldExperiment(OpticsExperiment):
         "f-number",
     ]
     linked_formulas = [
-        "20-formulas/depth-of-field",
-        "20-formulas/hyperfocal-distance",
+        "depth-of-field",
+        "hyperfocal-distance",
     ]
     learning_objectives = [
         "理解光圈、焦距和对焦距离如何共同影响景深。",

@@ -19,7 +19,7 @@ class SingleSlitDiffractionExperiment(OpticsExperiment):
         "diffraction-limit",
     ]
     linked_formulas = [
-        "20-formulas/single-slit-minima",
+        "single-slit-minima",
     ]
     learning_objectives = [
         "理解单缝衍射中央亮纹宽度与缝宽成反比。",

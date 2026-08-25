@@ -21,7 +21,7 @@ class PolarizationMalusExperiment(OpticsExperiment):
         "polarization",
     ]
     linked_formulas = [
-        "20-formulas/malus-law",
+        "malus-law",
     ]
     learning_objectives = [
         "理解非偏振光通过第一个偏振片后光强减半。",

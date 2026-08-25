@@ -56,7 +56,7 @@ export const BREADBOARD_PRESETS: BreadboardPreset[] = [
     linked_concepts: [
       "diffraction-limit",
     ],
-    linked_formulas: ["20-formulas/single-slit-minima"],
+    linked_formulas: ["single-slit-minima"],
     prerequisites: ["diffraction"],
     learning_objectives: [
       "理解单缝衍射中央亮纹宽度与缝宽成反比。",

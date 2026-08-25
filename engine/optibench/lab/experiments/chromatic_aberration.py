@@ -20,7 +20,7 @@ class ChromaticAberrationExperiment(OpticsExperiment):
         "dispersion",
     ]
     linked_formulas = [
-        "20-formulas/longitudinal-chromatic-aberration",
+        "longitudinal-chromatic-aberration",
     ]
     learning_objectives = [
         "理解阿贝数越小（色散越大），轴向色差越严重。",
