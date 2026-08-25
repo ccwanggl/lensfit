@@ -21,6 +21,7 @@ class MagnificationScaleExperiment(OpticsExperiment):
     linked_concepts = [
         "像素精度",
         "工作距离",
+        "放大倍率",
         "focal-length",
     ]
     linked_formulas = [

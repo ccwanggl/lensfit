@@ -17,6 +17,7 @@ class DoubleSlitExperiment(OpticsExperiment):
     prerequisites = ["single-slit-diffraction", "polarization-malus"]
     linked_concepts = [
         "interference",
+        "coherence",
         "diffraction-limit",
     ]
     linked_formulas = [

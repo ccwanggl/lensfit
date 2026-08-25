@@ -19,6 +19,7 @@ class AngleOfViewExperiment(OpticsExperiment):
     prerequisites = ["thin-lens"]
     linked_concepts = [
         "focal-length",
+        "视角",
     ]
     linked_formulas = [
         "angle-of-view",

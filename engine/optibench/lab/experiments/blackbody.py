@@ -24,6 +24,7 @@ class BlackbodyExperiment(OpticsExperiment):
     linked_concepts = [
         "color-temperature",
         "spectral-power-distribution",
+        "发射率",
     ]
     linked_formulas = [
         "planck-blackbody",
@@ -57,11 +58,21 @@ class BlackbodyExperiment(OpticsExperiment):
             step=100.0,
             unit="K",
         ),
+        Parameter(
+            name="emissivity",
+            label="发射率 ε（灰体）",
+            type="float",
+            default=1.0,
+            min=0.1,
+            max=1.0,
+            step=0.05,
+        ),
     ]
 
     def run(self, params: dict[str, Any]) -> ExperimentResult:
         t_k = float(params.get("temperature_k", 5500.0))
         t2_k = float(params.get("temperature_2_k", 2900.0))
+        emissivity = float(params.get("emissivity", 1.0))
 
         # Sample spectrum over a range that captures the visible peak for
         # temperatures up to 10,000 K.
@@ -73,8 +84,8 @@ class BlackbodyExperiment(OpticsExperiment):
             for i in range(num_samples)
         ]
 
-        radiance = [self._planck_radiance(lam_nm, t_k) for lam_nm in lambdas_nm]
-        radiance2 = [self._planck_radiance(lam_nm, t2_k) for lam_nm in lambdas_nm]
+        radiance = [emissivity * self._planck_radiance(lam_nm, t_k) for lam_nm in lambdas_nm]
+        radiance2 = [emissivity * self._planck_radiance(lam_nm, t2_k) for lam_nm in lambdas_nm]
         max_radiance = max(max(radiance), max(radiance2))
         normalized = [r / max_radiance for r in radiance]
         normalized2 = [r / max_radiance for r in radiance2]
@@ -114,6 +125,8 @@ class BlackbodyExperiment(OpticsExperiment):
                 "perceived_rgb": rgb,
                 "perceived_hex": f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}",
                 "exitance_ratio_t2_over_t1": round(exitance_ratio, 5),
+                "emissivity": emissivity,
+                "gray_body_note": "灰体：光谱形状不变，整体幅度 ×ε；峰值波长不受 ε 影响",
             },
             svg=svg,
             warnings=[],

@@ -19,6 +19,7 @@ class NyquistSamplingExperiment(OpticsExperiment):
     linked_concepts = [
         "nyquist-frequency",
         "aliasing",
+        "过采样",
     ]
     linked_formulas = [
         "nyquist-frequency",

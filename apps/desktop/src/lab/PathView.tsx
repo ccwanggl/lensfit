@@ -32,21 +32,33 @@ export interface LockInfo {
 }
 
 /**
- * A node is unlocked when all its direct prerequisites are completed.
- * Transitive blocking surfaces naturally: an incomplete prerequisite is
+ * A node is unlocked when all its direct prerequisites are satisfied.
+ * - experiment/preset/practice/assessment 先修：需 completed。
+ * - concept 先修：viewed 即满足（ADR-004——概念阅读发生在知识库，
+ *   点击跳转时已上报 viewed，不应要求应用内的 completed）。
+ * Transitive blocking surfaces naturally: an unsatisfied prerequisite is
  * listed as missing, and that prerequisite shows its own missing list.
  */
 export function computeLocks(
   nodes: CurriculumNode[],
-  completed: ReadonlySet<string>
+  completed: ReadonlySet<string>,
+  viewed: ReadonlySet<string> = new Set()
 ): Map<string, LockInfo> {
   const byId = new Map(nodes.map((n) => [n.id, n]));
   const locks = new Map<string, LockInfo>();
   for (const node of nodes) {
-    const missing = node.prerequisites
-      .filter((id) => !completed.has(id))
-      .map((id) => byId.get(id)?.title ?? id);
-    locks.set(node.id, { locked: missing.length > 0, missing });
+    const missing = node.prerequisites.filter((id) => {
+      if (completed.has(id)) return false;
+      const prereq = byId.get(id);
+      return !(prereq?.kind === "concept" && viewed.has(id));
+    });
+    locks.set(
+      node.id,
+      {
+        locked: missing.length > 0,
+        missing: missing.map((id) => byId.get(id)?.title ?? id),
+      }
+    );
   }
   return locks;
 }
@@ -113,9 +125,18 @@ export default function PathView() {
       ),
     [data]
   );
+  const viewed = useMemo(
+    () =>
+      new Set(
+        (data?.nodes ?? [])
+          .filter((n) => n.status === "viewed" || n.status === "completed")
+          .map((n) => n.id)
+      ),
+    [data]
+  );
   const locks = useMemo(
-    () => computeLocks(data?.nodes ?? [], completed),
-    [data, completed]
+    () =>     computeLocks(data?.nodes ?? [], completed, viewed),
+    [data, completed, viewed]
   );
 
   if (isLoading) {

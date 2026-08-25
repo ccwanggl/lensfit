@@ -23,6 +23,11 @@ from optibench.lab.experiments.illumination_geometry import IlluminationGeometry
 from optibench.lab.experiments.magnification_scale import MagnificationScaleExperiment
 from optibench.lab.experiments.mtf_explorer import MtfExplorerExperiment
 from optibench.lab.experiments.rayleigh_two_point import RayleighTwoPointExperiment
+from optibench.lab.experiments.delta_e_color import DeltaEColorExperiment
+from optibench.lab.experiments.illumination_uniformity import IlluminationUniformityExperiment
+from optibench.lab.experiments.shutter_timing import ShutterTimingExperiment
+from optibench.lab.experiments.parallax import ParallaxExperiment
+from optibench.lab.experiments.perspective_distortion import PerspectiveDistortionExperiment
 from optibench.lab.experiments.photometric_flux import PhotometricFluxExperiment
 from optibench.lab.experiments.color_gamut import ColorGamutExperiment
 from optibench.lab.experiments.qe_responsivity import QeResponsivityExperiment
@@ -681,3 +686,88 @@ class TestRayleighTwoPointExperiment:
         r8 = exp.run({"f_number": 8}).data["airy_radius_um"]
         r16 = exp.run({"f_number": 16}).data["airy_radius_um"]
         assert r16 == pytest.approx(2 * r8)
+
+
+class TestBlackbodyEmissivity:
+    def test_gray_body_scales_magnitude_not_peak(self):
+        exp = BlackbodyExperiment()
+        ref = exp.run({"temperature_k": 5500.0})
+        gray = exp.run({"temperature_k": 5500.0, "emissivity": 0.5})
+        mid = len(ref.data["radiance"]) // 2
+        assert gray.data["radiance"][mid] == pytest.approx(
+            ref.data["radiance"][mid] * 0.5, rel=1e-6
+        )
+        assert gray.data["peak_wavelength_nm"] == pytest.approx(
+            ref.data["peak_wavelength_nm"], abs=1e-6
+        )
+        _assert_svg(gray.svg)
+
+
+class TestPerspectiveDistortionExperiment:
+    def test_default_run(self):
+        exp = PerspectiveDistortionExperiment()
+        result = exp.run({})
+        assert result.data["model"] == "pinhole"
+        _assert_svg(result.svg)
+
+    def test_pitch_clamped_to_spec(self):
+        exp = PerspectiveDistortionExperiment()
+        validated = exp.validate_params({"pitch_deg": 90.0})
+        assert validated["pitch_deg"] == exp.parameters[2].max
+
+
+class TestParallaxExperiment:
+    def test_disparity_formula(self):
+        exp = ParallaxExperiment()
+        result = exp.run({})
+        expected_mm = 8.0 * 120.0 / 2000.0
+        assert result.data["disparity_mm"] == pytest.approx(expected_mm, abs=1e-3)
+        assert result.data["disparity_px_3p3um"] == pytest.approx(
+            expected_mm * 1e-3 / 3.3e-6, rel=1e-3
+        )
+        _assert_svg(result.svg)
+
+
+class TestShutterTimingExperiment:
+    def test_global_shutter_preserves_shape(self):
+        exp = ShutterTimingExperiment()
+        result = exp.run({"shutter_mode": "global", "speed_px_per_frame": 400})
+        assert result.data["shape_preserved"] is True
+        _assert_svg(result.svg)
+
+    def test_rolling_shutter_skew_matches_speed(self):
+        exp = ShutterTimingExperiment()
+        result = exp.run({"shutter_mode": "rolling",
+                          "speed_px_per_frame": 200, "readout_fraction": 0.5})
+        assert result.data["max_skew_px"] == pytest.approx(100.0)
+
+
+class TestIlluminationUniformityExperiment:
+    def test_uniformity_bounded_and_grade(self):
+        exp = IlluminationUniformityExperiment()
+        result = exp.run({})
+        u = result.data["uniformity_min_over_avg"]
+        assert 0 < u <= 1.0
+        assert result.data["grade"] in ("优", "良", "需优化")
+        _assert_svg(result.svg)
+
+    def test_larger_distance_improves_uniformity(self):
+        exp = IlluminationUniformityExperiment()
+        near = exp.run({"working_distance_mm": 40}).data["uniformity_min_over_avg"]
+        far = exp.run({"working_distance_mm": 400}).data["uniformity_min_over_avg"]
+        assert far > near
+
+
+class TestDeltaEColorExperiment:
+    def test_identical_colors_delta_zero(self):
+        exp = DeltaEColorExperiment()
+        result = exp.run({"r2": 220.0, "g2": 180.0, "b2": 140.0})
+        assert result.data["delta_e_cie76"] == 0.0
+        assert result.data["verdict"] == "不可分辨"
+        _assert_svg(result.svg)
+
+    def test_red_vs_green_large_delta(self):
+        exp = DeltaEColorExperiment()
+        result = exp.run({"r1": 255.0, "g1": 0.0, "b1": 0.0,
+                          "r2": 0.0, "g2": 255.0, "b2": 0.0})
+        assert result.data["delta_e_cie76"] > 40.0

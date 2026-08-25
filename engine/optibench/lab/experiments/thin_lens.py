@@ -15,6 +15,7 @@ class ThinLensExperiment(OpticsExperiment):
     difficulty = "foundation"
     linked_concepts = [
         "focal-length",
+        "thin-lens",
     ]
     linked_formulas = [
         "thin-lens-gauss",

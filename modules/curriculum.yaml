@@ -80,6 +80,12 @@ nodes:
     title: CIE 色域映射实验
     module: 10-foundations
     prerequisites: [color-mixing]
+  - id: delta-e-color
+    kind: experiment
+    ref: delta-e-color
+    title: 色差 ΔE 实验与判读
+    module: 10-foundations
+    prerequisites: [color-mixing]
 
   # ─── 20-geometric-optics ───
   - id: concept-thin-lens
@@ -254,6 +260,24 @@ nodes:
     title: 照明方式几何实验
     module: 20-geometric-optics
     prerequisites: [snell-refraction]
+  - id: perspective-distortion
+    kind: experiment
+    ref: perspective-distortion
+    title: 透视畸变实验
+    module: 20-geometric-optics
+    prerequisites: [thin-lens]
+  - id: parallax
+    kind: experiment
+    ref: parallax
+    title: 双目视差与深度实验
+    module: 20-geometric-optics
+    prerequisites: [thin-lens]
+  - id: illumination-uniformity
+    kind: experiment
+    ref: illumination-uniformity
+    title: 照明均匀度实验
+    module: 20-geometric-optics
+    prerequisites: []
 
   - id: cmos-fundamentals
     kind: concept
@@ -449,6 +473,12 @@ nodes:
     title: 光通量可见度积分实验
     module: 40-spectroscopy
     prerequisites: [blackbody]
+  - id: shutter-timing
+    kind: experiment
+    ref: shutter-timing
+    title: 快门时序实验（卷帘 vs 全局）
+    module: 40-spectroscopy
+    prerequisites: []
 
   # ─── 50-optical-design ───
   - id: concept-cutoff-frequency
