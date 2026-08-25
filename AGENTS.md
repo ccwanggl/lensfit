@@ -27,6 +27,16 @@
 - 代码标识符、API 路径、类名、文件路径、外部项目名保持英文。
 - 术语首次出现时可以中英并列，例如“场景图（SceneGraph）”。
 
+## 产品定位（2026-08 起）
+
+学习辅助是第一要务；镜头适配等选型能力是学习实践场景。定位转换相关开发必须以以下文档为执行入口：
+
+```text
+docs/development/plans/active/2026-08-learning-first-repositioning-plan.md
+```
+
+架构边界见 `docs/development/decisions/ADR-003-learning-first-pivot.md`：学习层只能通过 `PracticeActivity` 接口引用选型能力；不做账号系统；选型引擎保留不重构。
+
 ## 光学面包板执行规则
 
 光学面包板相关开发必须以以下文档为执行入口：

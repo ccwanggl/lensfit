@@ -7,6 +7,7 @@
 | 编号 | 标题 | 状态 |
 |---|---|---|
 | ADR-002 | [光学面包板 / 数字孪生策略](./ADR-002-optical-breadboard-strategy.md) | 提议 |
+| ADR-003 | [学习优先定位转换](./ADR-003-learning-first-pivot.md) | 提议 |
 
 每条记录至少包含：
 

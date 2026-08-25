@@ -1,6 +1,6 @@
-# OptiBench — 光学工程工作台
+# OptiBench — 光学学习工作台
 
-**OptiBench — Optical Engineering Workbench**
+**OptiBench — Optics Learning Workbench**
 
 <p align="center">
   <img src="apps/desktop/src-tauri/icons/128x128.png" alt="OptiBench Logo" width="96">
@@ -17,13 +17,25 @@
 
 ### 简介
 
-OptiBench 是一款面向光学工程师和系统集成商的光学工程工作台，原名 LensFit。它以镜头-传感器智能匹配为主线，基于物理光学和几何光学的严谨计算，帮助用户在不同应用场景（工业视觉、摄影、显微镜、红外成像）中快速找到最优的镜头-传感器组合；同时内置 Self-Study Lab 交互式光学实验与光学知识库，覆盖从选型决策到原理学习的完整工作流。
+OptiBench 是一款光学学习辅助软件，原名 LensFit。第一要务是帮助学习者（学生、自学者、转行工程师）系统掌握光学：读教程、做实验、沿学习路径进阶、用测验检验掌握度。应用以学习中心为主壳——学习路径、实验沙盘、教程三大视图；镜头-传感器选型、器件库、项目管理等工程能力收编为"实践场"，作为学习者掌握理论后在真实器件数据上的应用练习场景。
 
 ### 核心特性
 
+**学习主线**
+
 | 特性 | 说明 |
 |---|---|
-| **多领域匹配** | 支持工业视觉、摄影、显微镜、红外成像四大领域 |
+| **学习路径** | 声明式学习路径图（DAG）：概念/实验/面包板/测验/实践节点按先修关系逐层解锁 |
+| **教程视图** | `modules/` markdown 教程经内容合同校验后直达应用内阅读，联动相关实验一键跳转沙盘 |
+| **实验沙盘** | 19 个交互式光学实验 + 面包板 preset，参数实时调节、可视化即时反馈 |
+| **评测** | 通用测验组件落地 `modules/*/assessment` 评估标准，教程文末配套随堂测验 |
+| **学习者进度** | SQLite 本地记录浏览/完成/测验成绩（无账号系统），路径视图实时合并进度状态 |
+
+**实践场与工具（原选型工作台）**
+
+| 特性 | 说明 |
+|---|---|
+| **多领域匹配** | 工业视觉、摄影、显微镜、红外成像四大实践域的镜头-传感器匹配 |
 | **智能评分** | 基于覆盖比、分辨率、像素精度、放大倍率等多维度综合评分 |
 | **物理知识库** | 内置 9 个光学公式、5 条物理约束，实时推理计算过程 |
 | **推导链可视化** | 展示每个匹配结果背后的完整光学计算推导过程 |
@@ -194,13 +206,25 @@ MIT License — 详见 [LICENSE](LICENSE) 文件。
 
 ### Introduction
 
-OptiBench is an optical engineering workbench for optical engineers and system integrators, formerly known as LensFit. Its core is intelligent lens-sensor matching: based on rigorous calculations from physical and geometric optics, it helps users quickly find optimal lens-sensor combinations across various application domains (industrial vision, photography, microscopy, infrared imaging). It also ships with an interactive Self-Study Lab and an optics knowledge base, covering the full workflow from selection decisions to learning the underlying principles.
+OptiBench is an optics learning companion, formerly known as LensFit. Its primary goal is to help learners (students, self-taught engineers, career changers) master optics systematically: read tutorials, run experiments, advance along a learning path, and verify understanding with quizzes. The app shell is the Learning Hub — learning path, experiment sandbox, and tutorial views. Engineering capabilities such as lens-sensor matching, the component library, and project management are grouped into the "Practice Field", serving as applied exercises on real component data once the theory is in place.
 
 ### Key Features
 
+**Learning Track**
+
 | Feature | Description |
 |---|---|
-| **Multi-domain Matching** | Supports industrial vision, photography, microscopy, and infrared imaging |
+| **Learning Path** | Declarative learning-path graph (DAG): concept/experiment/breadboard/quiz/practice nodes unlocked by prerequisites |
+| **Tutorial View** | `modules/` markdown tutorials validated by a content contract and rendered in-app, with one-click jumps to linked experiments |
+| **Experiment Sandbox** | 19 interactive optics experiments + breadboard presets with real-time parameter tuning and visualization |
+| **Assessment** | A shared quiz component implementing the `modules/*/assessment` criteria, with per-tutorial quizzes |
+| **Learner Progress** | Local SQLite records of views/completions/quiz scores (no account system), merged live into the path view |
+
+**Practice Field & Tools (former matching workbenches)**
+
+| Feature | Description |
+|---|---|
+| **Multi-domain Matching** | Lens-sensor matching across industrial vision, photography, microscopy, and infrared imaging |
 | **Intelligent Scoring** | Multi-dimensional scoring based on coverage ratio, resolution, pixel accuracy, magnification |
 | **Physics Knowledge Base** | Built-in 9 optical formulas and 5 physical constraints with real-time inference |
 | **Derivation Chain Visualization** | Complete optical calculation derivation shown for every match result |
