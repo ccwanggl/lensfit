@@ -164,7 +164,7 @@ class TestRealCurriculum:
             kinds.setdefault(node.kind, []).append(node.id)
 
         # Coverage: 23 experiments, 2 presets, 4 practice domains, indexed concepts.
-        assert len(kinds["experiment"]) == 23
+        assert len(kinds["experiment"]) == 29
         assert sorted(kinds["preset"]) == ["double-slit-breadboard", "single-slit-breadboard"]
         assert sorted(kinds["practice"]) == [
             "industrial",

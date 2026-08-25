@@ -4,12 +4,12 @@
 
 | 类别 | 知识库 | 已锚定 | 未覆盖 | 覆盖率 |
 |---|---|---|---|---|
-| concepts | 149 | 45 | 104 | 30% |
-| formulas | 72 | 27 | 45 | 38% |
+| concepts | 149 | 53 | 96 | 36% |
+| formulas | 72 | 33 | 39 | 46% |
 
 遗留旧路径字面量：2 处（见 knowledge_links_unresolved.md）
 
-## 未覆盖概念（104）
+## 未覆盖概念（96）
 
 - `4f-system` — 双透镜傅里叶系统（10-概念/4-双透镜傅里叶系统.md）
 - `aperture-stop` — 孔径光阑（10-概念/145-孔径光阑.md）
@@ -17,14 +17,12 @@
 - `brightness-enhancement-film` — 增亮膜（10-概念/090-增亮膜.md）
 - `chromatic-dispersion` — 光纤色散（10-概念/111-光纤色散.md）
 - `coherence` — 相干（10-概念/相干.md）
-- `color-gamut` — 色域（10-概念/097-色域.md）
 - `color-rendering-index` — 显色指数（10-概念/130-显色指数.md）
 - `coma` — 彗差（10-概念/148-彗差.md）
 - `concentration-ratio` — 聚光比（10-概念/085-聚光比.md）
 - `concepts` — 概念（10-概念/概念.md）
 - `coupling-efficiency` — 耦合效率（10-概念/092-耦合效率.md）
 - `cpc` — 复合抛物面聚光器（10-概念/087-复合抛物面聚光器.md）
-- `cutoff-frequency` — 截止频率（10-概念/截止频率.md）
 - `czerny-turner` — 切尔尼特纳光谱仪结构（10-概念/切尔尼特纳光谱仪结构.md）
 - `detectivity-d-star` — 比探测率（10-概念/135-比探测率.md）
 - `directional-coupler` — 定向耦合器（10-概念/118-定向耦合器.md）
@@ -46,17 +44,12 @@
 - `gain-medium` — 增益介质（10-概念/101-增益介质.md）
 - `grating-coupler` — 光栅耦合器（10-概念/094-光栅耦合器.md）
 - `hyperspectral-imaging` — 高光谱成像（10-概念/073-高光谱成像.md）
-- `illuminance` — 照度（10-概念/129-照度.md）
 - `irradiance` — 辐射照度（10-概念/123-辐射照度.md）
-- `lambertian-emitter` — 朗伯体（10-概念/082-朗伯体.md）
-- `lambertian-surface` — 朗伯面（10-概念/125-朗伯面.md）
 - `laser-threshold` — 激光阈值（10-概念/103-激光阈值.md）
 - `light-extraction-efficiency` — 光提取效率（10-概念/083-光提取效率.md）
 - `light-guide-plate` — 导光板（10-概念/089-导光板.md）
 - `local-dimming` — 分区调光（10-概念/098-分区调光.md）
 - `luminance` — 亮度（10-概念/128-亮度.md）
-- `luminous-flux` — 光通量（10-概念/126-光通量.md）
-- `luminous-intensity` — 发光强度（10-概念/127-发光强度.md）
 - `mach-zehnder-modulator` — 马赫-曾德尔调制器（10-概念/116-马赫-曾德尔调制器.md）
 - `merit-function` — 评价函数（优化目标函数）（10-概念/评价函数优化目标函数.md）
 - `metasurface` — 超表面（10-概念/078-超表面.md）
@@ -84,7 +77,6 @@
 - `single-mode-fiber` — 单模光纤（10-概念/109-单模光纤.md）
 - `slit` — 入射狭缝（10-概念/入射狭缝.md）
 - `snapshot-spectral-imaging` — 快照式光谱成像（10-概念/075-快照式光谱成像.md）
-- `solid-angle` — 立体角（10-概念/124-立体角.md）
 - `source-target-mapping` — 源-靶映射（10-概念/096-源-靶映射.md）
 - `spatial-filtering` — 空间滤波（10-概念/空间滤波.md）
 - `spectral-bandwidth` — 光谱带宽与半高全宽（10-概念/光谱带宽与半高全宽.md）
@@ -116,7 +108,7 @@
 - `近轴近似` — 近轴近似（10-概念/001-近轴近似.md）
 - `透视畸变` — 透视畸变（10-概念/013-透视畸变.md）
 
-## 未覆盖公式（45）
+## 未覆盖公式（39）
 
 - `angular-spectrum` — 角谱传播公式（20-公式/角谱传播公式.md）
 - `concentration-ratio` — 几何聚光比（20-公式/018-几何聚光比.md）
@@ -137,7 +129,6 @@
 - `gain-bandwidth` — 增益带宽积（20-公式/051-增益带宽积.md）
 - `half-wave-voltage` — 半波电压（20-公式/039-半波电压.md）
 - `illumination-uniformity` — 照明均匀度（20-公式/044-照明均匀度.md）
-- `lambert-cosine` — 朗伯余弦定律（20-公式/045-朗伯余弦定律.md）
 - `laser-linewidth` — 激光本征线宽（20-公式/050-激光本征线宽.md）
 - `laser-rate-equations` — 激光速率方程（20-公式/032-激光速率方程.md）
 - `laser-threshold` — 激光阈值条件（20-公式/020-激光阈值条件.md）
@@ -152,14 +143,9 @@
 - `pockels-phase-modulation` — 泡克耳斯效应相位调制（20-公式/038-泡克耳斯效应相位调制.md）
 - `prism-dispersion` — 棱镜色散率（20-公式/014-棱镜色散率.md）
 - `pulse-broadening-gvd` — 群速度色散脉冲展宽（20-公式/053-群速度色散脉冲展宽.md）
-- `qe-responsivity-relation` — 量子效率与响应度关系（20-公式/036-量子效率与响应度关系.md）
 - `radiance-flux` — 亮度-通量关系（20-公式/049-亮度-通量关系.md）
-- `responsivity` — 光电响应度计算（20-公式/023-光电响应度计算.md）
 - `rms-wavefront-error` — 均方根波前误差计算（20-公式/均方根波前误差计算.md）
 - `saturation-intensity` — 饱和强度（20-公式/052-饱和强度.md）
-- `solid-angle-cone` — 锥形立体角（20-公式/056-锥形立体角.md）
 - `soliton-condition` — 光纤孤子条件（20-公式/055-光纤孤子条件.md）
 - `specific-detectivity` — 比探测率计算（20-公式/037-比探测率计算.md）
 - `strehl-ratio` — 斯特列尔比计算（20-公式/斯特列尔比计算.md）
-- `visible-flux-integral` — 光通量积分（辐射度→光度）（20-公式/058-光通量积分辐射度→光度.md）
-- `瑞利分辨率` — 瑞利分辨率（20-公式/010-瑞利分辨率.md）

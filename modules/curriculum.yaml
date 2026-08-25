@@ -67,6 +67,20 @@ nodes:
     module: 10-foundations
     prerequisites: []
 
+  - id: solid-angle-cone
+    kind: experiment
+    ref: solid-angle-cone
+    title: 立体角与锥形孔径实验
+    module: 10-foundations
+    prerequisites: [concept-solid-angle]
+
+  - id: color-gamut
+    kind: experiment
+    ref: color-gamut
+    title: CIE 色域映射实验
+    module: 10-foundations
+    prerequisites: [color-mixing]
+
   # ─── 20-geometric-optics ───
   - id: concept-thin-lens
     kind: concept
@@ -184,6 +198,20 @@ nodes:
     title: 全反射临界角与光纤 NA 实验
     module: 20-geometric-optics
     prerequisites: [snell-refraction]
+
+  - id: lambertian-radiance
+    kind: experiment
+    ref: lambertian-radiance
+    title: 朗伯体角分布实验
+    module: 20-geometric-optics
+    prerequisites: []
+
+  - id: rayleigh-two-point
+    kind: experiment
+    ref: rayleigh-two-point
+    title: 双点分辨与瑞利判据实验
+    module: 20-geometric-optics
+    prerequisites: [diffraction]
 
   - id: angle-of-view
     kind: experiment
@@ -407,6 +435,20 @@ nodes:
     title: 探测器信噪比预算实验
     module: 40-spectroscopy
     prerequisites: []
+
+  - id: qe-responsivity
+    kind: experiment
+    ref: qe-responsivity
+    title: 量子效率与响应度关系实验
+    module: 40-spectroscopy
+    prerequisites: [concept-quantum-efficiency]
+
+  - id: photometric-flux
+    kind: experiment
+    ref: photometric-flux
+    title: 光通量可见度积分实验
+    module: 40-spectroscopy
+    prerequisites: [blackbody]
 
   # ─── 50-optical-design ───
   - id: concept-cutoff-frequency

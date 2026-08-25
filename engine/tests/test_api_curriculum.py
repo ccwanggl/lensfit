@@ -55,7 +55,7 @@ def test_get_curriculum_graph(client: TestClient):
 
     nodes = {n["id"]: n for n in data["nodes"]}
     # Coverage
-    assert len([n for n in nodes.values() if n["kind"] == "experiment"]) == 23
+    assert len([n for n in nodes.values() if n["kind"] == "experiment"]) == 29
     assert "single-slit-breadboard" in nodes
     assert "industrial" in nodes
     assert "cmos-fundamentals" in nodes
