@@ -163,8 +163,8 @@ class TestRealCurriculum:
         for node in graph.nodes.values():
             kinds.setdefault(node.kind, []).append(node.id)
 
-        # Coverage: 19 experiments, 2 presets, 4 practice domains, indexed concepts.
-        assert len(kinds["experiment"]) == 19
+        # Coverage: 23 experiments, 2 presets, 4 practice domains, indexed concepts.
+        assert len(kinds["experiment"]) == 23
         assert sorted(kinds["preset"]) == ["double-slit-breadboard", "single-slit-breadboard"]
         assert sorted(kinds["practice"]) == [
             "industrial",

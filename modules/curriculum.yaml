@@ -60,6 +60,13 @@ nodes:
     module: 10-foundations
     prerequisites: []
 
+  - id: penumbra
+    kind: experiment
+    ref: penumbra
+    title: 半影与本影实验
+    module: 10-foundations
+    prerequisites: []
+
   # ─── 20-geometric-optics ───
   - id: concept-thin-lens
     kind: concept
@@ -171,6 +178,13 @@ nodes:
     module: 20-geometric-optics
     prerequisites: []
 
+  - id: tir-critical-angle
+    kind: experiment
+    ref: tir-critical-angle
+    title: 全反射临界角与光纤 NA 实验
+    module: 20-geometric-optics
+    prerequisites: [snell-refraction]
+
   - id: angle-of-view
     kind: experiment
     ref: angle-of-view
@@ -278,6 +292,13 @@ nodes:
     module: 30-wave-optics
     prerequisites: [double-slit]
 
+  - id: gaussian-beam
+    kind: experiment
+    ref: gaussian-beam
+    title: 高斯光束传播实验
+    module: 30-wave-optics
+    prerequisites: []
+
   # ─── 40-spectroscopy ───
   - id: concept-radiant-flux
     kind: concept
@@ -379,6 +400,13 @@ nodes:
     title: CMOS Sensor 光谱响应与色彩特性
     module: 40-spectroscopy
     prerequisites: [cmos-fundamentals]
+
+  - id: detector-snr
+    kind: experiment
+    ref: detector-snr
+    title: 探测器信噪比预算实验
+    module: 40-spectroscopy
+    prerequisites: []
 
   # ─── 50-optical-design ───
   - id: concept-cutoff-frequency
