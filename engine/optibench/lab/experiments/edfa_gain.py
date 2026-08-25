@@ -122,7 +122,7 @@ class EdfaGainExperiment(OpticsExperiment):
             return xx, yy
 
         pts = " ".join(
-            f"{px(d, g)[0]:.1f},{px(d, g)[1]:.1f}" for d, g in gain_curve
+            f"{px(d, g)[0]:.1f},{px(d, g)[1]:.1f}" for d, g, _pout in gain_curve
         )
         children: list[str] = [
             line(ox, oy + span_y, ox + span_x, oy + span_y, stroke="#475569"),

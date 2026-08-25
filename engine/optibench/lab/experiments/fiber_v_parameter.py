@@ -76,7 +76,7 @@ class FiberVParameterExperiment(OpticsExperiment):
         single_mode = v_number < _V_SINGLE_MODE_CUTOFF
         cutoff_nm = math.pi * d_um * na / _V_SINGLE_MODE_CUTOFF * 1e3
 
-        svg = self._draw_svg(lam_nm, d_um, na, single_mode)
+        svg = self._draw_svg(lam_nm, d_um, na, v_number, modes_approx, cutoff_nm, single_mode)
 
         return ExperimentResult(
             data={
@@ -98,7 +98,8 @@ class FiberVParameterExperiment(OpticsExperiment):
             ],
         )
 
-    def _draw_svg(self, lam_nm: float, d_um: float, na: float, single_mode: bool) -> str:
+    def _draw_svg(self, lam_nm: float, d_um: float, na: float, v_number: float,
+                  modes_approx: int, cutoff_nm: float, single_mode: bool) -> str:
         width, height = 640, 300
         ox, oy, span_x, span_y = 56.0, 28.0, 300.0, 170.0
 
