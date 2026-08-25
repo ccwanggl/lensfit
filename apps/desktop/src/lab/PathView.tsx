@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { conceptLink, obsidianUrlFor } from "./knowledgeLinks";
 import {
   BookOpen,
   Briefcase,
@@ -203,7 +204,12 @@ function PathNodeRow({
     }
     setActiveQuizId(null);
     if (node.kind === "concept") {
-      openConceptFromPath(node.ref);
+      const entry = conceptLink(node.ref);
+      if (entry) {
+        window.open(obsidianUrlFor(entry, node.ref), "_blank", "noreferrer");
+      } else {
+        openConceptFromPath(node.ref);
+      }
     } else if (node.kind === "practice") {
       setActiveTab(node.ref as AppTabId);
     } else {

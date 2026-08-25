@@ -1,18 +1,28 @@
 import { BookOpen, Calculator, ExternalLink, Lightbulb } from "lucide-react";
 import type { LabExperiment } from "../utils/api";
+import {
+  conceptLink,
+  formulaLink,
+  obsidianUrlFor,
+} from "./knowledgeLinks";
 
 interface KnowledgeSidebarProps {
   experiment: LabExperiment | null;
 }
 
-function obsidianUrl(path: string): string {
-  return `obsidian://open?vault=OpticKnowledgeSpace&file=${encodeURIComponent(
-    path
-  )}`;
+function conceptUrl(slug: string): string {
+  return obsidianUrlFor(conceptLink(slug), slug);
 }
 
-function conceptName(path: string): string {
-  return path.split("/").pop() ?? path;
+function formulaUrl(slug: string): string {
+  return obsidianUrlFor(formulaLink(slug), slug);
+}
+
+function linkName(
+  entry: ReturnType<typeof conceptLink>,
+  slug: string
+): string {
+  return entry?.title ?? slug;
 }
 
 export function KnowledgeSidebar({ experiment }: KnowledgeSidebarProps) {
@@ -58,13 +68,13 @@ export function KnowledgeSidebar({ experiment }: KnowledgeSidebarProps) {
             {experiment.linked_concepts.map((concept) => (
               <a
                 key={concept}
-                href={obsidianUrl(concept)}
+                href={conceptUrl(concept)}
                 target="_blank"
                 rel="noreferrer"
                 className="group inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 hover:border-emerald-300 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-emerald-500 dark:hover:text-emerald-400"
               >
                 <BookOpen size={12} />
-                <span>{conceptName(concept)}</span>
+                <span>{linkName(conceptLink(concept), concept)}</span>
                 <ExternalLink
                   size={10}
                   className="ml-0.5 opacity-0 transition-opacity group-hover:opacity-100"
@@ -84,14 +94,14 @@ export function KnowledgeSidebar({ experiment }: KnowledgeSidebarProps) {
             {experiment.linked_formulas.map((formula) => (
               <a
                 key={formula}
-                href={obsidianUrl(formula)}
+                href={formulaUrl(formula)}
                 target="_blank"
                 rel="noreferrer"
                 className="group flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 hover:border-indigo-300 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-indigo-500 dark:hover:text-indigo-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Calculator size={12} />
-                  {conceptName(formula)}
+                  {linkName(formulaLink(formula), formula)}
                 </span>
                 <ExternalLink
                   size={10}
