@@ -14,7 +14,9 @@ class PolarizationMalusExperiment(OpticsExperiment):
     title = "偏振与马吕斯定律实验"
     description = "改变两个理想偏振片的透光轴夹角，观察透射光强如何按马吕斯定律变化。"
     difficulty = "foundation"
-    prerequisites = ["thin-lens"]
+    # Malus's law only needs the concept of polarized light; a thin-lens
+    # prerequisite is physically unmotivated (fixed in learning-first phase 1).
+    prerequisites = []
     linked_concepts = [
         "10-concepts/polarization",
     ]

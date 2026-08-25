@@ -1,0 +1,213 @@
+# OptiBench 学习路径图（curriculum graph v1）
+#
+# 规格：docs/development/specifications/lab/curriculum-graph.md
+# 节点：{id, kind, ref, title, prerequisites, module}
+#   kind: concept | experiment | preset | practice | assessment
+#   ref:  concept → 内容合同概念 id；experiment → lab registry 实验 id；
+#         preset → 面包板 preset id；practice → 实践域 id；
+#         assessment → modules/<module>/assessment/quiz.yaml 中的测验 id
+#   prerequisites: 本文件内节点 id 列表（可为空）
+#   module: 分层展示层级（10 → 50，practice 为实践场层）
+
+nodes:
+  # ─── 10-foundations ───
+  - id: color-mixing
+    kind: experiment
+    ref: color-mixing
+    title: 光谱混色实验
+    module: 10-foundations
+    prerequisites: []
+
+  # ─── 20-geometric-optics ───
+  - id: thin-lens
+    kind: experiment
+    ref: thin-lens
+    title: 薄透镜成像实验
+    module: 20-geometric-optics
+    prerequisites: []
+
+  - id: snell-refraction
+    kind: experiment
+    ref: snell-refraction
+    title: 斯涅尔定律与全反射实验
+    module: 20-geometric-optics
+    prerequisites: []
+
+  - id: angle-of-view
+    kind: experiment
+    ref: angle-of-view
+    title: 视角与传感器尺寸实验
+    module: 20-geometric-optics
+    prerequisites: [thin-lens]
+
+  - id: magnification-scale
+    kind: experiment
+    ref: magnification-scale
+    title: 放大倍率与像素精度实验
+    module: 20-geometric-optics
+    prerequisites: [thin-lens, angle-of-view]
+
+  - id: depth-of-field
+    kind: experiment
+    ref: depth-of-field
+    title: 景深实验
+    module: 20-geometric-optics
+    prerequisites: [thin-lens, magnification-scale]
+
+  - id: sensor-coverage
+    kind: experiment
+    ref: sensor-coverage
+    title: 像圈与传感器覆盖实验
+    module: 20-geometric-optics
+    prerequisites: []
+
+  - id: chromatic-aberration
+    kind: experiment
+    ref: chromatic-aberration
+    title: 轴向色差实验
+    module: 20-geometric-optics
+    prerequisites: [thin-lens, snell-refraction]
+
+  - id: illumination-geometry
+    kind: experiment
+    ref: illumination-geometry
+    title: 照明方式几何实验
+    module: 20-geometric-optics
+    prerequisites: [snell-refraction]
+
+  - id: cmos-fundamentals
+    kind: concept
+    ref: cmos-fundamentals
+    title: CMOS Image Sensor 基础
+    module: 20-geometric-optics
+    prerequisites: []
+
+  - id: geo-optics-imaging-quiz
+    kind: assessment
+    ref: geo-optics-imaging-quiz
+    title: 几何光学成像与像差自测
+    module: 20-geometric-optics
+    prerequisites: [thin-lens, depth-of-field, chromatic-aberration]
+
+  # ─── 30-wave-optics ───
+  - id: diffraction
+    kind: experiment
+    ref: diffraction
+    title: 圆孔衍射与艾里斑
+    module: 30-wave-optics
+    prerequisites: []
+
+  - id: polarization-malus
+    kind: experiment
+    ref: polarization-malus
+    title: 偏振与马吕斯定律实验
+    module: 30-wave-optics
+    prerequisites: []
+
+  - id: single-slit-diffraction
+    kind: experiment
+    ref: single-slit-diffraction
+    title: 单缝衍射实验
+    module: 30-wave-optics
+    prerequisites: [diffraction]
+
+  - id: double-slit
+    kind: experiment
+    ref: double-slit
+    title: 双缝干涉实验
+    module: 30-wave-optics
+    prerequisites: [single-slit-diffraction, polarization-malus]
+
+  - id: single-slit-breadboard
+    kind: preset
+    ref: single-slit-breadboard
+    title: 单缝衍射面包板
+    module: 30-wave-optics
+    prerequisites: [single-slit-diffraction]
+
+  - id: double-slit-breadboard
+    kind: preset
+    ref: double-slit-breadboard
+    title: 双缝干涉面包板
+    module: 30-wave-optics
+    prerequisites: [double-slit]
+
+  # ─── 40-spectroscopy ───
+  - id: grating
+    kind: experiment
+    ref: grating
+    title: 光栅方程与光谱级次实验
+    module: 40-spectroscopy
+    prerequisites: [double-slit, color-mixing]
+
+  - id: blackbody
+    kind: experiment
+    ref: blackbody
+    title: 黑体辐射与色温实验
+    module: 40-spectroscopy
+    prerequisites: [color-mixing]
+
+  - id: cmos-spectral-response
+    kind: concept
+    ref: cmos-spectral-response
+    title: CMOS Sensor 光谱响应与色彩特性
+    module: 40-spectroscopy
+    prerequisites: [cmos-fundamentals]
+
+  # ─── 50-optical-design ───
+  - id: nyquist-sampling
+    kind: experiment
+    ref: nyquist-sampling
+    title: 奈奎斯特采样与混叠实验
+    module: 50-optical-design
+    prerequisites: [diffraction, magnification-scale]
+
+  - id: mtf-explorer
+    kind: experiment
+    ref: mtf-explorer
+    title: MTF/OTF 探索实验
+    module: 50-optical-design
+    prerequisites: [nyquist-sampling, diffraction]
+
+  - id: aberration-spot
+    kind: experiment
+    ref: aberration-spot
+    title: 透镜像差点列图实验
+    module: 50-optical-design
+    prerequisites: [thin-lens, chromatic-aberration, mtf-explorer]
+
+  - id: thermal-ifov-netd
+    kind: experiment
+    ref: thermal-ifov-netd
+    title: 热成像 IFOV 与 NETD 实验
+    module: 50-optical-design
+    prerequisites: [magnification-scale, angle-of-view]
+
+  # ─── practice（实践场）───
+  - id: industrial
+    kind: practice
+    ref: industrial
+    title: 工业视觉选型实践
+    module: practice
+    prerequisites: [thin-lens, depth-of-field, sensor-coverage]
+
+  - id: photography
+    kind: practice
+    ref: photography
+    title: 摄影镜头选型实践
+    module: practice
+    prerequisites: [thin-lens, depth-of-field, sensor-coverage]
+
+  - id: microscope
+    kind: practice
+    ref: microscope
+    title: 显微镜选型实践
+    module: practice
+    prerequisites: [magnification-scale, mtf-explorer]
+
+  - id: infrared
+    kind: practice
+    ref: infrared
+    title: 红外成像选型实践
+    module: practice
+    prerequisites: [blackbody, thermal-ifov-netd]

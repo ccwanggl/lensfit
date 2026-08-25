@@ -1,0 +1,128 @@
+# 几何光学模块测验（assessment quizzes）
+#
+# 规格：docs/development/specifications/lab/assessment-quizzes.md
+# 评估标准来源：modules/20-geometric-optics/assessment/README.md（概念自测题 2.1-2.3）
+# 题目为单项选择题，explanation 中联动相关实验（学习路径沙盘可直接验证）。
+
+quizzes:
+  # ─── 模块级综合自测：成像计算 + 像差识别 + 照明分析 ───
+  - id: geo-optics-imaging-quiz
+    title: 几何光学成像与像差自测
+    module: 20-geometric-optics
+    concepts: []
+    pass_score: 80
+    questions:
+      - question: 薄透镜焦距 f = 50 mm，实物位于镜前 u = 150 mm。按高斯公式 1/u + 1/v = 1/f，像距 v 是多少？
+        options:
+          - 37.5 mm
+          - 60 mm
+          - 75 mm
+          - 100 mm
+        correct_index: 2
+        explanation: 1/v = 1/50 − 1/150 = 2/150，v = 75 mm。可在「薄透镜成像实验」中输入相同参数验证像面位置。
+
+      - question: 上题条件下，横向放大率 β = −v/u 的成像特征是？
+        options:
+          - 正立、等大
+          - 倒立、缩小为一半
+          - 倒立、放大一倍
+          - 正立、缩小为一半
+        correct_index: 1
+        explanation: β = −75/150 = −0.5：负号表示倒立，|β| = 0.5 表示缩小一半。对应实验「放大倍率与像素精度实验」的倍率读数。
+
+      - question: 焦距 f = 50 mm、通光孔径 D = 25 mm 的镜头，其 F 数是？
+        options:
+          - F/0.5
+          - F/2
+          - F/12.5
+          - F/25
+        correct_index: 1
+        explanation: F 数 = f/D = 50/25 = 2。F 数同时决定衍射极限与景深，可联动「景深实验」调节光圈观察。
+
+      - question: 在空气中、近轴近似下，数值孔径 NA 与 F 数的换算关系是？
+        options:
+          - NA ≈ 1/(2F)
+          - NA ≈ 2F
+          - NA ≈ F/2
+          - NA ≈ 1/F
+        correct_index: 0
+        explanation: NA = n·sinθ ≈ D/(2f) = 1/(2F)。例如 F/2 对应 NA ≈ 0.25。
+
+      - question: 其它参数不变，把光圈从 F/2 收缩到 F/8，景深会如何变化？
+        options:
+          - 景深变小
+          - 景深不变
+          - 景深变大
+          - 先变大后变小
+        correct_index: 2
+        explanation: 光圈收缩（F 数增大）使容许弥散圆对应的物空间范围变大，景深增大。可在「景深实验」中直接验证。
+
+      - question: 轴上物点以宽光束成像，边缘光线的焦点比近轴光线更靠近透镜，这属于哪种像差？
+        options:
+          - 彗差
+          - 球差
+          - 畸变
+          - 场曲
+        correct_index: 1
+        explanation: 球差是轴上点像差：不同孔径（环带）的光线焦点沿轴向不重合。彗差则出现在轴外点，呈彗星状拖尾。
+
+      - question: 图像整体清晰，但画面边缘的直线变弯（桶形或枕形），这是哪种像差？
+        options:
+          - 畸变
+          - 球差
+          - 轴向色差
+          - 像散
+        correct_index: 0
+        explanation: 畸变是放大率随视场变化引起的几何失真，只影响形状不影响清晰度。校正思路是在光学设计中对称化光阑位置或用软件标定。
+
+      - question: 点光源照明下，探测器与光源距离加倍（保持正入射），照度变为原来的多少？
+        options:
+          - 1/2
+          - 1/4
+          - 不变
+          - 1/8
+        correct_index: 1
+        explanation: 距离平方反比定律 E = I·cosθ/d²：d 加倍则 E 变 1/4。可在「照明方式几何实验」中拖动距离验证，斜入射时还会叠加 cosθ 因子。
+
+  # ─── 概念配套测验：挂载在教程「CMOS Image Sensor 基础」文末 ───
+  - id: cmos-fundamentals-quiz
+    title: CMOS 基础自测
+    module: 20-geometric-optics
+    concepts: [cmos-fundamentals]
+    pass_score: 80
+    questions:
+      - question: 传感器尺寸固定时，镜头焦距越长，视场角会如何变化？
+        options:
+          - 视场角变大
+          - 视场角变小
+          - 视场角不变
+          - 与焦距无关
+        correct_index: 1
+        explanation: 视场角 ≈ 2·arctan(d/2f)：焦距 f 越长视场角越窄。可在「视角与传感器尺寸实验」中调节焦距观察。
+
+      - question: 像元尺寸为 2.4 µm 的传感器，其奈奎斯特频率约为？
+        options:
+          - 104 lp/mm
+          - 208 lp/mm
+          - 417 lp/mm
+          - 24 lp/mm
+        correct_index: 1
+        explanation: 奈奎斯特频率 = 1/(2·像元尺寸) = 1/(2×0.0024 mm) ≈ 208 lp/mm。镜头分辨率低于此值时传感器无法发挥全部能力。
+
+      - question: 镜头像圈直径小于传感器对角线时，成像会出现什么现象？
+        options:
+          - 画面整体变亮
+          - 边缘出现暗角甚至黑角
+          - 分辨率提升
+          - 色彩更饱和
+        correct_index: 1
+        explanation: 像圈覆盖不足时传感器边缘接收不到足够光线，出现渐晕甚至全黑。可在「像圈与传感器覆盖实验」中验证覆盖判据。
+
+      - question: 拜耳（Bayer）滤色阵列中，绿色（G）滤色单元约占全部像素的多少？
+        options:
+          - 1/4
+          - 1/3
+          - 1/2
+          - 3/4
+        correct_index: 2
+        explanation: 拜耳阵列按 RGGB 排列，G 占 1/2、R 和 B 各占 1/4，利用人眼对绿色亮度更敏感的特性。详见概念文档「CMOS Image Sensor 基础」。

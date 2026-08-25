@@ -14,10 +14,13 @@ from sqlalchemy.pool import NullPool, StaticPool
 
 from optibench.api.routers import (
     catalog,
+    content,
+    curriculum,
     domains,
     export,
     knowledge,
     lab,
+    learning,
     matching,
     projects,
     visualization,
@@ -172,6 +175,9 @@ app.include_router(knowledge.router)
 app.include_router(visualization.router)
 app.include_router(projects.router)
 app.include_router(lab.router)
+app.include_router(content.router)
+app.include_router(curriculum.router)
+app.include_router(learning.router)
 app.include_router(export.router)
 
 

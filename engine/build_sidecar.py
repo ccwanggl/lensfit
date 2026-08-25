@@ -64,6 +64,21 @@ def build() -> None:
         "optibench.lab.schemas",
         "optibench.lab.renderer",
         "optibench.api.routers.lab",
+        "optibench.content",
+        "optibench.content.contract",
+        "optibench.content.index",
+        "optibench.content.loader",
+        "optibench.content.quiz",
+        "optibench.api.routers.content",
+        "optibench.practice",
+        "optibench.practice.base",
+        "optibench.practice.matching",
+        "optibench.practice.breadboard",
+        "optibench.curriculum",
+        "optibench.curriculum.loader",
+        "optibench.curriculum.graph",
+        "optibench.api.routers.curriculum",
+        "optibench.api.routers.learning",
         "optibench.knowledge.formulas",
         "optibench.knowledge.constraints",
         "optibench.knowledge.presets",
@@ -87,6 +102,7 @@ def build() -> None:
     data_sep = ";" if system == "Windows" else ":"
     migrations_dir = engine_dir / "optibench" / "db" / "migrations"
     alembic_ini = engine_dir / "alembic.ini"
+    modules_dir = root_dir / "modules"
 
     cmd = [
         sys.executable,
@@ -113,6 +129,8 @@ def build() -> None:
         f"{migrations_dir}{data_sep}optibench/db/migrations",
         "--add-data",
         f"{alembic_ini}{data_sep}.",
+        "--add-data",
+        f"{modules_dir}{data_sep}modules",
     ]
     for imp in hidden_imports:
         cmd.extend(["--hidden-import", imp])

@@ -14,7 +14,9 @@ class SnellRefractionExperiment(OpticsExperiment):
     title = "斯涅尔定律与全反射实验"
     description = "改变入射角和两种介质的折射率，观察折射、反射和全反射现象。"
     difficulty = "foundation"
-    prerequisites = ["thin-lens"]
+    # Snell's law is more fundamental than the thin lens; requiring thin-lens
+    # first inverts the physics order (fixed in learning-first phase 1).
+    prerequisites = []
     linked_concepts = [
         "10-concepts/refractive-index",
         "10-concepts/dispersion",

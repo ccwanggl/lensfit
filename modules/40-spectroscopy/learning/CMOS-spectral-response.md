@@ -1,11 +1,17 @@
 ---
 id: cmos-spectral-response
 title: CMOS Sensor 光谱响应与色彩特性
+module: 40-spectroscopy
+difficulty: intermediate
+prerequisites:
+  - cmos-fundamentals
+linked_experiments:
+  - color-mixing
+status: draft
 type: learning
 domains:
   - spectroscopy
   - sensor
-status: draft
 source: "https://zhuanlan.zhihu.com/p/100777121"
 author:
   - "刘斯宁"

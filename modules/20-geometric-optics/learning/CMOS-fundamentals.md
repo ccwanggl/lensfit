@@ -1,11 +1,16 @@
 ---
 id: cmos-fundamentals
 title: CMOS Image Sensor 基础
+module: 20-geometric-optics
+difficulty: intermediate
+prerequisites: []
+linked_experiments:
+  - sensor-coverage
+status: draft
 type: learning
 domains:
   - geometric-optics
   - sensor
-status: draft
 source: "https://zhuanlan.zhihu.com/p/100777121"
 author:
   - "刘斯宁"

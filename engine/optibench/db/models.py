@@ -13,6 +13,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -253,6 +254,31 @@ class ProjectSetup(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     project: Mapped[Project] = relationship(back_populates="setups")
+
+
+class LearningRecord(Base):
+    """学习者进度表（learning-first 阶段 2）.
+
+    单表记录本地单用户的学习进度：概念已读、实验/面包板完成、测验成绩。
+    ``learner_id`` 预留多学习者扩展，当前恒为 ``default``（不做账号系统）。
+    """
+
+    __tablename__ = "learning_records"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    learner_id: Mapped[str] = mapped_column(String, nullable=False, default="default")
+    item_kind: Mapped[str] = mapped_column(String, nullable=False)
+    item_id: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[str] = mapped_column(String, nullable=False)  # viewed/completed/scored
+    score: Mapped[float | None] = mapped_column(Float)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
+
+    __table_args__ = (
+        UniqueConstraint("learner_id", "item_kind", "item_id", name="uq_learning_item"),
+        Index("ix_learning_learner_kind", "learner_id", "item_kind"),
+    )
 
 
 def init_db(db_url: str = "sqlite:///optibench.db") -> None:
