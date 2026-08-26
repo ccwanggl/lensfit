@@ -114,7 +114,7 @@ class EdfaGainExperiment(OpticsExperiment):
                   p_out_dbm: float, g0_db: float) -> str:
         width, height = 640, 300
         ox, oy, span_x, span_y = 56.0, 28.0, 330.0, 190.0
-        y_min_db, y_max_db = 0.0, math.ceil(g0_db / 5) * 5
+        y_max_db = math.ceil(g0_db / 5) * 5
 
         def px(dbm: float, gain_db: float):
             xx = ox + (dbm - sweep_dbm[0]) / (sweep_dbm[-1] - sweep_dbm[0]) * span_x

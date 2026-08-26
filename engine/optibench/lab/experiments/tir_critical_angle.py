@@ -99,8 +99,10 @@ class TirCriticalAngleExperiment(OpticsExperiment):
         children.append(
             line(ix - panel_half, iy, ix + panel_half, iy, stroke="#475569", stroke_width=2)
         )
-        children.append(text(ix - panel_half - 6, iy + 4, "n₂", fill="#475569", font_size=11, anchor="end"))
-        children.append(text(ix - panel_half - 6, iy - 10, "n₁", fill="#475569", font_size=11, anchor="end"))
+        children.append(text(ix - panel_half - 6, iy + 4,
+                             "n₂", fill="#475569", font_size=11, anchor="end"))
+        children.append(text(ix - panel_half - 6, iy - 10,
+                             "n₁", fill="#475569", font_size=11, anchor="end"))
         # Normal.
         children.append(line(ix, iy - 70, ix, iy + 60, stroke="#94a3b8", dash="4"))
         children.append(text(ix + 4, iy - 74, "法线", fill="#94a3b8", font_size=9))
@@ -121,7 +123,8 @@ class TirCriticalAngleExperiment(OpticsExperiment):
                 # Total reflection back into dense medium (mirror about normal).
                 x2 = ix - ray_len * math.sin(rad_in)
                 y2 = iy + ray_len * math.cos(rad_in)
-                children.append(line(ix, iy, x2 * 0.9 + ix * 0.1, y2 * 0.9 + iy * 0.1, stroke=color, stroke_width=2))
+                children.append(line(ix, iy, x2 * 0.9 + ix * 0.1,
+                                     y2 * 0.9 + iy * 0.1, stroke=color, stroke_width=2))
             else:
                 refr = math.degrees(math.asin(min(1.0, n_core * math.sin(rad_in) / n_clad)))
                 rad_r = math.radians(refr)

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 from optibench.lab.base import ExperimentResult, OpticsExperiment, Parameter
@@ -145,7 +144,9 @@ class IlluminationUniformityExperiment(OpticsExperiment):
                          cell_px + 0.5, cell_px + 0.5, fill=color(e_map[gy][gx]))
                 )
 
-        verdict_color = "#16a34a" if uniformity > 0.9 else "#b45309" if uniformity > 0.75 else "#dc2626"
+        verdict_color = ("#16a34a" if uniformity > 0.9
+                         else "#b45309" if uniformity > 0.75
+                         else "#dc2626")
         children += [
             text(ox + 300 + 24, oy + 30,
                  f"U₀ = Emin/Eavg = {uniformity:.2f}", fill="#0f172a", font_size=13),

@@ -223,10 +223,14 @@ class BlackbodyExperiment(OpticsExperiment):
                 font_size=10,
                 anchor="middle",
             ),
-            text(plot_x + plot_w - 8, plot_y + 16, "T₁", fill="#f59e0b", font_size=11, anchor="end"),
-            text(plot_x + plot_w - 34, plot_y + 16, "—", fill="#f59e0b", font_size=12, anchor="end"),
-            text(plot_x + plot_w - 8, plot_y + 32, "T₂", fill="#3b82f6", font_size=11, anchor="end"),
-            text(plot_x + plot_w - 34, plot_y + 32, "—", fill="#3b82f6", font_size=12, anchor="end"),
+            text(plot_x + plot_w - 8, plot_y + 16,
+                 "T₁", fill="#f59e0b", font_size=11, anchor="end"),
+            text(plot_x + plot_w - 34, plot_y + 16,
+                 "—", fill="#f59e0b", font_size=12, anchor="end"),
+            text(plot_x + plot_w - 8, plot_y + 32,
+                 "T₂", fill="#3b82f6", font_size=11, anchor="end"),
+            text(plot_x + plot_w - 34, plot_y + 32,
+                 "—", fill="#3b82f6", font_size=12, anchor="end"),
             # Axis labels.
             text(
                 plot_x + plot_w / 2,

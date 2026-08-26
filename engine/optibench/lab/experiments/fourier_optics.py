@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
 
 from optibench.lab.base import ExperimentResult, OpticsExperiment, Parameter
-from optibench.lab.renderer import axis_x, line, path, svg_root, text
+from optibench.lab.renderer import line, path, svg_root, text
 
 
 class FourierOpticsExperiment(OpticsExperiment):

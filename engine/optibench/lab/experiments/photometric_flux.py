@@ -139,12 +139,14 @@ class PhotometricFluxExperiment(OpticsExperiment):
             text(ox + span_x - 4, oy + 12, "SPD", fill="#f59e0b", font_size=10, anchor="end"),
             text(ox + span_x - 4, oy + 26, "V(λ)", fill="#22c55e", font_size=10, anchor="end"),
             text(ox + span_x - 4, oy + 40, "SPD×V(λ)", fill="#3b82f6", font_size=10, anchor="end"),
-            text(ox + span_x / 2, height - 34, "波长 (nm)", fill="#64748b", font_size=11, anchor="middle"),
+            text(ox + span_x / 2, height - 34,
+                 "波长 (nm)", fill="#64748b", font_size=11, anchor="middle"),
         ]
         for nm in (400, 500, 600, 700):
             x, _ = px(float(nm), 0)
             children.append(line(x, oy + span_y, x, oy + span_y + 4, stroke="#94a3b8"))
-            children.append(text(x, oy + span_y + 16, str(nm), fill="#94a3b8", font_size=9, anchor="middle"))
+            children.append(text(x, oy + span_y + 16, str(nm),
+                                 fill="#94a3b8", font_size=9, anchor="middle"))
         children.append(
             text(width / 2, height - 12,
                  "蓝线面积 ∝ 人眼实际感知的光通量；橙线与蓝线之间的差距被 V(λ) 滤掉",

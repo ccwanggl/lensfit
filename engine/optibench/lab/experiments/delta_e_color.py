@@ -54,12 +54,18 @@ class DeltaEColorExperiment(OpticsExperiment):
         "理解为什么在 RGB 空间直接算距离不准确（需要感知均匀空间）。",
     ]
     parameters = [
-        Parameter(name="r1", label="颜色A R", type="float", default=220.0, min=0.0, max=255.0, step=5.0),
-        Parameter(name="g1", label="颜色A G", type="float", default=180.0, min=0.0, max=255.0, step=5.0),
-        Parameter(name="b1", label="颜色A B", type="float", default=140.0, min=0.0, max=255.0, step=5.0),
-        Parameter(name="r2", label="颜色B R", type="float", default=210.0, min=0.0, max=255.0, step=5.0),
-        Parameter(name="g2", label="颜色B G", type="float", default=175.0, min=0.0, max=255.0, step=5.0),
-        Parameter(name="b2", label="颜色B B", type="float", default=160.0, min=0.0, max=255.0, step=5.0),
+        Parameter(name="r1", label="颜色A R",
+                  type="float", default=220.0, min=0.0, max=255.0, step=5.0),
+        Parameter(name="g1", label="颜色A G",
+                  type="float", default=180.0, min=0.0, max=255.0, step=5.0),
+        Parameter(name="b1", label="颜色A B",
+                  type="float", default=140.0, min=0.0, max=255.0, step=5.0),
+        Parameter(name="r2", label="颜色B R",
+                  type="float", default=210.0, min=0.0, max=255.0, step=5.0),
+        Parameter(name="g2", label="颜色B G",
+                  type="float", default=175.0, min=0.0, max=255.0, step=5.0),
+        Parameter(name="b2", label="颜色B B",
+                  type="float", default=160.0, min=0.0, max=255.0, step=5.0),
     ]
 
     def run(self, params: dict[str, Any]) -> ExperimentResult:
@@ -98,11 +104,13 @@ class DeltaEColorExperiment(OpticsExperiment):
 
     def _draw_svg(self, c1, c2, delta_e: float, verdict: str) -> str:
         width, height = 640, 240
+        fill_a = f"rgb({c1[0]:.0f},{c1[1]:.0f},{c1[2]:.0f})"
+        fill_b = f"rgb({c2[0]:.0f},{c2[1]:.0f},{c2[2]:.0f})"
         children: list[str] = [
             text(width / 2 - 110, 60, "颜色 A", fill="#475569", font_size=12, anchor="middle"),
             text(width / 2 + 110, 60, "颜色 B", fill="#475569", font_size=12, anchor="middle"),
-            rect(width / 2 - 170, 72, 120, 80, fill=f"rgb({c1[0]:.0f},{c1[1]:.0f},{c1[2]:.0f})", stroke="#94a3b8"),
-            rect(width / 2 + 50, 72, 120, 80, fill=f"rgb({c2[0]:.0f},{c2[1]:.0f},{c2[2]:.0f})", stroke="#94a3b8"),
+            rect(width / 2 - 170, 72, 120, 80, fill=fill_a, stroke="#94a3b8"),
+            rect(width / 2 + 50, 72, 120, 80, fill=fill_b, stroke="#94a3b8"),
             text(width / 2 - 110, 172, f"#{int(c1[0]):02x}{int(c1[1]):02x}{int(c1[2]):02x}",
                  fill="#64748b", font_size=10, anchor="middle"),
             text(width / 2 + 110, 172, f"#{int(c2[0]):02x}{int(c2[1]):02x}{int(c2[2]):02x}",

@@ -113,7 +113,8 @@ class SolidAngleConeExperiment(OpticsExperiment):
             "近似开始偏离" if abs(error_pct) < 10.0 else
             "必须使用精确式"
         )
-        color = "#22c55e" if abs(error_pct) < 1.0 else "#f59e0b" if abs(error_pct) < 10.0 else "#dc2626"
+        color = ("#22c55e" if abs(error_pct) < 1.0
+                 else "#f59e0b" if abs(error_pct) < 10.0 else "#dc2626")
         children.append(text(485, y + 8, verdict, fill=color, font_size=13, anchor="middle"))
 
         return svg_root(width, height, children)

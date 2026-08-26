@@ -159,21 +159,33 @@ class PenumbraExperiment(OpticsExperiment):
                 )
             )
 
-        children.append(rect(x_source - 7, y_px(-source_r), 7, 2 * source_r * v_scale, fill="#fbbf24"))
-        children.append(text(x_source + 2, y_px(-source_r) - 6, "光源", fill="#b45309", font_size=11))
+        children.append(
+            rect(x_source - 7, y_px(-source_r), 7,
+                 2 * source_r * v_scale, fill="#fbbf24")
+        )
+        children.append(text(x_source + 2, y_px(-source_r) - 6,
+                             "光源", fill="#b45309", font_size=11))
 
         obj_w = 10.0
-        children.append(rect(x_obj - obj_w / 2, y_px(-object_r), obj_w, 2 * object_r * v_scale, fill="#334155"))
         children.append(
-            text(x_obj, y_px(object_r) + 15, "障碍物", fill="#334155", font_size=11, anchor="middle")
+            rect(x_obj - obj_w / 2, y_px(-object_r), obj_w,
+                 2 * object_r * v_scale, fill="#334155")
+        )
+        children.append(
+            text(x_obj, y_px(object_r) + 15, "障碍物", fill="#334155",
+                 font_size=11, anchor="middle")
         )
 
         band_half = max(penumbra_r * v_scale, 20.0)
-        children.append(rect(x_screen, axis_y_px - band_half, 10, 2 * band_half, fill="#f8fafc", stroke="#94a3b8"))
+        children.append(
+            rect(x_screen, axis_y_px - band_half, 10, 2 * band_half,
+                 fill="#f8fafc", stroke="#94a3b8")
+        )
         if umbra_r > 0:
             umbra_h = 2 * umbra_r * v_scale
             children.append(rect(x_screen, axis_y_px - umbra_h / 2, 10, umbra_h, fill="#334155"))
-            children.append(text(x_screen + 15, axis_y_px - 4, "本影", fill="#334155", font_size=11))
+            children.append(text(x_screen + 15, axis_y_px - 4,
+                                 "本影", fill="#334155", font_size=11))
         pen_mid_mm = -(umbra_r + penumbra_r) / 2 if umbra_r > 0 else -(band_half / v_scale) / 2
         children.append(
             text(x_screen + 15, y_px(pen_mid_mm) + 4, "半影", fill="#64748b", font_size=11)

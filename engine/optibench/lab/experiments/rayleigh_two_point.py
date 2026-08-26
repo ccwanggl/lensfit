@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 from optibench.lab.base import ExperimentResult, OpticsExperiment, Parameter
 from optibench.lab.renderer import axis_x, line, path, svg_root, text
-
 
 _AIRY_FIRST_ZERO = 3.83170597  # first zero of J1, in pattern-units
 

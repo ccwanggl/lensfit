@@ -72,7 +72,8 @@ class GvdPulseBroadeningExperiment(OpticsExperiment):
         t_out_ps = t0_ps * broaden
 
         sweep = [length_km * i / 60 for i in range(61)]
-        widths = [t0_ps * math.sqrt(1.0 + (l / ld_km) ** 2) for l in sweep]
+        widths = [t0_ps * math.sqrt(1.0 + (dist_km / ld_km) ** 2)
+                  for dist_km in sweep]
 
         svg = self._draw_svg(sweep, widths, t0_ps, ld_km, length_km, broaden, beta2)
 
@@ -100,11 +101,11 @@ class GvdPulseBroadeningExperiment(OpticsExperiment):
         ox, oy, span_x, span_y = 56.0, 28.0, 330.0, 190.0
         y_max = max(widths[-1], t0_ps * 1.15)
 
-        def px(l: float, w: float):
-            return ox + l / sweep[-1] * span_x, oy + span_y - w / y_max * span_y
+        def px(dist_km: float, w: float):
+            return ox + dist_km / sweep[-1] * span_x, oy + span_y - w / y_max * span_y
 
-        pts = " ".join(f"{px(l, w)[0]:.1f},{px(l, w)[1]:.1f}"
-                       for l, w in zip(sweep, widths))
+        pts = " ".join(f"{px(dist_km, w)[0]:.1f},{px(dist_km, w)[1]:.1f}"
+                       for dist_km, w in zip(sweep, widths))
         children: list[str] = [
             line(ox, oy + span_y, ox + span_x, oy + span_y, stroke="#475569"),
             path("M" + pts, fill="none", stroke="#8b5cf6", stroke_width=2.5),
@@ -112,14 +113,16 @@ class GvdPulseBroadeningExperiment(OpticsExperiment):
         if ld_km <= sweep[-1]:
             lx = ox + ld_km / sweep[-1] * span_x
             children.append(line(lx, oy, lx, oy + span_y, stroke="#22c55e", dash="4"))
-            children.append(text(lx + 4, oy + 14, f"L_D={ld_km:.1f} km", fill="#22c55e", font_size=10))
+            children.append(text(lx + 4, oy + 14,
+                                 f"L_D={ld_km:.1f} km", fill="#22c55e", font_size=10))
         else:
             children.append(text(ox + span_x / 2, oy + 14,
                                  f"L_D = {ld_km:.0f} km 超出图示范围", fill="#22c55e",
                                  font_size=10, anchor="middle"))
         opx, opy = px(length_now, t0_ps * broaden)
         children.append(circle(opx, opy, 4, fill="#dc2626"))
-        children.append(text(opx + 6, opy - 6, f"{t0_ps*broaden:.1f} ps", fill="#dc2626", font_size=10))
+        children.append(text(opx + 6, opy - 6,
+                             f"{t0_ps*broaden:.1f} ps", fill="#dc2626", font_size=10))
 
         l_ticks = [(i / 4 * span_x, f"{i / 4 * sweep[-1]:.1f}") for i in range(5)]
         children += axis_x(ox, oy + span_y, span_x, "传输长度 (km)", l_ticks)

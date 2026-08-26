@@ -96,6 +96,7 @@ class ParallaxExperiment(OpticsExperiment):
         z_px = (depth_m / 20.0) * scene_h + 30
         b_half_px = min(90.0, baseline_m * 1e3 / 4)
         target_r = 10.0
+        disparity_px = disparity_mm * 1e-3 / 3.3e-6
 
         children = [
             # Cameras.
@@ -116,7 +117,7 @@ class ParallaxExperiment(OpticsExperiment):
             text(cx, cy - 32, f"B = {baseline_m*1e3:.0f} mm", fill="#475569",
                  font_size=11, anchor="middle"),
             text(width / 2, height - 34,
-                 f"视差 d = f·B/Z = {disparity_mm:.2f} mm ≈ {disparity_mm*1e-3/3.3e-6:.0f} px (3.3 µm 像元)",
+                 f"视差 d = f·B/Z = {disparity_mm:.2f} mm ≈ {disparity_px:.0f} px (3.3 µm 像元)",
                  fill="#475569", font_size=11, anchor="middle"),
             text(width / 2, height - 14,
                  "蓝/红射线与目标连线的夹角即视差角——两像面位置差就是它的直接体现",

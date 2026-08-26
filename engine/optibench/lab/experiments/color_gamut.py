@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 from optibench.lab.base import ExperimentResult, OpticsExperiment, Parameter
@@ -168,7 +167,8 @@ class ColorGamutExperiment(OpticsExperiment):
                 )
         violet_start = px(_LOCUS[-1][1], _LOCUS[-1][2])
         violet_end = px(_LOCUS[0][1], _LOCUS[0][2])
-        children.append(path("M" + " L".join(locus_pts), fill="none", stroke="#0f172a", stroke_width=1.5))
+        children.append(path("M" + " L".join(locus_pts),
+                             fill="none", stroke="#0f172a", stroke_width=1.5))
         children.append(line(violet_start[0], violet_start[1], violet_end[0], violet_end[1],
                              stroke="#8b5cf6", dash="4"))
 

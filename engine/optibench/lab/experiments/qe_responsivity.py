@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 from optibench.lab.base import ExperimentResult, OpticsExperiment, Parameter
@@ -129,7 +128,8 @@ class QeResponsivityExperiment(OpticsExperiment):
             path("M" + eta_pts, fill="none", stroke="#3b82f6", stroke_width=2),
             line(marker_x, margin_top, marker_x, margin_top + plot_h, stroke="#94a3b8", dash="3"),
             circle(marker_x, marker_y, 4, fill="#dc2626"),
-            text(marker_x + 6, marker_y - 6, f"R={responsivity:.3f} A/W", fill="#dc2626", font_size=11),
+            text(marker_x + 6, marker_y - 6, f"R={responsivity:.3f} A/W",
+                 fill="#dc2626", font_size=11),
             text(margin_left + plot_w - 6, margin_top + 16, "η=100% 理想线", fill="#22c55e",
                  font_size=10, anchor="end"),
             text(margin_left + plot_w - 6, margin_top + 30, f"η={qe*100:.0f}%", fill="#3b82f6",

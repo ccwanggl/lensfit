@@ -113,7 +113,7 @@ class FiberVParameterExperiment(OpticsExperiment):
             y = oy + span_y - min(1.0, v / 12.0) * span_y
             pts.append(f"{x:.1f},{y:.1f}")
             if i == 0:
-                vx, vy = x, oy + span_y - min(1.0, _V_SINGLE_MODE_CUTOFF / 12.0) * span_y
+                vy = oy + span_y - min(1.0, _V_SINGLE_MODE_CUTOFF / 12.0) * span_y
 
         children: list[str] = [
             line(ox, oy + span_y, ox + span_x, oy + span_y, stroke="#475569"),
