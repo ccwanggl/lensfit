@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -13,6 +14,8 @@ from optibench.domains.base import Requirements
 from optibench.matching.engine import MatchingEngine
 
 router = APIRouter(prefix="/api/v1", tags=["matching"])
+
+logger = logging.getLogger(__name__)
 
 
 class CalculateReq(BaseModel):
@@ -125,7 +128,12 @@ def get_matching_result(task_id: str, engine: MatchingEngine = Depends(get_engin
         try:
             explanations[f"{r.lens_id}-{r.detector_id}"] = engine.explain_result(r)
         except Exception:
-            pass
+            logger.warning(
+                "explain_result failed for %s-%s",
+                r.lens_id,
+                r.detector_id,
+                exc_info=True,
+            )
 
     return {
         "top_matches": [r.to_dict() for r in top_matches],
