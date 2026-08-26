@@ -1,5 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 
+/**
+ * 四领域工作台内部的章节/测验勾选状态（localStorage）。
+ *
+ * 边界决策见 docs/development/specifications/lab/learning-records.md §6：
+ * 本 hook 的键空间与学习路径 item 命名空间不重叠，明确不迁移；
+ * 学习路径相关进度一律走 /api/v1/learning/progress（见 lab/reportProgress.ts）。
+ */
+
 export type Domain = "photography" | "microscope" | "infrared" | "industrial";
 
 export interface DomainProgress {
