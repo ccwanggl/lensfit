@@ -1,7 +1,7 @@
 # 前端巨型文件重构计划（api.ts / LearningHub.tsx / 四域页面）
 
 > 制定日期：2026-08-26（同日 v2 修订：纳入 2026-08-25 评审 M1 的另一半范围「DomainPageShell」，并补充与面包板 checkpoint 的协调条款）
-> 状态：草案——仅立项，未进入执行；每切片开工前须单独确认
+> 状态：切片 A 已完成（2026-08-26）；切片 B / C 待确认后开工
 > 依据：`docs/development/reviews/2026-08-25-deep-codebase-review.md`（M1：前端巨型组件与四域重复编排）、2026-08-26 全仓深度评审（`LearningHub.tsx` 896 行、`utils/api.ts` 814 行持续膨胀）
 > 边界：全部切片只做结构拆分与模块化，不改任何业务行为与 API 协议语义；四域页面仅做结构抽取，不做视觉改版；不触碰 `engine/optibench/matching`。
 
@@ -16,6 +16,8 @@
 明确不做（YAGNI）：不改匹配算法与评分逻辑、不引入新状态管理库、不改路由结构、不动 `matching/engine.py`（遗留豁免）、不做四域页面的视觉改版。
 
 ## 1. 切片 A：utils/api.ts 领域化拆分
+
+> **状态：✅ 已完成（2026-08-26）**——拆出 `src/api/` 12 个域模块（client/types/domains/matching/visualization/catalog/projects/export/knowledge/lab/content/curriculum/learning），`utils/api.ts` 转为 23 行聚合出口；vitest 59 通过、tsc 通过、build 成功，最大单文件 catalog.ts 168 行。
 
 ### 目标
 
