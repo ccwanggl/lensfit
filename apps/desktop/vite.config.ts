@@ -8,6 +8,7 @@ export default defineConfig(async () => ({
     environment: "jsdom",
     globals: true,
     include: ["src/**/*.test.{ts,tsx}"],
+    setupFiles: ["src/test-utils/setup.ts"],
   },
   clearScreen: false,
   build: {
