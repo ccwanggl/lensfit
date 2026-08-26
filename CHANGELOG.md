@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+- **学习优先转型阶段 0–4 落地**（依据 ADR-003 与执行计划 2026-08-learning-first-repositioning-plan）
+  - 内容合同 v1 与内容 API：`GET /api/v1/content/concepts`、`GET /api/v1/content/quizzes`，`modules/**/learning/*.md` 启动扫描索引
+  - 声明式课程图 DAG（`modules/curriculum.yaml`）：`GET /api/v1/curriculum/graph` 合并进度状态，学习中心路径视图支持先修锁定与完成标记
+  - 学习者进度本地持久化：SQLite 表 `learning_records`（migration `004`）+ `GET/PUT /api/v1/learning/progress`，沙盘完成/教程浏览/测验成绩自动上报
+  - 通用测验组件 QuizPanel 与 assessment 节点落地，成绩入库
+  - 应用壳导航反转：学习中心为默认首页，四领域工作台收编为「实践场」分组
+- **实验库扩充**：T1 三批概念验证实验 + T3 数值仿真实验 + 60-photonics 课程层，课程图实验节点断言更新至 39
+
 ### Changed
 - **项目改名**：LensFit → OptiBench（光学工程工作台）
   - Python 包 `lensfit` → `optibench`，PyPI 包名 `lensfit-engine` → `optibench-engine`
