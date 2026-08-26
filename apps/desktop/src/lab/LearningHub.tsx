@@ -1,16 +1,10 @@
 import {
-  BarChart3,
   BookOpen,
   ChevronRight,
-  ExternalLink,
   FlaskConical,
-  Lightbulb,
-  Loader2,
   Maximize2,
-  Milestone,
   Minimize2,
   PanelLeft,
-  Play,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -19,14 +13,9 @@ import {
   getLabExperiment,
   runLabExperiment,
   runWorkbench,
-  type LabExperiment,
 } from "../utils/api";
 import { useLabStore } from "../stores/labStore";
-import { ExperimentCatalog } from "./ExperimentCatalog";
-import { ParameterControl } from "./ParameterControl";
 import { KnowledgeSidebar } from "./KnowledgeSidebar";
-import { getExperimentMedia } from "./experimentMedia";
-import { BreadboardPresetRunner } from "./BreadboardPresetRunner";
 import { useReportProgress } from "./reportProgress";
 import TutorialView from "./TutorialView";
 import PathView from "./PathView";
@@ -35,10 +24,13 @@ import {
   isBreadboardPreset,
   type WorkbenchScene,
   validatePresetParams,
-  WAVELENGTH_PRESETS,
 } from "./workbenchTypes";
+import { ViewSwitcher } from "./hub/ViewSwitcher";
+import { DifficultyBadge } from "./hub/states";
+import { DesktopCatalogColumn, MobileCatalogOverlay } from "./hub/CatalogColumn";
+import { DisplayCard, type HubTabId } from "./hub/DisplayCard";
 
-type TabId = "visual" | "data" | "hints";
+export { BreadboardPresetHeader } from "./hub/BreadboardPresetHeader";
 
 export default function LearningHub() {
   const activeExperimentId = useLabStore((s) => s.activeExperimentId);
@@ -94,7 +86,7 @@ export default function LearningHub() {
 
   const [params, setParams] = useState(initialParams);
   const [liveParams, setLiveParams] = useState(initialParams);
-  const [activeTab, setActiveTab] = useState<TabId>("visual");
+  const [activeTab, setActiveTab] = useState<HubTabId>("visual");
   const debounceRef = useRef<number | null>(null);
 
   const workbenchScene: WorkbenchScene | null = useMemo(() => {
@@ -203,27 +195,10 @@ export default function LearningHub() {
 
   return (
     <div className="flex h-[calc(100vh-112px)] flex-col gap-3">
-      {/* View switcher: 学习路径 / 实验沙盘 / 教程 */}
-      <div className="flex items-center gap-1 self-start rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-900">
-        <TabButton
-          active={learningView === "path"}
-          onClick={() => setLearningView("path")}
-          icon={<Milestone size={14} />}
-          label="学习路径"
+        <ViewSwitcher
+          learningView={learningView}
+          setLearningView={setLearningView}
         />
-        <TabButton
-          active={learningView === "sandbox"}
-          onClick={() => setLearningView("sandbox")}
-          icon={<FlaskConical size={14} />}
-          label="实验沙盘"
-        />
-        <TabButton
-          active={learningView === "tutorials"}
-          onClick={() => setLearningView("tutorials")}
-          icon={<BookOpen size={14} />}
-          label="教程"
-        />
-      </div>
 
       {learningView === "path" ? (
         <div className="min-h-0 flex-1">
@@ -237,73 +212,35 @@ export default function LearningHub() {
     <div className="relative flex min-h-0 flex-1 gap-4">
       {/* ─── Left column: catalog + parameters ─── */}
       {!centerExpanded && (
-        <aside
-          className={`${
-            showSidebar ? "hidden lg:flex" : "hidden"
-          } h-full w-72 shrink-0 flex-col gap-3`}
-        >
-          <div className="min-h-0 flex-[1.2]">
-            <ExperimentCatalog onSelect={handleSelectExperiment} />
-          </div>
-          {experiment && (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-3 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
-              {isPreset && activeExperimentId && (
-                <BreadboardPresetHeader
-                  presetId={activeExperimentId}
-                  params={params}
-                  onChange={handleParamChange}
-                />
-              )}
-              <ParameterPanel
-                experiment={experiment}
-                params={params}
-                onChange={handleParamChange}
-                onReset={handleReset}
-                isFetching={isFetching}
-                isPreset={isPreset}
-                sceneError={sceneError}
-              />
-            </div>
-          )}
-        </aside>
+        <DesktopCatalogColumn
+          showSidebar={showSidebar}
+          centerExpanded={centerExpanded}
+          handleSelectExperiment={handleSelectExperiment}
+          experiment={experiment}
+          isPreset={isPreset}
+          activeExperimentId={activeExperimentId}
+          params={params}
+          handleParamChange={handleParamChange}
+          handleReset={handleReset}
+          isFetching={isFetching}
+          sceneError={sceneError}
+        />
       )}
 
       {/* ─── Mobile left overlay ─── */}
       {mobilePanel === "left" && (
-        <div className="absolute inset-y-0 left-0 z-30 w-[85%] max-w-xs bg-slate-50/95 p-3 shadow-2xl backdrop-blur dark:bg-slate-950/95 lg:hidden">
-          <div className="flex h-full flex-col gap-3">
-            <button
-              onClick={() => setMobilePanel(null)}
-              className="self-end rounded-lg p-2 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800"
-              aria-label="关闭面板"
-            >
-              <X size={18} />
-            </button>
-            <div className="min-h-0 flex-1">
-              <ExperimentCatalog onSelect={handleSelectExperiment} />
-            </div>
-            {experiment && (
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] border border-slate-200/60 bg-white/80 p-3 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
-                {isPreset && activeExperimentId && (
-                  <BreadboardPresetHeader
-                    presetId={activeExperimentId}
-                    params={params}
-                    onChange={handleParamChange}
-                  />
-                )}
-                <ParameterPanel
-                  experiment={experiment}
-                  params={params}
-                  onChange={handleParamChange}
-                  onReset={handleReset}
-                  isFetching={isFetching}
-                  isPreset={isPreset}
-                  sceneError={sceneError}
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        <MobileCatalogOverlay
+          setMobilePanel={setMobilePanel}
+          handleSelectExperiment={handleSelectExperiment}
+          experiment={experiment}
+          isPreset={isPreset}
+          activeExperimentId={activeExperimentId}
+          params={params}
+          handleParamChange={handleParamChange}
+          handleReset={handleReset}
+          isFetching={isFetching}
+          sceneError={sceneError}
+        />
       )}
 
       {/* ─── Center column: display ─── */}
@@ -378,91 +315,20 @@ export default function LearningHub() {
           </div>
         </div>
 
-        {/* Main display card */}
-        <div className="flex min-h-0 flex-1 flex-col rounded-[14px] border border-slate-200/60 bg-white/80 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/80">
-          {activeExperimentId ? (
-            isLoading ? (
-              <LoadingState />
-            ) : error || !experiment ? (
-              <ErrorState message={error?.message ?? "未找到实验"} />
-            ) : (
-              <>
-                {/* Header / tabs */}
-                <div className="flex items-center justify-between border-b border-slate-200/60 px-4 py-2 dark:border-slate-700/60">
-                  <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-900">
-                    <TabButton
-                      active={activeTab === "visual"}
-                      onClick={() => setActiveTab("visual")}
-                      icon={<Maximize2 size={14} />}
-                      label="可视化"
-                    />
-                    <TabButton
-                      active={activeTab === "data"}
-                      onClick={() => setActiveTab("data")}
-                      icon={<BarChart3 size={14} />}
-                      label="数据"
-                    />
-                    <TabButton
-                      active={activeTab === "hints"}
-                      onClick={() => setActiveTab("hints")}
-                      icon={<Lightbulb size={14} />}
-                      label="提示"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {isFetching && (
-                      <span className="inline-flex items-center gap-1 text-xs text-indigo-500">
-                        <Loader2 size={12} className="animate-spin" />
-                        计算中…
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative min-h-0 flex-1 overflow-auto p-4">
-                  {runError ? (
-                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
-                      实验运行失败：{runError.message}
-                    </div>
-                  ) : activeTab === "visual" ? (
-                    isPreset ? (
-                      <BreadboardPresetRunner
-                        result={result}
-                        isFetching={isFetching}
-                        presetId={activeExperimentId ?? undefined}
-                        scene={workbenchScene ?? undefined}
-                      />
-                    ) : (
-                      <div className="space-y-3">
-                        <MediaPanel experimentId={experiment.id} />
-                        <div
-                          className={`transition-opacity duration-200 ${
-                            isFetching ? "opacity-60" : "opacity-100"
-                          }`}
-                          // eslint-disable-next-line react/no-danger
-                          dangerouslySetInnerHTML={{ __html: result?.svg ?? "" }}
-                        />
-                      </div>
-                    )
-                  ) : activeTab === "data" ? (
-                    <DataPanel result={result} />
-                  ) : (
-                    <HintsPanel result={result} />
-                  )}
-
-                  {isFetching && (
-                    <div className="absolute right-4 top-4">
-                      <Loader2 className="animate-spin text-indigo-500" size={20} />
-                    </div>
-                  )}
-                </div>
-              </>
-            )
-          ) : (
-            <EmptyState onOpenCatalog={() => setMobilePanel("left")} />
-          )}
-        </div>
+          <DisplayCard
+            activeExperimentId={activeExperimentId}
+            isLoading={isLoading}
+            error={error}
+            experiment={experiment}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            isFetching={isFetching}
+            runError={runError}
+            isPreset={isPreset}
+            result={result}
+            workbenchScene={workbenchScene}
+            onOpenCatalog={() => setMobilePanel("left")}
+          />
       </main>
 
       {/* ─── Right column: knowledge ─── */}
@@ -503,394 +369,6 @@ export default function LearningHub() {
       )}
     </div>
       )}
-    </div>
-  );
-}
-
-/* ─── Sub-components ─── */
-
-function ParameterPanel({
-  experiment,
-  params,
-  onChange,
-  onReset,
-  isFetching,
-  isPreset,
-  sceneError,
-}: {
-  experiment: LabExperiment;
-  params: Record<string, unknown>;
-  onChange: (name: string, value: unknown) => void;
-  onReset: () => void;
-  isFetching: boolean;
-  isPreset: boolean;
-  sceneError: string | null;
-}) {
-  return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-          参数控制
-        </h3>
-        {isFetching && (
-          <Loader2 size={14} className="animate-spin text-indigo-500" />
-        )}
-      </div>
-      <div className="min-h-0 flex-1 space-y-3 overflow-auto pr-1">
-        {experiment.parameters.map((param) => (
-          <ParameterControl
-            key={param.name}
-            param={param}
-            value={params[param.name]}
-            onChange={(value) => onChange(param.name, value)}
-          />
-        ))}
-      </div>
-      {sceneError && (
-        <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
-          {sceneError}
-        </div>
-      )}
-      <button
-        onClick={onReset}
-        className="mt-3 w-full rounded-lg border border-slate-200 bg-white py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-      >
-        {isPreset ? "重置默认布局" : "重置默认参数"}
-      </button>
-    </div>
-  );
-}
-
-export function BreadboardPresetHeader({
-  presetId,
-  params,
-  onChange,
-}: {
-  presetId: string;
-  params: Record<string, unknown>;
-  onChange: (name: string, value: unknown) => void;
-}) {
-  const screen_x_mm = Number(params.screen_x_mm ?? 1600);
-  const wavelength_nm = Number(params.wavelength_nm ?? 550);
-  const clamped = Math.min(Math.max(screen_x_mm, 700), 3000);
-  const screenSvgX = 40 + ((clamped - 700) / (3000 - 700)) * 220;
-  const isDoubleSlit = presetId === "double-slit-breadboard";
-
-  return (
-    <div className="mb-4 space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-          波长
-        </span>
-        {WAVELENGTH_PRESETS.map((preset) => {
-          const active = wavelength_nm === preset.value;
-          return (
-            <button
-              key={preset.value}
-              onClick={() => onChange("wavelength_nm", preset.value)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
-                active
-                  ? "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-800/40 dark:bg-indigo-900/30 dark:text-indigo-400"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-              }`}
-            >
-              <span className={`h-2 w-2 rounded-full ${preset.color}`} />
-              {preset.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="rounded-lg border border-slate-200/60 bg-slate-50/60 p-2 dark:border-slate-700/60 dark:bg-slate-800/60">
-        <div className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-400">
-          面包板示意
-        </div>
-        <svg viewBox="0 0 300 70" className="h-16 w-full">
-          <line
-            x1="20"
-            y1="50"
-            x2="280"
-            y2="50"
-            className="text-slate-300 dark:text-slate-600"
-            stroke="currentColor"
-            strokeWidth="2"
-          />
-          <circle cx="20" cy="50" r="5" className="text-red-500" fill="currentColor" />
-          <text
-            x="20"
-            y="65"
-            textAnchor="middle"
-            className="text-[8px] text-slate-500 dark:text-slate-400"
-            fill="currentColor"
-          >
-            激光
-          </text>
-          {isDoubleSlit ? (
-            <>
-              <line
-                x1="36"
-                y1="35"
-                x2="36"
-                y2="50"
-                className="text-slate-800 dark:text-slate-200"
-                stroke="currentColor"
-                strokeWidth="3"
-              />
-              <line
-                x1="44"
-                y1="35"
-                x2="44"
-                y2="50"
-                className="text-slate-800 dark:text-slate-200"
-                stroke="currentColor"
-                strokeWidth="3"
-              />
-            </>
-          ) : (
-            <line
-              x1="40"
-              y1="35"
-              x2="40"
-              y2="50"
-              className="text-slate-800 dark:text-slate-200"
-              stroke="currentColor"
-              strokeWidth="3"
-            />
-          )}
-          <text
-            x="40"
-            y="65"
-            textAnchor="middle"
-            className="text-[8px] text-slate-500 dark:text-slate-400"
-            fill="currentColor"
-          >
-            {isDoubleSlit ? "双缝" : "单缝"}
-          </text>
-          <line
-            x1={screenSvgX}
-            y1="30"
-            x2={screenSvgX}
-            y2="50"
-            className="text-indigo-500"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
-          <text
-            x={screenSvgX}
-            y="22"
-            textAnchor="middle"
-            className="text-[8px] text-indigo-500"
-            fill="currentColor"
-          >
-            屏幕
-          </text>
-        </svg>
-      </div>
-    </div>
-  );
-}
-
-function MediaPanel({ experimentId }: { experimentId: string }) {
-  const media = useMemo(() => getExperimentMedia(experimentId), [experimentId]);
-  const [open, setOpen] = useState(false);
-
-  if (!media) return null;
-
-  return (
-    <div className="rounded-xl border border-slate-200/60 bg-slate-50/60 p-3 dark:border-slate-700/60 dark:bg-slate-800/60">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between"
-      >
-        <span className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-          <Play size={14} className="text-rose-500" />
-          实验实操
-          {media.caption && (
-            <span className="font-normal text-slate-500 dark:text-slate-400">
-              · {media.caption}
-            </span>
-          )}
-        </span>
-        <span className="text-xs text-indigo-600 dark:text-indigo-400">
-          {open ? "收起" : "展开"}
-        </span>
-      </button>
-
-      {open && (
-        <div className="mt-3">
-          {media.video?.provider === "youtube" && (
-            <div className="relative aspect-video w-full max-h-56 overflow-hidden rounded-lg bg-black">
-              <iframe
-                className="h-full w-full"
-                src={`https://www.youtube-nocookie.com/embed/${media.video.id}${
-                  media.video.start ? `?start=${media.video.start}` : ""
-                }`}
-                title={media.video.title ?? "实验视频"}
-                allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
-          )}
-          {media.image && (
-            <div className="relative max-h-56 overflow-hidden rounded-lg">
-              <img
-                src={media.image.src}
-                alt={media.image.alt}
-                className="max-h-56 w-full object-contain"
-                loading="lazy"
-              />
-              {media.image.credit && (
-                <p className="mt-1 text-xs text-slate-400">
-                  来源：{media.image.credit}
-                </p>
-              )}
-            </div>
-          )}
-          {media.video?.provider === "youtube" && (
-            <a
-              href={`https://www.youtube.com/watch?v=${media.video.id}`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-2 inline-flex items-center gap-1 text-xs text-indigo-600 hover:underline dark:text-indigo-400"
-            >
-              在 YouTube 打开 <ExternalLink size={10} />
-            </a>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function DataPanel({ result }: { result?: { data: Record<string, unknown> } }) {
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-      <h4 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-        计算数据
-      </h4>
-      <pre className="max-h-[60vh] overflow-auto text-xs text-slate-600 dark:text-slate-400">
-        {result ? JSON.stringify(result.data, null, 2) : "暂无数据"}
-      </pre>
-    </div>
-  );
-}
-
-function HintsPanel({
-  result,
-}: {
-  result?: { warnings: string[]; learning_hints: string[] };
-}) {
-  return (
-    <div className="space-y-3">
-      {result?.warnings.length ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/30">
-          <div className="mb-1 text-sm font-semibold text-amber-800 dark:text-amber-400">
-            注意
-          </div>
-          <ul className="list-inside list-disc text-sm text-amber-700 dark:text-amber-300">
-            {result.warnings.map((w, i) => (
-              <li key={i}>{w}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-      {result?.learning_hints.length ? (
-        <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-3 dark:border-indigo-900 dark:bg-indigo-950/30">
-          <div className="mb-1 text-sm font-semibold text-indigo-800 dark:text-indigo-400">
-            学习提示
-          </div>
-          <ul className="list-inside list-disc text-sm text-indigo-700 dark:text-indigo-300">
-            {result.learning_hints.map((h, i) => (
-              <li key={i}>{h}</li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p className="text-sm text-slate-500 dark:text-slate-400">暂无学习提示</p>
-      )}
-    </div>
-  );
-}
-
-function DifficultyBadge({ difficulty }: { difficulty: string }) {
-  const cls =
-    difficulty === "foundation"
-      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-      : difficulty === "intermediate"
-      ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-      : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400";
-  const label =
-    difficulty === "foundation" ? "基础" : difficulty === "intermediate" ? "进阶" : "高级";
-  return (
-    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cls}`}>
-      {label}
-    </span>
-  );
-}
-
-function TabButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-        active
-          ? "bg-white text-indigo-600 shadow-sm dark:bg-slate-700 dark:text-indigo-400"
-          : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-      }`}
-    >
-      {icon}
-      {label}
-    </button>
-  );
-}
-
-function LoadingState() {
-  return (
-    <div className="flex h-full items-center justify-center">
-      <Loader2 className="animate-spin text-indigo-500" size={32} />
-    </div>
-  );
-}
-
-function ErrorState({ message }: { message: string }) {
-  return (
-    <div className="flex h-full items-center justify-center p-4">
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400">
-        无法加载实验：{message}
-      </div>
-    </div>
-  );
-}
-
-function EmptyState({ onOpenCatalog }: { onOpenCatalog: () => void }) {
-  return (
-    <div className="flex h-full flex-col items-center justify-center rounded-[14px] border border-dashed border-slate-300 bg-white/50 p-6 text-center dark:border-slate-700 dark:bg-slate-800/50">
-      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 dark:bg-indigo-900/30 dark:text-indigo-400">
-        <FlaskConical size={28} />
-      </div>
-      <h2 className="mb-2 text-lg font-semibold text-slate-800 dark:text-slate-200">
-        欢迎来到学习中心
-      </h2>
-      <p className="max-w-md text-sm text-slate-500 dark:text-slate-400">
-        在左侧选择一项光学实验，调整参数观察实时模拟，右侧会显示相关的概念与公式。
-      </p>
-      <button
-        onClick={onOpenCatalog}
-        className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 lg:hidden"
-      >
-        打开实验目录
-      </button>
     </div>
   );
 }
