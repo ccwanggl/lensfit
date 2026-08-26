@@ -1,6 +1,6 @@
 # ADR-003：学习优先定位转换（Learning-First Pivot）
 
-**状态**：提议  
+**状态**：接受（2026-08-26 全仓深度评审后追认，阶段 0–4 已按执行计划落地）  
 **日期**：2026-08-24  
 **作者**：OptiBench 架构团队  
 **范围**：将产品定位从“镜头-传感器选型工作台（工程师主线）+ Self-Study Lab（学习副线）”反转为“学习辅助为第一要务，选型匹配作为学习实践场景”。执行计划见 `docs/development/plans/active/2026-08-learning-first-repositioning-plan.md`。
