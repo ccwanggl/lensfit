@@ -100,6 +100,7 @@
 - **SQLite 新表**（Alembic migration）：`learning_records`（`id`, `learner_id`（默认 `default`，预留）, `item_kind`, `item_id`, `status`（viewed/completed/scored）, `score`, `updated_at`）。单表，KISS。
 - **API**：`GET/PUT /api/v1/learning/progress`（按 item 查询/上报）。
 - **前端**：替换现有 localStorage 碎片（`useLearningProgress.ts` 迁移到 API）；路径视图节点显示完成标记。
+  - 2026-08-26 范围修订：localStorage 替换收敛为学习主壳（PathView/TutorialView/LearningHub/QuizPanel）；四领域工作台内部章节/测验 UI 状态保留 localStorage，不做迁移，决策记录见 `specifications/lab/learning-records.md` §6。
 - 不做账号、不做多端同步（LW2）。
 
 ### 进入条件
@@ -156,16 +157,15 @@
 
 - 启动默认进入学习路径视图；实践场四个工作台功能回归无损；`npm run build` 与前端测试通过。
 
-## 6. 持续任务：教程正文补写
+## 6. 持续任务：知识内容协同（2026-08-26 按 ADR-004 修订）
 
-阶段 0 内容管道就绪后启动，按学习路径顺序分批补写 modules 正文（内容工作，不走 checkpoint）。优先顺序：
+原「教程正文补写」任务经 ADR-004（知识库—软件知识互联，已接受）重新分工：深度理论正文在 OpticKnowledgeSpace 知识库撰写与阅读，软件侧不再以补写 `modules/` 正文为目标。
 
-1. 10-foundations 核心概念（已有实验可联动的优先）。
-2. 20-geometric-optics（配合缺口实验：反射/平面镜、色散棱镜——新实验按 LS2 另行立项）。
-3. 30-wave-optics（菲涅尔衍射、干涉仪）。
-4. 40-spectroscopy、50-optical-design。
+软件侧对应持续任务调整为：
 
-每篇正文须满足内容合同 v1 并链接至少一个已有实验。
+1. **双链导航维护**：实验元数据锚定知识库概念 id，新增实验时同步锚点并重跑 `scripts/generate_knowledge_links.py`。
+2. **挂账清理**：`scripts/knowledge_links_unresolved.md` 登记的字面量在知识库补齐对应笔记后重跑生成器替换。
+3. **覆盖率审计**：周期性重跑 `scripts/knowledge_coverage.py` 刷新缺口基线，作为新实验立项依据（先进入本计划 checkpoint，再动工）。
 
 ## 7. 验证命令（各阶段通用）
 
@@ -186,3 +186,20 @@ npm run test
 | 学习层耦合匹配引擎 | 高 | `PracticeActivity` 接口 + import 方向测试 |
 | 各阶段间前端状态管理膨胀 | 中 | 每阶段退出条件含前端测试；状态集中在既有 zustand store 扩展 |
 | 与面包板阶段 6.5/7 冲突 | 低 | 面包板边界不动；面包板 preset 以 PracticeActivity 注册进路径图 |
+
+## 附录 A：T1/T3 实验批次与 60-photonics 课程层追认（2026-08-26）
+
+### 背景
+
+自 `5b912a1` 起，实验扩充以根目录 `laser-optics-expansion-report.md`、`non-imaging-optics-expansion-report.md` 的缺口清单为依据推进。两份报告按 ADR-003 §6 定位为「缺口证据，非执行依据」，按 AGENTS.md 文档执行优先级不应直接驱动实现。本附录将已落地范围追认进本计划；此后新增实验批次须先在本计划立 checkpoint 再动工。
+
+### 追认范围（截至 `98e4386`）
+
+- T1 概念验证实验三批（含黑体实验扩展）：朗伯体、立体角、QE 响应度、CIE 色域、光通量积分、双点分辨等。
+- T3 数值仿真实验首批：fourier-optics、fiber-v-parameter、laser-threshold、gvd-pulse-broadening、edfa-gain，及全实验运行时冒烟测试。
+- 课程层：`modules/curriculum.yaml` 新增 60-photonics 层与配套挂接；当前模块分布 10-foundations×10、20-geometric-optics×28、30-wave-optics×9、40-spectroscopy×17、50-optical-design×8、60-photonics×4、practice×4，课程图实验节点断言 39（`engine/tests/test_api_curriculum.py:58`）。
+- 配套工程：解锁规则优化、概念补链、知识覆盖率审计工具与挂账台账（`scripts/knowledge_coverage*`）。
+
+### 边界
+
+本附录仅追认内容层扩充，不改变第 0 节「明确不做」清单、ADR-002/003 架构边界与面包板 checkpoint 门禁。
