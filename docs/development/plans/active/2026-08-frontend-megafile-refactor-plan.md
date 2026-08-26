@@ -1,7 +1,7 @@
 # 前端巨型文件重构计划（api.ts / LearningHub.tsx / 四域页面）
 
 > 制定日期：2026-08-26（同日 v2 修订：纳入 2026-08-25 评审 M1 的另一半范围「DomainPageShell」，并补充与面包板 checkpoint 的协调条款）
-> 状态：切片 A 已完成（2026-08-26）；切片 B / C 待确认后开工
+> 状态：切片 A、B 已完成（2026-08-26）；切片 C 待确认后开工
 > 依据：`docs/development/reviews/2026-08-25-deep-codebase-review.md`（M1：前端巨型组件与四域重复编排）、2026-08-26 全仓深度评审（`LearningHub.tsx` 896 行、`utils/api.ts` 814 行持续膨胀）
 > 边界：全部切片只做结构拆分与模块化，不改任何业务行为与 API 协议语义；四域页面仅做结构抽取，不做视觉改版；不触碰 `engine/optibench/matching`。
 
@@ -45,6 +45,8 @@
 - 出现无法快速定位的行为差异 → 废弃子模块拆分，保留聚合出口回退点。
 
 ## 2. 切片 B：LearningHub 子视图拆分
+
+> **状态：✅ 已完成（2026-08-26）**——LearningHub 896→374 行；拆出 `src/lab/hub/` 七模块：ViewSwitcher / DisplayCard / CatalogColumn / panels（Parameter·Media·Data·Hints）/ states（Badge·Loading·Error·Empty）/ TabButton / BreadboardPresetHeader（经 LearningHub 再导出保持测试导入兼容）。全部字节级平移，数据查询与 `useReportProgress` 上报点保留在 LearningHub 原位，现有测试零改动全绿（vitest 59 / tsc / build）。
 
 ### 目标
 
