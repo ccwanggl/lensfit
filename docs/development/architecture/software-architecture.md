@@ -1,5 +1,25 @@
 # 软件架构与模块设计
 
+> **文档定位（2026-08 修订，依据 ADR-003 / ADR-004）**：产品定位已转换为**学习辅助第一要务**——应用主壳为学习中心
+> （学习路径 / 实验沙盘 / 教程三视图），镜头-传感器选型等工程能力收编为"实践场"。本文档以下章节描述的是
+> **实践场（匹配流水线）与实践域内部实现**，按 ADR-003 §5 继续有效；执行计划见
+> `docs/development/plans/active/2026-08-learning-first-repositioning-plan.md`。
+
+## 0. 学习优先子系统地图（2026-08 新增）
+
+| 子系统 | 位置 | 说明 |
+|---|---|---|
+| 内容管道 | `engine/optibench/content/` | 内容合同 v1 校验 + `modules/**/learning/*.md` 只读索引（无 DB 表）；正文阅读外移外部知识库（ADR-004），软件侧双链导航 |
+| 课程图 | `engine/optibench/curriculum/` | `modules/curriculum.yaml` 声明式 DAG，环检测 / 悬空引用检测 |
+| 实践接口 | `engine/optibench/practice/` | `PracticeActivity` 接口——学习层引用选型能力的**唯一通道**（import 方向受约束） |
+| 实验运行时 | `engine/optibench/lab/` | T1/T3 数值仿真实验 + 面包板 preset workbench 运行时 |
+| 学习者状态 | `learning_records` 表 | 本地 SQLite 单学习者（无账号系统），migration `004` |
+| 新增 API | `routers/content.py` `curriculum.py` `learning.py` `lab.py` | 概念/测验索引、课程图合并进度、GET/PUT 学习进度、实验运行 |
+| 前端主壳 | `apps/desktop/src/lab/LearningHub.tsx`(+`hub/`) | 默认首页；PathView / TutorialView / QuizPanel 挂载其内 |
+| 四域工作台 | `pages/*Page.tsx` + `components/domain/DomainPageShell` | 实践场分组入口，三栏布局共享壳 |
+
+架构边界（不可违反）：学习层只能经 `PracticeActivity` 引用选型能力；不做账号系统；面包板 checkpoint 门禁不变。
+
 ## 1. 设计哲学
 
 - **模块化**：每个光学领域（工业视觉、显微镜、红外）是可插拔的模块

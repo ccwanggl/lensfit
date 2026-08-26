@@ -438,6 +438,30 @@ result = aeval.eval(expr, focal=25, sensor=8.8, fov=50)
 
 ---
 
+### 3.9 学习者进度表 (learning_records)
+
+2026-08 学习优先转向新增（ADR-003）。本地单学习者持久化，**无账号系统**；`learner_id` 仅作多学习者预留（默认 `"default"`）。
+
+```sql
+CREATE TABLE learning_records (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    learner_id  TEXT NOT NULL DEFAULT 'default',
+    item_kind   TEXT NOT NULL,              -- concept/experiment/preset/practice/assessment
+    item_id     TEXT NOT NULL,              -- 对应 curriculum 节点 id
+    status      TEXT NOT NULL,              -- viewed/completed/scored
+    score       REAL,                       -- 仅 status='scored' 允许非空（API 层校验）
+    updated_at  TIMESTAMP                   -- 服务端 upsert 时写入
+);
+
+-- 同一学习者对同一学习项仅一条记录，重复上报为 upsert
+CREATE UNIQUE INDEX uq_learning_item ON learning_records(learner_id, item_kind, item_id);
+CREATE INDEX ix_learning_learner_kind ON learning_records(learner_id, item_kind);
+```
+
+- 迁移：`engine/optibench/db/migrations/versions/004_add_learning_records.py`（down_revision `0ac6c641b5d7`，可升降级）
+- ORM：`engine/optibench/db/models.py::LearningRecord`
+- API：`GET/PUT /api/v1/learning/progress`；课程图 `GET /api/v1/curriculum/graph` 在响应层合并该表状态，不回写 `curriculum.yaml`
+
 ## 4. 数据初始化策略
 
 ### 4.1 种子数据来源
